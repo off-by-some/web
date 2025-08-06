@@ -17,8 +17,8 @@ const config = {
       strict: false
     }),
 	paths: {
-		base: process.env.NODE_ENV === 'production' ? '/resume' : '' ,
-		assets: process.env.NODE_ENV === 'production' ? 'https://off-by-some.github.io/resume' : ''
+		base: process.env.NODE_ENV === 'production' ? '/web' : '' ,
+		assets: process.env.NODE_ENV === 'production' ? 'https://off-by-some.github.io/web' : ''
 	},
 	// prerender: true,
   },
