@@ -1,21 +1,10 @@
-/* ==========================================================================
-   CROSS-BROWSER ANIMATION SYSTEM
-   Optimized for smooth performance across all browsers
-   ========================================================================== */
-
-/* ==========================================================================
-   ANIMATION DURATIONS & EASING
-   ========================================================================== */
-
 :root {
-  /* Optimized durations - reduced for better performance */
   --duration-instant: 100ms;
   --duration-fast: 200ms;
   --duration-normal: 300ms;
   --duration-slow: 500ms;
   --duration-slower: 750ms;
 
-  /* Optimized easing functions - GPU-friendly */
   --ease-linear: cubic-bezier(0, 0, 1, 1);
   --ease-in: cubic-bezier(0.4, 0, 1, 1);
   --ease-out: cubic-bezier(0, 0, 0.2, 1);
@@ -24,11 +13,6 @@
   --ease-elastic: cubic-bezier(0.68, 0, 0.265, 1.55);
 }
 
-/* ==========================================================================
-   CROSS-BROWSER PERFORMANCE UTILITIES
-   ========================================================================== */
-
-/* Hardware acceleration utilities for all browsers */
 .gpu-accelerated {
   transform: translateZ(0);
   -moz-transform: translateZ(0);
@@ -50,7 +34,6 @@
   contain: layout style;
 }
 
-/* Cross-browser performance utilities */
 .gpu-accelerated {
   transform: translateZ(0);
   -moz-transform: translateZ(0);
@@ -60,13 +43,11 @@
   backface-visibility: hidden;
 }
 
-/* Cross-browser animation utilities */
 .animate-smooth {
   animation-duration: 0.8s;
   animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Cross-browser hover utilities */
 .hover-lift {
   transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
 }
@@ -77,7 +58,6 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
-/* Additional descriptive utilities */
 .layer-3d {
   transform-style: preserve-3d;
   -moz-transform-style: preserve-3d;
@@ -93,18 +73,12 @@
   -moz-backface-visibility: hidden;
 }
 
-/* ==========================================================================
-   CROSS-BROWSER KEYFRAME UTILITIES
-   ========================================================================== */
-
-/* Cross-browser keyframe mixins */
 @mixin cross-browser-keyframes($name) {
   @keyframes #{$name} {
     @content;
   }
 }
 
-/* Cross-browser transform keyframes */
 @mixin transform-keyframes($name, $from-transform, $to-transform) {
   @keyframes #{$name} {
     0% {
@@ -118,7 +92,6 @@
   }
 }
 
-/* Cross-browser slide animations */
 @mixin slide-in-left {
   @include transform-keyframes(
     slide-in-left,
@@ -159,11 +132,6 @@
   );
 }
 
-/* ==========================================================================
-   CROSS-BROWSER PERFORMANCE MIXINS (SCSS ONLY)
-   ========================================================================== */
-
-/* Cross-browser performance mixins */
 @mixin gpu-accelerated {
   transform: translateZ(0);
   -moz-transform: translateZ(0);
@@ -198,11 +166,6 @@
   -moz-transform: scale3d($x, $y, $z);
 }
 
-/* ==========================================================================
-   COMMON ANIMATION KEYFRAMES
-   ========================================================================== */
-
-/* Fade animations */
 @keyframes fade-in {
   0% { opacity: 0; }
   100% { opacity: 1; }
@@ -213,7 +176,6 @@
   100% { opacity: 0; }
 }
 
-/* Slide animations */
 @keyframes slide-up {
   0% { transform: translate3d(0, 100%, 0); }
   100% { transform: translate3d(0, 0, 0); }
@@ -224,7 +186,6 @@
   100% { transform: translate3d(0, 0, 0); }
 }
 
-/* Scale animations */
 @keyframes scale-in {
   0% { transform: scale3d(0, 0, 1); }
   100% { transform: scale3d(1, 1, 1); }
@@ -235,7 +196,6 @@
   100% { transform: scale3d(0, 0, 1); }
 }
 
-/* Rotation animations */
 @keyframes rotate-in {
   0% { transform: rotate(-180deg); }
   100% { transform: rotate(0deg); }
@@ -246,7 +206,6 @@
   100% { transform: rotate(180deg); }
 }
 
-/* Pulse animations */
 @keyframes pulse {
   0%, 100% { transform: scale3d(1, 1, 1); }
   50% { transform: scale3d(1.05, 1.05, 1); }
@@ -257,7 +216,6 @@
   50% { transform: scale3d(1.02, 1.02, 1); }
 }
 
-/* Bounce animations */
 @keyframes bounce {
   0%, 20%, 53%, 80%, 100% { transform: translate3d(0, 0, 0); }
   40%, 43% { transform: translate3d(0, -30px, 0); }
@@ -265,18 +223,12 @@
   90% { transform: translate3d(0, -4px, 0); }
 }
 
-/* Shake animations */
 @keyframes shake {
   0%, 100% { transform: translate3d(0, 0, 0); }
   10%, 30%, 50%, 70%, 90% { transform: translate3d(-10px, 0, 0); }
   20%, 40%, 60%, 80% { transform: translate3d(10px, 0, 0); }
 }
 
-/* ==========================================================================
-   COSMIC & BACKGROUND ANIMATIONS
-   ========================================================================== */
-
-/* Nebula drift animation */
 @keyframes nebula-drift {
   0% { 
     transform: translate3d(0, 0, 0) scale3d(1, 1, 1) rotate(0deg); 
@@ -288,29 +240,21 @@
   }
 }
 
-/* Particle field animation */
 @keyframes particles-float {
   0% { transform: translate3d(0, 0, 0); }
   100% { transform: translate3d(100px, -50px, 0); }
 }
 
-/* Energy waves animation */
 @keyframes waves-flow {
   0% { transform: translate3d(-200px, 0, 0); }
   100% { transform: translate3d(200px, 0, 0); }
 }
 
-/* Constellation rotation */
 @keyframes constellation-rotate {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
-/* ==========================================================================
-   TITLE & STATUS ANIMATIONS
-   ========================================================================== */
-
-/* Title pulse animation */
 @keyframes title-pulse {
   0% { 
     opacity: 0.4; 
@@ -322,13 +266,11 @@
   }
 }
 
-/* Status pulse animation */
 @keyframes status-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.6; }
 }
 
-/* Pulse ring animation */
 @keyframes pulse-ring {
   0% { 
     transform: scale3d(1, 1, 1); 
@@ -340,40 +282,27 @@
   }
 }
 
-/* ==========================================================================
-   FORM & BUTTON ANIMATIONS
-   ========================================================================== */
-
-/* Success pulse animation */
 @keyframes success-pulse {
   0%, 100% { transform: scale3d(1, 1, 1); }
   50% { transform: scale3d(1.05, 1.05, 1); }
 }
 
-/* Loading spinner animation */
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
-/* Success bounce animation */
 @keyframes success-bounce {
   0% { transform: scale3d(0, 0, 1); }
   50% { transform: scale3d(1.3, 1.3, 1); }
   100% { transform: scale3d(1, 1, 1); }
 }
 
-/* Button particles animation */
 @keyframes button-particles {
   0% { transform: translate3d(-20px, 0, 0); }
   100% { transform: translate3d(20px, 0, 0); }
 }
 
-/* ==========================================================================
-   CONTACT METHOD ANIMATIONS
-   ========================================================================== */
-
-/* Method entrance animation */
 @keyframes method-entrance {
   0% {
     opacity: 0;
@@ -385,11 +314,6 @@
   }
 }
 
-/* ==========================================================================
-   TIMELINE ANIMATIONS
-   ========================================================================== */
-
-/* Timeline fade-in animation */
 @keyframes fade-in-timeline {
   from {
     opacity: 0;
@@ -401,7 +325,6 @@
   }
 }
 
-/* Timeline indicator pulse animation */
 @keyframes pulse-indicator {
   0%, 100% {
     box-shadow:
@@ -419,17 +342,11 @@
   }
 }
 
-/* ==========================================================================
-   SKILLS ANIMATIONS
-   ========================================================================== */
-
-/* Grid constellation animation */
 @keyframes grid-constellation {
   0% { transform: translate3d(0, 0, 0) rotate(0deg); }
   100% { transform: translate3d(80px, 80px, 0) rotate(360deg); }
 }
 
-/* Orbs drift animation */
 @keyframes orbs-drift {
   0% { 
     transform: translate3d(0, 0, 0) scale3d(1, 1, 1); 
@@ -441,13 +358,11 @@
   }
 }
 
-/* Connections flow animation */
 @keyframes connections-flow {
   0% { transform: translate3d(-100px, -50px, 0); }
   100% { transform: translate3d(100px, 50px, 0); }
 }
 
-/* Title glow animation */
 @keyframes title-glow {
   0% { 
     opacity: 0.3; 
@@ -459,7 +374,6 @@
   }
 }
 
-/* Card entrance animation */
 @keyframes card-entrance {
   0% {
     opacity: 0;
@@ -471,48 +385,37 @@
   }
 }
 
-/* Glow pulse animation */
 @keyframes glow-pulse {
   0% { opacity: 1; transform: scale3d(1, 1, 1); }
   100% { opacity: 0.7; transform: scale3d(1.1, 1.1, 1); }
 }
 
-/* Particles drift animation */
 @keyframes particles-drift {
   0% { transform: translate3d(0, 0, 0); }
   100% { transform: translate3d(30px, -30px, 0); }
 }
 
-/* Ring pulse animation */
 @keyframes ring-pulse {
   0%, 100% { transform: scale3d(1, 1, 1); opacity: 0.6; }
   50% { transform: scale3d(1.02, 1.02, 1); opacity: 0.8; }
 }
 
-/* ==========================================================================
-   ABOUT ME SPECIFIC ANIMATIONS
-   ========================================================================== */
-
-/* Expand line animation */
 @keyframes expand-line {
   0% { width: 0; }
   100% { width: clamp(60px, 12vw + 3vh, 200px); }
 }
 
-/* Pulse status animation */
 @keyframes pulse-status {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
 }
 
-/* Button glow pulse animation */
 @keyframes btn-glow-pulse {
   0% { box-shadow: var(--token-shadow-elevated), var(--token-shadow-interactive); }
   50% { box-shadow: var(--token-shadow-strong), var(--token-shadow-focus); }
   100% { box-shadow: var(--token-shadow-elevated), var(--token-shadow-interactive); }
 }
 
-/* Pulse glow animation */
 @keyframes pulse-glow {
   0% { 
     opacity: 0.3; 
@@ -526,7 +429,6 @@
   }
 }
 
-/* Rotate animation */
 @keyframes rotate {
   from { 
     transform: rotate(0deg);
@@ -538,13 +440,11 @@
   }
 }
 
-/* Text shimmer animation */
 @keyframes text-shimmer {
   0% { background-position: -200% center; }
   100% { background-position: 200% center; }
 }
 
-/* Fade in up animation */
 @keyframes fade-in-up {
   0% {
     opacity: 0;
@@ -558,7 +458,6 @@
   }
 }
 
-/* Fade in float animation */
 @keyframes fade-in-float {
   0% {
     opacity: 0;
@@ -572,7 +471,6 @@
   }
 }
 
-/* Float animation */
 @keyframes float {
   0%, 100% {
     transform: translate3d(0, 0, 0);
@@ -584,7 +482,6 @@
   }
 }
 
-/* Arrow bounce animation */
 @keyframes arrow-bounce {
   0%, 100% {
     transform: translate3d(0, 0, 0);
@@ -596,7 +493,6 @@
   }
 }
 
-/* Scroll wheel animation */
 @keyframes scroll-wheel {
   0% {
     transform: translate3d(-50%, 0, 0);
@@ -608,11 +504,6 @@
   }
 }
 
-/* ==========================================================================
-   ACCESSIBILITY ANIMATION SUPPORT
-   ========================================================================== */
-
-/* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -636,23 +527,18 @@
   }
 }
 
-/* Firefox-specific reduced motion optimizations */
 @supports (-moz-appearance: none) {
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
     *::after {
-      /* Firefox-specific animation disabling */
       -moz-animation-duration: 0.01ms !important;
       -moz-transition-duration: 0.01ms !important;
-      /* Disable all transforms in Firefox */
       -moz-transform: none !important;
       transform: none !important;
-      /* Disable will-change in Firefox */
       will-change: auto !important;
     }
     
-    /* Firefox-specific GPU acceleration disabling */
     .gpu-accelerated,
     .gpu-layer,
     .paint-optimized {

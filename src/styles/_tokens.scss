@@ -2,36 +2,30 @@
 @use './_colors' as colors;
 @use './_themes' as themes;
 
-$breakpoint-sm: 30rem;    /* 480px */
-$breakpoint-md: 48rem;    /* 768px */
-$breakpoint-lg: 86rem;    /* 1280px */
-$breakpoint-xlg: 160rem;    /* 2560px */
+$breakpoint-sm: 30rem;
+$breakpoint-md: 48rem;
+$breakpoint-lg: 86rem;
+$breakpoint-xlg: 160rem;
 
 
 $dark-mode-tokens: (
-  // ======================================================
-  // 1. BRAND ANCHORS - Color System
-  // ======================================================
   brand: (
-    teal: #1de9b6,      // Trust & clarity - primary interactions
-    magenta: #ff3cac,   // Attention without urgency - emphasis & metrics  
-    gold: #ffd966,      // Urgency signal - status indicators (use sparingly)
-    neutral: #e3e6f0,   // Clean text foundation
-    dark: #0b0f28,      // Deep focus background
-    purple: #2f1747     // Rich gradient purple for visual depth
+    teal: #1de9b6,
+    magenta: #ff3cac,
+    gold: #ffd966,
+    neutral: #e3e6f0,
+    dark: #0b0f28,
+    purple: #2f1747
   ),
 
-  // ======================================================
-  // 2. SEMANTIC ROLES - Functions
-  // ======================================================
   emphasis: (
-    color: (magenta: 200),  // Data visualization, metrics, analytical thinking
+    color: (magenta: 200),
     glow: themes.reference('emphasis.color', $alpha: 30%),
     shadow: themes.reference('emphasis.color', $alpha: 40%),
   ),
 
   attention: (
-    color: (gold: 100),     // Status, notifications, time-sensitive actions
+    color: (gold: 100),
     glow: themes.reference('attention.color', $alpha: 40%),
     pulse: (
       from: themes.reference('attention.color', $alpha: 80%),
@@ -40,49 +34,42 @@ $dark-mode-tokens: (
   ),
 
   background: (
-    color: (dark: 900, alpha: 80%),     // Primary canvas for focus
+    color: (dark: 900, alpha: 80%),
   ),
 
   interactive: (
-    color: (teal: 100),      // Primary interactions, brand identity, progress
+    color: (teal: 100),
     hover: (teal: 50),
     focus: (teal: 0),
     ring: (teal: 0),
     glow: themes.reference('interactive.color', $alpha: 20%),
     shadow: themes.reference('interactive.color', $alpha: 30%),
     
-    // Enhanced interaction states
     pressed: themes.reference('interactive.color', $alpha: 25%),
     magnetic: themes.reference('interactive.color', $alpha: 10%),
   ),
 
-  // ======================================================
-  // 3. TEXT HIERARCHY - Reading as Architecture
-  // ======================================================
   text: (
-    color: (neutral: 0),    // Foundation text color
+    color: (neutral: 0),
 
     hovered: themes.reference('interactive.hover'),
 
-    // Semantic hierarchy for scanning & comprehension
-    primary:   themes.reference('text.color', $alpha: 95%),   // Primary content 
-    secondary: themes.reference('text.color', $alpha: 85%),   // Supporting content
-    tertiary:  themes.reference('text.color', $alpha: 70%),               // Labels & metadata
-    overlay:   themes.reference('text.color', $alpha: 90%),  // Text on surfaces
-    dark:      themes.reference('background.color'),         // Text on teal/light
-    brand:     themes.reference('interactive.color'),        // Brand moments
+    primary:   themes.reference('text.color', $alpha: 95%),
+    secondary: themes.reference('text.color', $alpha: 85%),
+    tertiary:  themes.reference('text.color', $alpha: 70%),
+    overlay:   themes.reference('text.color', $alpha: 90%),
+    dark:      themes.reference('background.color'),
+    brand:     themes.reference('interactive.color'),
 
     emphasis: (
       default: themes.reference('emphasis.color', $step: 250),
       heading: themes.reference('emphasis.color', $step: 300, $alpha: 100%),
     ),
     
-    // Content-specific roles
-    body:      themes.reference('text.primary'),             // Optimized for sustained reading
-    heading:   themes.reference('interactive.color'),        // Clear hierarchy markers
-    attention: themes.reference('attention.color', $step: 50),          // Urgency & status
+    body:      themes.reference('text.primary'),
+    heading:   themes.reference('interactive.color'),
+    attention: themes.reference('attention.color', $step: 50),
     
-    // Enhanced text effects
     shimmer: (
       from: themes.reference('text.brand'),
       via: themes.reference('text.hovered'),
@@ -90,16 +77,13 @@ $dark-mode-tokens: (
     ),
   ),
 
-  // ======================================================
-  // 4. SURFACES - Glass Morphisms, Overlays
-  // ======================================================
   surface: (
     color:     themes.reference('background.color'),
     overlay:   (grayscale: 900, alpha: 90%),
 
     glass: (
-      subtle:   themes.reference('surface.color', $alpha: 2%),   // rgba(255,255,255,0.02) - Ultra-light glass
-      light:    themes.reference('surface.color', $alpha: 3%),   // rgba(255,255,255,0.03) - Light glass  
+      subtle:   themes.reference('surface.color', $alpha: 2%),
+      light:    themes.reference('surface.color', $alpha: 3%),
       medium:   themes.reference('surface.color', $alpha: 10%),
       strong:   themes.reference('surface.color', $alpha: 10%),
 
@@ -112,7 +96,6 @@ $dark-mode-tokens: (
         ')'
       ),
       
-      // Iridescent bubble effect for non-interactive surfaces
       iridescent: (
         'linear-gradient('
           '135deg',
@@ -124,17 +107,12 @@ $dark-mode-tokens: (
         ')'
       ),
       
-      // Enhanced surface states
       magnetic: themes.reference('surface.color', $alpha: 20%),
       pressed: themes.reference('surface.color', $alpha: 15%),
     ),
   ),
 
-  // ======================================================
-  // 5. STATES - Interactive & Animation States
-  // ======================================================
   state: (
-    // Hover states for various elements
     hover: (
       glow: themes.reference('interactive.color', $alpha: 15%),
       shadow: themes.reference('interactive.color', $alpha: 20%),
@@ -143,19 +121,16 @@ $dark-mode-tokens: (
       surface: themes.reference('surface.glass.hover'),
     ),
     
-    // Active/pressed states
     active: (
       glow: themes.reference('interactive.color', $alpha: 25%),
       shadow: themes.reference('interactive.color', $alpha: 35%),
     ),
     
-    // Focus states
     focus: (
       ring: themes.reference('interactive.ring'),
       glow: themes.reference('interactive.color', $alpha: 8%),
     ),
     
-    // Available/online status
     available: (
       color: themes.reference('attention.color'),
       glow: themes.reference('attention.glow'),
@@ -165,7 +140,6 @@ $dark-mode-tokens: (
       ),
     ),
     
-    // Mastery/skill level indicators
     mastery: (
       expert: themes.reference('interactive.color'),
       advanced: themes.reference('interactive.color'),
@@ -174,9 +148,6 @@ $dark-mode-tokens: (
     ),
   ),
 
-  // ======================================================
-  // 6. BORDERS - Refined Hierarchy
-  // ======================================================
   border: (
     color: (
       default: (grayscale: 100, alpha: 10%),
@@ -230,19 +201,15 @@ $dark-mode-tokens: (
     ),
   ),
 
-  // ======================================================
-  // 7. TINTS - Subtle Color Applications
-  // ======================================================
   tint: (
     primary: (
-      rest:     themes.reference('interactive.color', $step: 50, $alpha: 25%), // Subtle hover
-      strong:   themes.reference('interactive.color', $step: 50, $alpha: 35%), // Press state
-      stronger: themes.reference('interactive.color', $step: 50, $alpha: 55%)  // Active emphasis
+      rest:     themes.reference('interactive.color', $step: 50, $alpha: 25%),
+      strong:   themes.reference('interactive.color', $step: 50, $alpha: 35%),
+      stronger: themes.reference('interactive.color', $step: 50, $alpha: 55%)
     ),
-    accent:    themes.reference('attention.color', $alpha: 30%),    // Gold tint
-    highlight: themes.reference('emphasis.color', $alpha: 25%),     // Magenta tint
+    accent:    themes.reference('attention.color', $alpha: 30%),
+    highlight: themes.reference('emphasis.color', $alpha: 25%),
     
-    // Enhanced overlay tints
     overlay: (
       subtle: themes.reference('interactive.color', $alpha: 10%),
       medium: themes.reference('interactive.color', $alpha: 15%),
@@ -250,9 +217,6 @@ $dark-mode-tokens: (
     ),
   ),
 
-  // ======================================================
-  // 8. SHADOWS - Depth & Glow Effects
-  // ======================================================
   shadow: (
     color:   (grayscale: 950),
     light:   themes.reference('shadow.color', $alpha: 6%),
@@ -262,7 +226,6 @@ $dark-mode-tokens: (
     interactive: themes.reference('interactive.color', $alpha: 20%, $step: 200),
     default: themes.reference('shadow.color', $alpha: 8%),
 
-    // Enhanced glow system
     glow: (
       subtle: themes.reference('interactive.color', $alpha: 8%),
       medium: themes.reference('interactive.color', $alpha: 15%),
@@ -271,7 +234,6 @@ $dark-mode-tokens: (
       emphasis: themes.reference('emphasis.color', $alpha: 20%),
     ),
 
-    // Refined shadow combinations
     elevated: (
       '0 1px 3px #{themes.reference("shadow.color", $alpha: 8%)}',
       '0 2px 6px #{themes.reference("shadow.color", $alpha: 6%)}',
@@ -283,7 +245,6 @@ $dark-mode-tokens: (
       '0 0 8px 2px #{themes.reference("interactive.color", $alpha: 8%)}'
     ),
     
-    // Enhanced interactive shadows
     magnetic: (
       '#{themes.reference("shadow.interactive")}',
       '#{themes.reference("shadow.elevated")}',
@@ -291,14 +252,11 @@ $dark-mode-tokens: (
     ),
   ),
 
-  // ======================================================
-  // 9. STATUS SYSTEM - Signaling
-  // ======================================================
   status: (
     success: (
       color:  #22c55e,
       fg:     #22c55e,
-      bg:     rgba(34, 197, 94, 0.04),   // Refined transparency
+      bg:     rgba(34, 197, 94, 0.04),
       border: rgba(34, 197, 94, 0.25),
       glow:   rgba(34, 197, 94, 0.3),
     ),
@@ -318,18 +276,13 @@ $dark-mode-tokens: (
       glow:   rgba(239, 68, 68, 0.08),
     ),
 
-    // Skill level refinements
     expert:     themes.reference('interactive.color'),
     advanced:   #6366f1,
     proficient: #f59e0b,
     learning:   #06b6d4,
   ),
 
-  // ======================================================
-  // 10. GRADIENTS - Enhanced Gradient System
-  // ======================================================
   gradients: (
-    // Text gradients
     heading:   (
       'linear-gradient('
         '135deg',
@@ -339,7 +292,6 @@ $dark-mode-tokens: (
       ')'
     ),
     
-    // Frame gradients for rotating elements
     frame: (
       'conic-gradient('
         'from 0deg',
@@ -350,7 +302,6 @@ $dark-mode-tokens: (
       ')'
     ),
 
-    // Hero gradient - exact original with rich purple
     hero: (
       'radial-gradient(ellipse at 20% 70%, rgba(29, 233, 182, 0.15) 0%, transparent 50%)',
       'radial-gradient(ellipse at 80% 30%, rgba(255, 60, 172, 0.12) 0%, transparent 50%)',
@@ -363,28 +314,24 @@ $dark-mode-tokens: (
       'radial-gradient(circle at 50% 50%, rgba(224, 192, 98, 0.03) 0%, transparent 60%)'
     ),
 
-    // Timeline - exact original with purple depth
     timeline: (
       'radial-gradient(ellipse at 20% 30%, rgba(29, 233, 182, 0.03) 0%, transparent 50%)',
       'radial-gradient(ellipse at 80% 70%, rgba(255, 60, 172, 0.02) 0%, transparent 50%)',
       'linear-gradient(180deg, rgba(11, 15, 40, 0.95) 0%, rgba(46, 26, 71, 0.9) 100%)'
     ),
 
-    // Skills - exact original with purple to dark
     skills: (
       'radial-gradient(ellipse at 30% 20%, rgba(29, 233, 182, 0.04) 0%, transparent 50%)',
       'radial-gradient(ellipse at 70% 80%, rgba(255, 60, 172, 0.03) 0%, transparent 50%)',
       'linear-gradient(180deg, rgba(46, 26, 71, 0.9) 0%, rgba(11, 15, 40, 0.95) 100%)'
     ),
 
-    // Contact - exact original with dark to purple
     contact: (
       'radial-gradient(ellipse at 30% 20%, rgba(29, 233, 182, 0.04) 0%, transparent 50%)',
       'radial-gradient(ellipse at 70% 80%, rgba(255, 60, 172, 0.03) 0%, transparent 50%)',
       'linear-gradient(180deg, rgba(11, 15, 40, 0.95) 0%, rgba(46, 26, 71, 0.9) 100%)'
     ),
 
-    // Component gradients - refined for compact design
     stat: (
       default: 'linear-gradient(135deg, #{themes.interpolate(neutral, 0, 6%)} 0%, #{themes.reference("surface.glass.medium")} 50%, #{themes.reference("surface.glass.subtle")} 100%)',
       hover:   'linear-gradient(135deg, #{themes.reference("surface.glass.hover")} 0%, #{themes.interpolate(neutral, 0, 6%)} 50%, #{themes.reference("surface.glass.light")} 100%)',
@@ -393,112 +340,95 @@ $dark-mode-tokens: (
     ),
   ),
 
-  // ======================================================
-  // 11. TYPOGRAPHY - Gentler Fluid Scaling System
-  // ======================================================
   font: (
     'size': (
-      // More conservative clamp() scaling - reduced vw factors for smoother transitions
-      'xs': clamp(0.75rem, 0.75rem + 0.15vw, 0.875rem),     // 12px → 14px (gentler)
-      'sm': clamp(0.875rem, 0.875rem + 0.2vw, 1rem),        // 14px → 16px (gentler)
-      'base': clamp(1rem, 1rem + 0.25vw, 1.125rem),         // 16px → 18px (much gentler)
-      'lg': clamp(1.125rem, 1.125rem + 0.3vw, 1.25rem),     // 18px → 20px (gentler)
-      'xl': clamp(1.25rem, 1.25rem + 0.4vw, 1.5rem),        // 20px → 24px (gentler)
-      '2xl': clamp(1.5rem, 1.5rem + 0.6vw, 1.875rem),       // 24px → 30px (gentler)
-      '3xl': clamp(1.875rem, 1.875rem + 0.8vw, 2.25rem),    // 30px → 36px (gentler)
-      '35xl': clamp(2rem, 2rem + 1vw, 3rem),             // 32px → 44px (gentler)
-      '4xl': clamp(2.25rem, 2.25rem + 1.2vw, 3.5rem),       // 36px → 56px (gentler)
-      '5xl': clamp(3rem, 3rem + 1.5vw, 4.5rem),       // 44px → 72px (gentler)
-      '6xl': clamp(3.5rem, 3.5rem + 2vw, 6rem),             // 56px → 96px (gentler)
-      '7xl': clamp(4.5rem, 4.5rem + 2.5vw, 8rem),           // 72px → 128px (gentler)
+      'xs': clamp(0.75rem, 0.75rem + 0.15vw, 0.875rem),
+      'sm': clamp(0.875rem, 0.875rem + 0.2vw, 1rem),
+      'base': clamp(1rem, 1rem + 0.25vw, 1.125rem),
+      'lg': clamp(1.125rem, 1.125rem + 0.3vw, 1.25rem),
+      'xl': clamp(1.25rem, 1.25rem + 0.4vw, 1.5rem),
+      '2xl': clamp(1.5rem, 1.5rem + 0.6vw, 1.875rem),
+      '3xl': clamp(1.875rem, 1.875rem + 0.8vw, 2.25rem),
+      '35xl': clamp(2rem, 2rem + 1vw, 3rem),
+      '4xl': clamp(2.25rem, 2.25rem + 1.2vw, 3.5rem),
+      '5xl': clamp(3rem, 3rem + 1.5vw, 4.5rem),
+      '6xl': clamp(3.5rem, 3.5rem + 2vw, 6rem),
+      '7xl': clamp(4.5rem, 4.5rem + 2.5vw, 8rem),
     ),
     'weight': (
-      'normal': 400,    // Primary reading weight
-      'medium': 500,    // Subtle emphasis, UI elements
-      'semibold': 600,  // Strong hierarchy, headings
-      'bold': 700       // Maximum emphasis, calls to action
+      'normal': 400,
+      'medium': 500,
+      'semibold': 600,
+      'bold': 700
     ),
     'family': (
-      // Optimized for character differentiation (I/l/1, O/0)
-      // Inter prioritized for its optimization
       'sans': ("Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif)
     )
   ),
 
   line: (
     'height': (
-      'tight': 1.1,        // Was 0.95 → Now minimum for legibility (display text only)
-      'snug': 1.25,        // Was 1.1 → Compact UI elements, better baseline
-      'normal': 1.4,       // Was 1.15 → WCAG AA+ compliance baseline
-      'relaxed': 1.5,      // Was 1.3 → Optimal for sustained reading research
-      'loose': 1.6,        // Unchanged → Good for dense content separation
-      'very-loose': 1.75   // Was 1.65 → accessibility maximum
+      'tight': 1.1,
+      'snug': 1.25,
+      'normal': 1.4,
+      'relaxed': 1.5,
+      'loose': 1.6,
+      'very-loose': 1.75
     )
   ),
   
   letter: (
     'spacing': (
-      'tighter': -0.025em,  // Was -0.03em → Less aggressive, maintains readability
-      'tight': -0.015em,    // Was -0.02em → Refined for headlines
-      'normal': -0.005em,   // Was -0.01em → Subtle optimization for body text
-      'default': 0em,       // Unchanged → Neutral fallback
-      'wide': 0.015em,      // Was 0.01em → Slightly more generous
-      'wider': 0.03em,      // Was 0.005em → FIXED: Was incorrectly tighter than 'wide'
-      'widest': 0.05em,     // Unchanged → Good maximum for readability
-      'extra-wide': 0.1em   // Was 0.08em → Clear maximum for special cases
+      'tighter': -0.025em,
+      'tight': -0.015em,
+      'normal': -0.005em,
+      'default': 0em,
+      'wide': 0.015em,
+      'wider': 0.03em,
+      'widest': 0.05em,
+      'extra-wide': 0.1em
     )
   ),
 
-  // ======================================================
-  // 12. SPACING - Proportional Scaling System
-  // ======================================================
   space: (
-    // Fixed spacing - Mathematical 4px base unit progression
     '0': 0,
-    '1': 0.25rem,      // 4px
-    '2': 0.5rem,       // 8px
-    '3': 0.75rem,      // 12px
-    '4': 1rem,         // 16px
-    '5': 1.25rem,      // 20px
-    '6': 1.5rem,       // 24px
-    '8': 2rem,         // 32px
-    '10': 2.5rem,      // 40px
-    '12': 3rem,        // 48px
-    '16': 4rem,        // 64px
-    '20': 5rem,        // 80px
-    '24': 6rem,        // 96px
+    '1': 0.25rem,
+    '2': 0.5rem,
+    '3': 0.75rem,
+    '4': 1rem,
+    '5': 1.25rem,
+    '6': 1.5rem,
+    '8': 2rem,
+    '10': 2.5rem,
+    '12': 3rem,
+    '16': 4rem,
+    '20': 5rem,
+    '24': 6rem,
     
     'fluid': (
-      // Proportional scaling with text - gentler vw factors to match typography
-      'xs': clamp(0.375rem, 0.375rem + 0.1vw, 0.5rem),      // 6px → 8px (proportional)
-      'sm': clamp(0.5rem, 0.5rem + 0.15vw, 0.75rem),        // 8px → 12px (proportional)
-      'md': clamp(0.75rem, 0.75rem + 0.2vw, 1rem),          // 12px → 16px (proportional)
-      'lg': clamp(1rem, 1rem + 0.25vw, 1.5rem),             // 16px → 24px (proportional)
-      'xl': clamp(1.5rem, 1.5rem + 0.4vw, 2.25rem),         // 24px → 36px (proportional)
-      '2xl': clamp(2rem, 2rem + 0.6vw, 3rem),               // 32px → 48px (proportional)
-      '3xl': clamp(2.5rem, 2.5rem + 0.8vw, 3.75rem),        // 40px → 60px (proportional)
-      '4xl': clamp(3rem, 3rem + 1vw, 4.5rem),               // 48px → 72px (proportional)
-      '5xl': clamp(4rem, 4rem + 1.2vw, 6rem),               // 64px → 96px (proportional)
-      '6xl': clamp(5rem, 5rem + 1.5vw, 7.5rem)              // 80px → 120px (proportional)
+      'xs': clamp(0.375rem, 0.375rem + 0.1vw, 0.5rem),
+      'sm': clamp(0.5rem, 0.5rem + 0.15vw, 0.75rem),
+      'md': clamp(0.75rem, 0.75rem + 0.2vw, 1rem),
+      'lg': clamp(1rem, 1rem + 0.25vw, 1.5rem),
+      'xl': clamp(1.5rem, 1.5rem + 0.4vw, 2.25rem),
+      '2xl': clamp(2rem, 2rem + 0.6vw, 3rem),
+      '3xl': clamp(2.5rem, 2.5rem + 0.8vw, 3.75rem),
+      '4xl': clamp(3rem, 3rem + 1vw, 4.5rem),
+      '5xl': clamp(4rem, 4rem + 1.2vw, 6rem),
+      '6xl': clamp(5rem, 5rem + 1.5vw, 7.5rem)
     )
   ),
 
-  // ======================================================
-  // 13. RADIUS - Proportional Scaling
-  // ======================================================
   radius: (
-    'xs': clamp(0.25rem, calc(0.1vw + 0.1vh), 0.4rem),         // 4-6px - Refined for tags
-    'sm': clamp(0.5rem, calc(0.25vw + 0.25vh), 0.8rem),        // 8-12px - Refined small
-    'md': clamp(0.75rem, calc(0.35vw + 0.35vh), 1.2rem),       // 12-19px - Refined medium
-    'lg': clamp(1rem, calc(0.5vw + 0.5vh), 1.8rem),            // 16-29px - Refined large
-    'xl': clamp(1.25rem, calc(0.6vw + 0.6vh), 2rem),           // 20-32px - Cards & components
-    '2xl': clamp(1.5rem, calc(0.8vw + 0.8vh), 2.5rem),         // 24-40px - Large cards
+    'xs': clamp(0.25rem, calc(0.1vw + 0.1vh), 0.4rem),
+    'sm': clamp(0.5rem, calc(0.25vw + 0.25vh), 0.8rem),
+    'md': clamp(0.75rem, calc(0.35vw + 0.35vh), 1.2rem),
+    'lg': clamp(1rem, calc(0.5vw + 0.5vh), 1.8rem),
+    'xl': clamp(1.25rem, calc(0.6vw + 0.6vh), 2rem),
+    '2xl': clamp(1.5rem, calc(0.8vw + 0.8vh), 2.5rem),
     'full': 9999px
   ),
 
-  // ======================================================
-  // 14. SIZE
-  // ======================================================
   size: (
     'px': 1px,
     '1': 0.25rem,
@@ -513,19 +443,16 @@ $dark-mode-tokens: (
     '16': 4.25rem,
     '40': 10rem,
     'avatar': (
-      'sm': clamp(6.5rem, 20vw, 8rem),      // Slightly more compact
-      'lg': clamp(8.5rem, 14vw, 10.5rem)     // Refined large avatar
+      'sm': clamp(6.5rem, 20vw, 8rem),
+      'lg': clamp(8.5rem, 14vw, 10.5rem)
     )
   ),
 
-  // ======================================================
-  // 15. BLUR - Refined Glass Effects & Backdrops
-  // ======================================================
   blur: (
-    'xs': 0.2rem,      // 3.2px
-    'sm': 0.625rem,    // 10px
-    'md': 1.25rem,     // 20px
-    'lg': 2.5rem       // 40px
+    'xs': 0.2rem,
+    'sm': 0.625rem,
+    'md': 1.25rem,
+    'lg': 2.5rem
   ),
 
   opacity: (
@@ -535,49 +462,38 @@ $dark-mode-tokens: (
     full:    1,
     none:    0,
     
-    // Ring opacity system
     ring: (
       default: 0.15,
       hover: 0.3,
     ),
   ),
 
-  // ======================================================
-  // 16. Z-INDEX - Refined Layering
-  // ======================================================
   z: (
     'behind': -1,
     'base': 0,
     'raised': 10
   ),
 
-  // ======================================================
-  // 17. CONTAINER SIZES - Extended Layout System
-  // ======================================================
   container: (
-    '5xl': 64rem,      // Skills & detailed content sections
-    '7xl': 80rem,      // Hero & main content
-    'max': 90rem       // Maximum site width
+    '5xl': 64rem,
+    '7xl': 80rem,
+    'max': 90rem
   ),
 
-  // ======================================================
-  // 18. MOTION - Refined Animation System
-  // ======================================================
   motion: (
     'duration': (
-      'fast': 200ms,     // Quick hover states
-      'normal': 300ms,   // Standard transitions
-      'slow': 600ms,     // Page animations
-      'pulse': 2s        // Breathing animations
+      'fast': 200ms,
+      'normal': 300ms,
+      'slow': 600ms,
+      'pulse': 2s
     ),
     'ease': (
-      'out': cubic-bezier(0.4, 0, 0.2, 1),              // Standard ease-out
-      'bounce': cubic-bezier(0.68, -0.55, 0.265, 1.55)  // Playful bounce
+      'out': cubic-bezier(0.4, 0, 0.2, 1),
+      'bounce': cubic-bezier(0.68, -0.55, 0.265, 1.55)
     )
   ),
 );
 
-// Generate and export
 :root {
   @include themes.export-semantic-theme($dark-mode-tokens, $prefix: 'token');
 }
