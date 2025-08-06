@@ -5,16 +5,11 @@
 @use 'sass:meta';
 
 /**
- * OKLCH Color Palette Generator - SCSS Port (Aligned with JS Implementation)
+ * OKLCH Color Palette Generator
  * 
- * This SCSS library provides perceptually uniform color palette generation using OKLCH color space,
- * with full mathematical implementations of conversion functions and scale generation.
- * Aligned 1:1 with the JavaScript implementation.
+ * This SCSS library provides perceptually uniform color palette generation using OKLCH color space.
  */
 
-/* ==========================================================================
-   CONFIGURATION & CONSTANTS
-   ========================================================================== */
 
 // Scale steps constant - EXACT MATCH with JavaScript (13 steps) - LOCKED
 $scale-steps:    (30, 129, 208, 288, 367, 400, 446, 485, 525, 564, 604, 643, 683, 722, 763, 801, 842, 881, 921, 960, 1000) !default;
@@ -56,61 +51,32 @@ $e: 2.718281828459045 !default;
 $pi: 3.141592653589793 !default;
 
 
-/* ==========================================================================
-   UTILITY FUNCTIONS
-   ========================================================================== */
 
-/// Clamp a value between min and max
-/// @param {Number} $value - Value to clamp
-/// @param {Number} $min - Minimum value
-/// @param {Number} $max - Maximum value
-/// @return {Number} - Clamped value
 @function constrain($value, $min, $max) {
   @return if($value < $min, $min, if($value > $max, $max, $value));
 }
 
-/// Sign function
-/// @param {Number} $value - Input value
-/// @return {Number} - -1, 0, or 1
 @function sign($value) {
   @return if($value > 0, 1, if($value < 0, -1, 0));
 }
 
-/// Cube root function
-/// @param {Number} $value - Input value
-/// @return {Number} - Cube root
 @function cbrt($value) {
   @return sign($value) * pow(abs($value), 1/3);
 }
 
-/// Convert degrees to radians
-/// @param {Number} $degrees - Angle in degrees
-/// @return {Number} - Angle in radians
 @function deg-to-rad($degrees) {
   @return math.div($degrees * $pi, 180);
 }
 
-/// Convert radians to degrees
-/// @param {Number} $radians - Angle in radians
-/// @return {Number} - Angle in degrees
 @function rad-to-deg($radians) {
   @return math.div($radians * 180, $pi);
 }
 
-/// Normalize angle to 0-360 range
-/// @param {Number} $angle - Angle in degrees
-/// @return {Number} - Normalized angle
 @function normalize-hue($angle) {
   @return (($angle % 360) + 360) % 360;
 }
 
-/* ==========================================================================
-   STEP MAPPING UTILITY FUNCTIONS
-   ========================================================================== */
 
-/// Convert normalized step name (50, 100, 200, etc.) to actual step value
-/// @param {Number} $normalized-step - Normalized step name (50, 100, 200, etc.)
-/// @return {Number} - Actual step value (30, 129, 208, etc.)
 @function get-actual-step($normalized-step) {
   @if map.has-key($normalized-step-mapping, $normalized-step) {
     @return map.get($normalized-step-mapping, $normalized-step);
@@ -119,9 +85,6 @@ $pi: 3.141592653589793 !default;
   @return $normalized-step;
 }
 
-/// Convert actual step value to normalized step name
-/// @param {Number} $actual-step - Actual step value (30, 129, 208, etc.)
-/// @return {Number} - Normalized step name (50, 100, 200, etc.)
 @function get-normalized-step($actual-step) {
   @if map.has-key($step-to-normalized, $actual-step) {
     @return map.get($step-to-normalized, $actual-step);
@@ -130,9 +93,6 @@ $pi: 3.141592653589793 !default;
   @return $actual-step;
 }
 
-/// Remap a color scale to use normalized step names
-/// @param {Map} $scale - Color scale with actual step values as keys
-/// @return {Map} - Color scale with normalized step names as keys
 @function remap-scale-to-normalized($scale) {
   $remapped: ();
   @each $actual-step, $color in $scale {
@@ -147,13 +107,7 @@ $pi: 3.141592653589793 !default;
   @return $remapped;
 }
 
-/* ==========================================================================
-   CORE OKLCH CONVERSION FUNCTIONS
-   ========================================================================== */
 
-/// Convert RGB to OKLCH color space with precision for perceptual contrast
-/// @param {Color} $color - RGB color
-/// @return {Map} - OKLCH values (L, C, h)
 @function rgb-to-oklch($color) {
   $r: math.div(constrain(color.channel($color, "red", $space: rgb), 0, 255), 255);
   $g: math.div(constrain(color.channel($color, "green", $space: rgb), 0, 255), 255);
@@ -194,9 +148,6 @@ $pi: 3.141592653589793 !default;
   );
 }
 
-/// Convert OKLCH to RGB color space with gamut clamping
-/// @param {Map} $oklch - OKLCH values (L, C, h)
-/// @return {Color} - RGB color
 @function oklch-to-rgb($oklch) {
   $L: map.get($oklch, L);
   $C: map.get($oklch, C);
@@ -396,15 +347,7 @@ $pi: 3.141592653589793 !default;
 
 
 
-/* ==========================================================================
-   GAMUT CALCULATIONS
-   ========================================================================== */
 
-/// Find gamut cusp - maximum chroma available at given lightness and hue
-/// Uses binary search for precision
-/// @param {Number} $lightness - OKLab lightness [0,1]
-/// @param {Number} $hue - hue angle in degrees
-/// @return {Number} - maximum chroma at this L,h
 @function calculate-max-chroma($lightness, $hue) {
   $low: 0;
   $high: 0.6; // Increased range for better coverage
@@ -436,23 +379,13 @@ $pi: 3.141592653589793 !default;
   @return $max-chroma;
 }
 
-/// Check if RGB color is within sRGB gamut
-/// @param {Color} $color - RGB color
-/// @return {Boolean} - True if in gamut
 @function is-in-gamut($color) {
   @return color.channel($color, "red") >= 0 and color.channel($color, "red") <= 255 and
           color.channel($color, "green") >= 0 and color.channel($color, "green") <= 255 and
           color.channel($color, "blue") >= 0 and color.channel($color, "blue") <= 255;
 }
 
-/* ==========================================================================
-   PERCEPTUAL LIGHTNESS SCALE GENERATION
-   ========================================================================== */
 
-/// Generate perceptual lightness scale with better distribution (reversed: higher steps = darker)
-/// @param {Number} $curve-factor - curve factor for lightness distribution
-/// @param {List} $steps - step array to use
-/// @return {Map} - lightness scale (highest steps get lowest lightness)
 @function generate-perceptual-lightness-scale($curve-factor: 1.0, $steps: $scale-steps) {
   $scale: ();
   $min-L: 0.1;
@@ -477,13 +410,7 @@ $pi: 3.141592653589793 !default;
   @return $scale;
 }
 
-/* ==========================================================================
-   HUE FAMILY CLASSIFICATION
-   ========================================================================== */
 
-/// Determine hue family based on OKLCH hue angles
-/// @param {Number} $hue - hue angle in degrees
-/// @return {String} - hue family name
 @function get-hue-family($hue) {
   $normalized-hue: normalize-hue($hue);
   
@@ -499,15 +426,7 @@ $pi: 3.141592653589793 !default;
   @return 'red';
 }
 
-/* ==========================================================================
-   PERCEPTUAL CHROMA CALCULATION
-   ========================================================================== */
 
-/// Calculate chroma with beautiful earth tone optimization
-/// @param {Map} $base-oklch - base color in OKLCH
-/// @param {Number} $target-L - target lightness
-/// @param {String} $hue-family - hue family name
-/// @return {Number} - calculated chroma
 @function calculate-perceptual-chroma($base-oklch, $target-L, $hue-family) {
   $base-C: map.get($base-oklch, C);
   $h: map.get($base-oklch, h);
@@ -561,13 +480,7 @@ $pi: 3.141592653589793 !default;
   @return min($base-chroma-scale * $perceptual-multiplier, $max-chroma);
 }
 
-/* ==========================================================================
-   LUMINANCE AND LIGHTNESS CONVERSION
-   ========================================================================== */
 
-/// Calculate precise relative luminance for WCAG contrast guarantees
-/// @param {Color} $color - RGB color
-/// @return {Number} - relative luminance [0,1]
 @function get-relative-luminance($color) {
   $r: math.div(color.channel($color, "red", $space: rgb), 255);
   $g: math.div(color.channel($color, "green", $space: rgb), 255);
@@ -580,9 +493,6 @@ $pi: 3.141592653589793 !default;
   @return 0.2126 * $r-lin + 0.7152 * $g-lin + 0.0722 * $b-lin;
 }
 
-/// Convert relative luminance Y directly to OKLab L* (exact mathematical transformation)
-/// @param {Number} $luminance - relative luminance Y [0,1]
-/// @return {Number} - exact OKLab L* [0,1]
 @function luminance-to-oklab-l($luminance) {
   $Y: constrain($luminance, 0.000001, 0.999999);
   
@@ -593,9 +503,6 @@ $pi: 3.141592653589793 !default;
   );
 }
 
-/// Convert OKLab L* to relative luminance Y (inverse transformation)
-/// @param {Number} $L - OKLab L* [0,1]
-/// @return {Number} - relative luminance Y [0,1]
 @function oklab-l-to-luminance($L) {
   $lightness: constrain($L, 0.000001, 0.999999);
   
@@ -606,9 +513,6 @@ $pi: 3.141592653589793 !default;
   );
 }
 
-/// Calculate cusp (maximum chroma) for a given hue and find the corresponding L*
-/// @param {Number} $hue - hue angle in degrees
-/// @return {Map} - cusp point in OKLCH (L, C)
 @function calculate-cusp-for-hue($hue) {
   $max-chroma: 0;
   $cusp-L: 0.5; // Start with middle lightness
@@ -626,14 +530,6 @@ $pi: 3.141592653589793 !default;
   @return (L: $cusp-L, C: $max-chroma);
 }
 
-/// Define dynamic contrast requirements based on step array characteristics
-/// @param {List} $steps - step array
-/// @param {Number} $step-index1 - first step index (1-based)
-/// @param {Number} $step-index2 - second step index (1-based)
-/// @param {Number} $total-range - total range of step values
-/// @param {Number} $target-AA - target AA contrast ratio
-/// @param {Number} $target-AAA - target AAA contrast ratio
-/// @return {Number} - required contrast ratio
 @function get-required-contrast($steps, $step-index1, $step-index2, $total-range, $target-AA, $target-AAA) {
   $index-distance: abs($step-index2 - $step-index1);
   $value-distance: abs(list.nth($steps, $step-index2) - list.nth($steps, $step-index1)); // 1-indexed
@@ -655,13 +551,6 @@ $pi: 3.141592653589793 !default;
   }
 }
 
-/// Generate pure geometric luminance progression with mathematical contrast guarantees
-/// @param {Number} $max-lum - maximum relative luminance Y
-/// @param {List} $steps - step array (use predefined $scale-steps)
-/// @param {Number} $hue - hue angle in degrees (for cusp calculation)
-/// @param {Number} $target-AA - target AA contrast ratio (4.5)
-/// @param {Number} $target-AAA - target AAA contrast ratio (7.0)
-/// @return {List} - exact luminance progression in Y-space
 @function generate-geometric-luminance-progression($max-lum, $steps, $hue, $target-AA: 4.5, $target-AAA: 7.0) {
   $num-steps: list.length($steps);
   
@@ -724,15 +613,7 @@ $pi: 3.141592653589793 !default;
   @return $reversed-progression;
 }
 
-/* ==========================================================================
-   HUE SHIFTING
-   ========================================================================== */
 
-/// Apply Bezold-Brücke hue shift for earth-tone behavior
-/// @param {Number} $hue - original hue
-/// @param {Number} $lightness - OKLab L
-/// @param {String} $hue-family - hue family classification
-/// @return {Number} - adjusted hue
 @function apply-bezold-brucke-shift($hue, $lightness, $hue-family) {
   $L-mid: 0.3;
   $L-min: 0.05;
@@ -747,13 +628,7 @@ $pi: 3.141592653589793 !default;
   @return normalize-hue($hue + $delta-h * $t-ease);
 }
 
-/* ==========================================================================
-   BLACK COLOR ADJUSTMENT UTILITIES
-   ========================================================================== */
 
-/// Check if a color is black or very close to black
-/// @param {Color} $color - RGB color
-/// @return {Boolean} - True if color is black
 @function is-color-black($color) {
   // Only detect as black if ALL channels are very low (true black)
   // This prevents legitimate dark colors from being converted to grayscale
@@ -761,10 +636,6 @@ $pi: 3.141592653589793 !default;
   @return color.channel($color, "red") <= 2 and color.channel($color, "green") <= 2 and color.channel($color, "blue") <= 2;
 }
 
-/// Create a midpoint color between two RGB colors
-/// @param {Color} $color1 - First color
-/// @param {Color} $color2 - Second color
-/// @return {Color} - Interpolated color
 @function interpolate-colors($color1, $color2) {
   @return rgb(
     round((color.channel($color1, "red") + color.channel($color2, "red")) / 2),
@@ -773,10 +644,6 @@ $pi: 3.141592653589793 !default;
   );
 }
 
-/// Adjust black colors in a scale to be midpoints between black and next color
-/// @param {Map} $scale - color scale
-/// @param {List} $steps - step array
-/// @return {Map} - adjusted scale
 @function adjust-black-colors($scale, $steps) {
   $adjusted-scale: $scale;
   $black-color: rgb(0, 0, 0);
@@ -815,14 +682,7 @@ $pi: 3.141592653589793 !default;
   @return $adjusted-scale;
 }
 
-/* ==========================================================================
-   MAIN COLOR SCALE GENERATION
-   ========================================================================== */
 
-/// Generate color scale with mathematically perfect contrast guarantees (aligned with JS)
-/// @param {Color} $base-color - brand color anchor
-/// @param {Number} $step-count - ignored, always uses predefined $scale-steps
-/// @return {Map} - complete color scale with metadata
 @function generate-color-scale($base-color, $step-count: list.length($scale-steps)) {
   // Use the predefined steps directly - DO NOT generate new ones
   $steps: $scale-steps;
@@ -911,13 +771,7 @@ $pi: 3.141592653589793 !default;
   @return $scale;
 }
 
-/* ==========================================================================
-   GRAYSCALE GENERATION
-   ========================================================================== */
 
-/// Generate perceptual grayscale scale (aligned with JS)
-/// @param {Number} $step-count - ignored, always uses predefined $scale-steps
-/// @return {Map} - grayscale color scale (highest steps are darkest)
 @function generate-perceptual-grayscale($step-count: 13) {
   // Use the predefined steps directly - DO NOT generate new ones
   $steps: $scale-steps;
@@ -952,14 +806,7 @@ $pi: 3.141592653589793 !default;
 
 
 
-/* ==========================================================================
-   UTILITY FUNCTIONS FOR COLOR ACCESS
-   ========================================================================== */
 
-/// Get a color from a generated scale
-/// @param {Map} $scale - color scale
-/// @param {Number} $step - step number (can be normalized like 50, 100, 200 or actual like 30, 129, 208)
-/// @return {Color} - RGB color
 @function get-scale-color($scale, $step) {
   // First try the step as-is (for actual step values)
   @if map.has-key($scale, $step) {
@@ -992,17 +839,10 @@ $pi: 3.141592653589793 !default;
   @return #000000;
 }
 
-/// Get a normalized version of a color scale (with 50, 100, 200, etc. as keys)
-/// @param {Map} $scale - color scale with actual step values
-/// @return {Map} - color scale with normalized step names
 @function get-normalized-scale($scale) {
   @return remap-scale-to-normalized($scale);
 }
 
-/// Find the step index of a given step value in the scale steps array
-/// @param {Number} $step - step value to find
-/// @param {List} $steps - step array (defaults to $scale-steps)
-/// @return {Number} - 1-based index of the step, or null if not found
 @function find-step-index($step, $steps: $scale-steps) {
   @for $i from 1 through list.length($steps) {
     @if list.nth($steps, $i) == $step {
@@ -1012,11 +852,6 @@ $pi: 3.141592653589793 !default;
   @return null;
 }
 
-/// Get a color N steps above or below a given step
-/// @param {Map} $scale - color scale
-/// @param {Number} $base-step - base step (can be normalized like 50, 100, 200 or actual like 30, 129, 208)
-/// @param {Number} $steps - number of steps to move (positive for lighter, negative for darker)
-/// @return {Color} - RGB color at the target step, or null if out of bounds
 @function get-color-at-offset($scale, $base-step, $steps) {
   // Convert normalized step to actual step if needed
   $actual-base-step: get-actual-step($base-step);
@@ -1044,29 +879,14 @@ $pi: 3.141592653589793 !default;
   @return get-scale-color($scale, $target-step);
 }
 
-/// Get a color N steps lighter than a given step
-/// @param {Map} $scale - color scale
-/// @param {Number} $base-step - base step (can be normalized like 50, 100, 200 or actual like 30, 129, 208)
-/// @param {Number} $steps - number of steps to move lighter (default: 1)
-/// @return {Color} - RGB color at the lighter step, or null if out of bounds
 @function get-lighter-color($scale, $base-step, $steps: 1) {
   @return get-color-at-offset($scale, $base-step, -$steps);
 }
 
-/// Get a color N steps darker than a given step
-/// @param {Map} $scale - color scale
-/// @param {Number} $base-step - base step (can be normalized like 50, 100, 200 or actual like 30, 129, 208)
-/// @param {Number} $steps - number of steps to move darker (default: 1)
-/// @return {Color} - RGB color at the darker step, or null if out of bounds
 @function get-darker-color($scale, $base-step, $steps: 1) {
   @return get-color-at-offset($scale, $base-step, $steps);
 }
 
-/// Get a range of colors centered around a base step
-/// @param {Map} $scale - color scale
-/// @param {Number} $base-step - base step (can be normalized like 50, 100, 200 or actual like 30, 129, 208)
-/// @param {Number} $range - number of steps on each side (default: 2)
-/// @return {Map} - map of step values to colors, including the base step
 @function get-color-range($scale, $base-step, $range: 2) {
   $actual-base-step: get-actual-step($base-step);
   $base-index: find-step-index($actual-base-step);
@@ -1090,10 +910,6 @@ $pi: 3.141592653589793 !default;
   @return $range-map;
 }
 
-/// Calculate contrast ratio between two colors
-/// @param {Color} $color1 - first color
-/// @param {Color} $color2 - second color
-/// @return {Number} - contrast ratio
 @function calculate-contrast($color1, $color2) {
   $lum1: get-relative-luminance($color1);
   $lum2: get-relative-luminance($color2);
@@ -1102,18 +918,11 @@ $pi: 3.141592653589793 !default;
   @return ($lighter + 0.05) / ($darker + 0.05);
 }
 
-/// Determine appropriate text color for background
-/// @param {Color} $bg-color - background color
-/// @return {Color} - black or white
 @function get-text-color($bg-color) {
   $luminance: get-relative-luminance($bg-color);
   @return if($luminance > 0.5, #000000, #ffffff);
 }
 
-/// Calculate gamut efficiency (how much of available gamut we're using)
-/// @param {Map} $scale - color scale
-/// @param {Map} $chroma-profile - chroma profile
-/// @return {Number} - efficiency percentage
 @function calculate-gamut-efficiency($scale, $chroma-profile) {
   $total-utilization: 0;
   $count: 0;
@@ -1134,25 +943,13 @@ $pi: 3.141592653589793 !default;
   @return if($count > 0, ($total-utilization / $count) * 100, 0);
 }
 
-/* ==========================================================================
-   HARMONY COLOR GENERATION
-   ========================================================================== */
 
-/// Calculate gamut-aware chroma for harmony colors
-/// @param {Number} $L - lightness value
-/// @param {Number} $hue - hue angle in degrees
-/// @param {Number} $adjusted-base-chroma - base chroma value to scale from
-/// @param {Number} $chroma-multiplier - multiplier for chroma (default: 1.0)
-/// @return {Number} - calculated chroma value
 @function get-harmony-chroma($L, $hue, $adjusted-base-chroma, $chroma-multiplier: 1.0) {
   $max-chroma: calculate-max-chroma($L, $hue);
   $target-chroma: $adjusted-base-chroma * $chroma-multiplier;
   @return min($target-chroma, $max-chroma);
 }
 
-/// Generate harmony colors from a base color
-/// @param {Color} $base-color - base color
-/// @return {Map} - harmony colors
 @function generate-harmony-colors($base-color) {
   $base-oklch: rgb-to-oklch($base-color);
   $hue-family: get-hue-family(map.get($base-oklch, h));
@@ -1223,14 +1020,7 @@ $pi: 3.141592653589793 !default;
   @return $harmony;
 }
 
-/* ==========================================================================
-   CSS EXPORT MIXINS
-   ========================================================================== */
 
-/// Export a color scale as CSS custom properties
-/// @param {String} $name - scale name
-/// @param {Map} $scale - color scale
-/// @param {String} $prefix - CSS variable prefix
 @mixin export-color-scale($name, $scale, $prefix: $color-prefix) {
   // Remap the scale to use normalized step names for export
   $normalized-scale: remap-scale-to-normalized($scale);
@@ -1243,19 +1033,12 @@ $pi: 3.141592653589793 !default;
 
 
 
-/// Export harmony colors as CSS custom properties
-/// @param {String} $name - scale name
-/// @param {Map} $harmony - harmony colors
-/// @param {String} $prefix - CSS variable prefix
 @mixin export-harmony-colors($name, $harmony, $prefix: $color-prefix) {
   @each $harmony-type, $color in $harmony {
     --#{$prefix}-#{$name}-#{$harmony-type}: #{$color};
   }
 }
 
-/// Master export mixin for complete color system
-/// @param {Map} $colors - input colors map
-/// @param {String} $prefix - CSS variable prefix
 @mixin export-color-system($colors, $prefix: $color-prefix) {
   :root {
     // Generate and export color scales
@@ -1274,9 +1057,6 @@ $pi: 3.141592653589793 !default;
   }
 }
 
-/// Generate color primitives map from a map of color names to base colors
-/// @param {Map} $color-map - Map of color names to base colors
-/// @return {Map} - Map of color names to generated color scales
 @function generate-primitives-from-map($color-map) {
   $primitives: ();
   @each $name, $color in $color-map {
