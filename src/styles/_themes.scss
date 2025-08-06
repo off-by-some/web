@@ -1,0 +1,1330 @@
+@use "sass:map";
+@use "sass:color";
+@use "sass:meta";
+@use "sass:list";
+@use "sass:string";
+@use "sass:math";
+@use "_colors.scss" as colors;
+
+// =============================================================================
+// CONFIGURATION
+// =============================================================================
+
+// Step mapping configuration
+$step-mapping: colors.$normalized-step-mapping !default;
+
+// Debug configuration
+$debug-color-resolution: false !default;
+
+// Validation ranges
+$alpha-range: (min: 0, max: 1000) !default;
+$numeric-range: (min: -10000, max: 10000) !default;
+$percentage-range: (min: -1000, max: 1000) !default;
+
+// String patterns
+$resolve-pattern: "var(" !default;
+$resolve-end: "):" !default;
+$reference-pattern: "reference(" !default;
+$reference-end: ")" !default;
+
+// =============================================================================
+// CORE UTILITIES MODULE
+// =============================================================================
+
+/// type checking with null safety
+@function is-valid-type($value, $expected-type) {
+  @return $value != null and meta.type-of($value) == $expected-type;
+}
+
+/// Robust map validation with detailed errors
+@function validate-map($map, $context: '') {
+  @if not is-valid-type($map, 'map') {
+    @error "Expected map in #{$context}, got #{meta.type-of($map)}";
+  }
+  @return true;
+}
+
+/// Type-safe key existence check (handles mixed key types)
+@function has-key($map, $key) {
+  @if map.has-key($map, $key) { @return true; }
+  
+  // Check for color key equivalent
+  @each $map-key, $value in $map {
+    @if meta.type-of($map-key) == 'color' and #{$map-key} == $key {
+      @return true;
+    }
+  }
+  @return false;
+}
+
+/// Type-safe key retrieval (handles mixed types)
+@function get-key($map, $key) {
+  @if map.has-key($map, $key) { @return $key; }
+  
+  @each $map-key, $value in $map {
+    @if meta.type-of($map-key) == 'color' and #{$map-key} == $key {
+      @return $map-key;
+    }
+  }
+  @return null;
+}
+
+/// range validation with warnings
+@function validate-range($value, $range, $context: '') {
+  $min: map.get($range, 'min');
+  $max: map.get($range, 'max');
+  
+  @if $value < $min or $value > $max {
+    @warn "Value #{$value} outside range #{$min}-#{$max} in #{$context}";
+  }
+  @return $value;
+}
+
+// =============================================================================
+// STRING PROCESSING MODULE
+// =============================================================================
+
+/// High-performance string trimming
+@function trim($string) {
+  $result: $string;
+  
+  @while string.slice($result, 1, 1) == ' ' and string.length($result) > 0 {
+    $result: string.slice($result, 2);
+  }
+  
+  @while string.slice($result, -1, -1) == ' ' and string.length($result) > 0 {
+    $result: string.slice($result, 1, -2);
+  }
+  
+  @return $result;
+}
+
+/// string splitting with quote awareness
+@function split($string, $delimiter) {
+  $result: ();
+  $current: '';
+  $length: string.length($string);
+  
+  @for $i from 1 through $length {
+    $char: string.slice($string, $i, $i);
+    @if $char == $delimiter {
+      $result: list.append($result, $current);
+      $current: '';
+    } @else {
+      $current: $current + $char;
+    }
+  }
+  
+  @if $current != '' {
+    $result: list.append($result, $current);
+  }
+  
+  @return $result;
+}
+
+/// Find substring with start position support
+@function string-index-after($string, $substring, $start-index) {
+  $length: string.length($string);
+  $substr-length: string.length($substring);
+  @for $i from $start-index through $length {
+    @if string.slice($string, $i, $i + $substr-length - 1) == $substring {
+      @return $i;
+    }
+  }
+  @return null;
+}
+
+// =============================================================================
+// NUMERICAL PARSING MODULE
+// =============================================================================
+
+/// Comprehensive number parsing with format support
+@function parse-number($string) {
+  @if $string == null or $string == '' { @return null; }
+  
+  $trimmed: trim($string);
+  $length: string.length($trimmed);
+  @if $length == 0 { @return null; }
+  
+  // Handle percentage
+  $is-percentage: string.slice($trimmed, -1) == '%';
+  $numeric-part: if($is-percentage, string.slice($trimmed, 1, -2), $trimmed);
+  
+  // Handle negative
+  $is-negative: string.slice($numeric-part, 1, 1) == '-';
+  $absolute-part: if($is-negative, string.slice($numeric-part, 2), $numeric-part);
+  
+  @if string.length($absolute-part) == 0 { @return null; }
+  
+  $parsed: parse-digits($absolute-part);
+  @if $parsed == null { @return null; }
+  
+  $final: if($is-negative, -1 * $parsed, $parsed);
+  @return if($is-percentage, $final * 1%, $final);
+}
+
+/// Optimized digit parsing with decimal support
+@function parse-digits($string) {
+  @if $string == '.' { @return null; }
+  
+  $digits: ('0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9);
+  $length: string.length($string);
+  $decimal-pos: null;
+  $result: 0;
+  
+  // Validate and find decimal
+  @for $i from 1 through $length {
+    $char: string.slice($string, $i, $i);
+    @if $char == '.' {
+      @if $decimal-pos != null { @return null; }
+      $decimal-pos: $i;
+    } @else if not map.has-key($digits, $char) {
+      @return null;
+    }
+  }
+  
+  // Parse integer part
+  $integer-end: if($decimal-pos != null, $decimal-pos - 1, $length);
+  @for $i from 1 through $integer-end {
+    $char: string.slice($string, $i, $i);
+    $result: $result * 10 + map.get($digits, $char);
+  }
+  
+  // Parse decimal part
+  @if $decimal-pos != null and $decimal-pos < $length {
+    $decimal-part: 0;
+    @for $i from ($decimal-pos + 1) through $length {
+      $char: string.slice($string, $i, $i);
+      $decimal-part: $decimal-part * 10 + map.get($digits, $char);
+    }
+    
+    $decimal-places: $length - $decimal-pos;
+    $divisor: 1;
+    @for $i from 1 through $decimal-places {
+      $divisor: $divisor * 10;
+    }
+    
+    $result: $result + math.div($decimal-part, $divisor);
+  }
+  
+  @return $result;
+}
+
+/// Multi-format alpha parsing with validation
+@function parse-alpha($value) {
+  @if $value == null { @return 1; }
+  
+  // Handle numbers
+  @if meta.type-of($value) == 'number' {
+    @if math.unit($value) == '%' {
+      $unitless: math.div($value, 1%);
+      @return if($unitless >= 0 and $unitless <= 100, math.div($unitless, 100), null);
+    }
+    
+    @if math.is-unitless($value) {
+      @if $value >= 0 and $value <= 1 { @return $value; }
+      @if $value >= 0 and $value <= 1000 { @return math.div($value, 1000); }
+    }
+    
+    @return null;
+  }
+  
+  // Handle strings
+  @if meta.type-of($value) == 'string' {
+    $parsed: parse-number($value);
+    @return if($parsed != null, parse-alpha($parsed), null);
+  }
+  
+  @return null;
+}
+
+// =============================================================================
+// ERROR HANDLING MODULE
+// =============================================================================
+
+/// Contextual error message generation
+@function error-message($type, $context: '', $details: ()) {
+  $base: map.get((
+    'invalid-color': 'Color name validation failed',
+    'invalid-step': 'Step validation failed', 
+    'invalid-alpha': 'Alpha validation failed',
+    'invalid-format': 'Format validation failed',
+    'mixed-keys': 'Mixed key types detected',
+    'missing-key': 'Required key missing'
+  ), $type);
+  
+  $context-msg: if($context != '', " in #{$context}", "");
+  $detail-msg: if(list.length($details) > 0, ". #{join($details, '. ')}", "");
+  
+  @return "#{$base}#{$context-msg}#{$detail-msg}";
+}
+
+/// Get available options for error suggestions
+@function get-available($primitives, $type: 'colors') {
+  @if $type == 'colors' {
+    @return map.keys($primitives);
+  } @else if $type == 'steps' {
+    @return map.keys($step-mapping);
+  }
+  @return ();
+}
+
+/// Generate smart suggestions for typos
+@function get-suggestions($input, $available) {
+  $suggestions: ();
+  $input-lower: string.to-lower-case(#{$input});
+  
+  @each $option in $available {
+    $option-lower: string.to-lower-case(#{$option});
+    @if $option-lower == $input-lower and #{$option} != #{$input} {
+      $suggestions: list.append($suggestions, "Try: '#{$option}' (case sensitive)");
+    }
+  }
+  
+  @return $suggestions;
+}
+
+/// alpha validation with context
+@function validate-alpha($value, $context: '') {
+  $alpha: parse-alpha($value);
+  @if $alpha == null {
+    $details: (
+      "Invalid alpha: '#{$value}' (#{meta.type-of($value)})",
+      "Valid formats: 0.5, 500, '50%', '0.5'"
+    );
+    @error error-message('invalid-alpha', $context, $details);
+  }
+  @return $alpha;
+}
+
+// =============================================================================
+// DEBUG MODULE
+// =============================================================================
+
+/// Conditional debug logging
+@function debug-log($message, $enabled: $debug-color-resolution) {
+  @if $enabled {
+    @debug $message;
+  }
+  @return '';
+}
+
+/// Debug map structure analysis
+@function debug-structure($map, $name: 'map') {
+  @if not $debug-color-resolution { @return ''; }
+  
+  $info: "#{$name}: #{list.length($map)} items";
+  @each $key, $value in $map {
+    $key-type: meta.type-of($key);
+    $value-type: meta.type-of($value);
+    @debug "  #{$key} (#{$key-type}): #{$value-type}";
+  }
+  @debug $info;
+  @return '';
+}
+
+// =============================================================================
+// REFERENCE PARSING MODULE
+// =============================================================================
+
+/// reference parameter parsing
+@function parse-reference-params($content) {
+  $debug: debug-log("parse-reference-params: '#{$content}'");
+  
+  // Remove outer quotes if present
+  $trimmed: trim($content);
+  $length: string.length($trimmed);
+  
+  @if $length >= 2 and string.slice($trimmed, 1, 1) == "'" and string.slice($trimmed, -1, -1) == "'" {
+    $trimmed: string.slice($trimmed, 2, -2);
+  } @else if $length >= 2 and string.slice($trimmed, 1, 1) == '"' and string.slice($trimmed, -1, -1) == '"' {
+    $trimmed: string.slice($trimmed, 2, -2);
+  }
+  
+  $trimmed: trim($trimmed);
+  
+  // Check for keyword arguments (like $alpha: 0.95)
+  $comma-pos: string.index($trimmed, ',');
+  @if $comma-pos != null {
+    $path: trim(string.slice($trimmed, 1, $comma-pos - 1));
+    $args: trim(string.slice($trimmed, $comma-pos + 1));
+    
+    // Parse keyword arguments
+    $keyword-args: ();
+    $args-parts: split($args, ',');
+    
+    @each $arg in $args-parts {
+      $arg-trimmed: trim($arg);
+      $colon-pos: string.index($arg-trimmed, ':');
+      
+      @if $colon-pos != null {
+        $key: trim(string.slice($arg-trimmed, 1, $colon-pos - 1));
+        $value: trim(string.slice($arg-trimmed, $colon-pos + 1));
+        
+        // Remove $ prefix from key if present
+        @if string.slice($key, 1, 1) == '$' {
+          $key: string.slice($key, 2);
+        }
+        
+        $keyword-args: map.merge($keyword-args, ($key: $value));
+      }
+    }
+    
+    @return (
+      'path': $path,
+      'args': $keyword-args
+    );
+  }
+  
+  @return (
+    'path': $trimmed,
+    'args': ()
+  );
+}
+
+/// Quote-aware path splitting for dot notation
+@function split-path($path) {
+  $parts: ();
+  $current: '';
+  $length: string.length($path);
+  $in-quotes: false;
+  $quote-char: null;
+  
+  @for $i from 1 through $length {
+    $char: string.slice($path, $i, $i);
+    
+    // Handle quoted strings
+    @if ($char == "'" or $char == '"') and not $in-quotes {
+      $in-quotes: true;
+      $quote-char: $char;
+    } @else if $char == $quote-char and $in-quotes {
+      $in-quotes: false;
+      $quote-char: null;
+    } @else if $char == '.' and not $in-quotes {
+      // Split on dot
+      @if $current != '' {
+        $parts: list.append($parts, $current);
+        $current: '';
+      }
+    } @else {
+      $current: $current + $char;
+    }
+  }
+  
+  // Add final part
+  @if $current != '' {
+    $parts: list.append($parts, $current);
+  }
+  
+  @return $parts;
+}
+
+/// Path to token name conversion
+@function path-to-token-name($path, $prefix: 'semantic') {
+  $parts: split-path($path);
+  $token-name: $prefix;
+  
+  @each $part in $parts {
+    $token-name: '#{$token-name}-#{$part}';
+  }
+  
+  @return $token-name;
+}
+
+/// Safe nested value navigation
+@function get-nested-value($map, $path) {
+  $debug: debug-log("get-nested-value: #{$path}");
+  
+  $parts: split-path($path);
+  $current: $map;
+  
+  @each $part in $parts {
+    $trimmed-part: trim($part);
+    
+    @if not is-valid-type($current, 'map') {
+      @return null;
+    }
+    
+    @if not has-key($current, $trimmed-part) {
+      @return null;
+    }
+    
+    $actual-key: get-key($current, $trimmed-part);
+    $current: map.get($current, $actual-key);
+  }
+  
+  @return $current;
+}
+
+// =============================================================================
+// CIRCULAR REFERENCE DETECTION MODULE
+// =============================================================================
+
+/// Optimized circular reference detection
+@function detect-circular-reference($path, $resolution-stack) {
+  @each $stack-path in $resolution-stack {
+    @if $stack-path == $path {
+      @return true;
+    }
+  }
+  @return false;
+}
+
+/// circular reference error message
+@function build-circular-reference-error($path, $resolution-stack) {
+  $chain: ();
+  $chain: list.append($chain, $path);
+  
+  // Find the cycle in the stack
+  $cycle-start: null;
+  @for $i from list.length($resolution-stack) through 1 {
+    $stack-path: list.nth($resolution-stack, $i);
+    @if $stack-path == $path {
+      $cycle-start: $i;
+    }
+  }
+  
+  // Build the reference chain
+  @if $cycle-start != null {
+    @for $i from $cycle-start through list.length($resolution-stack) {
+      $stack-path: list.nth($resolution-stack, $i);
+      $chain: list.append($chain, $stack-path);
+    }
+  }
+  
+  $chain-string: '';
+  @each $chain-path in $chain {
+    @if $chain-string != '' {
+      $chain-string: $chain-string + ' → ';
+    }
+    $chain-string: $chain-string + $chain-path;
+  }
+  
+  @return "Circular reference detected while resolving '#{$path}': Reference path chain: #{$chain-string}";
+}
+
+// =============================================================================
+// COLOR RESOLUTION MODULE
+// =============================================================================
+
+/// Robust primitive color resolution
+@function get-primitive($primitives, $color-name, $step) {
+  $debug: debug-log("get-primitive: #{$color-name}, #{$step}");
+  
+  // Validate inputs
+  $valid: validate-map($primitives, 'get-primitive primitives');
+  
+  @if not has-key($primitives, $color-name) {
+    $available: get-available($primitives, 'colors');
+    $suggestions: get-suggestions($color-name, $available);
+    $details: ("Available: #{$available}");
+    @each $suggestion in $suggestions {
+      $details: list.append($details, $suggestion);
+    }
+    @error error-message('invalid-color', "color '#{$color-name}'", $details);
+  }
+  
+  $system-step: map.get($step-mapping, $step);
+  @if $system-step == null {
+    $available: get-available($primitives, 'steps');
+    $details: ("Available steps: #{$available}");
+    @error error-message('invalid-step', "step #{$step}", $details);
+  }
+  
+  $actual-key: get-key($primitives, $color-name);
+  $scale: map.get($primitives, $actual-key);
+  $valid-scale: validate-map($scale, 'color scale');
+  
+  @if not map.has-key($scale, $system-step) {
+    $available: ();
+    @each $std, $sys in $step-mapping {
+      @if map.has-key($scale, $sys) {
+        $available: list.append($available, $std);
+      }
+    }
+    $details: ("Available for '#{$color-name}': #{$available}");
+    @error error-message('invalid-step', "step #{$step}", $details);
+  }
+  
+  $color: map.get($scale, $system-step);
+  @if not is-valid-type($color, 'color') {
+    @error "Expected color, got #{meta.type-of($color)} for #{$color-name}-#{$step}";
+  }
+  
+  @return $color;
+}
+
+/// Parse RGB string to Sass color
+@function parse-rgb-string($str) {
+  $str: string.to-lower-case($str);
+  @if string.index($str, 'rgb(') == 1 {
+    $content: string.slice($str, 5, -2); // remove 'rgb(' and ')'
+    $parts: split($content, ',');
+    @if list.length($parts) == 3 {
+      $r: parse-number(trim(list.nth($parts, 1)));
+      $g: parse-number(trim(list.nth($parts, 2)));
+      $b: parse-number(trim(list.nth($parts, 3)));
+      @return rgb($r, $g, $b);
+    }
+  } @else if string.index($str, 'rgba(') == 1 {
+    $content: string.slice($str, 6, -2); // remove 'rgba(' and ')'
+    $parts: split($content, ',');
+    @if list.length($parts) == 4 {
+      $r: parse-number(trim(list.nth($parts, 1)));
+      $g: parse-number(trim(list.nth($parts, 2)));
+      $b: parse-number(trim(list.nth($parts, 3)));
+      $a: parse-number(trim(list.nth($parts, 4)));
+      @return rgba($r, $g, $b, $a);
+    }
+  }
+  @return $str;
+}
+
+// =============================================================================
+// REFERENCE RESOLUTION SYSTEM
+// =============================================================================
+
+/// Comprehensive reference resolution with overrides
+@function resolve-reference($path, $resolved-schema, $resolution-stack: (), $alpha-override: null, $step-override: null, $original-schema: null, $primitives: null, $prefix: 'semantic') {
+  $debug: debug-log("resolve-reference: #{$path}");
+  
+  // Check for circular reference
+  @if detect-circular-reference($path, $resolution-stack) {
+    $error-msg: build-circular-reference-error($path, $resolution-stack);
+    @error $error-msg;
+  }
+  
+  // Add current path to resolution stack
+  $new-stack: list.append($resolution-stack, $path);
+  
+  // Convert dot notation path to flattened token name
+  $token-name: path-to-token-name($path, $prefix);
+  
+  // Get the referenced value from the flattened token structure
+  $referenced-value: map.get($resolved-schema, $token-name);
+  
+  @if $referenced-value == null {
+    @error "Invalid reference at '#{$path}': Token path '#{$path}' does not exist (looked for '#{$token-name}').";
+  }
+  
+  // If step override is provided, we need to find the original semantic definition
+  @if $step-override != null {
+    @if $original-schema == null or $primitives == null {
+      @error "Step override requires access to the original schema and primitives.";
+    }
+    
+    // Find the original semantic definition in the schema
+    $original-value: get-nested-value($original-schema, $path);
+    
+    @if $original-value == null {
+      @error "Cannot find original semantic definition for path '#{$path}' when applying step override.";
+    }
+    
+    // Check if the original value is a semantic color definition
+    @if meta.type-of($original-value) == 'map' {
+      $map-length: list.length($original-value);
+      
+      // Handle single color definition: (color: step)
+      @if $map-length == 1 {
+        $color-name: list.nth(map.keys($original-value), 1);
+        $original-step: map.get($original-value, $color-name);
+        
+        @if has-key($primitives, $color-name) and meta.type-of($original-step) == 'number' {
+          // Get the new color with the overridden step
+          $new-color: get-primitive($primitives, $color-name, $step-override);
+          $referenced-value: $new-color;
+        } @else {
+          @error "Cannot apply step override to non-color semantic definition at path '#{$path}'.";
+        }
+      } @else if $map-length == 2 and map.has-key($original-value, 'alpha') {
+        // Handle alpha DSL: (color: step, alpha: value)
+        $alpha-value: map.get($original-value, 'alpha');
+        $color-name: null;
+        $original-step: null;
+        
+        @each $k, $v in $original-value {
+          @if $k != 'alpha' {
+            $color-name: $k;
+            $original-step: $v;
+          }
+        }
+        
+        @if $color-name and has-key($primitives, $color-name) and meta.type-of($original-step) == 'number' {
+          // Get the new color with the overridden step
+          $base-color: get-primitive($primitives, $color-name, $step-override);
+          $alpha: validate-alpha($alpha-value, "step override alpha DSL");
+          $referenced-value: rgba($base-color, $alpha);
+        } @else {
+          @error "Cannot apply step override to non-color semantic definition at path '#{$path}'.";
+        }
+      } @else {
+        @error "Cannot apply step override to complex semantic definition at path '#{$path}'.";
+      }
+    } @else if meta.type-of($original-value) == 'string' and string.index($original-value, $reference-pattern) {
+      // Handle nested references - extract the referenced path and apply step override to that
+      $content: string.slice($original-value, string.index($original-value, '(') + 1, -1);
+      $params: parse-reference-params($content);
+      
+      @if $params != null and meta.type-of($params) == 'map' {
+        $referenced-path: map.get($params, 'path');
+        
+        // Recursively resolve the referenced path with step override
+        $resolved-reference: resolve-reference($referenced-path, $resolved-schema, $resolution-stack, null, $step-override, $original-schema, $primitives, $prefix);
+        $referenced-value: $resolved-reference;
+      } @else {
+        @error "Cannot apply step override to malformed reference at path '#{$path}'.";
+      }
+    } @else {
+      @error "Cannot apply step override to non-map semantic definition at path '#{$path}'.";
+    }
+  }
+  
+  // If alpha override is provided, validate that the referenced value is a color
+  @if $alpha-override != null {
+    // If we have a step override, the referenced value should already be a color
+    // If not, we need to resolve any remaining references first
+    @if meta.type-of($referenced-value) == 'string' and string.index($referenced-value, $reference-pattern) {
+      // Resolve any remaining references before applying alpha
+      $resolved-reference: process-reference-calls($referenced-value, $resolved-schema, $resolution-stack, $original-schema, $primitives, $prefix);
+      $referenced-value: $resolved-reference;
+    }
+    
+    // Check if the value is a color (either a color type or a color string)
+    $is-color: false;
+    @if meta.type-of($referenced-value) == 'color' {
+      $is-color: true;
+    } @else if meta.type-of($referenced-value) == 'string' {
+      // Check if it looks like a color string (rgb, rgba, hex, etc.)
+      $value: string.to-lower-case($referenced-value);
+      @if string.index($value, 'rgb') {
+        $referenced-value: parse-rgb-string($referenced-value);
+        @if meta.type-of($referenced-value) == 'color' {
+          $is-color: true;
+        }
+      } @else if string.index($value, '#') or string.index($value, 'hsl') or string.index($value, 'hwb') or string.index($value, 'lab') or string.index($value, 'lch') or string.index($value, 'oklch') {
+        $is-color: true;
+      }
+    }
+    
+    @if not $is-color {
+      @error "Cannot apply alpha override to non-color value: '#{$referenced-value}' at path '#{$path}'. Alpha overrides can only be applied to color values.";
+    }
+    
+    // Apply alpha override to color value
+    $referenced-value: rgba($referenced-value, $alpha-override);
+  }
+  
+  // If the referenced value contains references, resolve them recursively
+  @if meta.type-of($referenced-value) == 'string' and string.index($referenced-value, $reference-pattern) {
+    $resolved-reference: process-reference-calls($referenced-value, $resolved-schema, $new-stack, $original-schema, $primitives, $prefix);
+    @return $resolved-reference;
+  }
+  
+  @return $referenced-value;
+}
+
+/// Process reference calls in strings with loop prevention
+@function process-reference-calls($string, $resolved-schema, $resolution-stack: (), $original-schema: null, $primitives: null, $prefix: 'semantic') {
+  $result: $string;
+  $iteration-count: 0;
+  $max-iterations: 100; // Prevent infinite loops
+  
+  @while string.index($result, $reference-pattern) != null and $iteration-count < $max-iterations {
+    $iteration-count: $iteration-count + 1;
+    
+    // Find first reference() occurrence
+    $start: string.index($result, $reference-pattern);
+    $end: string-index-after($result, $reference-end, $start + string.length($reference-pattern));
+    
+    @if $start == null or $end == null or $end <= $start {
+      @return string.unquote($result); // Malformed reference(), bail out
+    }
+    
+    // Extract the content inside reference(...)
+    $content: string.slice($result, $start + string.length($reference-pattern), $end - 1);
+    $params: parse-reference-params($content);
+    
+    @if $params == null or $params == '' {
+      // Remove invalid reference() call and continue
+      $before: string.slice($result, 1, $start - 1);
+      $after: string.slice($result, $end + string.length($reference-end));
+      $result: "#{$before}#{$after}";
+    } @else {
+      // Get alpha override if provided
+      $alpha-override: null;
+      $step-override: null;
+      @if $params != null and meta.type-of($params) == 'map' and map.has-key($params, 'args') {
+        $args: map.get($params, 'args');
+        @if meta.type-of($args) == 'map' and map.has-key($args, 'alpha') {
+          $alpha-value: map.get($args, 'alpha');
+          $alpha-override: parse-alpha($alpha-value);
+          @if $alpha-override == null {
+            @error "Invalid alpha value in reference: '#{$alpha-value}'";
+          }
+        }
+        @if meta.type-of($args) == 'map' and map.has-key($args, 'step') {
+          $step-value: map.get($args, 'step');
+          $step-override: parse-number($step-value);
+          @if $step-override == null {
+            @error "Invalid step value in reference: '#{$step-value}'";
+          }
+        }
+      }
+      
+      // Resolve the referenced token
+      $path: if($params != null and meta.type-of($params) == 'map', map.get($params, 'path'), $params);
+      $resolved-value: resolve-reference($path, $resolved-schema, $resolution-stack, $alpha-override, $step-override, $original-schema, $primitives, $prefix);
+      
+      // Replace the reference() call with the resolved value
+      $before: string.slice($result, 1, $start - 1);
+      $after: string.slice($result, $end + string.length($reference-end));
+      $result: "#{$before}#{$resolved-value}#{$after}";
+    }
+  }
+  
+  @if $iteration-count >= $max-iterations {
+    @warn "Reference processing exceeded maximum iterations. Possible circular reference or deeply nested references.";
+  }
+  
+  @return string.unquote($result);
+}
+
+/// Process references in resolved schema
+@function process-references($resolved-schema, $original-schema: null, $primitives: null, $prefix: 'semantic') {
+  $debug: debug-log("process-references: processing schema with #{list.length($resolved-schema)} top-level keys");
+  
+  $processed: ();
+  
+  @each $key, $value in $resolved-schema {
+    @if meta.type-of($value) == 'string' and string.index($value, $reference-pattern) {
+      $processed-value: process-reference-calls($value, $resolved-schema, (), $original-schema, $primitives, $prefix);
+      $processed: map.merge($processed, ($key: $processed-value));
+    } @else if is-valid-type($value, 'map') {
+      $nested-processed: process-references($value, $original-schema, $primitives, $prefix);
+      $processed: map.merge($processed, ($key: $nested-processed));
+    } @else if meta.type-of($value) == 'list' {
+      $processed-list: ();
+      @each $item in $value {
+        @if meta.type-of($item) == 'string' and string.index($item, $reference-pattern) {
+          $processed-item: process-reference-calls($item, $resolved-schema, (), $original-schema, $primitives, $prefix);
+          $processed-list: list.append($processed-list, $processed-item);
+        } @else {
+          $processed-list: list.append($processed-list, $item);
+        }
+      }
+      $processed: map.merge($processed, ($key: $processed-list));
+    } @else {
+      $processed: map.merge($processed, ($key: $value));
+    }
+  }
+  
+  @return $processed;
+}
+
+// =============================================================================
+// LEGACY RESOLVE CALLS MODULE
+// =============================================================================
+
+/// Parse legacy resolve call parameters
+@function parse-resolve-params($content, $primitives) {
+  $debug: debug-log("parse-resolve-params: '#{$content}'");
+  
+  $parts: split($content, ',');
+  @if list.length($parts) != 3 {
+    @return null; // Skip malformed calls
+  }
+  
+  $color-name: trim(list.nth($parts, 1));
+  $step-str: trim(list.nth($parts, 2));
+  $alpha-str: trim(list.nth($parts, 3));
+  
+  // Validate it's not CSS variable syntax or other non-color content
+  @if string.index($color-name, 'var(') or string.index($color-name, '--') or 
+       string.index($color-name, ' ') or string.index($color-name, '(') {
+    @return null; // Skip CSS variables and complex strings
+  }
+  
+  $step: parse-number($step-str);
+  @if $step == null or math.unit($step) != '' {
+    @return null; // Skip invalid step values
+  }
+  
+  $alpha: parse-alpha($alpha-str);
+  @if $alpha == null {
+    @return null; // Skip invalid alpha values
+  }
+  
+  @return (
+    'color': $color-name,
+    'step': $step,
+    'alpha': $alpha
+  );
+}
+
+/// Process legacy resolve calls in strings
+@function process-resolve-calls($string, $primitives) {
+  $result: $string;
+  $start: string.index($result, $resolve-pattern);
+  $continue: true;
+  
+  @while $start != null and $continue {
+    $end: string.index($result, $resolve-end);
+    @if $end == null { @return $result; }
+    
+    $content: string.slice($result, $start + string.length($resolve-pattern), $end - 1);
+    
+    // Only process if it has commas (our format) and looks like a valid color reference
+    @if string.index($content, ',') != null {
+      $params: parse-resolve-params($content, $primitives);
+      
+      @if $params != null {
+        $color: get-primitive($primitives, map.get($params, 'color'), map.get($params, 'step'));
+        $alpha: map.get($params, 'alpha');
+        $final-color: if($alpha == 1, $color, rgba($color, $alpha));
+        
+        $before: string.slice($result, 1, $start - 1);
+        $after: string.slice($result, $end + string.length($resolve-end));
+        $result: "#{$before}#{$final-color}#{$after}";
+        $start: string.index($result, $resolve-pattern);
+      } @else {
+        // Skip this pattern and continue
+        $start: string.index($result, $resolve-pattern, $start + 1);
+      }
+    } @else {
+      // Skip this pattern and continue
+      $start: string.index($result, $resolve-pattern, $start + 1);
+    }
+  }
+  
+  @return string.unquote($result);
+}
+
+// =============================================================================
+// VALUE RESOLUTION MODULE
+// =============================================================================
+
+/// Resolve semantic reference or alpha DSL
+@function resolve-semantic($value, $primitives) {
+  @if not is-valid-type($value, 'map') { @return $value; }
+  
+  $length: list.length($value);
+  
+  // Alpha DSL: (color: step, alpha: value)
+  @if $length == 2 and map.has-key($value, 'alpha') {
+    $alpha-value: map.get($value, 'alpha');
+    $color-name: null;
+    $step: null;
+    
+    @each $key, $val in $value {
+      @if $key != 'alpha' {
+        $color-name: $key;
+        $step: $val;
+      }
+    }
+    
+    // Validate that the color name is a valid primitive color
+    @if $color-name and $step and has-key($primitives, $color-name) {
+      $base-color: get-primitive($primitives, $color-name, $step);
+      $alpha: validate-alpha($alpha-value, "alpha DSL");
+      $result: rgba($base-color, $alpha);
+      @return $result;
+    } @else if $color-name and not has-key($primitives, $color-name) {
+      $available: get-available($primitives, 'colors');
+      $details: ("Invalid color name: '#{$color-name}'", "Available colors: #{$available}");
+      @error error-message('invalid-color', "alpha DSL", $details);
+    }
+  }
+  
+  // Semantic reference: (color: step)
+  @if $length == 1 {
+    $color-name: list.nth(map.keys($value), 1);
+    $step: map.get($value, $color-name);
+    @return get-primitive($primitives, $color-name, $step);
+  }
+  
+  @return $value;
+}
+
+/// Resolve any value type
+@function resolve-value($value, $primitives) {
+  @if $value == null { @return null; }
+  
+  // Handle lists - process each item
+  @if meta.type-of($value) == 'list' {
+    $resolved-list: ();
+    @each $item in $value {
+      $resolved-item: resolve-value($item, $primitives);
+      $resolved-list: list.append($resolved-list, $resolved-item);
+    }
+    @return $resolved-list;
+  }
+  
+  // Handle maps (semantic references)
+  @if meta.type-of($value) == 'map' {
+    @return resolve-semantic($value, $primitives);
+  }
+  
+  // Handle strings with resolve calls
+  @if meta.type-of($value) == 'string' {
+    @if string.index($value, $resolve-pattern) {
+      @return process-resolve-calls($value, $primitives);
+    }
+    @return string.unquote($value);
+  }
+  
+  // Pass through other types
+  @return $value;
+}
+
+// =============================================================================
+// SCHEMA PROCESSING MODULE
+// =============================================================================
+
+/// Recursively resolve schema
+@function resolve-schema($data, $primitives) {
+  @if not is-valid-type($data, 'map') {
+    @return resolve-value($data, $primitives);
+  }
+  
+  $resolved: ();
+  
+  @each $key, $value in $data {
+    @if is-valid-type($value, 'map') {
+      $value-length: list.length($value);
+      
+      // Check if semantic reference or nested structure
+      // Only treat as semantic reference if it has exactly 1 key and that key is a valid color name
+      @if $value-length == 1 {
+        $color-name: list.nth(map.keys($value), 1);
+        $step: map.get($value, $color-name);
+        
+        // Only treat as semantic reference if the key is a valid color name and step is a number
+        @if has-key($primitives, $color-name) and meta.type-of($step) == 'number' {
+          $resolved-value: resolve-value($value, $primitives);
+          $resolved: map.merge($resolved, ($key: $resolved-value));
+        } @else {
+          $nested: resolve-schema($value, $primitives);
+          $resolved: map.merge($resolved, ($key: $nested));
+        }
+      } @else if $value-length == 2 and map.has-key($value, 'alpha') {
+        // Alpha DSL: (color: step, alpha: value)
+        $alpha-value: map.get($value, 'alpha');
+        $color-name: null;
+        $step: null;
+        
+        @each $k, $v in $value {
+          @if $k != 'alpha' {
+            $color-name: $k;
+            $step: $v;
+          }
+        }
+        
+        // Validate alpha DSL syntax - the non-alpha key must be a valid color name
+        @if $color-name and not has-key($primitives, $color-name) {
+          $available: get-available($primitives, 'colors');
+          $details: ("Invalid color name in alpha DSL: '#{$color-name}'", "Available colors: #{$available}");
+          @error error-message('invalid-color', "alpha DSL validation", $details);
+        }
+        
+        // Only treat as alpha DSL if the key is a valid color name and step is a number
+        @if $color-name and has-key($primitives, $color-name) and meta.type-of($step) == 'number' {
+          $resolved-value: resolve-value($value, $primitives);
+          $resolved: map.merge($resolved, ($key: $resolved-value));
+        } @else {
+          $nested: resolve-schema($value, $primitives);
+          $resolved: map.merge($resolved, ($key: $nested));
+        }
+      } @else {
+        $nested: resolve-schema($value, $primitives);
+        $resolved: map.merge($resolved, ($key: $nested));
+      }
+    } @else if meta.type-of($value) == 'list' {
+      // Handle lists - process each item
+      $resolved-list: ();
+      @each $item in $value {
+        $resolved-item: resolve-value($item, $primitives);
+        $resolved-list: list.append($resolved-list, $resolved-item);
+      }
+      $resolved: map.merge($resolved, ($key: $resolved-list));
+    } @else {
+      $resolved-value: resolve-value($value, $primitives);
+      $resolved: map.merge($resolved, ($key: $resolved-value));
+    }
+  }
+  
+  @return $resolved;
+}
+
+/// Flatten nested map to CSS custom properties
+@function flatten-tokens($data, $prefix) {
+  $tokens: ();
+  
+  @each $key, $value in $data {
+    $token-name: '#{$prefix}-#{$key}';
+    
+    @if is-valid-type($value, 'map') {
+      $nested: flatten-tokens($value, $token-name);
+      $tokens: map.merge($tokens, $nested);
+    } @else if meta.type-of($value) == 'list' {
+      // Convert list to comma-separated string for CSS
+      $list-string: '';
+      @each $item in $value {
+        @if $list-string != '' {
+          $list-string: $list-string + ', ';
+        }
+        $list-string: $list-string + #{$item};
+      }
+      $tokens: map.merge($tokens, ($token-name: $list-string));
+    } @else {
+      $tokens: map.merge($tokens, ($token-name: $value));
+    }
+  }
+  
+  @return $tokens;
+}
+
+/// Expand brand colors to full ranges
+@function expand-brand($brand-colors, $primitives) {
+  $expanded: ();
+  
+  @each $role, $color in $brand-colors {
+    @if $color != null and has-key($primitives, $role) {
+      $actual-key: get-key($primitives, $role);
+      $scale: map.get($primitives, $actual-key);
+      $role-tokens: ();
+      
+      @each $system-step, $color-value in $scale {
+        @if is-valid-type($system-step, 'number') and is-valid-type($color-value, 'color') {
+          @each $std, $sys in $step-mapping {
+            @if $sys == $system-step {
+              $role-tokens: map.merge($role-tokens, ($std: $color-value));
+            }
+          }
+        }
+      }
+      
+      $expanded: map.merge($expanded, ($role: $role-tokens));
+    }
+  }
+  
+  @return $expanded;
+}
+
+// =============================================================================
+// PUBLIC API
+// =============================================================================
+
+/// Generate interpolate function call string
+@function interpolate($color-name, $step, $alpha: 1) {
+  @return "var(#{$color-name}, #{$step}, #{$alpha}):";
+}
+
+/// Generate reference function call string
+@function reference($path, $alpha: null, $step: null) {
+  $args: ();
+  @if $alpha != null {
+    $args: list.append($args, "$alpha: #{$alpha}");
+  }
+  @if $step != null {
+    $args: list.append($args, "$step: #{$step}");
+  }
+  
+  @if list.length($args) > 0 {
+    $args-string: '';
+    @each $arg in $args {
+      @if $args-string != '' {
+        $args-string: $args-string + ', ';
+      }
+      $args-string: $args-string + $arg;
+    }
+    @return "reference(#{$path}, #{$args-string})";
+  }
+  
+  @return "reference(#{$path})";
+}
+
+/// Process complete semantic schema
+@function process-semantic-schema($schema, $primitives: null, $prefix: 'semantic') {
+  $valid-schema: validate-map($schema, 'semantic schema');
+  
+  $brand-colors: if(map.has-key($schema, 'brand'), map.get($schema, 'brand'), ());
+  
+  @if $primitives == null {
+    @if list.length($brand-colors) == 0 {
+      @error "No brand colors and no primitives provided";
+    }
+    $primitives: colors.generate-primitives-from-map($brand-colors);
+  }
+  
+  $valid-primitives: validate-map($primitives, 'primitives');
+  $debug: debug-structure($primitives, 'primitives');
+  
+  $tokens: ();
+  
+  // Expand brand colors
+  @if list.length($brand-colors) > 0 {
+    $brand-expanded: expand-brand($brand-colors, $primitives);
+    
+    @each $role, $role-data in $brand-expanded {
+      @each $step, $value in $role-data {
+        $tokens: map.merge($tokens, ('#{$prefix}-#{$role}-#{$step}': $value));
+      }
+    }
+  }
+  
+  // Process other categories and root-level tokens
+  @each $category, $category-data in $schema {
+    @if $category != 'brand' {
+      @if is-valid-type($category-data, 'map') {
+        // Check if this is alpha DSL syntax (2 keys, one is 'alpha')
+        $map-length: list.length($category-data);
+        @if $map-length == 2 and map.has-key($category-data, 'alpha') {
+          // This is alpha DSL syntax - treat as root-level token
+          $resolved: resolve-value($category-data, $primitives);
+          $tokens: map.merge($tokens, ('#{$prefix}-#{$category}': $resolved));
+        } @else {
+          // This is a nested category (like 'example', 'content', etc.)
+          $resolved: resolve-schema($category-data, $primitives);
+          $flattened: flatten-tokens($resolved, '#{$prefix}-#{$category}');
+          $tokens: map.merge($tokens, $flattened);
+        }
+      } @else {
+        // This is a root-level token (like 'basic-value', 'interpolated-string-value')
+        $resolved: resolve-value($category-data, $primitives);
+        $tokens: map.merge($tokens, ('#{$prefix}-#{$category}': $resolved));
+      }
+    }
+  }
+  
+  // Phase 2: Process references in the resolved tokens
+  $tokens-with-references: process-references($tokens, $schema, $primitives, $prefix);
+  
+  @return $tokens-with-references;
+}
+
+/// Export tokens as CSS custom properties
+@mixin export-tokens($tokens) {
+  @each $name, $value in $tokens {
+    --#{$name}: #{$value};
+  }
+}
+
+/// Export complete semantic theme
+@mixin export-semantic-theme($schema, $primitives: null, $prefix: 'semantic') {
+  $tokens: process-semantic-schema($schema, $primitives, $prefix);
+  @include export-tokens($tokens);
+}
+
+// =============================================================================
+// DEBUGGING UTILITIES
+// =============================================================================
+
+/// Debug primitives structure
+@function debug-primitives($primitives) {
+  @if $primitives == null {
+    @return (error: 'Primitives is null');
+  }
+  
+  $debug: (
+    total-scales: list.length($primitives),
+    scale-names: map.keys($primitives)
+  );
+  
+  $scales: ();
+  @each $name, $scale in $primitives {
+    @if is-valid-type($scale, 'map') {
+      $steps: ();
+      @each $step, $value in $scale {
+        @if is-valid-type($step, 'number') and is-valid-type($value, 'color') {
+          $steps: list.append($steps, $step);
+        }
+      }
+      
+      $scales: map.merge($scales, (
+        $name: (
+          color-steps: list.length($steps),
+          available-steps: $steps
+        )
+      ));
+    }
+  }
+  
+  @return map.merge($debug, (scales: $scales));
+}
+
+/// Print debug information
+@mixin print-debug($debug-info) {
+  /* === DEBUG INFORMATION === */
+  @each $key, $value in $debug-info {
+    @if $key != 'scales' {
+      /* #{$key}: #{$value} */
+    } @else {
+      /* #{$key}: */
+      @each $scale, $info in $value {
+        /*   #{$scale}: #{map.get($info, 'color-steps')} steps #{map.get($info, 'available-steps')} */
+      }
+    }
+  }
+  /* === END DEBUG === */
+}
+
+// =============================================================================
+// EXAMPLE USAGE
+// =============================================================================
+
+// Example schema showcasing all features
+$example-schema: (
+  brand: (
+    primary: #000000
+  ),
+  
+  // Basic alpha DSL
+  basic-value: (primary: 700, alpha: 0.95),
+  basic-value2: (primary: 700, alpha: 95%),
+  
+  // String interpolation
+  interpolated-string-value: 'test #{interpolate(primary, 700, 0.95)}',
+  
+  // Reference system
+  nested-interpolation: (
+    value: reference('interpolated-string-value')
+  ),
+  
+  // Reference with overrides
+  adjusted-alpha-reference: reference('basic-value', $alpha: 85%),
+  adjusted-step-reference: reference('basic-value', $step: 50),
+  
+  example: (
+    // Basic references
+    basic-reference: reference('basic-value'),
+    nested-basic-reference: reference('nested-interpolation.value'),
+    
+    // Complex interpolation
+    interpolated-gradient: 'linear-gradient(90deg, #{reference("basic-value")} 0%, transparent 100%)',
+    multi-ref-string: 'Refs: #{reference("basic-value")}, #{reference("nested-interpolation.value")}',
+    
+    // examples
+    nested-gradient: 'radial-gradient(ellipse at 30% 80%, #{reference("basic-value")} 0%, transparent 40%)',
+    list-of-references: (reference('basic-value'), reference('nested-interpolation.value')),
+    complex-interpolation: 'linear-gradient(#{interpolate(primary, 700, 0.5)}, #{reference("basic-value")})',
+    quoted-reference: 'This is "#{reference("basic-value")}" inside quotes',
+    
+    // Deep reference chain
+    many-refs: (
+      a: reference('basic-value'),
+      b: reference('example.many-refs.a'),
+      c: reference('example.many-refs.b'),
+      d: reference('example.many-refs.c'),
+      e: reference('example.many-refs.d')
+    )
+  )
+);
+
+// Export the theme
+:root {
+  @include export-semantic-theme($example-schema);
+}
+
+
+
+

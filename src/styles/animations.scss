@@ -1,0 +1,664 @@
+/* ==========================================================================
+   CROSS-BROWSER ANIMATION SYSTEM
+   Optimized for smooth performance across all browsers
+   ========================================================================== */
+
+/* ==========================================================================
+   ANIMATION DURATIONS & EASING
+   ========================================================================== */
+
+:root {
+  /* Optimized durations - reduced for better performance */
+  --duration-instant: 100ms;
+  --duration-fast: 200ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+  --duration-slower: 750ms;
+
+  /* Optimized easing functions - GPU-friendly */
+  --ease-linear: cubic-bezier(0, 0, 1, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-elastic: cubic-bezier(0.68, 0, 0.265, 1.55);
+}
+
+/* ==========================================================================
+   CROSS-BROWSER PERFORMANCE UTILITIES
+   ========================================================================== */
+
+/* Hardware acceleration utilities for all browsers */
+.gpu-accelerated {
+  transform: translateZ(0);
+  -moz-transform: translateZ(0);
+  will-change: auto;
+  contain: layout style;
+}
+
+.gpu-layer {
+  transform: translate3d(0, 0, 0);
+  -moz-transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+}
+
+.paint-optimized {
+  will-change: auto;
+  transform: translateZ(0);
+  -moz-transform: translateZ(0);
+  contain: layout style;
+}
+
+/* Cross-browser performance utilities */
+.gpu-accelerated {
+  transform: translateZ(0);
+  -moz-transform: translateZ(0);
+  will-change: auto;
+  contain: layout style;
+  -moz-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Cross-browser animation utilities */
+.animate-smooth {
+  animation-duration: 0.8s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Cross-browser hover utilities */
+.hover-lift {
+  transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
+}
+
+.hover-lift:hover {
+  transform: translate3d(0, -2px, 0);
+  -moz-transform: translate3d(0, -2px, 0);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Additional descriptive utilities */
+.layer-3d {
+  transform-style: preserve-3d;
+  -moz-transform-style: preserve-3d;
+}
+
+.paint-optimized {
+  contain: layout style;
+  will-change: auto;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+}
+
+/* ==========================================================================
+   CROSS-BROWSER KEYFRAME UTILITIES
+   ========================================================================== */
+
+/* Cross-browser keyframe mixins */
+@mixin cross-browser-keyframes($name) {
+  @keyframes #{$name} {
+    @content;
+  }
+}
+
+/* Cross-browser transform keyframes */
+@mixin transform-keyframes($name, $from-transform, $to-transform) {
+  @keyframes #{$name} {
+    0% {
+      transform: $from-transform;
+      -moz-transform: $from-transform;
+    }
+    100% {
+      transform: $to-transform;
+      -moz-transform: $to-transform;
+    }
+  }
+}
+
+/* Cross-browser slide animations */
+@mixin slide-in-left {
+  @include transform-keyframes(
+    slide-in-left,
+    translate3d(clamp(-30px, -5vw, -60px), clamp(10px, 2vh, 20px), 0),
+    translate3d(0, 0, 0)
+  );
+}
+
+@mixin slide-in-right {
+  @include transform-keyframes(
+    slide-in-right,
+    translate3d(clamp(30px, 5vw, 60px), clamp(10px, 2vh, 20px), 0),
+    translate3d(0, 0, 0)
+  );
+}
+
+@mixin fade-in-up {
+  @include transform-keyframes(
+    fade-in-up,
+    translate3d(0, clamp(10px, 2vh, 20px), 0),
+    translate3d(0, 0, 0)
+  );
+}
+
+@mixin scale-in {
+  @include transform-keyframes(
+    scale-in,
+    scale3d(0.8, 0.8, 1),
+    scale3d(1, 1, 1)
+  );
+}
+
+@mixin fade-in-scale {
+  @include transform-keyframes(
+    fade-in-scale,
+    scale3d(0.95, 0.95, 1) translate3d(0, clamp(5px, 1vh, 10px), 0),
+    scale3d(1, 1, 1) translate3d(0, 0, 0)
+  );
+}
+
+/* ==========================================================================
+   CROSS-BROWSER PERFORMANCE MIXINS (SCSS ONLY)
+   ========================================================================== */
+
+/* Cross-browser performance mixins */
+@mixin gpu-accelerated {
+  transform: translateZ(0);
+  -moz-transform: translateZ(0);
+  will-change: auto;
+  contain: layout style;
+  -moz-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+@mixin animate-smooth($duration: 0.8s, $easing: cubic-bezier(0.4, 0, 0.2, 1)) {
+  animation-duration: $duration;
+  animation-timing-function: $easing;
+}
+
+@mixin hover-lift($distance: -2px) {
+  transition: all var(--duration-normal) var(--ease-out);
+  
+  &:hover {
+    transform: translate3d(0, $distance, 0);
+    -moz-transform: translate3d(0, $distance, 0);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  }
+}
+
+@mixin transform3d($x: 0, $y: 0, $z: 0) {
+  transform: translate3d($x, $y, $z);
+  -moz-transform: translate3d($x, $y, $z);
+}
+
+@mixin scale3d($x: 1, $y: 1, $z: 1) {
+  transform: scale3d($x, $y, $z);
+  -moz-transform: scale3d($x, $y, $z);
+}
+
+/* ==========================================================================
+   COMMON ANIMATION KEYFRAMES
+   ========================================================================== */
+
+/* Fade animations */
+@keyframes fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes fade-out {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Slide animations */
+@keyframes slide-up {
+  0% { transform: translate3d(0, 100%, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+@keyframes slide-down {
+  0% { transform: translate3d(0, -100%, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+/* Scale animations */
+@keyframes scale-in {
+  0% { transform: scale3d(0, 0, 1); }
+  100% { transform: scale3d(1, 1, 1); }
+}
+
+@keyframes scale-out {
+  0% { transform: scale3d(1, 1, 1); }
+  100% { transform: scale3d(0, 0, 1); }
+}
+
+/* Rotation animations */
+@keyframes rotate-in {
+  0% { transform: rotate(-180deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes rotate-out {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(180deg); }
+}
+
+/* Pulse animations */
+@keyframes pulse {
+  0%, 100% { transform: scale3d(1, 1, 1); }
+  50% { transform: scale3d(1.05, 1.05, 1); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { transform: scale3d(1, 1, 1); }
+  50% { transform: scale3d(1.02, 1.02, 1); }
+}
+
+/* Bounce animations */
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% { transform: translate3d(0, 0, 0); }
+  40%, 43% { transform: translate3d(0, -30px, 0); }
+  70% { transform: translate3d(0, -15px, 0); }
+  90% { transform: translate3d(0, -4px, 0); }
+}
+
+/* Shake animations */
+@keyframes shake {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  10%, 30%, 50%, 70%, 90% { transform: translate3d(-10px, 0, 0); }
+  20%, 40%, 60%, 80% { transform: translate3d(10px, 0, 0); }
+}
+
+/* ==========================================================================
+   COSMIC & BACKGROUND ANIMATIONS
+   ========================================================================== */
+
+/* Nebula drift animation */
+@keyframes nebula-drift {
+  0% { 
+    transform: translate3d(0, 0, 0) scale3d(1, 1, 1) rotate(0deg); 
+    opacity: 0.6;
+  }
+  100% { 
+    transform: translate3d(30px, -20px, 0) scale3d(1.1, 1.1, 1) rotate(1deg); 
+    opacity: 0.8;
+  }
+}
+
+/* Particle field animation */
+@keyframes particles-float {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(100px, -50px, 0); }
+}
+
+/* Energy waves animation */
+@keyframes waves-flow {
+  0% { transform: translate3d(-200px, 0, 0); }
+  100% { transform: translate3d(200px, 0, 0); }
+}
+
+/* Constellation rotation */
+@keyframes constellation-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ==========================================================================
+   TITLE & STATUS ANIMATIONS
+   ========================================================================== */
+
+/* Title pulse animation */
+@keyframes title-pulse {
+  0% { 
+    opacity: 0.4; 
+    transform: translate3d(-50%, -50%, 0) scale3d(1, 1, 1); 
+  }
+  100% { 
+    opacity: 0.7; 
+    transform: translate3d(-50%, -50%, 0) scale3d(1.2, 1.2, 1); 
+  }
+}
+
+/* Status pulse animation */
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Pulse ring animation */
+@keyframes pulse-ring {
+  0% { 
+    transform: scale3d(1, 1, 1); 
+    opacity: 0.3; 
+  }
+  100% { 
+    transform: scale3d(2.5, 2.5, 1); 
+    opacity: 0; 
+  }
+}
+
+/* ==========================================================================
+   FORM & BUTTON ANIMATIONS
+   ========================================================================== */
+
+/* Success pulse animation */
+@keyframes success-pulse {
+  0%, 100% { transform: scale3d(1, 1, 1); }
+  50% { transform: scale3d(1.05, 1.05, 1); }
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Success bounce animation */
+@keyframes success-bounce {
+  0% { transform: scale3d(0, 0, 1); }
+  50% { transform: scale3d(1.3, 1.3, 1); }
+  100% { transform: scale3d(1, 1, 1); }
+}
+
+/* Button particles animation */
+@keyframes button-particles {
+  0% { transform: translate3d(-20px, 0, 0); }
+  100% { transform: translate3d(20px, 0, 0); }
+}
+
+/* ==========================================================================
+   CONTACT METHOD ANIMATIONS
+   ========================================================================== */
+
+/* Method entrance animation */
+@keyframes method-entrance {
+  0% {
+    opacity: 0;
+    transform: translate3d(20px, 0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* ==========================================================================
+   TIMELINE ANIMATIONS
+   ========================================================================== */
+
+/* Timeline fade-in animation */
+@keyframes fade-in-timeline {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 30px, 0) rotateX(10deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotateX(0deg);
+  }
+}
+
+/* Timeline indicator pulse animation */
+@keyframes pulse-indicator {
+  0%, 100% {
+    box-shadow:
+      0 0 0 4px var(--token-surface-color),
+      0 0 0 6px var(--token-emphasis-color),
+      var(--token-shadow-strong),
+      0 0 30px rgba(99, 102, 241, 0.6);
+  }
+  50% {
+    box-shadow:
+      0 0 0 4px var(--token-surface-color),
+      0 0 0 8px var(--token-emphasis-color),
+      var(--token-shadow-elevated),
+      0 0 40px rgba(99, 102, 241, 0.6);
+  }
+}
+
+/* ==========================================================================
+   SKILLS ANIMATIONS
+   ========================================================================== */
+
+/* Grid constellation animation */
+@keyframes grid-constellation {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  100% { transform: translate3d(80px, 80px, 0) rotate(360deg); }
+}
+
+/* Orbs drift animation */
+@keyframes orbs-drift {
+  0% { 
+    transform: translate3d(0, 0, 0) scale3d(1, 1, 1); 
+    filter: blur(0px);
+  }
+  100% { 
+    transform: translate3d(30px, -20px, 0) scale3d(1.1, 1.1, 1); 
+    filter: blur(1px);
+  }
+}
+
+/* Connections flow animation */
+@keyframes connections-flow {
+  0% { transform: translate3d(-100px, -50px, 0); }
+  100% { transform: translate3d(100px, 50px, 0); }
+}
+
+/* Title glow animation */
+@keyframes title-glow {
+  0% { 
+    opacity: 0.3; 
+    transform: translate3d(-50%, -50%, 0) scale3d(1, 1, 1); 
+  }
+  100% { 
+    opacity: 0.6; 
+    transform: translate3d(-50%, -50%, 0) scale3d(1.1, 1.1, 1); 
+  }
+}
+
+/* Card entrance animation */
+@keyframes card-entrance {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 40px, 0) rotateX(10deg) scale3d(0.9, 0.9, 1);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotateX(0deg) scale3d(1, 1, 1);
+  }
+}
+
+/* Glow pulse animation */
+@keyframes glow-pulse {
+  0% { opacity: 1; transform: scale3d(1, 1, 1); }
+  100% { opacity: 0.7; transform: scale3d(1.1, 1.1, 1); }
+}
+
+/* Particles drift animation */
+@keyframes particles-drift {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(30px, -30px, 0); }
+}
+
+/* Ring pulse animation */
+@keyframes ring-pulse {
+  0%, 100% { transform: scale3d(1, 1, 1); opacity: 0.6; }
+  50% { transform: scale3d(1.02, 1.02, 1); opacity: 0.8; }
+}
+
+/* ==========================================================================
+   ABOUT ME SPECIFIC ANIMATIONS
+   ========================================================================== */
+
+/* Expand line animation */
+@keyframes expand-line {
+  0% { width: 0; }
+  100% { width: clamp(60px, 12vw + 3vh, 200px); }
+}
+
+/* Pulse status animation */
+@keyframes pulse-status {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Button glow pulse animation */
+@keyframes btn-glow-pulse {
+  0% { box-shadow: var(--token-shadow-elevated), var(--token-shadow-interactive); }
+  50% { box-shadow: var(--token-shadow-strong), var(--token-shadow-focus); }
+  100% { box-shadow: var(--token-shadow-elevated), var(--token-shadow-interactive); }
+}
+
+/* Pulse glow animation */
+@keyframes pulse-glow {
+  0% { 
+    opacity: 0.3; 
+    transform: scale3d(1, 1, 1);
+    -moz-transform: scale3d(1, 1, 1);
+  }
+  100% { 
+    opacity: 0.6; 
+    transform: scale3d(1.05, 1.05, 1);
+    -moz-transform: scale3d(1.05, 1.05, 1);
+  }
+}
+
+/* Rotate animation */
+@keyframes rotate {
+  from { 
+    transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+  }
+  to { 
+    transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+  }
+}
+
+/* Text shimmer animation */
+@keyframes text-shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Fade in up animation */
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, clamp(10px, 2vh, 20px), 0);
+    -moz-transform: translate3d(0, clamp(10px, 2vh, 20px), 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    -moz-transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Fade in float animation */
+@keyframes fade-in-float {
+  0% {
+    opacity: 0;
+    transform: translate3d(-50%, clamp(10px, 2vh, 20px), 0);
+    -moz-transform: translate3d(-50%, clamp(10px, 2vh, 20px), 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(-50%, 0, 0);
+    -moz-transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* Float animation */
+@keyframes float {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+    -moz-transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -10px, 0);
+    -moz-transform: translate3d(0, -10px, 0);
+  }
+}
+
+/* Arrow bounce animation */
+@keyframes arrow-bounce {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+    -moz-transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, clamp(4px, 1vh, 8px), 0);
+    -moz-transform: translate3d(0, clamp(4px, 1vh, 8px), 0);
+  }
+}
+
+/* Scroll wheel animation */
+@keyframes scroll-wheel {
+  0% {
+    transform: translate3d(-50%, 0, 0);
+    -moz-transform: translate3d(-50%, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, clamp(12px, 2vh, 18px), 0);
+    -moz-transform: translate3d(-50%, clamp(12px, 2vh, 18px), 0);
+  }
+}
+
+/* ==========================================================================
+   ACCESSIBILITY ANIMATION SUPPORT
+   ========================================================================== */
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .animate-smooth,
+  .animate-fast {
+    transition: none !important;
+  }
+  
+  .gpu-accelerated,
+  .gpu-layer,
+  .paint-optimized {
+    will-change: auto !important;
+    transform: none !important;
+  }
+}
+
+/* Firefox-specific reduced motion optimizations */
+@supports (-moz-appearance: none) {
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      /* Firefox-specific animation disabling */
+      -moz-animation-duration: 0.01ms !important;
+      -moz-transition-duration: 0.01ms !important;
+      /* Disable all transforms in Firefox */
+      -moz-transform: none !important;
+      transform: none !important;
+      /* Disable will-change in Firefox */
+      will-change: auto !important;
+    }
+    
+    /* Firefox-specific GPU acceleration disabling */
+    .gpu-accelerated,
+    .gpu-layer,
+    .paint-optimized {
+      -moz-transform: none !important;
+      -moz-backface-visibility: visible !important;
+      -moz-perspective: none !important;
+    }
+  }
+} 
