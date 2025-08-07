@@ -154,7 +154,7 @@
 					years: 11,
 					category: "framework",
 					description: "Advanced patterns, performance optimization",
-					image: `${base}/react-logo.png`
+					image: `${base}/react-logo.webp`
 				},
 				{
 					name: "TypeScript",
@@ -186,7 +186,7 @@
 					years: 11,
 					category: "styling",
 					description: "Advanced CSS preprocessor.",
-					image: `${base}/sass-logo.png`
+					image: `${base}/sass-logo.webp`
 				},
 				{
 					name: "Next.js",
@@ -194,7 +194,7 @@
 					years: 5,
 					category: "framework",
 					description: "SSR, SSG, App Router, performance",
-					image: `${base}/nextjs.png`
+					image: `${base}/nextjs.webp`
 				},
 				{
 					name: "Svelte",
@@ -242,7 +242,7 @@
 					years: 11,
 					category: "framework",
 					description: "Module bundler, performance optimization",
-					image: `${base}/webpack.png`
+					image: `${base}/webpack.webp`
 				},
 				{
 					name: "Vite",
@@ -266,7 +266,7 @@
 					years: 11,
 					category: "runtime",
 					description: "Microservices, event-driven architecture",
-					image: `${base}/javascript logo.png`
+					image: `${base}/javascript logo.webp`
 				},
 				{
 					name: "Python",
@@ -274,7 +274,7 @@
 					years: 15,
 					category: "language",
 					description: "Django, FastAPI, data processing",
-					image: `${base}/python logo.png`
+					image: `${base}/python logo.webp`
 				},
 				{
 					name: "Ruby",
@@ -290,7 +290,7 @@
 					years: 5,
 					category: "language",
 					description: "High-performance services",
-					image: `${base}/golang logo.png`
+					image: `${base}/golang logo.webp`
 				},
 				{
 					name: "PostgreSQL",
@@ -298,7 +298,7 @@
 					years: 15,
 					category: "database",
 					description: "Complex queries, optimization",
-					image: `${base}/postgresql.png`
+					image: `${base}/postgresql.webp`
 				},
 				{
 					name: "Redis",
@@ -306,7 +306,7 @@
 					years: 5,
 					category: "cache",
 					description: "Caching strategies, pub/sub",
-					image: `${base}/Redis-logo.png`
+					image: `${base}/Redis-logo.webp`
 				},
 				{
 					name: "Ruby on Rails",
@@ -314,7 +314,7 @@
 					years: 9,
 					category: "framework",
 					description: "Full-stack web applications",
-					image: `${base}/RoR.png`
+					image: `${base}/RoR.webp`
 				},
 				{
 					name: "Apache Kafka",
@@ -322,7 +322,7 @@
 					years: 3,
 					category: "messaging",
 					description: "Event streaming, real-time data processing",
-					image: `${base}/apachekafka.png`
+					image: `${base}/apachekafka.webp`
 				},
 				{
 					name: "Elasticsearch",
@@ -330,7 +330,7 @@
 					years: 3,
 					category: "database",
 					description: "Search & analytics",
-					image: `${base}/elasticsearch-logo.png`
+					image: `${base}/elasticsearch-logo.webp`
 				},
 				{
 					name: "Django",
@@ -346,7 +346,7 @@
 					years: 2,
 					category: "framework",
 					description: "AI agentic workflows, LLM integration, developer tools, and more.",
-					image: `${base}/langchain-text.png`
+					image: `${base}/langchain-text.webp`
 				},
 
 			],
@@ -371,7 +371,7 @@
 					years: 4,
 					category: "orchestration",
 					description: "Container orchestration, scaling",
-					image: `${base}/kubernetes.png`
+					image: `${base}/kubernetes.webp`
 				},
 				{
 					name: "Helm",
@@ -387,7 +387,7 @@
 					years: 7,
 					category: "containerization",
 					description: "Multi-stage builds, optimization",
-					image: `${base}/docker.png`
+					image: `${base}/docker.webp`
 				},
 				{
 					name: "Terraform",
@@ -395,7 +395,7 @@
 					years: 3,
 					category: "iac",
 					description: "Infrastructure as Code",
-					image: `${base}/terraform.png`
+					image: `${base}/terraform.webp`
 				},
 				{
 					name: "CI/CD",
@@ -403,7 +403,7 @@
 					years: 8,
 					category: "automation",
 					description: "GitHub Actions, Jenkins, deployment",
-					image: `${base}/GitHub Actions.png`
+					image: `${base}/GitHub Actions.webp`
 				},
 				{
 					name: "Git",
@@ -411,7 +411,7 @@
 					years: 15,
 					category: "version-control",
 					description: "Version control, branching strategies",
-					image: `${base}/git.png`
+					image: `${base}/git.webp`
 				},
 				{
 					name: "Bash",
@@ -427,7 +427,7 @@
 					years: 2,
 					category: "framework",
 					description: "Load testing, Chaos Engineering, performance optimization",
-					image: `${base}/locust.png`
+					image: `${base}/locust.webp`
 				},
 				{
 					name: "DataDog",
@@ -435,7 +435,7 @@
 					years: 4,
 					category: "monitoring",
 					description: "Monitoring, logging, and alerting",
-					image: `${base}/dd_icon_white.png`
+					image: `${base}/dd_icon_white.webp`
 				}
 			],
 		},
@@ -451,7 +451,7 @@
 					years: 8,
 					category: "management",
 					description: "Led over 15+ engineering teams",
-					image: `${base}/Team Leadership.png`
+					image: `${base}/Team Leadership.webp`
 				},
 				{
 					name: "Software Architecture",
@@ -459,7 +459,7 @@
 					years: 10,
 					category: "design",
 					description: "System design, scalability planning",
-					image: `${base}/Architecture.png`
+					image: `${base}/Architecture.webp`
 				},
 				{
 					name: "Mentoring",
@@ -467,7 +467,7 @@
 					years: 9,
 					category: "development",
 					description: "Career development, technical growth",
-					image: `${base}/Mentorship.png`
+					image: `${base}/Mentorship.webp`
 				},
 				{
 					name: "Product Strategy",
@@ -475,7 +475,7 @@
 					years: 7,
 					category: "business",
 					description: "Technical roadmaps, stakeholder alignment",
-					image: `${base}/Product Strategy.png`
+					image: `${base}/Product Strategy.webp`
 				},
 
 				{
@@ -502,7 +502,7 @@
 					years: 10,
 					category: "business",
 					description: "Jira, Notion, Linear, Confluence, and other project management tools.",
-					image: `${base}/Jira.png`
+					image: `${base}/Jira.webp`
 				},
 
 			],
@@ -524,7 +524,7 @@
 		{
 			title: "Senior Software Engineer",
 			company: "Scribe",
-			logo: `${base}/company_logos/scribehow_logo.jpg`,
+			logo: `${base}/company_logos/scribehow_logo.webp`,
 			date: "Apr 2023 – Dec 2024",
 			dateValue: "Apr 2023",
 			location: "Remote",
@@ -553,7 +553,7 @@
 		{
 			title: "Senior Software Engineer II",
 			company: "Green Bits Inc & Dutchie",
-			logo: `${base}/company_logos/getdutchie_logo.jpg`,
+			logo: `${base}/company_logos/getdutchie_logo.webp`,
 			date: "Apr 2017 – Dec 2022",
 			dateValue: "Apr 2017",
 			location: "Remote",
@@ -583,7 +583,7 @@
 		{
 			title: "Front-End Engineer",
 			company: "Import.io",
-			logo: `${base}/company_logos/import_io_logo.jpg`,
+			logo: `${base}/company_logos/import_io_logo.webp`,
 			date: "Aug 2016 – Apr 2017",
 			dateValue: "Aug 2016",
 			location: "Los Gatos, California",
@@ -614,7 +614,7 @@
 		{
 			title: "Software Engineer",
 			company: "UpGuard",
-			logo: `${base}/company_logos/upguard_logo.jpg`,
+			logo: `${base}/company_logos/upguard_logo.webp`,
 			date: "Oct 2016 – Sep 2017",
 			dateValue: "Oct 2016",
 			location: "Mountain View, California",
@@ -632,7 +632,7 @@
 		{
 			title: "Full-Stack Developer / CTO",
 			company: "LaunchBadge LLC",
-			logo: `${base}/company_logos/launchbadge_logo.jpg`,
+			logo: `${base}/company_logos/launchbadge_logo.webp`,
 			date: "Feb 2015 – Sep 2016",
 			dateValue: "Feb 2015",
 			location: "Sacramento, California Area",
@@ -670,7 +670,7 @@
 		statusText="Available for new opportunities"
 		valueHeadline="I architect systems that scale, lead teams that thrive, and build products that last."
 		valueDescription="With over a decade of experience turning complex challenges into elegant solutions, I specialize in building high-performance engineering teams and resilient distributed systems. From React frontends to cloud infrastructure, I create technology that just works."
-		avatarSrc={`${base}/headshot.PNG`}
+		avatarSrc={`${base}/headshot.webp`}
 		avatarAlt="Cassidy Bridges"
 		primaryButtonText="View Experience"
 		primaryButtonHref="#experience"
