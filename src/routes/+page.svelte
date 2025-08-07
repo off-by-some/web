@@ -5,7 +5,6 @@
 	import ContactMe from '$lib/ContactMe.svelte';
 	import { base } from '$app/paths';
 
-	// Types for SkillsSection
 	interface Skill {
 		name: string;
 		level: "expert" | "advanced" | "proficient" | "learning";
@@ -36,7 +35,6 @@
 		technologies: string[];
 	}
 
-	// Types for TimelineSection
 	interface Experience {
 		title: string;
 		company: string;
@@ -59,7 +57,6 @@
 		description: string;
 	}
 
-	// Smooth scrolling utility function
 	function smoothScrollTo(elementId: string, offset: number = 0) {
 		const element = document.getElementById(elementId);
 		if (element) {
@@ -76,13 +73,12 @@
 	// State for selected skills category
 	let selectedSkillsCategory: string | null = null;
 
-	// Event handlers for smooth scrolling
 	function handlePrimaryAction() {
-		smoothScrollTo('experience'); // Add offset for header/navigation
+		smoothScrollTo('experience');
 	}
 
 	function handleSecondaryAction() {
-		smoothScrollTo('contact'); // Add offset for header/navigation
+		smoothScrollTo('contact');
 	}
 
 	function handleScrollIndicator() {
@@ -190,7 +186,7 @@
 				},
 				{
 					name: "Next.js",
-					level: "expert",
+					level: "advanced",
 					years: 5,
 					category: "framework",
 					description: "SSR, SSG, App Router, performance",
@@ -222,7 +218,7 @@
 				},
 				{
 					name: "Tailwind",
-					level: "expert",
+					level: "advanced",
 					years: 4,
 					category: "styling",
 					description: "Tailwind, CSS-in-JS, design systems, scalable token systems",
@@ -375,7 +371,7 @@
 				},
 				{
 					name: "Helm",
-					level: "expert",
+					level: "advanced",
 					years: 4,
 					category: "orchestration",
 					description: "Container orchestration, scaling",
@@ -407,7 +403,7 @@
 				},
 				{
 					name: "Git",
-					level: "advanced",
+					level: "expert",
 					years: 15,
 					category: "version-control",
 					description: "Version control, branching strategies",
@@ -415,7 +411,7 @@
 				},
 				{
 					name: "Bash",
-					level: "advanced",
+					level: "expert",
 					years: 15,
 					category: "automation",
 					description: "Automated workflows, scripting",
@@ -430,7 +426,7 @@
 					image: `${base}/locust.webp`
 				},
 				{
-					name: "DataDog",
+					name: "Datadog",
 					level: "advanced",
 					years: 4,
 					category: "monitoring",
@@ -471,7 +467,7 @@
 				},
 				{
 					name: "Product Strategy",
-					level: "advanced",
+					level: "expert",
 					years: 7,
 					category: "business",
 					description: "Technical roadmaps, stakeholder alignment",
@@ -483,7 +479,7 @@
 					level: "expert",
 					years: 15,
 					category: "business",
-					description: "WCAG, ACPA & ADA standards for accessible and equitable workplaces.",
+					description: "WCAG, ACAA & ADA standards for accessible and equitable workplaces.",
 					image: `${base}/ADA.svg`
 				},
 
@@ -592,7 +588,7 @@
 			highlights: [
 				"Established foundational engineering workflows—unit/E2E tests, structured ticketing, and sprint estimates—to transform a fragile codebase into a maintainable, predictable system.",
 				"Architected a high-performance spreadsheet engine with live formulas, and virtual rendering, eliminating manual scripts and saving users hundreds of hours",
-				"Created solutions for complex problems, such as a number system to efficiently generate combinatoric slices on-the-fly in O(n) time, enabling advanced generation features.",
+				"Created solutions for complex problems, such as a number system to efficiently generate combinatorial slices on-the-fly in O(n) time, enabling advanced generation features.",
 				"Designed and implemented the full Angular 1→React migration, reducing the JS bundle by 45% and cutting initial load times by 60%, all without a single customer-facing regression ",
 				"Mentored junior developers through pair programming and code reviews, embedding React best practices and lifting the entire team's frontend expertise.",
 				"Process collaboration: Partnered with Product & Design to shape requirements, ran regular design-dev syncs, and delivered iterative UI improvements based on real user feedback.",
