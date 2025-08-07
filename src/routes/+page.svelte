@@ -98,7 +98,7 @@
 	// AboutMe data
 	const aboutMeStats: Stat[] = [
 		{ count: "12", label: "Years<br>Experience", type: "years" },
-		{ count: "15", label: "Teams<br>Lead", type: "scale" },
+		{ count: "15", label: "Teams<br>Led", type: "scale" },
 		{ count: "99.99%", label: "System<br>Uptime", type: "reliability" },
 		{ count: "16x", label: "Code<br>Reduction", type: "performance" },
 	];
