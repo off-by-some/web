@@ -34,6 +34,7 @@
     let selectedCategory: string | null = initialSelectedCategory;
     let hoveredSkill: string | null = null;
     let cardVisibilityStates: Map<number, { opacity: number; transform: string }> = new Map();
+    let announcementText: string = '';
 
     $: if (initialSelectedCategory !== undefined) {
         selectedCategory = initialSelectedCategory;
@@ -152,6 +153,11 @@
     function handleCategoryFilter(category: SkillCategory | null) {
         selectedCategory = category?.name || null;
         
+        // Announce filter change to screen readers
+        const skillCount = category ? category.skills.length : allSkills.length;
+        const categoryName = category ? category.name : "All Skills";
+        announcementText = `Filtered to ${categoryName}. Showing ${skillCount} skills.`;
+        
         cardVisibilityStates.clear();
         
         setTimeout(() => {
@@ -184,6 +190,34 @@
         }
     }
 
+    function handleKeydown(event: KeyboardEvent, index: number) {
+        switch (event.key) {
+            case 'Enter':
+            case ' ':
+                event.preventDefault();
+                const skill = filteredSkills[index];
+                handleSkillHover(skill, true);
+                announcementText = `Selected ${skill.name}. ${skill.level} level skill${skill.years ? ` with ${skill.years} years experience` : ''}${skill.description ? `. ${skill.description}` : ''}`;
+                return;
+            default:
+                return;
+        }
+    }
+    
+    function getColumnsPerRow(): number {
+        if (typeof window === 'undefined') return 2;
+        const width = window.innerWidth;
+        if (width >= 1024) return 3; // lg breakpoint
+        return 2;
+    }
+    
+    function handleFilterKeydown(event: KeyboardEvent, category: SkillCategory | null) {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            handleCategoryFilter(category);
+        }
+    }
+
     $: allSkills = skillCategories.flatMap((category) =>
         category.skills.map((skill) => ({ ...skill, categoryInfo: category })),
     );
@@ -203,75 +237,92 @@
     };
 </script>
 
-<section class="skills" id="skills" bind:this={skillsElement}>
+<section class="skills" id="skills" bind:this={skillsElement} role="region" aria-labelledby="skills-heading">
+    <!-- Screen reader announcements -->
+    <div class="sr-only" role="status" aria-live="polite" aria-atomic="true">
+        {announcementText}
+    </div>
     <Section className="skills__content">
         <div class="skills__container">
             <div class="skills__header">
-                <h2 class="skills__title">{title}</h2>
+                <h2 class="skills__title" id="skills-heading">{title}</h2>
                 <p class="skills__subtitle">{subtitle}</p>
             </div>
 
-            <div class="skills__filters">
+            <div class="skills__filters" role="tablist" aria-label="Filter skills by category">
                 <button
                     class="filter__button"
                     class:filter__button--active={!selectedCategory}
                     on:click={() => handleCategoryFilter(null)}
+                    on:keydown={(e) => handleFilterKeydown(e, null)}
+                    role="tab"
+                    aria-selected={!selectedCategory}
+                    aria-controls="skills-grid"
+                    id="filter-all"
                 >
                     All Skills
-                    <span class="filter__count">{allSkills.length}</span>
+                    <span class="filter__count" aria-label="{allSkills.length} skills">{allSkills.length}</span>
                 </button>
 
-                {#each skillCategories as category}
+                {#each skillCategories as category, index}
                     <button
                         class="filter__button"
-                        class:filter__button--active={selectedCategory ===
-                            category.name}
+                        class:filter__button--active={selectedCategory === category.name}
                         on:click={() => handleCategoryFilter(category)}
+                        on:keydown={(e) => handleFilterKeydown(e, category)}
+                        role="tab"
+                        aria-selected={selectedCategory === category.name}
+                        aria-controls="skills-grid"
+                        id="filter-{category.name.toLowerCase().replace(/\s+/g, '-')}"
                     >
-                        <span class="filter__icon">{category.icon}</span>
+                        <span class="filter__icon" aria-hidden="true">{category.icon}</span>
                         {category.name}
-                        <span class="filter__count"
-                            >{category.skills.length}</span
-                        >
+                        <span class="filter__count" aria-label="{category.skills.length} skills">{category.skills.length}</span>
                     </button>
                 {/each}
             </div>
 
-            <div class="skills__grid">
+            <div class="skills__grid" role="grid" aria-labelledby="skills-heading" id="skills-grid" aria-rowcount="{Math.ceil(filteredSkills.length / getColumnsPerRow())}" aria-colcount="{getColumnsPerRow()}">
                 {#each filteredSkills as skill, index}
                     <div
                         class="skill__card skill__card--{skill.level} skill__card--scroll-driven"
                         class:skill__card--hovered={hoveredSkill === skill.name}
+
                         data-card-index={index}
                         on:mouseenter={() => handleSkillHover(skill, true)}
                         on:mouseleave={() => handleSkillHover(skill, false)}
-                        role="button"
+                        on:keydown={(e) => handleKeydown(e, index)}
+                        role="gridcell"
                         tabindex="0"
-                        aria-label="{skill.name} - {skill.level} level"
+                        aria-rowindex="{Math.floor(index / getColumnsPerRow()) + 1}"
+                        aria-colindex="{(index % getColumnsPerRow()) + 1}"
+                        aria-label="{skill.name}. {skill.level} level skill{skill.years ? ` with ${skill.years} years experience` : ''}{skill.description ? `. ${skill.description}` : ''}"
+                        aria-describedby="skill-{index}-details"
                     >
                         <div class="skill__image">
                             <img
                                 src={skill.image}
-                                alt={skill.name}
+                                alt=""
                                 loading="lazy"
+                                role="presentation"
                             />
                             <div
                                 class="skill__level-indicator skill__level-indicator--{skill.level}"
+                                aria-label="{skill.level} level indicator"
+                                role="img"
                             ></div>
                         </div>
 
                         <div class="skill__content">
-                            <h3 class="skill__name">{skill.name}</h3>
-                            <div class="skill__meta">
-                                <span class="skill__level">{skill.level}</span>
+                            <h3 class="skill__name" id="skill-{index}-name">{skill.name}</h3>
+                            <div class="skill__meta" id="skill-{index}-details">
+                                <span class="skill__level" aria-label="Skill level: {skill.level}">{skill.level}</span>
                                 {#if skill.years}
-                                    <span class="skill__years"
-                                        >{skill.years}y</span
-                                    >
+                                    <span class="skill__years" aria-label="{skill.years} years of experience">{skill.years}y</span>
                                 {/if}
                             </div>
                             {#if skill.description}
-                                <p class="skill__description">
+                                <p class="skill__description" id="skill-{index}-desc">
                                     {skill.description}
                                 </p>
                             {/if}
@@ -282,46 +333,43 @@
                 {/each}
             </div>
 
-            <div class="skills__summary">
-                <div class="summary__grid">
-                    <div class="summary__card">
-                        <div class="summary__number">{allSkills.length}</div>
-                        <div class="summary__label">Technologies</div>
+            <div class="skills__summary" role="region" aria-labelledby="skills-summary-heading">
+                <h3 class="sr-only" id="skills-summary-heading">Skills Summary Statistics</h3>
+                <div class="summary__grid" role="list" aria-label="Skills statistics">
+                    <div class="summary__card" role="listitem" tabindex="0" aria-label="{allSkills.length} total technologies">
+                        <div class="summary__number" aria-hidden="true">{allSkills.length}</div>
+                        <div class="summary__label" aria-hidden="true">Technologies</div>
                     </div>
-                    <div class="summary__card">
-                        <div class="summary__number">
-                            {skillsByLevel.expert}
-                        </div>
-                        <div class="summary__label">Expert Level</div>
+                    <div class="summary__card" role="listitem" tabindex="0" aria-label="{skillsByLevel.expert} expert level skills">
+                        <div class="summary__number" aria-hidden="true">{skillsByLevel.expert}</div>
+                        <div class="summary__label" aria-hidden="true">Expert Level</div>
                     </div>
-                    <div class="summary__card">
-                        <div class="summary__number">
-                            {skillCategories.length}
-                        </div>
-                        <div class="summary__label">Domains</div>
+                    <div class="summary__card" role="listitem" tabindex="0" aria-label="{skillCategories.length} skill domains">
+                        <div class="summary__number" aria-hidden="true">{skillCategories.length}</div>
+                        <div class="summary__label" aria-hidden="true">Domains</div>
                     </div>
-                    <div class="summary__card">
-                        <div class="summary__number">12+</div>
-                        <div class="summary__label">Years</div>
+                    <div class="summary__card" role="listitem" tabindex="0" aria-label="Over 12 years of experience">
+                        <div class="summary__number" aria-hidden="true">12+</div>
+                        <div class="summary__label" aria-hidden="true">Years</div>
                     </div>
                 </div>
 
-                <div class="skills__legend">
-                    <div class="legend__item legend__item--expert">
-                        <div class="legend__dot"></div>
-                        <span>Expert</span>
+                <div class="skills__legend" role="list" aria-label="Skill level legend">
+                    <div class="legend__item legend__item--expert" role="listitem" tabindex="0" aria-label="Expert level skills indicator">
+                        <div class="legend__dot" aria-hidden="true"></div>
+                        <span aria-hidden="true">Expert</span>
                     </div>
-                    <div class="legend__item legend__item--advanced">
-                        <div class="legend__dot"></div>
-                        <span>Advanced</span>
+                    <div class="legend__item legend__item--advanced" role="listitem" tabindex="0" aria-label="Advanced level skills indicator">
+                        <div class="legend__dot" aria-hidden="true"></div>
+                        <span aria-hidden="true">Advanced</span>
                     </div>
-                    <div class="legend__item legend__item--proficient">
-                        <div class="legend__dot"></div>
-                        <span>Proficient</span>
+                    <div class="legend__item legend__item--proficient" role="listitem" tabindex="0" aria-label="Proficient level skills indicator">
+                        <div class="legend__dot" aria-hidden="true"></div>
+                        <span aria-hidden="true">Proficient</span>
                     </div>
-                    <div class="legend__item legend__item--learning">
-                        <div class="legend__dot"></div>
-                        <span>Learning</span>
+                    <div class="legend__item legend__item--learning" role="listitem" tabindex="0" aria-label="Learning level skills indicator">
+                        <div class="legend__dot" aria-hidden="true"></div>
+                        <span aria-hidden="true">Learning</span>
                     </div>
                 </div>
             </div>
@@ -349,6 +397,19 @@
     --skills-advanced-glow-strong: rgba(99, 102, 241, 0.3);
     --skills-proficient-glow-strong: rgba(245, 158, 11, 0.3);
     --skills-learning-glow-strong: rgba(6, 182, 212, 0.3);
+}
+
+/* Screen reader only content */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 
 .skills {
@@ -664,6 +725,15 @@
         outline-offset: 2px;
         box-shadow: var(--token-shadow-focus);
     }
+
+    &:focus {
+        outline: 2px solid var(--token-interactive-color);
+        outline-offset: 2px;
+        box-shadow: var(--token-shadow-focus);
+        z-index: 10;
+    }
+
+
 
     &--expert:hover {
         border-color: var(--skills-expert-color);

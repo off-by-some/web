@@ -54,7 +54,7 @@
           years: 8,
           category: "framework",
           description: "Advanced patterns, performance optimization",
-          image: "/react-logo.png"
+          image: "/react-logo.webp"
         },
         {
           name: "TypeScript",
@@ -62,7 +62,7 @@
           years: 6,
           category: "language",
           description: "Complex type systems, advanced generics",
-          image: "/javascript logo.png"
+          image: "/javascript logo.webp"
         },
         {
           name: "Next.js",
@@ -70,7 +70,7 @@
           years: 5,
           category: "framework",
           description: "SSR, SSG, App Router, performance",
-          image: "/react-logo.png"
+          image: "/react-logo.webp"
         },
         {
           name: "Svelte",
@@ -78,7 +78,7 @@
           years: 2,
           category: "framework",
           description: "Modern reactive patterns",
-          image: "/javascript logo.png"
+          image: "/javascript logo.webp"
         },
         {
           name: "GraphQL",
@@ -94,7 +94,7 @@
           years: 10,
           category: "styling",
           description: "SCSS, CSS-in-JS, design systems",
-          image: "/CSS-logo.jpg"
+          image: "/CSS-logo.webp"
         },
       ],
     },
@@ -110,7 +110,7 @@
           years: 7,
           category: "runtime",
           description: "Microservices, event-driven architecture",
-          image: "/nodejs.png"
+          image: "/nodejs.webp"
         },
         {
           name: "Python",
@@ -118,7 +118,7 @@
           years: 6,
           category: "language",
           description: "Django, FastAPI, data processing",
-          image: "/python logo.png"
+          image: "/python logo.webp"
         },
         {
           name: "Go",
@@ -126,7 +126,7 @@
           years: 3,
           category: "language",
           description: "High-performance services",
-          image: "/golang logo.png"
+          image: "/golang logo.webp"
         },
         {
           name: "PostgreSQL",
@@ -134,7 +134,7 @@
           years: 8,
           category: "database",
           description: "Complex queries, optimization",
-          image: "/postgresql.png"
+          image: "/postgresql.webp"
         },
         {
           name: "Redis",
@@ -142,7 +142,7 @@
           years: 5,
           category: "cache",
           description: "Caching strategies, pub/sub",
-          image: "/Redis-logo.png"
+          image: "/Redis-logo.webp"
         },
         {
           name: "Ruby on Rails",
@@ -150,7 +150,7 @@
           years: 9,
           category: "framework",
           description: "Full-stack web applications",
-          image: "/RoR.png"
+          image: "/RoR.webp"
         },
       ],
     },
@@ -166,7 +166,7 @@
           years: 6,
           category: "cloud",
           description: "EC2, Lambda, RDS, S3, CloudFormation",
-          image: "/AWS-logo.png"
+          image: "/AWS-logo.webp"
         },
         {
           name: "Kubernetes",
@@ -174,7 +174,7 @@
           years: 4,
           category: "orchestration",
           description: "Container orchestration, scaling",
-          image: "/kubernetes.png"
+          image: "/kubernetes.webp"
         },
         {
           name: "Docker",
@@ -182,7 +182,7 @@
           years: 7,
           category: "containerization",
           description: "Multi-stage builds, optimization",
-          image: "/docker-logo.png"
+          image: "/docker-logo.webp"
         },
         {
           name: "Terraform",
@@ -190,7 +190,7 @@
           years: 3,
           category: "iac",
           description: "Infrastructure as Code",
-          image: "/terraform.png"
+          image: "/terraform.webp"
         },
         {
           name: "CI/CD",
@@ -198,7 +198,7 @@
           years: 8,
           category: "automation",
           description: "GitHub Actions, Jenkins, deployment",
-          image: "/circleci.png"
+          image: "/circleci.webp"
         },
         {
           name: "Git",
@@ -206,7 +206,7 @@
           years: 5,
           category: "version-control",
           description: "Version control, branching strategies",
-          image: "/git.png"
+          image: "/git.webp"
         },
       ],
     },
@@ -222,7 +222,7 @@
           years: 8,
           category: "management",
           description: "Built and led 15+ engineering teams",
-          image: "/agile.png"
+          image: "/agile.webp"
         },
         {
           name: "Architecture",
@@ -230,7 +230,7 @@
           years: 10,
           category: "design",
           description: "System design, scalability planning",
-          image: "/agile.png"
+          image: "/agile.webp"
         },
         {
           name: "Mentoring",
@@ -238,7 +238,7 @@
           years: 9,
           category: "development",
           description: "Career development, technical growth",
-          image: "/agile.png"
+          image: "/agile.webp"
         },
         {
           name: "Product Strategy",
@@ -246,7 +246,7 @@
           years: 7,
           category: "business",
           description: "Technical roadmaps, stakeholder alignment",
-          image: "/agile.png"
+          image: "/agile.webp"
         },
         {
           name: "Apache Kafka",
@@ -254,7 +254,7 @@
           years: 12,
           category: "messaging",
           description: "Event streaming, real-time data processing",
-          image: "/apachekafka.png"
+          image: "/apachekafka.webp"
         },
         {
           name: "Django",
@@ -262,7 +262,7 @@
           years: 10,
           category: "framework",
           description: "Python web framework, REST APIs",
-          image: "/django.png"
+          image: "/django.webp"
         },
       ],
     },
@@ -286,7 +286,7 @@
             years: 8,
             category: "framework",
             description: "Advanced patterns, performance optimization",
-            image: "/react-logo.png"
+            image: "/react-logo.webp"
           },
           {
             name: "TypeScript",
@@ -294,7 +294,7 @@
             years: 6,
             category: "language",
             description: "Complex type systems, advanced generics",
-            image: "/javascript logo.png"
+            image: "/javascript logo.webp"
           },
           {
             name: "Next.js",
@@ -302,7 +302,7 @@
             years: 5,
             category: "framework",
             description: "SSR, SSG, App Router, performance",
-            image: "/react-logo.png"
+            image: "/react-logo.webp"
           },
           {
             name: "Svelte",
@@ -310,7 +310,7 @@
             years: 2,
             category: "framework",
             description: "Modern reactive patterns",
-            image: "/javascript logo.png"
+            image: "/javascript logo.webp"
           },
           {
             name: "GraphQL",
@@ -326,7 +326,7 @@
             years: 10,
             category: "styling",
             description: "SCSS, CSS-in-JS, design systems",
-            image: "/CSS-logo.jpg"
+            image: "/CSS-logo.webp"
           },
         ],
       },
@@ -342,7 +342,7 @@
             years: 7,
             category: "runtime",
             description: "Microservices, event-driven architecture",
-            image: "/nodejs.png"
+            image: "/nodejs.webp"
           },
           {
             name: "Python",
@@ -350,7 +350,7 @@
             years: 6,
             category: "language",
             description: "Django, FastAPI, data processing",
-            image: "/python logo.png"
+            image: "/python logo.webp"
           },
           {
             name: "Go",
@@ -358,7 +358,7 @@
             years: 3,
             category: "language",
             description: "High-performance services",
-            image: "/golang logo.png"
+            image: "/golang logo.webp"
           },
           {
             name: "PostgreSQL",
@@ -366,7 +366,7 @@
             years: 8,
             category: "database",
             description: "Complex queries, optimization",
-            image: "/postgresql.png"
+            image: "/postgresql.webp"
           },
           {
             name: "Redis",
@@ -374,7 +374,7 @@
             years: 5,
             category: "cache",
             description: "Caching strategies, pub/sub",
-            image: "/Redis-logo.png"
+            image: "/Redis-logo.webp"
           },
           {
             name: "Ruby on Rails",
@@ -382,7 +382,7 @@
             years: 9,
             category: "framework",
             description: "Full-stack web applications",
-            image: "/RoR.png"
+            image: "/RoR.webp"
           },
         ],
       },
@@ -398,7 +398,7 @@
             years: 6,
             category: "cloud",
             description: "EC2, Lambda, RDS, S3, CloudFormation",
-            image: "/AWS-logo.png"
+            image: "/AWS-logo.webp"
           },
           {
             name: "Kubernetes",
@@ -406,7 +406,7 @@
             years: 4,
             category: "orchestration",
             description: "Container orchestration, scaling",
-            image: "/kubernetes.png"
+            image: "/kubernetes.webp"
           },
           {
             name: "Docker",
@@ -414,7 +414,7 @@
             years: 7,
             category: "containerization",
             description: "Multi-stage builds, optimization",
-            image: "/docker-logo.png"
+            image: "/docker-logo.webp"
           },
           {
             name: "Terraform",
@@ -422,7 +422,7 @@
             years: 3,
             category: "iac",
             description: "Infrastructure as Code",
-            image: "/terraform.png"
+            image: "/terraform.webp"
           },
           {
             name: "CI/CD",
@@ -430,7 +430,7 @@
             years: 8,
             category: "automation",
             description: "GitHub Actions, Jenkins, deployment",
-            image: "/circleci.png"
+            image: "/circleci.webp"
           },
           {
             name: "Git",
@@ -438,7 +438,7 @@
             years: 5,
             category: "version-control",
             description: "Version control, branching strategies",
-            image: "/git.png"
+            image: "/git.webp"
           },
         ],
       },
@@ -454,7 +454,7 @@
             years: 8,
             category: "management",
             description: "Built and led 15+ engineering teams",
-            image: "/agile.png"
+            image: "/agile.webp"
           },
           {
             name: "Architecture",
@@ -462,7 +462,7 @@
             years: 10,
             category: "design",
             description: "System design, scalability planning",
-            image: "/agile.png"
+            image: "/agile.webp"
           },
           {
             name: "Mentoring",
@@ -470,7 +470,7 @@
             years: 9,
             category: "development",
             description: "Career development, technical growth",
-            image: "/agile.png"
+            image: "/agile.webp"
           },
           {
             name: "Product Strategy",
@@ -478,7 +478,7 @@
             years: 7,
             category: "business",
             description: "Technical roadmaps, stakeholder alignment",
-            image: "/agile.png"
+            image: "/agile.webp"
           },
           {
             name: "Apache Kafka",
@@ -486,7 +486,7 @@
             years: 12,
             category: "messaging",
             description: "Event streaming, real-time data processing",
-            image: "/apachekafka.png"
+            image: "/apachekafka.webp"
           },
           {
             name: "Django",
@@ -494,7 +494,7 @@
             years: 10,
             category: "framework",
             description: "Python web framework, REST APIs",
-            image: "/django.png"
+            image: "/django.webp"
           },
         ],
       },
@@ -522,7 +522,7 @@
           years: 8,
           category: "framework",
           description: "Advanced patterns, performance optimization",
-          image: "/react-logo.png"
+          image: "/react-logo.webp"
         },
         {
           name: "TypeScript",
@@ -530,7 +530,7 @@
           years: 6,
           category: "language",
           description: "Complex type systems, advanced generics",
-          image: "/javascript logo.png"
+          image: "/javascript logo.webp"
         },
         {
           name: "CSS",
@@ -538,7 +538,7 @@
           years: 10,
           category: "styling",
           description: "SCSS, CSS-in-JS, design systems",
-          image: "/CSS-logo.jpg"
+          image: "/CSS-logo.webp"
         },
       ],
     },
@@ -554,7 +554,7 @@
           years: 7,
           category: "runtime",
           description: "Microservices, event-driven architecture",
-          image: "/nodejs.png"
+          image: "/nodejs.webp"
         },
         {
           name: "Python",
@@ -562,7 +562,7 @@
           years: 6,
           category: "language",
           description: "Django, FastAPI, data processing",
-          image: "/python logo.png"
+          image: "/python logo.webp"
         },
         {
           name: "PostgreSQL",
@@ -570,7 +570,7 @@
           years: 8,
           category: "database",
           description: "Complex queries, optimization",
-          image: "/postgresql.png"
+          image: "/postgresql.webp"
         },
       ],
     },
@@ -594,7 +594,7 @@
             years: 8,
             category: "framework",
             description: "Advanced patterns, performance optimization",
-            image: "/react-logo.png"
+            image: "/react-logo.webp"
           },
           {
             name: "TypeScript",
@@ -602,7 +602,7 @@
             years: 6,
             category: "language",
             description: "Complex type systems, advanced generics",
-            image: "/javascript logo.png"
+            image: "/javascript logo.webp"
           },
           {
             name: "CSS",
@@ -610,7 +610,7 @@
             years: 10,
             category: "styling",
             description: "SCSS, CSS-in-JS, design systems",
-            image: "/CSS-logo.jpg"
+            image: "/CSS-logo.webp"
           },
         ],
       },
@@ -626,7 +626,7 @@
             years: 7,
             category: "runtime",
             description: "Microservices, event-driven architecture",
-            image: "/nodejs.png"
+            image: "/nodejs.webp"
           },
           {
             name: "Python",
@@ -634,7 +634,7 @@
             years: 6,
             category: "language",
             description: "Django, FastAPI, data processing",
-            image: "/python logo.png"
+            image: "/python logo.webp"
           },
           {
             name: "PostgreSQL",
@@ -642,7 +642,7 @@
             years: 8,
             category: "database",
             description: "Complex queries, optimization",
-            image: "/postgresql.png"
+            image: "/postgresql.webp"
           },
         ],
       },
@@ -670,7 +670,7 @@
           years: 8,
           category: "framework",
           description: "Advanced patterns, performance optimization",
-          image: "/react-logo.png"
+          image: "/react-logo.webp"
         },
         {
           name: "TypeScript",
@@ -678,7 +678,7 @@
           years: 6,
           category: "language",
           description: "Complex type systems, advanced generics",
-          image: "/javascript logo.png"
+          image: "/javascript logo.webp"
         },
       ],
     },
@@ -694,7 +694,7 @@
           years: 7,
           category: "runtime",
           description: "Microservices, event-driven architecture",
-          image: "/nodejs.png"
+          image: "/nodejs.webp"
         },
         {
           name: "Python",
@@ -702,7 +702,7 @@
           years: 6,
           category: "language",
           description: "Django, FastAPI, data processing",
-          image: "/python logo.png"
+          image: "/python logo.webp"
         },
       ],
     },
@@ -726,7 +726,7 @@
             years: 8,
             category: "framework",
             description: "Advanced patterns, performance optimization",
-            image: "/react-logo.png"
+            image: "/react-logo.webp"
           },
           {
             name: "TypeScript",
@@ -734,7 +734,7 @@
             years: 6,
             category: "language",
             description: "Complex type systems, advanced generics",
-            image: "/javascript logo.png"
+            image: "/javascript logo.webp"
           },
         ],
       },
@@ -750,7 +750,7 @@
             years: 7,
             category: "runtime",
             description: "Microservices, event-driven architecture",
-            image: "/nodejs.png"
+            image: "/nodejs.webp"
           },
           {
             name: "Python",
@@ -758,7 +758,7 @@
             years: 6,
             category: "language",
             description: "Django, FastAPI, data processing",
-            image: "/python logo.png"
+            image: "/python logo.webp"
           },
         ],
       },

@@ -7,7 +7,7 @@
     {
       title: "Scribe – Senior Software Engineer",
       company: "Scribe",
-      logo: "/company_logos/scribehow_logo.jpg",
+      logo: "/company_logos/scribehow_logo.webp",
       date: "Apr 2023 – Dec 2024",
       dateValue: "Apr 2023",
       location: "Remote",
@@ -25,7 +25,7 @@
     {
       title: "Green Bits Inc & Dutchie – Senior Software Engineer II",
       company: "Green Bits Inc & Dutchie",
-      logo: "/company_logos/getdutchie_logo.jpg",
+      logo: "/company_logos/getdutchie_logo.webp",
       date: "Apr 2017 – Dec 2022",
       dateValue: "Apr 2017",
       location: "Remote",
@@ -43,7 +43,7 @@
     {
       title: "Import.io – Front-End Engineer",
       company: "Import.io",
-      logo: "/company_logos/import_io_logo.jpg",
+      logo: "/company_logos/import_io_logo.webp",
       date: "Aug 2016 – Apr 2017",
       dateValue: "Aug 2016",
       location: "Los Gatos, California",
@@ -59,7 +59,7 @@
     {
       title: "UpGuard – Software Engineer",
       company: "UpGuard",
-      logo: "/company_logos/upguard_logo.jpg",
+      logo: "/company_logos/upguard_logo.webp",
       date: "Oct 2016 – Sep 2017",
       dateValue: "Oct 2016",
       location: "Mountain View, California",
@@ -75,7 +75,7 @@
     {
       title: "LaunchBadge LLC – Full-Stack Developer / CTO",
       company: "LaunchBadge LLC",
-      logo: "/company_logos/launchbadge_logo.jpg",
+      logo: "/company_logos/launchbadge_logo.webp",
       date: "Feb 2015 – Sep 2016",
       dateValue: "Feb 2015",
       location: "Sacramento, California Area",
@@ -94,7 +94,7 @@
     {
       title: "Senior Software Engineer",
       company: "Tech Company",
-      logo: "/company_logos/concordus-applications.jpg",
+      logo: "/company_logos/concordus-applications.webp",
       date: "2023 – Present",
       dateValue: "2023",
       location: "Remote",
@@ -109,7 +109,7 @@
     {
       title: "Frontend Developer",
       company: "Startup Inc",
-      logo: "/company_logos/rezku-dark-acc4b79577.png",
+      logo: "/company_logos/rezku-dark-acc4b79577.webp",
       date: "2021 – 2023",
       dateValue: "2021",
       location: "San Francisco, CA",
@@ -266,7 +266,7 @@ Each experience item should have:
   experiences: defaultExperiences,
   title: "Professional Experience",
   enableProfileEffects: true,
-  profileImage: "/headshot.PNG",
+  profileImage: "/headshot.webp",
   profileName: "Cassidy Bridges",
   profileTitle: "Software Engineering Leader"
 }}>
@@ -274,7 +274,7 @@ Each experience item should have:
     experiences={defaultExperiences}
     title="Professional Experience"
     enableProfileEffects={true}
-    profileImage="/headshot.PNG"
+    profileImage="/headshot.webp"
     profileName="Cassidy Bridges"
     profileTitle="Software Engineering Leader"
     on:experienceSelect={(e) => console.log('Experience selected:', e.detail)}

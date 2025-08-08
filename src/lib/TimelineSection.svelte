@@ -26,10 +26,17 @@
     let timelineElement: HTMLElement | null = null;
     let timelineProgressElement: HTMLElement | null = null;
     let activeIndex = 0;
+    let announcementText: string = '';
+    let focusedItemIndex: number = 0;
 
     onMount(() => {
         const cleanup = initScrollWatcher();
         initProgressAnimation();
+        
+        // Initialize tabindex management after component mounts
+        setTimeout(() => {
+            updateTabIndexForCollapsedContent();
+        }, 100);
 
         return () => {
             if (cleanup) cleanup();
@@ -140,30 +147,115 @@
 
         if (isExpanded) {
             expandedItems.delete(index);
+            announcementText = `Collapsed details for ${experience.title} at ${experience.company}`;
         } else {
             expandedItems.add(index);
+            announcementText = `Expanded details for ${experience.title} at ${experience.company}. Showing ${experience.highlights.length} key achievements and ${experience.skills.length} skills.`;
         }
 
         expandedItems = new Set(expandedItems);
         dispatch("experienceSelect", { experience });
+        
+        // Update tabindex for all focusable elements in the details section
+        setTimeout(() => {
+            updateTabIndexForCollapsedContent();
+        }, 50);
+    }
+    
+    function updateTabIndexForCollapsedContent() {
+        if (!timelineElement) return;
+        
+        const detailsSections = timelineElement.querySelectorAll('.timeline__details');
+        detailsSections.forEach((section, index) => {
+            const isExpanded = expandedItems.has(index);
+            const focusableElements = section.querySelectorAll('button, [tabindex], a, input, select, textarea');
+            
+            focusableElements.forEach(element => {
+                if (isExpanded) {
+                    // Restore original tabindex or set to 0 if it was -1
+                    const originalTabindex = element.getAttribute('data-original-tabindex');
+                    if (originalTabindex !== null) {
+                        element.setAttribute('tabindex', originalTabindex);
+                    } else {
+                        element.setAttribute('tabindex', '0');
+                    }
+                } else {
+                    // Store original tabindex and set to -1
+                    const currentTabindex = element.getAttribute('tabindex') || '0';
+                    element.setAttribute('data-original-tabindex', currentTabindex);
+                    element.setAttribute('tabindex', '-1');
+                }
+            });
+        });
+    }
+    
+    function handleTimelineKeydown(event: KeyboardEvent, index: number) {
+        switch (event.key) {
+            case 'Enter':
+            case ' ':
+                event.preventDefault();
+                // Focus and trigger the toggle button instead of handling directly
+                const toggleButton = timelineElement?.querySelector(`#toggle-${index}`) as HTMLButtonElement;
+                if (toggleButton) {
+                    toggleButton.focus();
+                    toggleButton.click();
+                }
+                return;
+            default:
+                return;
+        }
+    }
+    
+    function handleToggleKeydown(event: KeyboardEvent, experience: Experience, index: number) {
+        if (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') {
+            event.preventDefault();
+            event.stopPropagation(); // Prevent event bubbling
+            handleReadMore(event, experience, index);
+        }
+    }
+    
+    function handleTimelineFocus(index: number) {
+        // When a timeline item receives focus via Tab, scroll it into view and make it active
+        const timelineItem = timelineElement?.querySelector(`[data-timeline-index="${index}"]`) as HTMLElement;
+        if (timelineItem) {
+            // Smooth scroll to center the item in the viewport
+            timelineItem.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center',
+                inline: 'nearest'
+            });
+            
+            // Update active index to match the focused item
+            activeIndex = index;
+            updateTimelineProgress(index);
+            
+            // Announce the active item
+            const experience = experiences[index];
+            announcementText = `Focused on ${experience.title} at ${experience.company}, ${experience.date}`;
+        }
     }
 </script>
 
-<section class="timeline" id="experience">
+<section class="timeline" id="experience" role="region" aria-labelledby="timeline-heading">
+    <!-- Screen reader announcements -->
+    <div class="sr-only" role="status" aria-live="polite" aria-atomic="true">
+        {announcementText}
+    </div>
     <Section className="timeline__content">
         <div class="timeline__header">
-            <h2 class="timeline__title">{title}</h2>
+            <h2 class="timeline__title" id="timeline-heading">{title}</h2>
             <div class="timeline__subtitle">
                 Building exceptional teams and products across {experiences.length}
                 organizations
             </div>
         </div>
 
-        <div class="timeline__container" bind:this={timelineElement}>
-            <div class="timeline__line">
+        <div class="timeline__container" bind:this={timelineElement} role="list" aria-label="Professional experience timeline">
+            <div class="timeline__line" role="presentation" aria-hidden="true">
                 <div
                     class="timeline__progress"
                     bind:this={timelineProgressElement}
+                    aria-label="Timeline progress indicator"
                 ></div>
             </div>
 
@@ -174,38 +266,49 @@
                     class:timeline__item--expanded={expandedItems.has(index)}
                     class:timeline__item--left={index % 2 === 0}
                     class:timeline__item--right={index % 2 === 1}
+
                     data-index={index}
+                    data-timeline-index={index}
+                    role="listitem"
+                    tabindex="0"
+                    on:keydown={(e) => handleTimelineKeydown(e, index)}
+                    on:focus={() => handleTimelineFocus(index)}
+                    aria-label="{experience.title} at {experience.company}, {experience.date}. {activeIndex === index ? 'Currently active. ' : ''}Press Enter to {expandedItems.has(index) ? 'collapse' : 'expand'} details."
                 >
                     <div class="timeline__card">
-                        <div class="timeline__marker">
-                            <div class="timeline__dot"></div>
+                        <div class="timeline__marker" role="presentation" aria-hidden="true">
+                            <div class="timeline__dot" aria-label="Timeline marker for {experience.dateValue}"></div>
                             <div class="timeline__date">{experience.dateValue}</div>
                         </div>
                         <div class="timeline__card-header">
                             <div class="timeline__logo-container">
                                 <img
                                     src={experience.logo}
-                                    alt="{experience.company} logo"
+                                    alt=""
                                     class="timeline__logo"
                                     loading="lazy"
+                                    role="presentation"
                                 />
                             </div>
                             <div class="timeline__meta">
-                                <h3 class="timeline__role">
+                                <h3 class="timeline__role" id="experience-{index}-title">
                                     {experience.title}
                                 </h3>
-                                <div class="timeline__company">
+                                <div class="timeline__company" id="experience-{index}-company">
                                     {experience.company}
                                 </div>
-                                <div class="timeline__period">
+                                <div class="timeline__period" id="experience-{index}-period">
                                     {experience.date} • {experience.location}
                                 </div>
                             </div>
                             <button
                                 class="timeline__toggle"
-                                on:click={(e) =>
-                                    handleReadMore(e, experience, index)}
+                                on:click={(e) => handleReadMore(e, experience, index)}
+                                on:keydown={(e) => handleToggleKeydown(e, experience, index)}
                                 aria-expanded={expandedItems.has(index)}
+                                aria-controls="experience-{index}-details"
+                                aria-label="{expandedItems.has(index) ? 'Hide' : 'Show'} details for {experience.title} at {experience.company}"
+                                id="toggle-{index}"
                             >
                                 <span class="toggle__text">
                                     {expandedItems.has(index)
@@ -218,6 +321,7 @@
                                     height="24"
                                     viewBox="0 0 24 24"
                                     fill="none"
+                                    aria-hidden="true"
                                 >
                                     <path
                                         d="M6 9L12 15L18 9"
@@ -230,28 +334,31 @@
                             </button>
                         </div>
 
-                        <div class="timeline__summary">
+                        <div class="timeline__summary" id="experience-{index}-summary">
                             {experience.summary}
                         </div>
 
                         <div
                             class="timeline__details"
-                            class:timeline__details--expanded={expandedItems.has(
-                                index,
-                            )}
+                            class:timeline__details--expanded={expandedItems.has(index)}
+                            id="experience-{index}-details"
+                            role="region"
+                            aria-labelledby="experience-{index}-title"
+                            aria-hidden={!expandedItems.has(index)}
+                            inert={!expandedItems.has(index)}
                         >
                             <div class="timeline__highlights">
-                                <h4>Key Achievements</h4>
-                                <ul>
-                                    {#each experience.highlights as highlight}
-                                        <li>{highlight}</li>
+                                <h4 id="experience-{index}-achievements">Key Achievements</h4>
+                                <ul role="list" aria-labelledby="experience-{index}-achievements">
+                                    {#each experience.highlights as highlight, highlightIndex}
+                                        <li role="listitem">{highlight}</li>
                                     {/each}
                                 </ul>
                             </div>
 
-                            <div class="timeline__skills">
-                                {#each experience.skills as skill}
-                                    <span class="timeline__skill">{skill}</span>
+                            <div class="timeline__skills" role="list" aria-label="Skills used in this role">
+                                {#each experience.skills as skill, skillIndex}
+                                    <span class="timeline__skill" role="listitem" tabindex={expandedItems.has(index) ? "0" : "-1"} aria-label="Skill: {skill}">{skill}</span>
                                 {/each}
                             </div>
                         </div>
@@ -266,6 +373,19 @@
 @use "styles/_reset.scss" as *;
 @use "styles/animations.scss" as *;
 @use "styles/_tokens.scss" as *;
+
+/* Screen reader only content */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
 
 .timeline {
     position: relative;
@@ -402,6 +522,10 @@
         gap: var(--token-space-fluid-lg) var(--token-space-fluid-2xl);
         padding-left: 0;
         margin-bottom: var(--token-space-fluid-3xl);
+    }
+
+    &:focus {
+        outline: none; 
     }
 }
 
@@ -673,6 +797,11 @@
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.4s var(--token-motion-ease-out);
+    
+    /* Ensure collapsed content is completely inaccessible */
+    &:not(.timeline__details--expanded) {
+        visibility: hidden;
+    }
 }
 
 .timeline__details--expanded {
@@ -766,6 +895,14 @@
     &:hover {
         background: var(--token-tint-highlight);
         border-color: var(--token-text-emphasis-default);
+        transform: translateY(-1px);
+    }
+
+    &:focus {
+        outline: 2px solid var(--token-interactive-color);
+        outline-offset: 2px;
+        background: var(--token-interactive-color);
+        color: var(--token-text-dark);
         transform: translateY(-1px);
     }
 }

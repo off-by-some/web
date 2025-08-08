@@ -83,7 +83,7 @@
   statusText: "Available for new opportunities",
   valueHeadline: "I architect systems that scale, lead teams that thrive, and build products that last.",
   valueDescription: "With over a decade of experience turning complex challenges into elegant solutions, I specialize in building high-performance engineering teams and resilient distributed systems. From React frontends to cloud infrastructure, I create technology that just works.",
-  avatarSrc: "/headshot.PNG",
+  avatarSrc: "/headshot.webp",
   avatarAlt: "Cassidy Bridges",
   primaryButtonText: "View Experience",
   primaryButtonHref: "#experience",
@@ -126,7 +126,7 @@
     statusText="Available for new opportunities"
     valueHeadline="I architect systems that scale, lead teams that thrive, and build products that last."
     valueDescription="With over a decade of experience turning complex challenges into elegant solutions, I specialize in building high-performance engineering teams and resilient distributed systems. From React frontends to cloud infrastructure, I create technology that just works."
-    avatarSrc="/headshot.PNG"
+    avatarSrc="/headshot.webp"
     avatarAlt="Cassidy Bridges"
     primaryButtonText="View Experience"
     primaryButtonHref="#experience"
