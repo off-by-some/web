@@ -53,7 +53,7 @@
 		label: string;
 		value: string;
 		href: string;
-		icon: string;
+		imagePath: string;
 		description: string;
 	}
 
@@ -107,7 +107,7 @@
 			label: "Email",
 			value: emailAddress,
 			href: `mailto:${emailAddress}`,
-			icon: "✉️",
+			imagePath: `${base}/email_brand_icon.svg`,
 			description: "Direct message"
 		},
 		{
@@ -115,7 +115,7 @@
 			label: "LinkedIn",
 			value: "/in/cassidy-bridges-tech",
 			href: "https://linkedin.com/in/cassidy-bridges-tech",
-			icon: "💼",
+			imagePath: `${base}/linkedin_brand_icon.svg`,
 			description: "Professional network"
 		},
 		{
@@ -123,7 +123,7 @@
 			label: "GitHub",
 			value: "@off-by-some",
 			href: "https://github.com/off-by-some",
-			icon: "🚀",
+			imagePath: `${base}/github_brand_icon.svg`,
 			description: "View my code"
 		},
 		// {
@@ -689,9 +689,9 @@
 	<!-- Skills Section -->
 	<SkillsSection
 		title="Technical Expertise"
-		subtitle="Mastery forged through years of hands-on experience"
+		subtitle="Skills shaped by curiosity, tested through years of real-world impact."
 		{skillCategories}
-		initialSelectedCategory={selectedSkillsCategory}
+		initialSelectedCategory={selectedSkillsCategory || skillCategories[0]?.name}
 		on:skillSelect={(e) => console.log('Skill selected:', e.detail)}
 		on:categorySelect={(e) => console.log('Category selected:', e.detail)}
 	/>

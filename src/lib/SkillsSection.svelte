@@ -30,211 +30,240 @@
         categorySelect: { category: SkillCategory };
     }>();
 
+    const scrollConfig = {
+        enterOffset: 150,
+        exitOffset: 100,
+        staggerDelay: 50,
+        maxStagger: 800,
+        fadeDistance: { enter: 150, exit: 100 },
+        transform: { translateY: 40, scale: { min: 0.95, max: 1 } }
+    };
+
     let skillsElement: HTMLElement | null = null;
     let selectedCategory: string | null = initialSelectedCategory;
     let hoveredSkill: string | null = null;
     let cardVisibilityStates: Map<number, { opacity: number; transform: string }> = new Map();
     let announcementText: string = '';
 
-    $: if (initialSelectedCategory !== undefined) {
-        selectedCategory = initialSelectedCategory;
-    }
-
-    onMount(() => {
-        const cleanup = initScrollBasedRendering();
-        
-        return () => {
-            if (cleanup) cleanup();
+    const getViewportBounds = () => {
+        const viewportTop = window.scrollY;
+        const viewportHeight = window.innerHeight;
+        return {
+            top: viewportTop,
+            bottom: viewportTop + viewportHeight,
+            height: viewportHeight
         };
-    });
+    };
 
-    function initScrollBasedRendering() {
+    const getCardBounds = (element: HTMLElement) => {
+        const rect = element.getBoundingClientRect();
+        const top = rect.top + window.scrollY;
+        return {
+            top,
+            bottom: top + rect.height,
+            center: top + rect.height / 2,
+            height: rect.height
+        };
+    };
+
+    const calculateVisibility = (cardBounds: ReturnType<typeof getCardBounds>, viewportBounds: ReturnType<typeof getViewportBounds>) => {
+        const { top: cardTop, bottom: cardBottom } = cardBounds;
+        const { top: viewportTop, bottom: viewportBottom } = viewportBounds;
+        
+        const fadeInStart = viewportBottom + scrollConfig.enterOffset;
+        const fullyVisibleStart = viewportBottom;
+        const fullyVisibleEnd = viewportTop;
+        const fadeOutEnd = viewportTop - scrollConfig.exitOffset;
+
+        if (cardTop > fadeInStart || cardBottom < fadeOutEnd) return 0;
+        
+        if (cardTop <= fullyVisibleStart && cardBottom >= fullyVisibleEnd) return 1;
+        
+        if (cardTop > fullyVisibleStart) {
+            const distanceBelow = cardTop - fullyVisibleStart;
+            return Math.max(0, 1 - (distanceBelow / scrollConfig.fadeDistance.enter));
+        }
+        
+        if (cardBottom < fullyVisibleEnd) {
+            const distanceAbove = fullyVisibleEnd - cardBottom;
+            return Math.max(0, 1 - (distanceAbove / scrollConfig.fadeDistance.exit));
+        }
+        
+        return 0;
+    };
+
+    const calculateTransform = (visibility: number) => {
+        const progress = Math.max(0, Math.min(1, visibility));
+        const translateY = scrollConfig.transform.translateY * (1 - progress);
+        const scale = scrollConfig.transform.scale.min + 
+                     (scrollConfig.transform.scale.max - scrollConfig.transform.scale.min) * progress;
+        return { translateY, scale };
+    };
+
+    const applyCardStyles = (element: HTMLElement, opacity: number, transform: { translateY: number; scale: number }) => {
+        Object.assign(element.style, {
+            opacity: opacity.toString(),
+            transform: `translateY(${transform.translateY}px) scale(${transform.scale})`,
+            transition: 'opacity 0.3s ease-out, transform 0.3s ease-out'
+        });
+    };
+
+    const handleScrollAnimation = () => {
         if (!skillsElement) return;
 
-        const config = {
-            enterOffset: 150,
-            exitOffset: 100,
-            staggerDelay: 50,
-            maxStagger: 800,
-        };
-
-        const handleScroll = () => {
-            const container = skillsElement;
-            if (!container) return;
-
-            const viewportHeight = window.innerHeight;
-            const viewportTop = window.scrollY;
-            const viewportBottom = viewportTop + viewportHeight;
+        const viewportBounds = getViewportBounds();
+        const cards = skillsElement.querySelectorAll(".skill__card");
+        
+        cards.forEach((card, index) => {
+            const element = card as HTMLElement;
+            const cardBounds = getCardBounds(element);
             
-            const cards = container.querySelectorAll(".skill__card");
+            let visibility = calculateVisibility(cardBounds, viewportBounds);
             
-            cards.forEach((card, index) => {
-                const cardElement = card as HTMLElement;
-                const cardRect = cardElement.getBoundingClientRect();
-                const cardTop = cardRect.top + viewportTop;
-                const cardBottom = cardTop + cardRect.height;
-                const cardCenter = cardTop + cardRect.height / 2;
+            if (visibility > 0 && cardBounds.top > viewportBounds.bottom) {
+                const staggerOffset = index * 0.1;
+                const adjustedProgress = Math.max(0, visibility - staggerOffset);
+                visibility = Math.min(visibility, adjustedProgress + staggerOffset);
+            }
 
-                let visibility = 0;
-                let translateY = 40;
-                let scale = 0.95;
-
-                const fadeInStart = viewportBottom + config.enterOffset;
-                const fullyVisibleStart = viewportBottom;
-                const fullyVisibleEnd = viewportTop;
-                const fadeOutEnd = viewportTop - config.exitOffset;
-
-                if (cardTop <= fadeInStart && cardBottom >= fadeOutEnd) {
-                    if (cardTop <= fullyVisibleStart && cardBottom >= fullyVisibleEnd) {
-                        visibility = 1;
-                        translateY = 0;
-                        scale = 1;
-                    } else if (cardTop > fullyVisibleStart) {
-                        const distanceBelow = cardTop - fullyVisibleStart;
-                        const fadeDistance = config.enterOffset;
-                        const fadeProgress = Math.max(0, 1 - (distanceBelow / fadeDistance));
-                        
-                        visibility = fadeProgress;
-                        translateY = 40 * (1 - fadeProgress);
-                        scale = 0.95 + (0.05 * fadeProgress);
-                    } else if (cardBottom < fullyVisibleEnd) {
-                        const distanceAbove = fullyVisibleEnd - cardBottom;
-                        const fadeDistance = config.exitOffset;
-                        const fadeProgress = Math.max(0, 1 - (distanceAbove / fadeDistance));
-                        
-                        visibility = fadeProgress;
-                        translateY = 40 * (1 - fadeProgress);
-                        scale = 0.95 + (0.05 * fadeProgress);
-                    }
-                }
-
-                let finalOpacity = visibility;
-                if (visibility > 0 && cardTop > fullyVisibleStart) {
-                    const staggerOffset = index * 0.1;
-                    const adjustedProgress = Math.max(0, visibility - staggerOffset);
-                    finalOpacity = Math.min(visibility, adjustedProgress + staggerOffset);
-                }
-
-                const newState = {
-                    opacity: Math.max(0, Math.min(1, finalOpacity)),
-                    transform: `translateY(${translateY}px) scale(${scale})`
-                };
-
-                cardElement.style.opacity = newState.opacity.toString();
-                cardElement.style.transform = newState.transform;
-                cardElement.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
-
-                cardVisibilityStates.set(index, newState);
+            const transform = calculateTransform(visibility);
+            applyCardStyles(element, visibility, transform);
+            
+            cardVisibilityStates.set(index, {
+                opacity: visibility,
+                transform: `translateY(${transform.translateY}px) scale(${transform.scale})`
             });
-        };
+        });
+    };
 
+    const createThrottledHandler = (handler: () => void) => {
         let ticking = false;
-        const throttledScroll = () => {
+        return () => {
             if (!ticking) {
                 requestAnimationFrame(() => {
-                    handleScroll();
+                    handler();
                     ticking = false;
                 });
                 ticking = true;
             }
         };
+    };
 
-        window.addEventListener("scroll", throttledScroll, { passive: true });
-        window.addEventListener("resize", throttledScroll, { passive: true });
+    const initScrollBasedRendering = () => {
+        if (!skillsElement) return;
 
-        handleScroll();
+        const throttledScroll = createThrottledHandler(handleScrollAnimation);
+        const events = [
+            ['scroll', throttledScroll],
+            ['resize', throttledScroll]
+        ] as const;
+
+        events.forEach(([event, handler]) => {
+            window.addEventListener(event, handler, { passive: true });
+        });
+
+        handleScrollAnimation();
 
         return () => {
-            window.removeEventListener("scroll", throttledScroll);
-            window.removeEventListener("resize", throttledScroll);
+            events.forEach(([event, handler]) => {
+                window.removeEventListener(event, handler);
+            });
         };
-    }
+    };
 
-    function handleCategoryFilter(category: SkillCategory | null) {
-        selectedCategory = category?.name || null;
-        
-        // Announce filter change to screen readers
-        const skillCount = category ? category.skills.length : allSkills.length;
-        const categoryName = category ? category.name : "All Skills";
-        announcementText = `Filtered to ${categoryName}. Showing ${skillCount} skills.`;
-        
+    const resetCardAnimations = () => {
         cardVisibilityStates.clear();
         
         setTimeout(() => {
             if (skillsElement) {
                 const cards = skillsElement.querySelectorAll(".skill__card");
-                cards.forEach((card) => {
-                    const cardElement = card as HTMLElement;
-                    cardElement.style.opacity = "0";
-                    cardElement.style.transform = "translateY(40px) scale(0.95)";
+                cards.forEach(card => {
+                    const element = card as HTMLElement;
+                    applyCardStyles(element, 0, { translateY: scrollConfig.transform.translateY, scale: scrollConfig.transform.scale.min });
                 });
                 
-                const scrollEvent = new Event('scroll');
-                window.dispatchEvent(scrollEvent);
+                window.dispatchEvent(new Event('scroll'));
             }
         }, 50);
+    };
+
+    const createAnnouncement = (category: SkillCategory | null) => {
+        const skillCount = category ? category.skills.length : allSkills.length;
+        const categoryName = category ? category.name : "All Skills";
+        return `Filtered to ${categoryName}. Showing ${skillCount} skills.`;
+    };
+
+    const createSkillAnnouncement = (skill: Skill & { categoryInfo: SkillCategory }) => {
+        const parts = [
+            `Selected ${skill.name}`,
+            `${skill.level} level skill`,
+            skill.years && `with ${skill.years} years experience`,
+            skill.description
+        ].filter(Boolean);
+        
+        return parts.join('. ');
+    };
+
+    const createKeydownHandler = (callback: () => void) => (event: KeyboardEvent) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            callback();
+        }
+    };
+
+    const handleCategoryFilter = (category: SkillCategory | null) => {
+        selectedCategory = category?.name || null;
+        announcementText = createAnnouncement(category);
+        resetCardAnimations();
         
         if (category) {
             dispatch("categorySelect", { category });
         }
-    }
+    };
 
-    function handleSkillHover(
-        skill: Skill & { categoryInfo: SkillCategory },
-        isHovering: boolean,
-    ) {
+    const handleSkillHover = (skill: Skill & { categoryInfo: SkillCategory }, isHovering: boolean) => {
         hoveredSkill = isHovering ? skill.name : null;
 
         if (isHovering) {
             dispatch("skillSelect", { skill, category: skill.categoryInfo });
         }
-    }
+    };
 
-    function handleKeydown(event: KeyboardEvent, index: number) {
-        switch (event.key) {
-            case 'Enter':
-            case ' ':
-                event.preventDefault();
-                const skill = filteredSkills[index];
-                handleSkillHover(skill, true);
-                announcementText = `Selected ${skill.name}. ${skill.level} level skill${skill.years ? ` with ${skill.years} years experience` : ''}${skill.description ? `. ${skill.description}` : ''}`;
-                return;
-            default:
-                return;
-        }
-    }
-    
-    function getColumnsPerRow(): number {
-        if (typeof window === 'undefined') return 2;
-        const width = window.innerWidth;
-        if (width >= 1024) return 3; // lg breakpoint
-        return 2;
-    }
-    
-    function handleFilterKeydown(event: KeyboardEvent, category: SkillCategory | null) {
-        if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            handleCategoryFilter(category);
-        }
-    }
+    const handleKeydown = (event: KeyboardEvent, index: number) => {
+        createKeydownHandler(() => {
+            const skill = filteredSkills[index];
+            handleSkillHover(skill, true);
+            announcementText = createSkillAnnouncement(skill);
+        })(event);
+    };
 
-    $: allSkills = skillCategories.flatMap((category) =>
-        category.skills.map((skill) => ({ ...skill, categoryInfo: category })),
+    const handleFilterKeydown = (category: SkillCategory | null) => 
+        createKeydownHandler(() => handleCategoryFilter(category));
+
+    const getColumnsPerRow = (): number => 
+        typeof window !== 'undefined' && window.innerWidth >= 1024 ? 3 : 2;
+
+    $: selectedCategory = initialSelectedCategory !== undefined 
+        ? initialSelectedCategory 
+        : skillCategories?.[0]?.name || null;
+
+    $: allSkills = skillCategories.flatMap(category =>
+        category.skills.map(skill => ({ ...skill, categoryInfo: category }))
     );
 
     $: filteredSkills = selectedCategory
-        ? allSkills.filter(
-              (skill) => skill.categoryInfo.name === selectedCategory,
-          )
+        ? allSkills.filter(skill => skill.categoryInfo.name === selectedCategory)
         : allSkills;
 
-    $: skillsByLevel = {
-        expert: filteredSkills.filter((s) => s.level === "expert").length,
-        advanced: filteredSkills.filter((s) => s.level === "advanced").length,
-        proficient: filteredSkills.filter((s) => s.level === "proficient")
-            .length,
-        learning: filteredSkills.filter((s) => s.level === "learning").length,
-    };
+    $: skillsByLevel = ['expert', 'advanced', 'proficient', 'learning'].reduce((acc, level) => ({
+        ...acc,
+        [level]: filteredSkills.filter(skill => skill.level === level).length
+    }), {} as Record<string, number>);
+
+    onMount(() => {
+        const cleanup = initScrollBasedRendering();
+        return cleanup;
+    });
 </script>
 
 <section class="skills" id="skills" bind:this={skillsElement} role="region" aria-labelledby="skills-heading">
@@ -250,20 +279,6 @@
             </div>
 
             <div class="skills__filters" role="tablist" aria-label="Filter skills by category">
-                <button
-                    class="filter__button"
-                    class:filter__button--active={!selectedCategory}
-                    on:click={() => handleCategoryFilter(null)}
-                    on:keydown={(e) => handleFilterKeydown(e, null)}
-                    role="tab"
-                    aria-selected={!selectedCategory}
-                    aria-controls="skills-grid"
-                    id="filter-all"
-                >
-                    All Skills
-                    <span class="filter__count" aria-label="{allSkills.length} skills">{allSkills.length}</span>
-                </button>
-
                 {#each skillCategories as category, index}
                     <button
                         class="filter__button"
@@ -280,6 +295,20 @@
                         <span class="filter__count" aria-label="{category.skills.length} skills">{category.skills.length}</span>
                     </button>
                 {/each}
+
+                <button
+                    class="filter__button"
+                    class:filter__button--active={!selectedCategory}
+                    on:click={() => handleCategoryFilter(null)}
+                    on:keydown={(e) => handleFilterKeydown(e, null)}
+                    role="tab"
+                    aria-selected={!selectedCategory}
+                    aria-controls="skills-grid"
+                    id="filter-all"
+                >
+                    All Skills
+                    <span class="filter__count" aria-label="{allSkills.length} skills">{allSkills.length}</span>
+                </button>
             </div>
 
             <div class="skills__grid" role="grid" aria-labelledby="skills-heading" id="skills-grid" aria-rowcount="{Math.ceil(filteredSkills.length / getColumnsPerRow())}" aria-colcount="{getColumnsPerRow()}">
@@ -316,7 +345,7 @@
                         <div class="skill__content">
                             <h3 class="skill__name" id="skill-{index}-name">{skill.name}</h3>
                             <div class="skill__meta" id="skill-{index}-details">
-                                <span class="skill__level" aria-label="Skill level: {skill.level}">{skill.level}</span>
+                                <span class="skill__level skill__level--{skill.level}" aria-label="Skill level: {skill.level}">{skill.level}</span>
                                 {#if skill.years}
                                     <span class="skill__years" aria-label="{skill.years} years of experience">{skill.years}y</span>
                                 {/if}
@@ -536,7 +565,8 @@
         pointer-events: none;
     }
 
-    &:hover {
+    &:hover,
+    &:focus {
         transform: translateY(-3px) scale(1.02);
         border-color: var(--token-border-color-default);
         color: var(--token-text-primary);
@@ -569,7 +599,8 @@
             opacity: 1;
         }
 
-        &:hover {
+        &:hover,
+        &:focus {
             transform: translateY(-4px) scale(1.02);
             border-color: var(--token-border-color-hover);
             box-shadow: 
@@ -705,7 +736,8 @@
         border-radius: var(--token-radius-xl);
     }
 
-    &:hover {
+    &:hover,
+    &:focus {
         border-color: var(--token-border-color-default);
         box-shadow: var(--token-shadow-elevated);
         z-index: 10;
@@ -735,7 +767,8 @@
 
 
 
-    &--expert:hover {
+    &--expert:hover,
+    &--expert:focus {
         border-color: var(--skills-expert-color);
         box-shadow: 
             var(--token-shadow-elevated),
@@ -755,7 +788,8 @@
         }
     }
 
-    &--advanced:hover {
+    &--advanced:hover,
+    &--advanced:focus {
         border-color: var(--skills-advanced-color);
         box-shadow: 
             var(--token-shadow-elevated),
@@ -775,7 +809,8 @@
         }
     }
 
-    &--proficient:hover {
+    &--proficient:hover,
+    &--proficient:focus {
         border-color: var(--skills-proficient-color);
         box-shadow: 
             var(--token-shadow-elevated),
@@ -795,7 +830,8 @@
         }
     }
 
-    &--learning:hover {
+    &--learning:hover,
+    &--learning:focus {
         border-color: var(--skills-learning-color);
         box-shadow: 
             var(--token-shadow-elevated),
@@ -846,7 +882,8 @@
     }
 }
 
-.skill__card:hover .skill__image {
+.skill__card:hover .skill__image,
+.skill__card:focus .skill__image {
     transform: scale(1.05);
     box-shadow: var(--token-shadow-interactive);
 
@@ -893,7 +930,8 @@
     }
 }
 
-.skill__card:hover .skill__level-indicator {
+.skill__card:hover .skill__level-indicator,
+.skill__card:focus .skill__level-indicator {
     transform: scale(1.2);
     box-shadow: 
         0 0 var(--token-space-4) currentColor,
@@ -958,10 +996,59 @@
     }
 }
 
-.skill__card:hover .skill__level {
+.skill__card:hover .skill__level,
+.skill__card:focus .skill__level {
     background: var(--token-interactive-color);
     color: var(--token-text-dark);
     transform: scale(1.05);
+}
+
+.skill__level--expert {
+    color: var(--skills-expert-color);
+    border-color: var(--skills-expert-color);
+}
+
+.skill__level--advanced {
+    color: var(--skills-advanced-color);
+    border-color: var(--skills-advanced-color);
+}
+
+.skill__level--proficient {
+    color: var(--skills-proficient-color);
+    border-color: var(--skills-proficient-color);
+}
+
+.skill__level--learning {
+    color: var(--skills-learning-color);
+    border-color: var(--skills-learning-color);
+}
+
+.skill__card:hover .skill__level--expert,
+.skill__card:focus .skill__level--expert {
+    background: var(--skills-expert-color);
+    color: var(--token-text-dark);
+    box-shadow: 0 0 var(--token-space-2) var(--skills-expert-glow);
+}
+
+.skill__card:hover .skill__level--advanced,
+.skill__card:focus .skill__level--advanced {
+    background: var(--skills-advanced-color);
+    color: var(--token-text-dark);
+    box-shadow: 0 0 var(--token-space-2) var(--skills-advanced-glow);
+}
+
+.skill__card:hover .skill__level--proficient,
+.skill__card:focus .skill__level--proficient {
+    background: var(--skills-proficient-color);
+    color: var(--token-text-dark);
+    box-shadow: 0 0 var(--token-space-2) var(--skills-proficient-glow);
+}
+
+.skill__card:hover .skill__level--learning,
+.skill__card:focus .skill__level--learning {
+    background: var(--skills-learning-color);
+    color: var(--token-text-dark);
+    box-shadow: 0 0 var(--token-space-2) var(--skills-learning-glow);
 }
 
 .skill__years {
@@ -1002,7 +1089,8 @@
     }
 }
 
-.skill__card:hover .skill__description {
+.skill__card:hover .skill__description,
+.skill__card:focus .skill__description {
     opacity: 1;
     transform: translateY(0);
 }

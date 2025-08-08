@@ -13,65 +13,7 @@
   --ease-elastic: cubic-bezier(0.68, 0, 0.265, 1.55);
 }
 
-.gpu-accelerated {
-  transform: translateZ(0);
-  -moz-transform: translateZ(0);
-  will-change: auto;
-  contain: layout style;
-}
 
-.gpu-layer {
-  transform: translate3d(0, 0, 0);
-  -moz-transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
-  -moz-backface-visibility: hidden;
-}
-
-.paint-optimized {
-  will-change: auto;
-  transform: translateZ(0);
-  -moz-transform: translateZ(0);
-  contain: layout style;
-}
-
-.gpu-accelerated {
-  transform: translateZ(0);
-  -moz-transform: translateZ(0);
-  will-change: auto;
-  contain: layout style;
-  -moz-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-
-.animate-smooth {
-  animation-duration: 0.8s;
-  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.hover-lift {
-  transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
-}
-
-.hover-lift:hover {
-  transform: translate3d(0, -2px, 0);
-  -moz-transform: translate3d(0, -2px, 0);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-}
-
-.layer-3d {
-  transform-style: preserve-3d;
-  -moz-transform-style: preserve-3d;
-}
-
-.paint-optimized {
-  contain: layout style;
-  will-change: auto;
-}
-
-.backface-hidden {
-  backface-visibility: hidden;
-  -moz-backface-visibility: hidden;
-}
 
 @mixin cross-browser-keyframes($name) {
   @keyframes #{$name} {
@@ -132,29 +74,7 @@
   );
 }
 
-@mixin gpu-accelerated {
-  transform: translateZ(0);
-  -moz-transform: translateZ(0);
-  will-change: auto;
-  contain: layout style;
-  -moz-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
 
-@mixin animate-smooth($duration: 0.8s, $easing: cubic-bezier(0.4, 0, 0.2, 1)) {
-  animation-duration: $duration;
-  animation-timing-function: $easing;
-}
-
-@mixin hover-lift($distance: -2px) {
-  transition: all var(--duration-normal) var(--ease-out);
-  
-  &:hover {
-    transform: translate3d(0, $distance, 0);
-    -moz-transform: translate3d(0, $distance, 0);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  }
-}
 
 @mixin transform3d($x: 0, $y: 0, $z: 0) {
   transform: translate3d($x, $y, $z);
@@ -514,17 +434,9 @@
     scroll-behavior: auto !important;
   }
   
-  .animate-smooth,
-  .animate-fast {
-    transition: none !important;
-  }
+
   
-  .gpu-accelerated,
-  .gpu-layer,
-  .paint-optimized {
-    will-change: auto !important;
-    transform: none !important;
-  }
+
 }
 
 @supports (-moz-appearance: none) {
@@ -539,12 +451,6 @@
       will-change: auto !important;
     }
     
-    .gpu-accelerated,
-    .gpu-layer,
-    .paint-optimized {
-      -moz-transform: none !important;
-      -moz-backface-visibility: visible !important;
-      -moz-perspective: none !important;
-    }
+
   }
 } 

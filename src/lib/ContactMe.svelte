@@ -1,6 +1,7 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
     import Section from "./Section.svelte";
+    import Dropdown from "./Dropdown.svelte";
 
     interface ContactForm {
         name: string;
@@ -24,8 +25,14 @@
         label: string;
         value: string;
         href: string;
-        icon: string;
+        imagePath: string;
         description: string;
+    }
+
+    interface DropdownOption {
+        value: string;
+        label: string;
+        description?: string;
     }
 
     export let title: string = "Let's Build Something Amazing";
@@ -38,7 +45,27 @@
         contactMethodClick: { method: ContactMethod };
     }>();
 
-    let formData: ContactForm = {
+    const budgetOptions: DropdownOption[] = [
+        { value: "under-10k", label: "Under $10K", description: "Small projects and quick fixes" },
+        { value: "10k-25k", label: "$10K - $25K", description: "Medium-sized applications" },
+        { value: "25k-50k", label: "$25K - $50K", description: "Complex web applications" },
+        { value: "50k-100k", label: "$50K - $100K", description: "Enterprise solutions" },
+        { value: "100k-150k", label: "$100K - $150K", description: "Large-scale platforms" },
+        { value: "150k-200k", label: "$150K - $200K", description: "Complex enterprise systems" },
+        { value: "200k-plus", label: "$200K+", description: "Major digital transformations" },
+        { value: "discuss", label: "Let's discuss", description: "Custom pricing for unique projects" }
+    ];
+
+    const timelineOptions: DropdownOption[] = [
+        { value: "asap", label: "ASAP", description: "Rush project, immediate start" },
+        { value: "1-month", label: "Within 1 month", description: "Quick turnaround needed" },
+        { value: "2-3-months", label: "2-3 months", description: "Standard project timeline" },
+        { value: "3-6-months", label: "3-6 months", description: "Complex project development" },
+        { value: "6-plus-months", label: "6+ months", description: "Long-term strategic project" },
+        { value: "flexible", label: "Timeline is flexible", description: "No rush, quality focused" }
+    ];
+
+    const createInitialFormData = (): ContactForm => ({
         name: "",
         email: "",
         subject: "",
@@ -46,62 +73,53 @@
         company: "",
         budget: "",
         timeline: ""
+    });
+
+    const validationRules = {
+        name: (value: string) => !value.trim() ? "Name is required" : null,
+        email: (value: string) => {
+            if (!value.trim()) return "Email is required";
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return "Please enter a valid email address";
+            return null;
+        },
+        subject: (value: string) => !value.trim() ? "Subject is required" : null,
+        message: (value: string) => {
+            if (!value.trim()) return "Message is required";
+            if (value.length < 10) return "Message must be at least 10 characters";
+            return null;
+        }
     };
+
+    let formData = createInitialFormData();
     let errors: FormErrors = {};
     let isSubmitting = false;
     let submitSuccess = false;
     let formElement: HTMLFormElement;
-
     let hasAttemptedSubmit = false;
 
-    function validateForm(): boolean {
+    const validateForm = (): boolean => {
         const newErrors: FormErrors = {};
-
-        if (!formData.name.trim()) {
-            newErrors.name = "Name is required";
-        }
-
-        if (!formData.email.trim()) {
-            newErrors.email = "Email is required";
-        } else if (!isValidEmail(formData.email)) {
-            newErrors.email = "Please enter a valid email address";
-        }
-
-        if (!formData.subject.trim()) {
-            newErrors.subject = "Subject is required";
-        }
-
-        if (!formData.message.trim()) {
-            newErrors.message = "Message is required";
-        } else if (formData.message.length < 10) {
-            newErrors.message = "Message must be at least 10 characters";
-        }
+        
+        Object.entries(validationRules).forEach(([field, validator]) => {
+            const error = validator(formData[field as keyof ContactForm] as string);
+            if (error) newErrors[field as keyof FormErrors] = error;
+        });
 
         errors = newErrors;
         return Object.keys(newErrors).length === 0;
-    }
+    };
 
-    function isValidEmail(email: string): boolean {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    }
+    const constructEmailBody = () => {
+        const getBudgetLabel = (value: string) => budgetOptions.find(opt => opt.value === value)?.label || value;
+        const getTimelineLabel = (value: string) => timelineOptions.find(opt => opt.value === value)?.label || value;
 
-    async function handleSubmit(event: Event) {
-        event.preventDefault();
-        hasAttemptedSubmit = true;
-        
-        if (!validateForm()) {
-            const firstErrorField = formElement.querySelector('.form__input--error') as HTMLElement;
-            if (firstErrorField) {
-                firstErrorField.focus();
-            }
-            return;
-        }
+        const optionalFields = [
+            formData.company && `Company: ${formData.company}`,
+            formData.budget && `Budget: ${getBudgetLabel(formData.budget)}`,
+            formData.timeline && `Timeline: ${getTimelineLabel(formData.timeline)}`
+        ].filter(Boolean).join('\n');
 
-        isSubmitting = true;
-
-        const subject = encodeURIComponent(formData.subject);
-        const body = encodeURIComponent(
+        return encodeURIComponent(
             `Hi Cassidy,
 
 ${formData.message}
@@ -110,15 +128,32 @@ ${formData.message}
 Contact Details:
 Name: ${formData.name}
 Email: ${formData.email}
-${formData.company ? `Company: ${formData.company}` : ''}
-${formData.budget ? `Budget: ${formData.budget}` : ''}
-${formData.timeline ? `Timeline: ${formData.timeline}` : ''}
+${optionalFields}
 
 Best regards,
 ${formData.name}`
         );
+    };
 
-        const mailtoLink = `mailto:${emailAddress}?subject=${subject}&body=${body}`;
+    const resetFormWithDelay = () => {
+        setTimeout(() => {
+            submitSuccess = false;
+            formData = createInitialFormData();
+            hasAttemptedSubmit = false;
+        }, 3000);
+    };
+
+    const handleSubmit = async (event: Event) => {
+        event.preventDefault();
+        hasAttemptedSubmit = true;
+        
+        if (!validateForm()) {
+            formElement.querySelector('.form__input--error')?.focus();
+            return;
+        }
+
+        isSubmitting = true;
+        const mailtoLink = `mailto:${emailAddress}?subject=${encodeURIComponent(formData.subject)}&body=${constructEmailBody()}`;
 
         try {
             window.location.href = mailtoLink;
@@ -126,20 +161,7 @@ ${formData.name}`
             setTimeout(() => {
                 isSubmitting = false;
                 submitSuccess = true;
-                
-                setTimeout(() => {
-                    submitSuccess = false;
-                    formData = {
-                        name: "",
-                        email: "",
-                        subject: "",
-                        message: "",
-                        company: "",
-                        budget: "",
-                        timeline: ""
-                    };
-                    hasAttemptedSubmit = false;
-                }, 3000);
+                resetFormWithDelay();
             }, 1000);
 
             dispatch("formSubmit", { formData });
@@ -147,49 +169,36 @@ ${formData.name}`
             console.error("Error opening email client:", error);
             isSubmitting = false;
         }
-    }
+    };
 
-    function handleInputChange(field: keyof ContactForm, value: string) {
+    const handleInputChange = (field: keyof ContactForm, value: string) => {
         formData[field] = value;
         
         if (hasAttemptedSubmit && errors[field as keyof FormErrors]) {
-            const newErrors = { ...errors };
-            delete newErrors[field as keyof FormErrors];
-            errors = newErrors;
+            const { [field as keyof FormErrors]: removed, ...remainingErrors } = errors;
+            errors = remainingErrors;
         }
-    }
+    };
 
-    function handleContactMethodClick(method: ContactMethod) {
+    const handleContactMethodClick = (method: ContactMethod) => 
         dispatch("contactMethodClick", { method });
-    }
 
-    function getInputClass(field: keyof FormErrors): string {
+    const getInputClass = (field: keyof FormErrors): string => {
         if (errors[field]) return "form__input form__input--error";
         if (formData[field]?.trim()) return "form__input form__input--filled";
         return "form__input";
-    }
+    };
 
-    function getFieldErrorId(field: string): string {
-        return `${field}-error`;
-    }
+    const getFieldErrorId = (field: string): string => `${field}-error`;
+    const getAriaInvalid = (field: keyof FormErrors): boolean => !!errors[field];
+    const getAriaDescribedBy = (field: keyof FormErrors): string | undefined => 
+        errors[field] ? getFieldErrorId(field) : undefined;
 
-    function getFieldDescriptionId(field: string): string {
-        return `${field}-description`;
-    }
-
-    function getAriaInvalid(field: keyof FormErrors): boolean {
-        return !!errors[field];
-    }
-
-    function getAriaDescribedBy(field: keyof FormErrors): string | undefined {
-        return errors[field] ? getFieldErrorId(field) : undefined;
-    }
-
-    function getCharacterCountAnnouncement(count: number): string {
+    const getCharacterCountAnnouncement = (count: number): string => {
         if (count === 0) return "No characters entered";
         if (count === 1) return "1 character entered";
         return `${count} characters entered`;
-    }
+    };
 </script>
 
 <section class="contact" id="contact" aria-labelledby="contact-title">
@@ -300,24 +309,14 @@ ${formData.name}`
                                 <label for="budget" class="form__label">
                                     Budget Range
                                 </label>
-                                <select
+                                <Dropdown 
                                     id="budget"
-                                    class="form__input form__select"
+                                    options={budgetOptions}
                                     bind:value={formData.budget}
-                                    on:change={(e) => handleInputChange('budget', e.currentTarget.value)}
+                                    placeholder="Select budget range"
                                     disabled={isSubmitting}
-                                    aria-label="Select your project budget range"
-                                >
-                                    <option value="">Select budget range</option>
-                                    <option value="under-10k">Under $10K</option>
-                                    <option value="10k-25k">$10K - $25K</option>
-                                    <option value="25k-50k">$25K - $50K</option>
-                                    <option value="50k-100k">$50K - $100K</option>
-                                    <option value="100k-150k">$100K - $150K</option>
-                                    <option value="150k-200k">$150K - $200K</option>
-                                    <option value="200k-plus">$200K+</option>
-                                    <option value="discuss">Let's discuss</option>
-                                </select>
+                                    ariaLabel="Select your project budget range"
+                                />
                             </div>
                         </div>
 
@@ -353,22 +352,14 @@ ${formData.name}`
                             <label for="timeline" class="form__label">
                                 Timeline
                             </label>
-                            <select
+                            <Dropdown 
                                 id="timeline"
-                                class="form__input form__select"
+                                options={timelineOptions}
                                 bind:value={formData.timeline}
-                                on:change={(e) => handleInputChange('timeline', e.currentTarget.value)}
+                                placeholder="When do you need this completed?"
                                 disabled={isSubmitting}
-                                aria-label="Select your project timeline"
-                            >
-                                <option value="">When do you need this completed?</option>
-                                <option value="asap">ASAP</option>
-                                <option value="1-month">Within 1 month</option>
-                                <option value="2-3-months">2-3 months</option>
-                                <option value="3-6-months">3-6 months</option>
-                                <option value="6-plus-months">6+ months</option>
-                                <option value="flexible">Timeline is flexible</option>
-                            </select>
+                                ariaLabel="Select your project timeline"
+                            />
                         </div>
 
                         <div class="form__group">
@@ -449,7 +440,9 @@ ${formData.name}`
                                 rel={method.type === 'email' ? '' : 'noopener noreferrer'}
                                 aria-label="Contact via {method.label}: {method.value} - {method.description}"
                             >
-                                <div class="method__icon" aria-hidden="true">{method.icon}</div>
+                                <div class="method__icon" aria-hidden="true">
+                                    <img src={method.imagePath} alt="" />
+                                </div>
                                 <div class="method__content">
                                     <h4 class="method__label">{method.label}</h4>
                                     <p class="method__value">{method.value}</p>
@@ -872,18 +865,6 @@ ${formData.name}`
     }
 }
 
-.form__input.form__select {
-    cursor: pointer;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-    background-position: right var(--token-space-fluid-lg) center;
-    background-repeat: no-repeat;
-    background-size: var(--token-size-4);
-    padding-right: var(--token-space-fluid-3xl);
-}
-
 textarea.form__input {
     resize: vertical;
     min-height: 8rem;
@@ -1189,7 +1170,6 @@ textarea.form__input {
 }
 
 .method__icon {
-    font-size: var(--token-font-size-xl);
     width: var(--token-size-12);
     height: var(--token-size-12);
     display: flex;
@@ -1203,9 +1183,17 @@ textarea.form__input {
     position: relative;
     z-index: 2;
     box-shadow: var(--token-shadow-light);
+    overflow: hidden;
+    
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        filter: var(--token-icon-filter, none);
+        transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
+    }
 
     @media (min-width: $breakpoint-md) {
-        font-size: var(--token-font-size-2xl);
         width: 4rem;
         height: 4rem;
         border-radius: var(--token-radius-xl);
@@ -1215,6 +1203,11 @@ textarea.form__input {
 .method__card:hover .method__icon {
     transform: scale(1.05);
     box-shadow: var(--token-shadow-default);
+
+    img {
+        transform: scale(1.1);
+        filter: var(--token-icon-filter-hover, var(--token-icon-filter, none));
+    }
 }
 
 .method__content {
@@ -1433,6 +1426,7 @@ textarea.form__input {
     color: var(--token-text-secondary);
 }
 
+// Animations
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -1512,6 +1506,7 @@ textarea.form__input {
     }
 }
 
+// Responsive Design
 @media (max-width: #{$breakpoint-lg}) {
     .contact__main {
         grid-template-columns: 1fr;
@@ -1578,6 +1573,7 @@ textarea.form__input {
     }
 }
 
+// Accessibility & Motion Preferences
 @media (prefers-reduced-motion: reduce) {
     .contact__container,
     .contact__header,

@@ -5,6 +5,7 @@ const config: StorybookConfig = {
     "../src/**/*.mdx",
     "../src/**/*.stories.@(js|ts|svelte)"
   ],
+  staticDirs: ["../static"],
   addons: [
     "@storybook/addon-svelte-csf",
     "@storybook/addon-docs"  // Add this

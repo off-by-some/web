@@ -22,6 +22,24 @@
         experienceSelect: { experience: Experience };
     }>();
 
+    const config = {
+        animation: {
+            initialScale: 'scaleY(0)',
+            transformOrigin: 'top',
+            delay: 100
+        },
+        scroll: {
+            viewportCenter: () => window.innerHeight / 2,
+            activeOpacity: '1',
+            inactiveOpacity: '0.6'
+        },
+        tabIndex: {
+            active: '0',
+            inactive: '-1',
+            dataAttribute: 'data-original-tabindex'
+        }
+    };
+
     let expandedItems = new Set<number>();
     let timelineElement: HTMLElement | null = null;
     let timelineProgressElement: HTMLElement | null = null;
@@ -29,89 +47,70 @@
     let announcementText: string = '';
     let focusedItemIndex: number = 0;
 
-    onMount(() => {
-        const cleanup = initScrollWatcher();
-        initProgressAnimation();
-        
-        // Initialize tabindex management after component mounts
-        setTimeout(() => {
-            updateTabIndexForCollapsedContent();
-        }, 100);
-
-        return () => {
-            if (cleanup) cleanup();
-        };
-    });
-
-    function initScrollWatcher() {
-        if (!timelineElement) return;
-
-        const handleScroll = () => {
-            const container = timelineElement;
-            if (!container) return;
-
-            const containerRect = container.getBoundingClientRect();
-            const containerTop = containerRect.top;
-            const containerHeight = containerRect.height;
-            const viewportCenter = window.innerHeight / 2;
-
-            const items = container.querySelectorAll(".timeline__item");
-            let closestIndex = 0;
-            let minDistance = Infinity;
-
-            items.forEach((item, index) => {
-                const itemRect = item.getBoundingClientRect();
-                const itemCenter = itemRect.top + itemRect.height / 2;
-                const distance = Math.abs(itemCenter - viewportCenter);
-
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    closestIndex = index;
-                }
-            });
-
-            if (activeIndex !== closestIndex) {
-                console.log(
-                    "Timeline item activated:",
-                    closestIndex,
-                    "distance:",
-                    minDistance,
-                );
-                activeIndex = closestIndex;
-                updateTimelineProgress(closestIndex);
-            }
-        };
-
+    const createThrottledHandler = (handler: () => void) => {
         let ticking = false;
-        const throttledScroll = () => {
+        return () => {
             if (!ticking) {
                 requestAnimationFrame(() => {
-                    handleScroll();
+                    handler();
                     ticking = false;
                 });
                 ticking = true;
             }
         };
+    };
 
-        window.addEventListener("scroll", throttledScroll);
-        window.addEventListener("resize", throttledScroll);
+    const setupEventListeners = (handler: () => void) => {
+        const throttledHandler = createThrottledHandler(handler);
+        const events = ['scroll', 'resize'] as const;
+        
+        events.forEach(event => {
+            window.addEventListener(event, throttledHandler);
+        });
 
-        handleScroll();
+        handler();
 
         return () => {
-            window.removeEventListener("scroll", throttledScroll);
-            window.removeEventListener("resize", throttledScroll);
+            events.forEach(event => {
+                window.removeEventListener(event, throttledHandler);
+            });
         };
-    }
+    };
 
-    function initProgressAnimation() {
-        if (!timelineProgressElement) return;
+    const findClosestItem = () => {
+        if (!timelineElement) return 0;
 
-        timelineProgressElement.style.transform = "scaleY(0)";
-        timelineProgressElement.style.transformOrigin = "top";
-    }
+        const items = timelineElement.querySelectorAll(".timeline__item");
+        const viewportCenter = config.scroll.viewportCenter();
+        let closestIndex = 0;
+        let minDistance = Infinity;
 
-    function updateTimelineProgress(activeIndex: number) {
+        items.forEach((item, index) => {
+            const itemRect = item.getBoundingClientRect();
+            const itemCenter = itemRect.top + itemRect.height / 2;
+            const distance = Math.abs(itemCenter - viewportCenter);
+
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestIndex = index;
+            }
+        });
+
+        return closestIndex;
+    };
+
+    const updateDotOpacity = (items: NodeListOf<Element>, activeIndex: number) => {
+        items.forEach((item, index) => {
+            const dot = item.querySelector(".timeline__dot") as HTMLElement;
+            if (dot) {
+                dot.style.opacity = index <= activeIndex 
+                    ? config.scroll.activeOpacity 
+                    : config.scroll.inactiveOpacity;
+            }
+        });
+    };
+
+    const updateTimelineProgress = (activeIndex: number) => {
         if (!timelineProgressElement || !timelineElement) return;
 
         const items = timelineElement.querySelectorAll(".timeline__item");
@@ -123,117 +122,127 @@
             timelineProgressElement!.style.transform = `scaleY(${progress})`;
         });
 
-        items.forEach((item, index) => {
-            const dot = item.querySelector(".timeline__dot") as HTMLElement;
+        updateDotOpacity(items, activeIndex);
+    };
 
-            if (dot) {
-                if (index <= activeIndex) {
-                    dot.style.opacity = "1";
-                } else {
-                    dot.style.opacity = "0.6";
-                }
+    const handleScroll = () => {
+        const closestIndex = findClosestItem();
+
+        if (activeIndex !== closestIndex) {
+            console.log("Timeline item activated:", closestIndex);
+            activeIndex = closestIndex;
+            updateTimelineProgress(closestIndex);
+        }
+    };
+
+    const initProgressAnimation = () => {
+        if (!timelineProgressElement) return;
+
+        Object.assign(timelineProgressElement.style, {
+            transform: config.animation.initialScale,
+            transformOrigin: config.animation.transformOrigin
+        });
+    };
+
+    const manageTabIndex = (elements: NodeListOf<Element>, isExpanded: boolean) => {
+        elements.forEach(element => {
+            const { active, inactive, dataAttribute } = config.tabIndex;
+            
+            if (isExpanded) {
+                const originalTabindex = element.getAttribute(dataAttribute);
+                element.setAttribute('tabindex', originalTabindex || active);
+            } else {
+                const currentTabindex = element.getAttribute('tabindex') || active;
+                element.setAttribute(dataAttribute, currentTabindex);
+                element.setAttribute('tabindex', inactive);
             }
         });
-    }
+    };
 
-    function handleReadMore(
-        event: Event,
-        experience: Experience,
-        index: number,
-    ) {
-        event.preventDefault();
-
-        const isExpanded = expandedItems.has(index);
-
-        if (isExpanded) {
-            expandedItems.delete(index);
-            announcementText = `Collapsed details for ${experience.title} at ${experience.company}`;
-        } else {
-            expandedItems.add(index);
-            announcementText = `Expanded details for ${experience.title} at ${experience.company}. Showing ${experience.highlights.length} key achievements and ${experience.skills.length} skills.`;
-        }
-
-        expandedItems = new Set(expandedItems);
-        dispatch("experienceSelect", { experience });
-        
-        // Update tabindex for all focusable elements in the details section
-        setTimeout(() => {
-            updateTabIndexForCollapsedContent();
-        }, 50);
-    }
-    
-    function updateTabIndexForCollapsedContent() {
+    const updateTabIndexForCollapsedContent = () => {
         if (!timelineElement) return;
         
         const detailsSections = timelineElement.querySelectorAll('.timeline__details');
         detailsSections.forEach((section, index) => {
             const isExpanded = expandedItems.has(index);
             const focusableElements = section.querySelectorAll('button, [tabindex], a, input, select, textarea');
-            
-            focusableElements.forEach(element => {
-                if (isExpanded) {
-                    // Restore original tabindex or set to 0 if it was -1
-                    const originalTabindex = element.getAttribute('data-original-tabindex');
-                    if (originalTabindex !== null) {
-                        element.setAttribute('tabindex', originalTabindex);
-                    } else {
-                        element.setAttribute('tabindex', '0');
-                    }
-                } else {
-                    // Store original tabindex and set to -1
-                    const currentTabindex = element.getAttribute('tabindex') || '0';
-                    element.setAttribute('data-original-tabindex', currentTabindex);
-                    element.setAttribute('tabindex', '-1');
-                }
-            });
+            manageTabIndex(focusableElements, isExpanded);
         });
-    }
-    
-    function handleTimelineKeydown(event: KeyboardEvent, index: number) {
-        switch (event.key) {
-            case 'Enter':
-            case ' ':
-                event.preventDefault();
-                // Focus and trigger the toggle button instead of handling directly
-                const toggleButton = timelineElement?.querySelector(`#toggle-${index}`) as HTMLButtonElement;
-                if (toggleButton) {
-                    toggleButton.focus();
-                    toggleButton.click();
-                }
-                return;
-            default:
-                return;
-        }
-    }
-    
-    function handleToggleKeydown(event: KeyboardEvent, experience: Experience, index: number) {
+    };
+
+    const createAnnouncementText = (experience: Experience, isExpanded: boolean) => {
+        const action = isExpanded ? 'Expanded' : 'Collapsed';
+        const baseText = `${action} details for ${experience.title} at ${experience.company}`;
+        
+        return isExpanded 
+            ? `${baseText}. Showing ${experience.highlights.length} key achievements and ${experience.skills.length} skills.`
+            : baseText;
+    };
+
+    const createKeydownHandler = (callback: () => void) => (event: KeyboardEvent) => {
         if (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') {
             event.preventDefault();
-            event.stopPropagation(); // Prevent event bubbling
-            handleReadMore(event, experience, index);
+            event.stopPropagation();
+            callback();
         }
-    }
-    
-    function handleTimelineFocus(index: number) {
-        // When a timeline item receives focus via Tab, scroll it into view and make it active
+    };
+
+    const handleReadMore = (event: Event, experience: Experience, index: number) => {
+        event.preventDefault();
+
+        const isExpanded = expandedItems.has(index);
+        
+        if (isExpanded) {
+            expandedItems.delete(index);
+        } else {
+            expandedItems.add(index);
+        }
+
+        expandedItems = new Set(expandedItems);
+        announcementText = createAnnouncementText(experience, !isExpanded);
+        dispatch("experienceSelect", { experience });
+        
+        setTimeout(updateTabIndexForCollapsedContent, 50);
+    };
+
+    const handleTimelineKeydown = (event: KeyboardEvent, index: number) => {
+        createKeydownHandler(() => {
+            const toggleButton = timelineElement?.querySelector(`#toggle-${index}`) as HTMLButtonElement;
+            if (toggleButton) {
+                toggleButton.focus();
+                toggleButton.click();
+            }
+        })(event);
+    };
+
+    const handleToggleKeydown = (experience: Experience, index: number) => 
+        createKeydownHandler(() => handleReadMore(new Event('click'), experience, index));
+
+    const handleTimelineFocus = (index: number) => {
         const timelineItem = timelineElement?.querySelector(`[data-timeline-index="${index}"]`) as HTMLElement;
         if (timelineItem) {
-            // Smooth scroll to center the item in the viewport
             timelineItem.scrollIntoView({ 
                 behavior: 'smooth', 
                 block: 'center',
                 inline: 'nearest'
             });
             
-            // Update active index to match the focused item
             activeIndex = index;
             updateTimelineProgress(index);
             
-            // Announce the active item
             const experience = experiences[index];
             announcementText = `Focused on ${experience.title} at ${experience.company}, ${experience.date}`;
         }
-    }
+    };
+
+    onMount(() => {
+        const cleanup = setupEventListeners(handleScroll);
+        initProgressAnimation();
+        
+        setTimeout(updateTabIndexForCollapsedContent, config.animation.delay);
+
+        return cleanup;
+    });
 </script>
 
 <section class="timeline" id="experience" role="region" aria-labelledby="timeline-heading">
@@ -245,8 +254,7 @@
         <div class="timeline__header">
             <h2 class="timeline__title" id="timeline-heading">{title}</h2>
             <div class="timeline__subtitle">
-                Building exceptional teams and products across {experiences.length}
-                organizations
+                Engineering exceptional products & empowering exceptional teams across {experiences.length} organizations.
             </div>
         </div>
 
@@ -367,7 +375,7 @@
             {/each}
         </div>
     </Section>
-</section>
+    </section>
 
 <style lang="scss">
 @use "styles/_reset.scss" as *;
@@ -390,27 +398,22 @@
 .timeline {
     position: relative;
     background: var(--token-gradients-timeline);
-    padding: var(--token-space-fluid-5xl) 0;
+    padding: var(--token-space-fluid-5xl) var(--token-space-fluid-md);
     overflow: hidden;
     font-family: var(--token-font-family-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-}
-
-.timeline__content {
-    position: relative;
-    max-width: var(--token-container-max);
-    margin: 0 auto;
-    padding: 0 var(--token-space-fluid-md);
 
     @media (min-width: $breakpoint-md) {
-        padding: 0 var(--token-space-fluid-lg);
+        padding: var(--token-space-fluid-5xl) var(--token-space-fluid-lg);
     }
 
     @media (min-width: $breakpoint-lg) {
-        padding: 0 var(--token-space-fluid-xl);
+        padding: var(--token-space-fluid-5xl) var(--token-space-fluid-xl);
     }
 }
+
+
 
 .timeline__header {
     text-align: center;
@@ -1053,9 +1056,7 @@
         padding: var(--token-space-fluid-4xl) 0;
     }
 
-    .timeline__content {
-        padding: 0 var(--token-space-fluid-sm);
-    }
+
 
     .timeline__header {
         margin-bottom: var(--token-space-fluid-4xl);

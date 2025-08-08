@@ -40,31 +40,47 @@
     let mounted = false;
     let statElements: HTMLElement[] = [];
     let techContainers: { [key: number]: HTMLElement } = {};
-
     let animatedCounters = new Set<HTMLElement>();
+
+    const typeDescriptions = {
+        years: "years of experience",
+        scale: "scale metric", 
+        reliability: "reliability percentage",
+        performance: "performance metric",
+        expert: "Expert level proficiency",
+        advanced: "Advanced level proficiency"
+    };
+
+    const createClone = (element: HTMLElement) => {
+        const clone = element.cloneNode(true) as HTMLElement;
+        Object.assign(clone.style, {
+            position: 'absolute',
+            visibility: 'hidden',
+            top: '-9999px',
+            width: getComputedStyle(element).width
+        });
+        document.body.appendChild(clone);
+        return clone;
+    };
+
+    const measureTagHeight = (clone: HTMLElement, technology: string) => {
+        clone.innerHTML = '';
+        const testTag = document.createElement('span');
+        testTag.className = 'tech__tag';
+        testTag.textContent = technology;
+        clone.appendChild(testTag);
+        return clone.offsetHeight;
+    };
 
     function getVisibleTags(technologies: string[], containerElement: HTMLElement | null) {
         if (!technologies.length || !containerElement) {
             return { visible: technologies, overflow: 0 };
         }
 
-        const clone = containerElement.cloneNode(true) as HTMLElement;
-        Object.assign(clone.style, {
-            position: 'absolute',
-            visibility: 'hidden',
-            top: '-9999px',
-            width: getComputedStyle(containerElement).width
-        });
-        document.body.appendChild(clone);
+        const clone = createClone(containerElement);
         
         try {
-            clone.innerHTML = '';
-            
-            const testTag = document.createElement('span');
-            testTag.className = 'tech__tag';
-            testTag.textContent = technologies[0];
-            clone.appendChild(testTag);
-            const singleLineHeight = clone.offsetHeight;
+            const singleLineHeight = measureTagHeight(clone, technologies[0]);
             const maxHeight = singleLineHeight * 2;
             
             clone.innerHTML = '';
@@ -110,6 +126,66 @@
         visibleTags: getVisibleTags(category.technologies, techContainers[index])
     }));
 
+    const animateCounter = (element: HTMLElement, target: string) => {
+        const match = target.match(/^([\d.]+)(.*)$/);
+        if (!match || animatedCounters.has(element)) return;
+
+        const [, numStr, suffix] = match;
+        const num = parseFloat(numStr);
+        const decimalPlaces = numStr.includes(".") && !isNaN(num) ? 2 : 0;
+        const duration = 2000;
+        const startTime = performance.now();
+
+        animatedCounters.add(element);
+        element.setAttribute('aria-live', 'polite');
+        element.setAttribute('aria-atomic', 'true');
+
+        const updateCounter = (currentTime: number) => {
+            const progress = Math.min((currentTime - startTime) / duration, 1);
+            const easedProgress = 1 - Math.pow(1 - progress, 3);
+            const currentValue = easedProgress * num;
+            
+            element.textContent = currentValue.toFixed(decimalPlaces) + suffix;
+            
+            if (progress < 1) {
+                requestAnimationFrame(updateCounter);
+            } else {
+                element.setAttribute('aria-live', 'off');
+            }
+        };
+
+        requestAnimationFrame(updateCounter);
+    };
+
+    const initStatCounters = () => {
+        if (!mounted) return;
+
+        const observer = new IntersectionObserver(
+            entries => entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const dataCount = entry.target.getAttribute("data-count");
+                    if (dataCount) {
+                        animateCounter(entry.target as HTMLElement, dataCount);
+                    }
+                    observer.unobserve(entry.target);
+                }
+            }),
+            { threshold: 0.5 }
+        );
+
+        statElements.forEach(stat => observer.observe(stat));
+    };
+
+    const createEventHandler = (eventType: string, payload?: any) => () => 
+        dispatch(eventType as any, payload);
+
+    const createKeydownHandler = (callback: () => void) => (event: KeyboardEvent) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            callback();
+        }
+    };
+
     onMount(() => {
         mounted = true;
         initStatCounters();
@@ -127,125 +203,25 @@
             });
         }, 100);
         
-        return () => {
-            resizeObserver.disconnect();
-        };
+        return () => resizeObserver.disconnect();
     });
 
-    function animateCounter(element: HTMLElement, target: string) {
-        const match = target.match(/^([\d.]+)(.*)$/);
-        if (match) {
-            const num = parseFloat(match[1]);
-            const suffix = match[2] || "";
-            const isDecimal = String(num).includes(".") && !isNaN(num);
-            const decimalPlaces = isDecimal ? 2 : 0;
+    const handlePrimaryAction = createEventHandler("primaryAction", { href: primaryButtonHref });
+    const handleSecondaryAction = createEventHandler("secondaryAction", { href: secondaryButtonHref });
+    const handleScrollIndicator = createEventHandler("scrollIndicator");
+    const handleAvatarClick = createEventHandler("avatarClick");
+    const handleTechCategoryClick = (categoryTitle: string) => 
+        createEventHandler("techCategoryClick", { category: categoryTitle })();
 
-            let start = 0;
-            const duration = 2000;
-            const startTime = performance.now();
+    const handleTechCategoryKeydown = (categoryTitle: string) => 
+        createKeydownHandler(() => handleTechCategoryClick(categoryTitle));
+    const handleAvatarKeydown = createKeydownHandler(handleAvatarClick);
 
-            if (animatedCounters.has(element)) return;
-            animatedCounters.add(element);
-            
-            element.setAttribute('aria-live', 'polite');
-            element.setAttribute('aria-atomic', 'true');
+    const getMasteryDescription = (level: "expert" | "advanced"): string => 
+        typeDescriptions[level];
 
-            function updateCounter(currentTime: number) {
-                const elapsedTime = currentTime - startTime;
-
-                if (elapsedTime < duration) {
-                    const progress = elapsedTime / duration;
-                    const easedProgress = 1 - Math.pow(1 - progress, 3);
-                    const currentValue = easedProgress * num;
-                    element.textContent =
-                        currentValue.toFixed(decimalPlaces) + suffix;
-                    requestAnimationFrame(updateCounter);
-                } else {
-                    element.textContent = num.toFixed(decimalPlaces) + suffix;
-                    element.setAttribute('aria-live', 'off');
-                }
-            }
-
-            requestAnimationFrame(updateCounter);
-        } else {
-            element.textContent = target;
-        }
-    }
-
-    function initStatCounters() {
-        if (!mounted) return;
-
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        const dataCount =
-                            entry.target.getAttribute("data-count");
-                        if (dataCount) {
-                            animateCounter(
-                                entry.target as HTMLElement,
-                                dataCount,
-                            );
-                        }
-                        observer.unobserve(entry.target);
-                    }
-                });
-            },
-            { threshold: 0.5 },
-        );
-
-        statElements.forEach((stat) => {
-            observer.observe(stat);
-        });
-    }
-
-    function handlePrimaryAction() {
-        dispatch("primaryAction", { href: primaryButtonHref });
-    }
-
-    function handleSecondaryAction() {
-        dispatch("secondaryAction", { href: secondaryButtonHref });
-    }
-
-    function handleScrollIndicator() {
-        dispatch("scrollIndicator");
-    }
-
-    function handleTechCategoryClick(categoryTitle: string) {
-        dispatch("techCategoryClick", { category: categoryTitle });
-    }
-
-    function handleAvatarClick() {
-        dispatch("avatarClick");
-    }
-
-    function handleTechCategoryKeydown(event: KeyboardEvent, categoryTitle: string) {
-        if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            handleTechCategoryClick(categoryTitle);
-        }
-    }
-
-    function handleAvatarKeydown(event: KeyboardEvent) {
-        if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            handleAvatarClick();
-        }
-    }
-
-    function getMasteryDescription(level: "expert" | "advanced"): string {
-        return level === "expert" ? "Expert level proficiency" : "Advanced level proficiency";
-    }
-
-    function getStatDescription(stat: typeof stats[0]): string {
-        const typeDescriptions = {
-            years: "years of experience",
-            scale: "scale metric",
-            reliability: "reliability percentage",
-            performance: "performance metric"
-        };
-        return `${stat.count} ${typeDescriptions[stat.type]}: ${stat.label}`;
-    }
+    const getStatDescription = (stat: typeof stats[0]): string => 
+        `${stat.count} ${typeDescriptions[stat.type]}: ${stat.label}`;
 </script>
 
 <section class="hero" id="about" role="main" aria-labelledby="profile-name">
@@ -448,20 +424,6 @@
 
 }
 
-.hero__canvas {
-    position: absolute;
-    inset: 0;
-    z-index: var(--token-z-behind);
-    pointer-events: none;
-    opacity: var(--token-opacity-default);
-
-    canvas {
-        width: 100% !important;
-        height: 100% !important;
-        filter: blur(0.5px);
-        will-change: transform;
-    }
-}
 
 .hero__content {
     position: relative;
@@ -1945,8 +1907,7 @@
     .hero__actions,
     .avatar__glow,
     .avatar__rings,
-    .scroll__indicator,
-    .hero__canvas {
+    .scroll__indicator {
         display: none;
     }
 
@@ -1992,7 +1953,6 @@
     will-change: transform;
 }
 
-.hero__canvas canvas,
 .avatar__glow,
 .ring {
     will-change: transform, opacity;
@@ -2003,8 +1963,7 @@
 }
 
 @media (hover: none) {
-    .avatar__rings,
-    .hero__canvas {
+    .avatar__rings {
         display: none;
     }
     
