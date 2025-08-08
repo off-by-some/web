@@ -161,7 +161,7 @@ A sophisticated timeline component for displaying professional experience with i
   title="Professional Experience"
   enableParticles={true}
   enableProfileEffects={true}
-  profileImage="/profile.jpg"
+  profileImage="/headshot.webp"
   profileName="John Doe"
   profileTitle="Software Engineer"
   on:experienceSelect={handleExperienceSelect}
