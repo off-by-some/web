@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
+    "prebuild": "npm run generate:og",
     "build": "rm -rf build && vite build",
     "postbuild": "cp build/index.html build/404.html && touch build/.nojekyll",
     "undeploy": "git push origin --delete gh-pages || true",
@@ -21,7 +22,8 @@
     "sass:watch": "sass --watch src/styles/_tokens.scss:dist/_tokens.css",
     "sass:colors": "sass src/styles/_tokens.scss dist/colors.css",
     "sass:contrast": "sass src/styles/contrast-test.scss dist/contrast-test.css",
-    "sass:compile-all": "sass src/styles:dist --no-source-map"
+    "sass:compile-all": "sass src/styles:dist --no-source-map",
+    "generate:og": "node scripts/generate-og-images.js"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^4.0.1",
@@ -56,6 +58,8 @@
     "vite": "^7.0.4"
   },
   "dependencies": {
+    "@fontsource/inter": "^5.2.6",
+    "puppeteer": "^24.16.0",
     "yarn": "^1.22.22"
   }
 }
