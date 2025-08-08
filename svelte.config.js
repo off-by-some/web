@@ -20,7 +20,9 @@ const config = {
 		base: process.env.NODE_ENV === 'production' ? '/web' : '' ,
 		assets: process.env.NODE_ENV === 'production' ? 'https://off-by-some.github.io/web' : ''
 	},
-	// prerender: true,
+	prerender: {
+		entries: ['*']
+	},
   },
   extensions: ['.svelte', '.md', '.svx']
 };

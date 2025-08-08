@@ -3,7 +3,6 @@
 	import TimelineSection from '$lib/TimelineSection.svelte';
 	import SkillsSection from '$lib/SkillsSection.svelte';
 	import ContactMe from '$lib/ContactMe.svelte';
-	import SEO from '$lib/SEO.svelte';
 	import { base } from '$app/paths';
 
 	interface Skill {
@@ -654,11 +653,7 @@
 	];
 </script>
 
-<SEO 
-	title="Cassidy Bridges - Engineering Resume"
-	description="Software Engineering Leader with 12+ years of experience building scalable systems and high-performance teams."
-	imageUrl="/og/og-about.png"
-/>
+
 
 <main>
 	<!-- About Me Section -->

@@ -14,9 +14,9 @@
 	export let enableJsonLd = true;
 
 	// Calculate full URLs
-	$: siteUrl = (import.meta as any).env?.VITE_SITE_URL ?? '';
+	$: siteUrl = (import.meta as any).env?.VITE_SITE_URL ?? 'https://off-by-some.github.io';
 	$: fullUrl = url ? (siteUrl ? `${siteUrl}${url}` : url) : (siteUrl ? `${siteUrl}${base}` : base);
-	$: fullImageUrl = imageUrl ? (siteUrl ? `${siteUrl}${imageUrl}` : imageUrl) : `${siteUrl}${base}/og/og-about.png`;
+	$: fullImageUrl = imageUrl ? (siteUrl ? `${siteUrl}${base}${imageUrl}` : `${base}${imageUrl}`) : `${siteUrl}${base}/og/og-about.png`;
 
 	// JSON-LD Person schema
 	$: personJsonLd = enableJsonLd ? {
@@ -38,16 +38,16 @@
 	<title>{title}</title>
 	<meta name="description" content={description} />
 
-	<!-- Social unfurl (Open Graph & LinkedIn/GitHub) -->
+	<!-- Open Graph / Facebook -->
+	<meta property="og:type" content={type} />
+	<meta property="og:url" content={fullUrl} />
 	<meta property="og:title" content={title} />
 	<meta property="og:description" content={description} />
-	<meta property="og:type" content={type} />
-	<meta property="og:site_name" content={siteName} />
-	<meta property="og:url" content={fullUrl} />
 	<meta property="og:image" content={fullImageUrl} />
 	<meta property="og:image:width" content="1200" />
 	<meta property="og:image:height" content="630" />
 	<meta property="og:image:alt" content={title} />
+	<meta property="og:site_name" content={siteName} />
 	<meta property="og:locale" content="en_US" />
 	
 	<!-- LinkedIn specific meta tags -->
