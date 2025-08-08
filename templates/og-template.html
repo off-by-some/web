@@ -18,10 +18,10 @@
             height: 630px;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
             background: 
-                radial-gradient(ellipse at 15% 85%, rgba(9, 228, 177, 0.12) 0%, transparent 50%), 
-                radial-gradient(ellipse at 85% 15%, rgba(252, 60, 170, 0.08) 0%, transparent 50%), 
-                radial-gradient(ellipse at 50% 50%, rgba(224, 192, 98, 0.04) 0%, transparent 65%),
-                linear-gradient(135deg, rgba(3, 4, 24, 0.98) 0%, rgba(22, 26, 50, 0.95) 50%, rgba(15, 19, 44, 0.98) 100%);
+                radial-gradient(ellipse at 15% 85%, rgba(9, 228, 177, 0.15) 0%, transparent 50%), 
+                radial-gradient(ellipse at 85% 15%, rgba(252, 60, 170, 0.12) 0%, transparent 50%), 
+                radial-gradient(ellipse at 50% 50%, rgba(224, 192, 98, 0.08) 0%, transparent 65%),
+                linear-gradient(135deg, rgba(8, 12, 40, 0.95) 0%, rgba(25, 35, 70, 0.92) 50%, rgba(18, 25, 55, 0.95) 100%);
             position: relative;
             overflow: hidden;
             display: flex;
@@ -44,7 +44,7 @@
             position: absolute;
             width: 700px;
             height: 700px;
-            background: radial-gradient(circle, rgba(9, 228, 177, 0.06) 0%, rgba(9, 228, 177, 0.02) 40%, transparent 70%);
+            background: radial-gradient(circle, rgba(9, 228, 177, 0.08) 0%, rgba(9, 228, 177, 0.03) 40%, transparent 70%);
             top: -250px;
             left: -200px;
             border-radius: 50%;
@@ -55,7 +55,7 @@
             position: absolute;
             width: 600px;
             height: 600px;
-            background: radial-gradient(circle, rgba(252, 60, 170, 0.04) 0%, rgba(252, 60, 170, 0.01) 40%, transparent 70%);
+            background: radial-gradient(circle, rgba(252, 60, 170, 0.06) 0%, rgba(252, 60, 170, 0.02) 40%, transparent 70%);
             bottom: -200px;
             right: -150px;
             border-radius: 50%;
@@ -66,7 +66,7 @@
             position: absolute;
             width: 500px;
             height: 500px;
-            background: radial-gradient(circle, rgba(224, 192, 98, 0.03) 0%, transparent 60%);
+            background: radial-gradient(circle, rgba(224, 192, 98, 0.05) 0%, transparent 60%);
             top: 30%;
             right: 20%;
             border-radius: 50%;
@@ -78,11 +78,11 @@
             position: absolute;
             inset: 0;
             background-image: 
-                linear-gradient(rgba(9, 228, 177, 0.008) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(9, 228, 177, 0.008) 1px, transparent 1px);
+                linear-gradient(rgba(9, 228, 177, 0.012) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(9, 228, 177, 0.012) 1px, transparent 1px);
             background-size: 120px 120px;
             mask: radial-gradient(ellipse at center, transparent 20%, black 80%);
-            opacity: 0.4;
+            opacity: 0.5;
         }
         
         /* Main container with enhanced depth */
@@ -90,8 +90,8 @@
             position: relative;
             width: 1100px;
             height: 540px;
-            background: rgba(15, 23, 42, 0.92);
-            border: 1px solid rgba(9, 228, 177, 0.2);
+            background: rgba(10, 15, 30, 0.95);
+            border: 1px solid rgba(9, 228, 177, 0.3);
             border-radius: 40px;
             backdrop-filter: blur(24px);
             display: grid;
@@ -100,23 +100,25 @@
             padding: 70px 80px;
             gap: 70px;
             box-shadow: 
-                0 32px 120px rgba(0, 0, 0, 0.6),
-                0 0 0 1px rgba(9, 228, 177, 0.08) inset,
-                0 0 120px rgba(9, 228, 177, 0.12),
-                0 8px 32px rgba(0, 0, 0, 0.3);
+                0 40px 160px rgba(0, 0, 0, 0.8),
+                0 0 0 1px rgba(9, 228, 177, 0.15) inset,
+                0 0 160px rgba(9, 228, 177, 0.2),
+                0 12px 48px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.05) inset;
         }
         
-        /* Enhanced glassmorphism layers */
+        /* Enhanced glassmorphism layers following SkillsSection patterns */
         .main-container::before {
             content: '';
             position: absolute;
             inset: 0;
             background: linear-gradient(
                 135deg,
-                rgba(255, 255, 255, 0.08) 0%,
-                rgba(9, 228, 177, 0.02) 30%,
-                transparent 60%,
-                rgba(252, 60, 170, 0.01) 100%
+                rgba(255, 255, 255, 0.1) 0%,
+                rgba(255, 0, 128, 0.05) 25%,
+                rgba(0, 255, 255, 0.05) 50%,
+                rgba(128, 255, 0, 0.05) 75%,
+                rgba(255, 255, 255, 0.1) 100%
             );
             border-radius: inherit;
             opacity: 1;
@@ -130,9 +132,9 @@
             inset: 1px;
             background: linear-gradient(
                 135deg,
-                rgba(255, 255, 255, 0.03) 0%,
-                transparent 40%,
-                rgba(9, 228, 177, 0.01) 100%
+                rgba(255, 255, 255, 0.02) 0%,
+                transparent 50%,
+                rgba(255, 255, 255, 0.01) 100%
             );
             border-radius: 38px;
             pointer-events: none;
