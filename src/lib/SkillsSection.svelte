@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { onMount } from "svelte";
     import { createEventDispatcher } from "svelte";
     import Section from "./Section.svelte";
 
@@ -30,181 +29,37 @@
         categorySelect: { category: SkillCategory };
     }>();
 
-    const scrollConfig = {
-        enterOffset: 150,
-        exitOffset: 100,
-        staggerDelay: 50,
-        maxStagger: 800,
-        fadeDistance: { enter: 150, exit: 100 },
-        transform: { translateY: 40, scale: { min: 0.95, max: 1 } }
-    };
+    // Centralized configuration
+    const CONFIG = {
+        animation: {
+            enterOffset: 150,
+            exitOffset: 100,
+            staggerDelay: 50,
+            translateY: 40,
+            scaleRange: [0.95, 1] as const,
+            duration: 300
+        },
+        breakpoints: {
+            sm: 640,
+            md: 768,
+            lg: 1024
+        }
+    } as const;
 
-    let skillsElement: HTMLElement | null = null;
+    const SKILL_LEVELS = ['expert', 'advanced', 'proficient', 'learning'] as const;
+
+    // State
     let selectedCategory: string | null = initialSelectedCategory;
     let hoveredSkill: string | null = null;
-    let cardVisibilityStates: Map<number, { opacity: number; transform: string }> = new Map();
     let announcementText: string = '';
+    
 
-    const getViewportBounds = () => {
-        const viewportTop = window.scrollY;
-        const viewportHeight = window.innerHeight;
-        return {
-            top: viewportTop,
-            bottom: viewportTop + viewportHeight,
-            height: viewportHeight
-        };
-    };
+    
 
-    const getCardBounds = (element: HTMLElement) => {
-        const rect = element.getBoundingClientRect();
-        const top = rect.top + window.scrollY;
-        return {
-            top,
-            bottom: top + rect.height,
-            center: top + rect.height / 2,
-            height: rect.height
-        };
-    };
+    
 
-    const calculateVisibility = (cardBounds: ReturnType<typeof getCardBounds>, viewportBounds: ReturnType<typeof getViewportBounds>) => {
-        const { top: cardTop, bottom: cardBottom } = cardBounds;
-        const { top: viewportTop, bottom: viewportBottom } = viewportBounds;
-        
-        const fadeInStart = viewportBottom + scrollConfig.enterOffset;
-        const fullyVisibleStart = viewportBottom;
-        const fullyVisibleEnd = viewportTop;
-        const fadeOutEnd = viewportTop - scrollConfig.exitOffset;
-
-        if (cardTop > fadeInStart || cardBottom < fadeOutEnd) return 0;
-        
-        if (cardTop <= fullyVisibleStart && cardBottom >= fullyVisibleEnd) return 1;
-        
-        if (cardTop > fullyVisibleStart) {
-            const distanceBelow = cardTop - fullyVisibleStart;
-            return Math.max(0, 1 - (distanceBelow / scrollConfig.fadeDistance.enter));
-        }
-        
-        if (cardBottom < fullyVisibleEnd) {
-            const distanceAbove = fullyVisibleEnd - cardBottom;
-            return Math.max(0, 1 - (distanceAbove / scrollConfig.fadeDistance.exit));
-        }
-        
-        return 0;
-    };
-
-    const calculateTransform = (visibility: number) => {
-        const progress = Math.max(0, Math.min(1, visibility));
-        const translateY = scrollConfig.transform.translateY * (1 - progress);
-        const scale = scrollConfig.transform.scale.min + 
-                     (scrollConfig.transform.scale.max - scrollConfig.transform.scale.min) * progress;
-        return { translateY, scale };
-    };
-
-    const applyCardStyles = (element: HTMLElement, opacity: number, transform: { translateY: number; scale: number }) => {
-        Object.assign(element.style, {
-            opacity: opacity.toString(),
-            transform: `translateY(${transform.translateY}px) scale(${transform.scale})`,
-            transition: 'opacity 0.3s ease-out, transform 0.3s ease-out'
-        });
-    };
-
-    const handleScrollAnimation = () => {
-        if (!skillsElement) return;
-
-        const viewportBounds = getViewportBounds();
-        const cards = skillsElement.querySelectorAll(".skill__card");
-        
-        cards.forEach((card, index) => {
-            const element = card as HTMLElement;
-            const cardBounds = getCardBounds(element);
-            
-            let visibility = calculateVisibility(cardBounds, viewportBounds);
-            
-            if (visibility > 0 && cardBounds.top > viewportBounds.bottom) {
-                const staggerOffset = index * 0.1;
-                const adjustedProgress = Math.max(0, visibility - staggerOffset);
-                visibility = Math.min(visibility, adjustedProgress + staggerOffset);
-            }
-
-            const transform = calculateTransform(visibility);
-            applyCardStyles(element, visibility, transform);
-            
-            cardVisibilityStates.set(index, {
-                opacity: visibility,
-                transform: `translateY(${transform.translateY}px) scale(${transform.scale})`
-            });
-        });
-    };
-
-    const createThrottledHandler = (handler: () => void) => {
-        let ticking = false;
-        return () => {
-            if (!ticking) {
-                requestAnimationFrame(() => {
-                    handler();
-                    ticking = false;
-                });
-                ticking = true;
-            }
-        };
-    };
-
-    const initScrollBasedRendering = () => {
-        if (!skillsElement) return;
-
-        const throttledScroll = createThrottledHandler(handleScrollAnimation);
-        const events = [
-            ['scroll', throttledScroll],
-            ['resize', throttledScroll]
-        ] as const;
-
-        events.forEach(([event, handler]) => {
-            window.addEventListener(event, handler, { passive: true });
-        });
-
-        handleScrollAnimation();
-
-        return () => {
-            events.forEach(([event, handler]) => {
-                window.removeEventListener(event, handler);
-            });
-        };
-    };
-
-    const resetCardAnimations = () => {
-        cardVisibilityStates.clear();
-        
-        setTimeout(() => {
-            if (skillsElement) {
-                const cards = skillsElement.querySelectorAll(".skill__card");
-                cards.forEach(card => {
-                    const element = card as HTMLElement;
-                    applyCardStyles(element, 0, { translateY: scrollConfig.transform.translateY, scale: scrollConfig.transform.scale.min });
-                });
-                
-                window.dispatchEvent(new Event('scroll'));
-            }
-        }, 50);
-    };
-
-    const createAnnouncement = (category: SkillCategory | null) => {
-        const skillCount = category ? category.skills.length : allSkills.length;
-        const categoryName = category ? category.name : "All Skills";
-        return `Filtered to ${categoryName}. Showing ${skillCount} skills.`;
-    };
-
-    const createSkillAnnouncement = (skill: Skill & { categoryInfo: SkillCategory }) => {
-        const parts = [
-            `Selected ${skill.name}`,
-            `${skill.level} level skill`,
-            skill.years && `with ${skill.years} years experience`,
-            skill.description
-        ].filter(Boolean);
-        
-        return parts.join('. ');
-    };
-
-    const createKeydownHandler = (callback: () => void) => (event: KeyboardEvent) => {
+    // Optimized event handlers
+    const createKeyHandler = (callback: () => void) => (event: KeyboardEvent) => {
         if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
             callback();
@@ -213,36 +68,30 @@
 
     const handleCategoryFilter = (category: SkillCategory | null) => {
         selectedCategory = category?.name || null;
-        announcementText = createAnnouncement(category);
-        resetCardAnimations();
+        const skillCount = category?.skills.length || allSkills.length;
+        const categoryName = category?.name || "All Skills";
+        announcementText = `Filtered to ${categoryName}. Showing ${skillCount} skills.`;
         
-        if (category) {
-            dispatch("categorySelect", { category });
-        }
+        if (category) dispatch("categorySelect", { category });
     };
 
-    const handleSkillHover = (skill: Skill & { categoryInfo: SkillCategory }, isHovering: boolean) => {
-        hoveredSkill = isHovering ? skill.name : null;
-
-        if (isHovering) {
+    const handleSkillInteraction = (skill: Skill & { categoryInfo: SkillCategory }, isActive: boolean) => {
+        hoveredSkill = isActive ? skill.name : null;
+        if (isActive) {
             dispatch("skillSelect", { skill, category: skill.categoryInfo });
+            const parts = [
+                `Selected ${skill.name}`,
+                `${skill.level} level skill`,
+                skill.years && `with ${skill.years} years experience`,
+                skill.description
+            ].filter(Boolean);
+            announcementText = parts.join('. ');
         }
     };
 
-    const handleKeydown = (event: KeyboardEvent, index: number) => {
-        createKeydownHandler(() => {
-            const skill = filteredSkills[index];
-            handleSkillHover(skill, true);
-            announcementText = createSkillAnnouncement(skill);
-        })(event);
-    };
+    
 
-    const handleFilterKeydown = (category: SkillCategory | null) => 
-        createKeydownHandler(() => handleCategoryFilter(category));
-
-    const getColumnsPerRow = (): number => 
-        typeof window !== 'undefined' && window.innerWidth >= 1024 ? 3 : 2;
-
+    // Reactive statements
     $: selectedCategory = initialSelectedCategory !== undefined 
         ? initialSelectedCategory 
         : skillCategories?.[0]?.name || null;
@@ -255,44 +104,42 @@
         ? allSkills.filter(skill => skill.categoryInfo.name === selectedCategory)
         : allSkills;
 
-    $: skillsByLevel = ['expert', 'advanced', 'proficient', 'learning'].reduce((acc, level) => ({
+    $: skillsByLevel = SKILL_LEVELS.reduce((acc, level) => ({
         ...acc,
         [level]: filteredSkills.filter(skill => skill.level === level).length
     }), {} as Record<string, number>);
 
-    onMount(() => {
-        const cleanup = initScrollBasedRendering();
-        return cleanup;
-    });
+    
 </script>
 
-<section class="skills" id="skills" bind:this={skillsElement} role="region" aria-labelledby="skills-heading">
-    <!-- Screen reader announcements -->
+<section class="skills" id="skills" aria-labelledby="skills-heading">
     <div class="sr-only" role="status" aria-live="polite" aria-atomic="true">
         {announcementText}
     </div>
+    
     <Section className="skills__content">
         <div class="skills__container">
-            <div class="skills__header">
+            <header class="skills__header">
                 <h2 class="skills__title" id="skills-heading">{title}</h2>
                 <p class="skills__subtitle">{subtitle}</p>
-            </div>
+            </header>
 
             <div class="skills__filters" role="tablist" aria-label="Filter skills by category">
-                {#each skillCategories as category, index}
+                {#each skillCategories as category}
                     <button
                         class="filter__button"
                         class:filter__button--active={selectedCategory === category.name}
                         on:click={() => handleCategoryFilter(category)}
-                        on:keydown={(e) => handleFilterKeydown(e, category)}
+                        on:keydown={createKeyHandler(() => handleCategoryFilter(category))}
                         role="tab"
                         aria-selected={selectedCategory === category.name}
                         aria-controls="skills-grid"
-                        id="filter-{category.name.toLowerCase().replace(/\s+/g, '-')}"
                     >
                         <span class="filter__icon" aria-hidden="true">{category.icon}</span>
                         {category.name}
-                        <span class="filter__count" aria-label="{category.skills.length} skills">{category.skills.length}</span>
+                        <span class="filter__count" aria-label="{category.skills.length} skills">
+                            {category.skills.length}
+                        </span>
                     </button>
                 {/each}
 
@@ -300,1243 +147,831 @@
                     class="filter__button"
                     class:filter__button--active={!selectedCategory}
                     on:click={() => handleCategoryFilter(null)}
-                    on:keydown={(e) => handleFilterKeydown(e, null)}
+                    on:keydown={createKeyHandler(() => handleCategoryFilter(null))}
                     role="tab"
                     aria-selected={!selectedCategory}
                     aria-controls="skills-grid"
-                    id="filter-all"
                 >
                     All Skills
-                    <span class="filter__count" aria-label="{allSkills.length} skills">{allSkills.length}</span>
+                    <span class="filter__count" aria-label="{allSkills.length} skills">
+                        {allSkills.length}
+                    </span>
                 </button>
             </div>
 
-            <div class="skills__grid" role="grid" aria-labelledby="skills-heading" id="skills-grid" aria-rowcount="{Math.ceil(filteredSkills.length / getColumnsPerRow())}" aria-colcount="{getColumnsPerRow()}">
+            <div 
+                class="skills__grid" 
+                id="skills-grid"
+            >
                 {#each filteredSkills as skill, index}
-                    <div
-                        class="skill__card skill__card--{skill.level} skill__card--scroll-driven"
-                        class:skill__card--hovered={hoveredSkill === skill.name}
+                    <article class="skill__item" data-card-index={index}>
+                        <button
+                            type="button"
+                            class="skill__card skill__card--{skill.level}"
+                            class:skill__card--hovered={hoveredSkill === skill.name}
+                            on:click={() => handleSkillInteraction(skill, true)}
+                            on:mouseenter={() => handleSkillInteraction(skill, true)}
+                            on:mouseleave={() => handleSkillInteraction(skill, false)}
+                            on:keydown={createKeyHandler(() => handleSkillInteraction(skill, true))}
+                            aria-label="{skill.name}. {skill.level} level skill{skill.years ? ` with ${skill.years} years experience` : ''}{skill.description ? `. ${skill.description}` : ''}"
+                        >
+                            <div class="skill__image">
+                                <img src={skill.image} alt="" loading="lazy" role="presentation" />
+                                <div class="skill__level-indicator skill__level-indicator--{skill.level}"></div>
+                            </div>
 
-                        data-card-index={index}
-                        on:mouseenter={() => handleSkillHover(skill, true)}
-                        on:mouseleave={() => handleSkillHover(skill, false)}
-                        on:keydown={(e) => handleKeydown(e, index)}
-                        role="gridcell"
-                        tabindex="0"
-                        aria-rowindex="{Math.floor(index / getColumnsPerRow()) + 1}"
-                        aria-colindex="{(index % getColumnsPerRow()) + 1}"
-                        aria-label="{skill.name}. {skill.level} level skill{skill.years ? ` with ${skill.years} years experience` : ''}{skill.description ? `. ${skill.description}` : ''}"
-                        aria-describedby="skill-{index}-details"
-                    >
-                        <div class="skill__image">
-                            <img
-                                src={skill.image}
-                                alt=""
-                                loading="lazy"
-                                role="presentation"
-                            />
-                            <div
-                                class="skill__level-indicator skill__level-indicator--{skill.level}"
-                                aria-label="{skill.level} level indicator"
-                                role="img"
-                            ></div>
-                        </div>
-
-                        <div class="skill__content">
-                            <h3 class="skill__name" id="skill-{index}-name">{skill.name}</h3>
-                            <div class="skill__meta" id="skill-{index}-details">
-                                <span class="skill__level skill__level--{skill.level}" aria-label="Skill level: {skill.level}">{skill.level}</span>
-                                {#if skill.years}
-                                    <span class="skill__years" aria-label="{skill.years} years of experience">{skill.years}y</span>
+                            <div class="skill__content">
+                                <h3 class="skill__name">{skill.name}</h3>
+                                <div class="skill__meta">
+                                    <span class="skill__level skill__level--{skill.level}">
+                                        {skill.level}
+                                    </span>
+                                    {#if skill.years}
+                                        <span class="skill__years">{skill.years}y</span>
+                                    {/if}
+                                </div>
+                                {#if skill.description}
+                                    <p class="skill__description">{skill.description}</p>
                                 {/if}
                             </div>
-                            {#if skill.description}
-                                <p class="skill__description" id="skill-{index}-desc">
-                                    {skill.description}
-                                </p>
-                            {/if}
-                        </div>
 
-                        <div class="skill__glow"></div>
-                    </div>
+                            <div class="skill__glow"></div>
+                        </button>
+                    </article>
                 {/each}
             </div>
 
-            <div class="skills__summary" role="region" aria-labelledby="skills-summary-heading">
+            <aside class="skills__summary" role="region" aria-labelledby="skills-summary-heading">
                 <h3 class="sr-only" id="skills-summary-heading">Skills Summary Statistics</h3>
+                
                 <div class="summary__grid" role="list" aria-label="Skills statistics">
-                    <div class="summary__card" role="listitem" tabindex="0" aria-label="{allSkills.length} total technologies">
-                        <div class="summary__number" aria-hidden="true">{allSkills.length}</div>
-                        <div class="summary__label" aria-hidden="true">Technologies</div>
-                    </div>
-                    <div class="summary__card" role="listitem" tabindex="0" aria-label="{skillsByLevel.expert} expert level skills">
-                        <div class="summary__number" aria-hidden="true">{skillsByLevel.expert}</div>
-                        <div class="summary__label" aria-hidden="true">Expert Level</div>
-                    </div>
-                    <div class="summary__card" role="listitem" tabindex="0" aria-label="{skillCategories.length} skill domains">
-                        <div class="summary__number" aria-hidden="true">{skillCategories.length}</div>
-                        <div class="summary__label" aria-hidden="true">Domains</div>
-                    </div>
-                    <div class="summary__card" role="listitem" tabindex="0" aria-label="Over 12 years of experience">
-                        <div class="summary__number" aria-hidden="true">12+</div>
-                        <div class="summary__label" aria-hidden="true">Years</div>
-                    </div>
+                    {#each [
+                        { value: allSkills.length, label: 'Technologies', key: 'total' },
+                        { value: skillsByLevel.expert, label: 'Expert Level', key: 'expert' },
+                        { value: skillCategories.length, label: 'Domains', key: 'domains' },
+                        { value: '12+', label: 'Years', key: 'years' }
+                    ] as stat}
+                        <div class="summary__card summary__card--{stat.key}" role="listitem">
+                            <div class="summary__number">{stat.value}</div>
+                            <div class="summary__label">{stat.label}</div>
+                        </div>
+                    {/each}
                 </div>
 
                 <div class="skills__legend" role="list" aria-label="Skill level legend">
-                    <div class="legend__item legend__item--expert" role="listitem" tabindex="0" aria-label="Expert level skills indicator">
-                        <div class="legend__dot" aria-hidden="true"></div>
-                        <span aria-hidden="true">Expert</span>
-                    </div>
-                    <div class="legend__item legend__item--advanced" role="listitem" tabindex="0" aria-label="Advanced level skills indicator">
-                        <div class="legend__dot" aria-hidden="true"></div>
-                        <span aria-hidden="true">Advanced</span>
-                    </div>
-                    <div class="legend__item legend__item--proficient" role="listitem" tabindex="0" aria-label="Proficient level skills indicator">
-                        <div class="legend__dot" aria-hidden="true"></div>
-                        <span aria-hidden="true">Proficient</span>
-                    </div>
-                    <div class="legend__item legend__item--learning" role="listitem" tabindex="0" aria-label="Learning level skills indicator">
-                        <div class="legend__dot" aria-hidden="true"></div>
-                        <span aria-hidden="true">Learning</span>
-                    </div>
+                    {#each SKILL_LEVELS as level}
+                        <div class="legend__item legend__item--{level}" role="listitem">
+                            <div class="legend__dot"></div>
+                            <span>{level}</span>
+                        </div>
+                    {/each}
                 </div>
-            </div>
+            </aside>
         </div>
     </Section>
 </section>
 
 <style lang="scss">
-@use "styles/_reset.scss" as *;
-@use "styles/animations.scss" as *;
-@use "styles/_tokens.scss" as *;
+    @use "styles/animations.scss" as *;
+    @use "styles/_tokens.scss" as *;
 
-:root {
-    --skills-expert-color: var(--token-status-expert);
-    --skills-advanced-color: var(--token-status-advanced);
-    --skills-proficient-color: var(--token-status-proficient);
-    --skills-learning-color: var(--token-status-learning);
-    
-    --skills-expert-glow: var(--token-shadow-glow-medium);
-    --skills-advanced-glow: rgba(99, 102, 241, 0.15);
-    --skills-proficient-glow: rgba(245, 158, 11, 0.15);
-    --skills-learning-glow: rgba(6, 182, 212, 0.15);
-    
-    --skills-expert-glow-strong: var(--token-shadow-glow-strong);
-    --skills-advanced-glow-strong: rgba(99, 102, 241, 0.3);
-    --skills-proficient-glow-strong: rgba(245, 158, 11, 0.3);
-    --skills-learning-glow-strong: rgba(6, 182, 212, 0.3);
-}
+    // CSS Custom Properties for Skill Levels
+    :root {
+        --skill-expert: var(--token-status-expert);
+        --skill-advanced: var(--token-status-advanced);
+        --skill-proficient: var(--token-status-proficient);
+        --skill-learning: var(--token-status-learning);
+        
+        --glow-expert: var(--token-shadow-glow-medium);
+        --glow-advanced: rgba(99, 102, 241, 0.15);
+        --glow-proficient: rgba(245, 158, 11, 0.15);
+        --glow-learning: rgba(6, 182, 212, 0.15);
+        
+        --glow-expert-strong: var(--token-shadow-glow-strong);
+        --glow-advanced-strong: rgba(99, 102, 241, 0.3);
+        --glow-proficient-strong: rgba(245, 158, 11, 0.3);
+        --glow-learning-strong: rgba(6, 182, 212, 0.3);
 
-/* Screen reader only content */
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-}
-
-.skills {
-    position: relative;
-    background: var(--token-gradients-skills);
-    padding: var(--token-space-fluid-5xl) 0;
-    overflow: hidden;
-    font-family: var(--token-font-family-sans);
-    font-feature-settings: "kern" 1, "liga" 1, "calt" 1, "ss01" 1;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
-.skills__content {
-    position: relative;
-    max-width: var(--token-container-7xl);
-    margin: 0 auto;
-    padding: 0 var(--token-space-fluid-md);
-
-    @media (min-width: $breakpoint-md) {
-        padding: 0 var(--token-space-fluid-lg);
+        --animation-duration: 300ms;
+        --animation-ease: cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    @media (min-width: $breakpoint-lg) {
-        padding: 0 var(--token-space-fluid-xl);
-        max-width: var(--token-container-max);
-    }
-}
-
-.skills__container {
-    animation: fadeInUp var(--token-motion-duration-slow) var(--token-motion-ease-out) both;
-}
-
-.skills__header {
-    text-align: center;
-    margin-bottom: var(--token-space-fluid-5xl);
-    animation: fadeInUp var(--token-motion-duration-slow) var(--token-motion-ease-out) 0.2s both;
-}
-
-.skills__title {
-    font-size: var(--token-font-size-4xl);
-    font-weight: var(--token-font-weight-bold);
-    line-height: var(--token-line-height-tight);
-    color: var(--token-text-heading);
-    margin-bottom: var(--token-space-fluid-md);
-    letter-spacing: var(--token-letter-spacing-tight);
-    background: var(--token-gradients-heading);
-    background-size: 200% 200%;
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: textShimmer 8s ease-in-out infinite;
-
-    @media (min-width: $breakpoint-md) {
-        font-size: var(--token-font-size-5xl);
-        line-height: var(--token-line-height-snug);
-    }
-
-    @media (min-width: $breakpoint-lg) {
-        font-size: var(--token-font-size-6xl);
-        letter-spacing: var(--token-letter-spacing-normal);
-    }
-}
-
-.skills__subtitle {
-    font-size: var(--token-font-size-lg);
-    color: var(--token-text-secondary);
-    font-weight: var(--token-font-weight-normal);
-    line-height: var(--token-line-height-relaxed);
-    letter-spacing: var(--token-letter-spacing-normal);
-    max-width: var(--token-container-5xl);
-    margin: 0 auto;
-
-    @media (min-width: $breakpoint-md) {
-        font-size: var(--token-font-size-xl);
-        line-height: var(--token-line-height-loose);
-    }
-
-    @media (min-width: $breakpoint-lg) {
-        font-size: var(--token-font-size-2xl);
-        letter-spacing: var(--token-letter-spacing-wide);
-    }
-}
-
-.skills__filters {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: var(--token-space-fluid-md);
-    margin-bottom: var(--token-space-fluid-5xl);
-    animation: fadeInUp var(--token-motion-duration-slow) var(--token-motion-ease-out) 0.4s both;
-}
-
-.filter__button {
-    display: flex;
-    align-items: center;
-    gap: var(--token-space-fluid-sm);
-    background: var(--token-surface-glass-strong);
-    border: var(--token-border-default-small);
-    border-radius: var(--token-radius-full);
-    padding: var(--token-space-fluid-sm) var(--token-space-fluid-lg);
-    font-size: var(--token-font-size-sm);
-    font-weight: var(--token-font-weight-medium);
-    color: var(--token-text-overlay);
-    cursor: pointer;
-    transition: all var(--token-motion-duration-fast) var(--token-motion-ease-out);
-    backdrop-filter: blur(var(--token-blur-lg));
-    white-space: nowrap;
-    position: relative;
-    overflow: hidden;
-    letter-spacing: var(--token-letter-spacing-wide);
-    line-height: var(--token-line-height-snug);
-    box-shadow: var(--token-shadow-light);
-
-    &::before {
-        content: '';
+    // Base Components
+    .sr-only {
         position: absolute;
-        inset: 0;
-        background: var(--token-surface-glass-iridescent);
-        opacity: 0;
-        transition: opacity var(--token-motion-duration-fast) var(--token-motion-ease-out);
-        border-radius: inherit;
-        pointer-events: none;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
     }
 
-    &:hover,
-    &:focus {
-        transform: translateY(-3px) scale(1.02);
-        border-color: var(--token-border-color-default);
-        color: var(--token-text-primary);
-        box-shadow: var(--token-shadow-elevated);
+    .skills {
+        position: relative;
+        background: var(--token-gradients-skills);
+        padding: var(--token-space-fluid-5xl) 0;
+        overflow: hidden;
+        font-family: var(--token-font-family-sans);
+        font-feature-settings: "kern" 1, "liga" 1, "calt" 1, "ss01" 1;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
 
-        &::before {
-            opacity: 1;
+    .skills__content {
+        position: relative;
+        max-width: var(--token-container-7xl);
+        margin: 0 auto;
+        padding: 0 var(--token-space-fluid-md);
+
+        @media (min-width: $breakpoint-md) {
+            padding: 0 var(--token-space-fluid-lg);
+        }
+
+        @media (min-width: $breakpoint-lg) {
+            padding: 0 var(--token-space-fluid-xl);
+            max-width: var(--token-container-max);
         }
     }
 
-    &:active {
-        transform: translateY(-1px) scale(1);
-        box-shadow: var(--token-shadow-light);
+    .skills__container {
+        animation: fadeInUp var(--token-motion-duration-slow) var(--token-motion-ease-out) both;
     }
 
-    &--active {
+    // Header Styles
+    .skills__header {
+        text-align: center;
+        margin-bottom: var(--token-space-fluid-5xl);
+        animation: fadeInUp var(--token-motion-duration-slow) var(--token-motion-ease-out) 0.2s both;
+    }
+
+    .skills__title {
+        font-size: var(--token-font-size-4xl);
+        font-weight: var(--token-font-weight-bold);
+        line-height: var(--token-line-height-tight);
+        color: var(--token-text-heading);
+        margin-bottom: var(--token-space-fluid-md);
+        letter-spacing: var(--token-letter-spacing-tight);
+        background: var(--token-gradients-heading);
+        background-size: 200% 200%;
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: textShimmer 8s ease-in-out infinite;
+
+        @media (min-width: $breakpoint-md) {
+            font-size: var(--token-font-size-5xl);
+        }
+
+        @media (min-width: $breakpoint-lg) {
+            font-size: var(--token-font-size-6xl);
+        }
+    }
+
+    .skills__subtitle {
+        font-size: var(--token-font-size-lg);
+        color: var(--token-text-secondary);
+        font-weight: var(--token-font-weight-normal);
+        line-height: var(--token-line-height-relaxed);
+        max-width: var(--token-container-5xl);
+        margin: 0 auto;
+
+        @media (min-width: $breakpoint-md) {
+            font-size: var(--token-font-size-xl);
+        }
+
+        @media (min-width: $breakpoint-lg) {
+            font-size: var(--token-font-size-2xl);
+        }
+    }
+
+    // Filter Styles
+    .skills__filters {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: var(--token-space-fluid-md);
+        margin-bottom: var(--token-space-fluid-5xl);
+        animation: fadeInUp var(--token-motion-duration-slow) var(--token-motion-ease-out) 0.4s both;
+    }
+
+    .filter__button {
+        display: flex;
+        align-items: center;
+        gap: var(--token-space-fluid-sm);
         background: var(--token-surface-glass-strong);
-        border-color: var(--token-border-color-hover);
-        color: var(--token-text-primary);
-        box-shadow: 
-            var(--token-shadow-default),
-            0 0 20px var(--token-shadow-glow-subtle);
+        border: var(--token-border-default-small);
+        border-radius: var(--token-radius-full);
+        padding: var(--token-space-fluid-sm) var(--token-space-fluid-lg);
+        font-size: var(--token-font-size-sm);
+        font-weight: var(--token-font-weight-medium);
+        color: var(--token-text-overlay);
+        cursor: pointer;
+        transition: all var(--animation-duration) var(--animation-ease);
+        backdrop-filter: blur(var(--token-blur-lg));
+        white-space: nowrap;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--token-shadow-light);
 
         &::before {
-            background: linear-gradient(
-                135deg,
-                var(--token-tint-overlay-subtle) 0%,
-                transparent 50%
-            );
-            opacity: 1;
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--token-surface-glass-iridescent);
+            opacity: 0;
+            transition: opacity var(--animation-duration) var(--animation-ease);
+            border-radius: inherit;
+            pointer-events: none;
         }
 
         &:hover,
         &:focus {
-            transform: translateY(-4px) scale(1.02);
+            transform: translateY(-3px) scale(1.02);
+            border-color: var(--token-border-color-default);
+            color: var(--token-text-primary);
+            box-shadow: var(--token-shadow-elevated);
+
+            &::before { opacity: 1; }
+        }
+
+        &--active {
+            background: var(--token-surface-glass-strong);
             border-color: var(--token-border-color-hover);
-            box-shadow: 
-                var(--token-shadow-default),
-                0 0 25px var(--token-shadow-glow-medium);
+            color: var(--token-text-primary);
+            box-shadow: var(--token-shadow-default), 0 0 20px var(--token-shadow-glow-subtle);
 
             &::before {
-                background: linear-gradient(
-                    135deg,
-                    var(--token-tint-overlay-medium) 0%,
-                    transparent 50%,
-                    var(--token-tint-overlay-subtle) 100%
-                );
+                background: linear-gradient(135deg, var(--token-tint-overlay-subtle) 0%, transparent 50%);
+                opacity: 1;
+            }
+        }
+
+        @media (min-width: $breakpoint-md) {
+            font-size: var(--token-font-size-base);
+            padding: var(--token-space-fluid-md) var(--token-space-fluid-xl);
+        }
+    }
+
+    .filter__icon {
+        font-size: var(--token-font-size-base);
+        position: relative;
+        z-index: 2;
+    }
+
+    .filter__count {
+        background: var(--token-surface-glass-strong);
+        border-radius: var(--token-radius-sm);
+        padding: var(--token-space-1) var(--token-space-2);
+        font-size: var(--token-font-size-xs);
+        font-weight: var(--token-font-weight-semibold);
+        position: relative;
+        z-index: 2;
+        backdrop-filter: blur(var(--token-blur-sm));
+    }
+
+    // Skills Grid
+    .skills__grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--token-space-fluid-xl);
+        margin-bottom: var(--token-space-fluid-5xl);
+        position: relative;
+
+        @media (min-width: $breakpoint-lg) {
+            grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
+            gap: var(--token-space-fluid-2xl) var(--token-space-fluid-3xl);
+        }
+    }
+
+    /* Removed scroll-driven and JS fallback animations */
+
+    // Skill Card Base
+    .skill__card {
+        display: block;
+        width: 100%;
+        height: 100%;
+        background: var(--token-surface-glass-medium);
+        border: var(--token-border-default-small);
+        border-radius: var(--token-radius-lg);
+        padding: var(--token-space-fluid-xl);
+        position: relative;
+        cursor: pointer;
+        backdrop-filter: blur(var(--token-blur-lg));
+        box-shadow: var(--token-shadow-default);
+        z-index: 1;
+        
+        
+        // JS animated cards - efficient fallback
+        &--js-animated {
+            /* Initial off-state */
+            opacity: 0;
+            transform: translate3d(0, 40px, 0) scale(0.95);
+            will-change: transform, opacity;
+            /* Important: scroll drives progress; no easing fights it */
+            transition: none;
+        }
+
+        &::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
+            border-radius: inherit;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        &::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--token-surface-glass-iridescent);
+            opacity: 0;
+            transition: opacity var(--animation-duration) var(--animation-ease);
+            border-radius: inherit;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Hover/focus transitions */
+        &:hover,
+        &:focus {
+            border-color: var(--token-border-color-default);
+            box-shadow: var(--token-shadow-elevated);
+            z-index: 10;
+            transition: border-color var(--animation-duration) var(--animation-ease),
+                       box-shadow var(--animation-duration) var(--animation-ease);
+            &::before { opacity: 1; }
+        }
+
+        @media (min-width: $breakpoint-md) {
+            padding: var(--token-space-fluid-2xl);
+            border-radius: var(--token-radius-xl);
+        }
+    }
+
+    // Skill Level Variations - Restored border colors for all card types
+    @each $level in expert, advanced, proficient, learning {
+        .skill__card--#{$level}:hover,
+        .skill__card--#{$level}:focus {
+            border-color: var(--skill-#{$level});
+            box-shadow: var(--token-shadow-elevated), 0 0 var(--token-space-fluid-xl) var(--glow-#{$level}-strong);
+
+            &::before {
+                background: linear-gradient(135deg, var(--skill-#{$level}) 0%, transparent 50%);
+                opacity: 0.1;
             }
         }
     }
 
-    &:focus-visible {
-        outline: 2px solid var(--token-interactive-color);
-        outline-offset: 2px;
+    // Skill Card Content
+    .skill__image {
+        position: relative;
+        width: var(--token-size-14);
+        height: var(--token-size-14);
+        margin: 0 auto var(--token-space-fluid-lg);
+        border-radius: var(--token-radius-lg);
+        background: var(--token-surface-color);
+        border: var(--token-border-default-small);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all var(--animation-duration) var(--animation-ease);
+        box-shadow: var(--token-shadow-light);
+
+        img {
+            width: 3rem;
+            height: 3rem;
+            border-radius: var(--token-radius-sm);
+            object-fit: contain;
+            transition: transform var(--animation-duration) var(--animation-ease);
+        }
+
+        @media (min-width: $breakpoint-md) {
+            width: 4rem;
+            height: 4rem;
+        }
     }
 
-    @media (min-width: $breakpoint-md) {
-        font-size: var(--token-font-size-base);
-        padding: var(--token-space-fluid-md) var(--token-space-fluid-xl);
+    .skill__card:hover .skill__image,
+    .skill__card:focus .skill__image {
+        transform: scale(1.05);
+        box-shadow: var(--token-shadow-interactive);
+
+        img { transform: scale(1.1); }
     }
-}
 
-.filter__icon {
-    font-size: var(--token-font-size-base);
-    position: relative;
-    z-index: 2;
-}
-
-.filter__count {
-    background: var(--token-surface-glass-strong);
-    border-radius: var(--token-radius-sm);
-    padding: var(--token-space-1) var(--token-space-2);
-    font-size: var(--token-font-size-xs);
-    font-weight: var(--token-font-weight-semibold);
-    position: relative;
-    z-index: 2;
-    letter-spacing: var(--token-letter-spacing-normal);
-    line-height: var(--token-line-height-tight);
-    backdrop-filter: blur(var(--token-blur-sm));
-}
-
-.filter__button--active .filter__count {
-    background: var(--token-surface-glass-medium);
-    color: var(--token-text-primary);
-}
-
-.skills__grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--token-space-fluid-xl);
-    margin-bottom: var(--token-space-fluid-5xl);
-    position: relative;
-
-    &::before {
-        content: '';
+    .skill__level-indicator {
         position: absolute;
-        inset: 0;
-        background: 
-            radial-gradient(circle at 25% 25%, var(--token-tint-overlay-subtle) 1px, transparent 1px),
-            radial-gradient(circle at 75% 75%, var(--token-tint-overlay-subtle) 1px, transparent 1px);
-        background-size: 50px 50px;
-        opacity: 0;
-        transition: opacity var(--token-motion-duration-slow) var(--token-motion-ease-out);
-        pointer-events: none;
-        z-index: 0;
-    }
+        top: calc(-1 * var(--token-space-1));
+        right: calc(-1 * var(--token-space-1));
+        width: var(--token-size-4);
+        height: var(--token-size-4);
+        border-radius: var(--token-radius-full);
+        border: var(--token-border-default-small);
+        z-index: var(--token-z-raised);
+        transition: all var(--animation-duration) var(--animation-ease);
 
-    &:hover::before {
-        opacity: 0.3;
-    }
-
-    @media (min-width: $breakpoint-md) {
-        gap: var(--token-space-fluid-2xl);
-    }
-
-    @media (min-width: $breakpoint-lg) {
-        grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
-        gap: var(--token-space-fluid-2xl) var(--token-space-fluid-3xl);
-    }
-}
-
-.skill__card {
-    background: var(--token-surface-glass-medium);
-    border: var(--token-border-default-small);
-    border-radius: var(--token-radius-lg);
-    padding: var(--token-space-fluid-xl);
-    position: relative;
-    cursor: pointer;
-    backdrop-filter: blur(var(--token-blur-lg));
-    box-shadow: var(--token-shadow-default);
-    z-index: 1;
-    
-    &--scroll-driven {
-        opacity: 0;
-        transform: translateY(40px) scale(0.95);
-    }
-
-    &::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-            135deg,
-            rgba(255, 255, 255, 0.02) 0%,
-            transparent 50%,
-            rgba(255, 255, 255, 0.01) 100%
-        );
-        border-radius: inherit;
-        pointer-events: none;
-        z-index: 0;
-    }
-
-    &::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: var(--token-surface-glass-iridescent);
-        opacity: 0;
-        transition: opacity var(--token-motion-duration-normal) var(--token-motion-ease-out);
-        border-radius: inherit;
-        pointer-events: none;
-        z-index: 1;
-    }
-
-    @media (min-width: $breakpoint-md) {
-        padding: var(--token-space-fluid-2xl);
-        border-radius: var(--token-radius-xl);
-    }
-
-    &:hover,
-    &:focus {
-        border-color: var(--token-border-color-default);
-        box-shadow: var(--token-shadow-elevated);
-        z-index: 10;
-        
-        &.skill__card--scroll-driven {
-            transform: translateY(-5px) scale(1.02) !important;
-            transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out) !important;
-        }
-        
-        &::before {
-            opacity: 1;
+        @media (min-width: $breakpoint-md) {
+            width: var(--token-size-5);
+            height: var(--token-size-5);
         }
     }
 
-    &:focus-within {
-        outline: 2px solid var(--token-interactive-color);
-        outline-offset: 2px;
-        box-shadow: var(--token-shadow-focus);
-    }
-
-    &:focus {
-        outline: 2px solid var(--token-interactive-color);
-        outline-offset: 2px;
-        box-shadow: var(--token-shadow-focus);
-        z-index: 10;
-    }
-
-
-
-    &--expert:hover,
-    &--expert:focus {
-        border-color: var(--skills-expert-color);
-        box-shadow: 
-            var(--token-shadow-elevated),
-            0 0 var(--token-space-fluid-xl) var(--skills-expert-glow-strong);
-
-        &.skill__card--scroll-driven {
-            transform: translateY(-5px) scale(1.02) !important;
-        }
-
-        &::before {
-            background: linear-gradient(
-                135deg,
-                rgba(41, 238, 186, 0.1) 0%,
-                transparent 50%,
-                rgba(41, 238, 186, 0.05) 100%
-            );
+    // Level indicator colors (DRY)
+    @each $level in expert, advanced, proficient, learning {
+        .skill__level-indicator--#{$level} {
+            background: var(--skill-#{$level});
+            box-shadow: 0 0 var(--token-space-3) var(--glow-#{$level}-strong);
         }
     }
 
-    &--advanced:hover,
-    &--advanced:focus {
-        border-color: var(--skills-advanced-color);
-        box-shadow: 
-            var(--token-shadow-elevated),
-            0 0 var(--token-space-fluid-xl) var(--skills-advanced-glow-strong);
-
-        &.skill__card--scroll-driven {
-            transform: translateY(-5px) scale(1.02) !important;
-        }
-
-        &::before {
-            background: linear-gradient(
-                135deg,
-                rgba(99, 102, 241, 0.1) 0%,
-                transparent 50%,
-                rgba(99, 102, 241, 0.05) 100%
-            );
-        }
+    .skill__card:hover .skill__level-indicator,
+    .skill__card:focus .skill__level-indicator {
+        transform: scale(1.2);
     }
 
-    &--proficient:hover,
-    &--proficient:focus {
-        border-color: var(--skills-proficient-color);
-        box-shadow: 
-            var(--token-shadow-elevated),
-            0 0 var(--token-space-fluid-xl) var(--skills-proficient-glow-strong);
-
-        &.skill__card--scroll-driven {
-            transform: translateY(-5px) scale(1.02) !important;
-        }
-
-        &::before {
-            background: linear-gradient(
-                135deg,
-                rgba(245, 158, 11, 0.1) 0%,
-                transparent 50%,
-                rgba(245, 158, 11, 0.05) 100%
-            );
-        }
+    .skill__content {
+        text-align: center;
+        position: relative;
+        z-index: 2;
+        transition: transform var(--animation-duration) var(--animation-ease);
     }
 
-    &--learning:hover,
-    &--learning:focus {
-        border-color: var(--skills-learning-color);
-        box-shadow: 
-            var(--token-shadow-elevated),
-            0 0 var(--token-space-fluid-xl) var(--skills-learning-glow-strong);
-
-        &.skill__card--scroll-driven {
-            transform: translateY(-5px) scale(1.02) !important;
-        }
-
-        &::before {
-            background: linear-gradient(
-                135deg,
-                rgba(6, 182, 212, 0.1) 0%,
-                transparent 50%,
-                rgba(6, 182, 212, 0.05) 100%
-            );
-        }
-    }
-}
-
-.skill__image {
-    position: relative;
-    width: var(--token-size-14);
-    height: var(--token-size-14);
-    margin: 0 auto var(--token-space-fluid-lg);
-    border-radius: var(--token-radius-lg);
-    background: var(--token-surface-color);
-    border: var(--token-border-default-small);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
-    box-shadow: var(--token-shadow-light);
-
-    @media (min-width: $breakpoint-md) {
-        width: 4rem;
-        height: 4rem;
-        border-radius: var(--token-radius-xl);
-    }
-
-    img {
-        width: 3rem;
-        height: 3rem;
-        border-radius: var(--token-radius-sm);
-        object-fit: contain;
-        transition: transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
-        filter: drop-shadow(0 var(--token-space-1) var(--token-space-2) var(--token-shadow-light));
-    }
-}
-
-.skill__card:hover .skill__image,
-.skill__card:focus .skill__image {
-    transform: scale(1.05);
-    box-shadow: var(--token-shadow-interactive);
-
-    img {
-        transform: scale(1.1);
-        filter: drop-shadow(0 var(--token-space-2) var(--token-space-4) var(--token-shadow-medium));
-    }
-}
-
-.skill__level-indicator {
-    position: absolute;
-    top: calc(-1 * var(--token-space-1));
-    right: calc(-1 * var(--token-space-1));
-    width: var(--token-size-4);
-    height: var(--token-size-4);
-    border-radius: var(--token-radius-full);
-    border: var(--token-border-default-small);
-    z-index: var(--token-z-raised);
-    transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
-
-    @media (min-width: $breakpoint-md) {
-        width: var(--token-size-5);
-        height: var(--token-size-5);
-    }
-
-    &--expert {
-        background: var(--skills-expert-color);
-        box-shadow: 0 0 var(--token-space-3) var(--skills-expert-glow-strong);
-    }
-
-    &--advanced {
-        background: var(--skills-advanced-color);
-        box-shadow: 0 0 var(--token-space-3) var(--skills-advanced-glow-strong);
-    }
-
-    &--proficient {
-        background: var(--skills-proficient-color);
-        box-shadow: 0 0 var(--token-space-3) var(--skills-proficient-glow-strong);
-    }
-
-    &--learning {
-        background: var(--skills-learning-color);
-        box-shadow: 0 0 var(--token-space-3) var(--skills-learning-glow-strong);
-    }
-}
-
-.skill__card:hover .skill__level-indicator,
-.skill__card:focus .skill__level-indicator {
-    transform: scale(1.2);
-    box-shadow: 
-        0 0 var(--token-space-4) currentColor,
-        0 0 var(--token-space-6) rgba(255, 255, 255, 0.1);
-}
-
-.skill__content {
-    text-align: center;
-    position: relative;
-    z-index: 2;
-}
-
-.skill__name {
-    font-size: var(--token-font-size-lg);
-    font-weight: var(--token-font-weight-semibold);
-    color: var(--token-text-primary);
-    margin-bottom: var(--token-space-fluid-sm);
-    letter-spacing: var(--token-letter-spacing-normal);
-    line-height: var(--token-line-height-snug);
-
-    @media (min-width: $breakpoint-md) {
-        font-size: var(--token-font-size-xl);
-        line-height: var(--token-line-height-normal);
-    }
-
-    @media (min-width: $breakpoint-lg) {
-        font-size: var(--token-font-size-2xl);
-        letter-spacing: var(--token-letter-spacing-tight);
-    }
-}
-
-.skill__meta {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--token-space-fluid-sm);
-    margin-bottom: var(--token-space-fluid-md);
-    flex-wrap: wrap;
-    position: relative;
-    z-index: 2;
-}
-
-.skill__level {
-    font-size: var(--token-font-size-xs);
-    font-weight: var(--token-font-weight-semibold);
-    text-transform: uppercase;
-    letter-spacing: var(--token-letter-spacing-widest);
-    line-height: var(--token-line-height-tight);
-    padding: var(--token-space-2) var(--token-space-3);
-    border-radius: var(--token-radius-sm);
-    background: var(--token-surface-glass-strong);
-    color: var(--token-text-overlay);
-    border: var(--token-border-default-small);
-    backdrop-filter: blur(var(--token-blur-sm));
-    transition: all var(--token-motion-duration-fast) var(--token-motion-ease-out);
-    position: relative;
-    z-index: 2;
-
-    @media (min-width: $breakpoint-md) {
-        font-size: var(--token-font-size-sm);
-        padding: var(--token-space-fluid-xs) var(--token-space-fluid-sm);
-    }
-}
-
-.skill__card:hover .skill__level,
-.skill__card:focus .skill__level {
-    background: var(--token-interactive-color);
-    color: var(--token-text-dark);
-    transform: scale(1.05);
-}
-
-.skill__level--expert {
-    color: var(--skills-expert-color);
-    border-color: var(--skills-expert-color);
-}
-
-.skill__level--advanced {
-    color: var(--skills-advanced-color);
-    border-color: var(--skills-advanced-color);
-}
-
-.skill__level--proficient {
-    color: var(--skills-proficient-color);
-    border-color: var(--skills-proficient-color);
-}
-
-.skill__level--learning {
-    color: var(--skills-learning-color);
-    border-color: var(--skills-learning-color);
-}
-
-.skill__card:hover .skill__level--expert,
-.skill__card:focus .skill__level--expert {
-    background: var(--skills-expert-color);
-    color: var(--token-text-dark);
-    box-shadow: 0 0 var(--token-space-2) var(--skills-expert-glow);
-}
-
-.skill__card:hover .skill__level--advanced,
-.skill__card:focus .skill__level--advanced {
-    background: var(--skills-advanced-color);
-    color: var(--token-text-dark);
-    box-shadow: 0 0 var(--token-space-2) var(--skills-advanced-glow);
-}
-
-.skill__card:hover .skill__level--proficient,
-.skill__card:focus .skill__level--proficient {
-    background: var(--skills-proficient-color);
-    color: var(--token-text-dark);
-    box-shadow: 0 0 var(--token-space-2) var(--skills-proficient-glow);
-}
-
-.skill__card:hover .skill__level--learning,
-.skill__card:focus .skill__level--learning {
-    background: var(--skills-learning-color);
-    color: var(--token-text-dark);
-    box-shadow: 0 0 var(--token-space-2) var(--skills-learning-glow);
-}
-
-.skill__years {
-    font-size: var(--token-font-size-xs);
-    font-weight: var(--token-font-weight-medium);
-    color: var(--token-text-tertiary);
-    background: var(--token-surface-glass-strong);
-    padding: var(--token-space-2) var(--token-space-3);
-    border-radius: var(--token-radius-sm);
-    letter-spacing: var(--token-letter-spacing-normal);
-    line-height: var(--token-line-height-snug);
-    border: var(--token-border-default-small);
-    backdrop-filter: blur(var(--token-blur-sm));
-    position: relative;
-    z-index: 2;
-
-    @media (min-width: $breakpoint-md) {
-        font-size: var(--token-font-size-sm);
-        padding: var(--token-space-fluid-xs) var(--token-space-fluid-sm);
-    }
-}
-
-.skill__description {
-    font-size: var(--token-font-size-sm);
-    line-height: var(--token-line-height-relaxed);
-    color: var(--token-text-overlay);
-    opacity: 0;
-    transform: translateY(var(--token-space-fluid-sm));
-    transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
-    letter-spacing: var(--token-letter-spacing-normal);
-    margin-top: var(--token-space-fluid-sm);
-    position: relative;
-    z-index: 2;
-
-    @media (min-width: $breakpoint-md) {
-        font-size: var(--token-font-size-base);
-        line-height: var(--token-line-height-loose);
-    }
-}
-
-.skill__card:hover .skill__description,
-.skill__card:focus .skill__description {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.skills__summary {
-    background: var(--token-surface-glass-medium);
-    border: var(--token-border-default-small);
-    border-radius: var(--token-radius-lg);
-    padding: var(--token-space-fluid-lg);
-    backdrop-filter: blur(var(--token-blur-lg));
-    animation: fadeInUp var(--token-motion-duration-slow) var(--token-motion-ease-out) 0.6s both;
-    position: relative;
-    overflow: hidden;
-    box-shadow: var(--token-shadow-default);
-
-    &::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: var(--token-surface-glass-iridescent);
-        opacity: 0;
-        transition: opacity var(--token-motion-duration-normal) var(--token-motion-ease-out);
-        border-radius: inherit;
-    }
-
-    &:hover::before {
-        opacity: 1;
-    }
-
-    &:hover .section__title {
-        color: var(--token-text-secondary);
-    }
-
-    @media (min-width: $breakpoint-md) {
-        padding: var(--token-space-fluid-xl);
-        border-radius: var(--token-radius-xl);
-    }
-}
-
-.section__title {
-    font-size: var(--token-font-size-xs);
-    font-weight: var(--token-font-weight-semibold);
-    color: var(--token-text-tertiary);
-    text-transform: uppercase;
-    letter-spacing: var(--token-letter-spacing-extra-wide);
-    margin-bottom: var(--token-space-fluid-sm);
-    line-height: var(--token-line-height-snug);
-    transition: color var(--token-motion-duration-normal) var(--token-motion-ease-out);
-
-    @media (min-width: $breakpoint-lg) {
-        font-size: var(--token-font-size-sm);
-        letter-spacing: var(--token-letter-spacing-widest);
-    }
-}
-
-.section__accent {
-    width: 1.5rem;
-    height: 2px;
-    background: var(--token-emphasis-color);
-    border-radius: var(--token-radius-full);
-    margin-bottom: var(--token-space-fluid-md);
-    transition: width var(--token-motion-duration-normal) var(--token-motion-ease-out);
-}
-
-.skills__summary:hover .section__accent {
-    width: 3rem;
-}
-
-.summary__grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--token-space-fluid-sm);
-    margin-bottom: var(--token-space-fluid-2xl);
-
-    @media (min-width: $breakpoint-md) {
-        grid-template-columns: repeat(4, 1fr);
-        gap: var(--token-space-fluid-md);
-    }
-}
-
-.summary__card {
-    padding: var(--token-space-fluid-md);
-    text-align: center;
-    background: var(--token-gradients-stat-default);
-    border: var(--token-border-default-small);
-    border-radius: var(--token-radius-md);
-    transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
-    position: relative;
-    cursor: pointer;
-    overflow: hidden;
-
-    &::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-            135deg,
-            rgba(255, 255, 255, 0.02) 0%,
-            transparent 50%,
-            rgba(255, 255, 255, 0.01) 100%
-        );
-        border-radius: inherit;
-        pointer-events: none;
-        z-index: 0;
-    }
-
-    &::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-            135deg,
-            var(--token-tint-overlay-subtle) 0%,
-            transparent 70%
-        );
-        opacity: 0;
-        transition: opacity var(--token-motion-duration-normal) var(--token-motion-ease-out);
-        border-radius: inherit;
-        z-index: 1;
-    }
-
-    &:hover {
-        transform: translateY(-5px) scale(1.02);
-        background: var(--token-gradients-stat-hover);
-        border-color: var(--token-border-color-hover);
-        box-shadow: 
-            var(--token-shadow-interactive), 
-            var(--token-shadow-default),
-            0 0 20px var(--token-shadow-glow-subtle);
-
-        &::before {
-            opacity: 1;
-        }
-
-        .summary__number {
-            transform: scale(1.1);
-            color: var(--token-text-heading);
-        }
-    }
-
-    &:nth-child(even) {
-        background: var(--token-gradients-stat-alt);
-
-        &:hover {
-            background: var(--token-gradients-stat-alt_hover);
-        }
-    }
-}
-
-.summary__number {
-    font-size: var(--token-font-size-2xl);
-    font-weight: var(--token-font-weight-bold);
-    line-height: var(--token-line-height-tight);
-    margin-bottom: var(--token-space-1);
-    color: var(--token-text-emphasis-heading);
-    letter-spacing: var(--token-letter-spacing-tight);
-    transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
-    position: relative;
-    z-index: 2;
-
-    @media (min-width: $breakpoint-md) {
-        font-size: var(--token-font-size-3xl);
-    }
-
-    @media (min-width: $breakpoint-lg) {
-        font-size: var(--token-font-size-35xl);
-        line-height: var(--token-line-height-snug);
-    }
-}
-
-.summary__label {
-    font-size: var(--token-font-size-xs);
-    font-weight: var(--token-font-weight-medium);
-    color: var(--token-text-tertiary);
-    text-transform: uppercase;
-    letter-spacing: var(--token-letter-spacing-widest);
-    line-height: var(--token-line-height-relaxed);
-    transition: color var(--token-motion-duration-normal) var(--token-motion-ease-out);
-    position: relative;
-    z-index: 2;
-
-    @media (min-width: $breakpoint-lg) {
-        font-size: var(--token-font-size-sm);
-        letter-spacing: var(--token-letter-spacing-extra-wide);
-    }
-}
-
-.summary__card:hover .summary__label {
-    color: var(--token-text-secondary);
-}
-
-.skills__legend {
-    display: flex;
-    justify-content: center;
-    gap: var(--token-space-fluid-xl);
-    flex-wrap: wrap;
-    padding-top: var(--token-space-fluid-xl);
-    border-top: var(--token-border-default-small);
-    animation: fadeInUp var(--token-motion-duration-slow) var(--token-motion-ease-out) 0.8s both;
-
-    @media (min-width: $breakpoint-md) {
-        gap: var(--token-space-fluid-2xl);
-    }
-}
-
-.legend__item {
-    display: flex;
-    align-items: center;
-    gap: var(--token-space-fluid-sm);
-    font-size: var(--token-font-size-xs);
-    font-weight: var(--token-font-weight-medium);
-    color: var(--token-text-tertiary);
-    letter-spacing: var(--token-letter-spacing-wide);
-    line-height: var(--token-line-height-snug);
-    cursor: pointer;
-    transition: all var(--token-motion-duration-fast) var(--token-motion-ease-out);
-    padding: var(--token-space-2) var(--token-space-3);
-    border-radius: var(--token-radius-sm);
-
-    @media (min-width: $breakpoint-md) {
-        font-size: var(--token-font-size-sm);
-    }
-
-    &:hover {
+    .skill__name {
+        font-size: var(--token-font-size-lg);
+        font-weight: var(--token-font-weight-semibold);
         color: var(--token-text-primary);
-        transform: translateY(-2px);
-    }
-}
+        margin-bottom: var(--token-space-fluid-sm);
+        letter-spacing: var(--token-letter-spacing-normal);
+        line-height: var(--token-line-height-snug);
 
-.legend__dot {
-    width: var(--token-space-3);
-    height: var(--token-space-3);
-    border-radius: var(--token-radius-full);
-    flex-shrink: 0;
-    transition: all var(--token-motion-duration-fast) var(--token-motion-ease-out);
+        @media (min-width: $breakpoint-md) {
+            font-size: var(--token-font-size-xl);
+        }
 
-    @media (min-width: $breakpoint-md) {
-        width: var(--token-space-4);
-        height: var(--token-space-4);
-    }
-}
-
-.legend__item:hover .legend__dot {
-    transform: scale(1.3);
-}
-
-.legend__item--expert .legend__dot {
-    background: var(--skills-expert-color);
-    box-shadow: 0 0 var(--token-space-3) var(--skills-expert-glow-strong);
-}
-
-.legend__item--advanced .legend__dot {
-    background: var(--skills-advanced-color);
-    box-shadow: 0 0 var(--token-space-3) var(--skills-advanced-glow-strong);
-}
-
-.legend__item--proficient .legend__dot {
-    background: var(--skills-proficient-color);
-    box-shadow: 0 0 var(--token-space-3) var(--skills-proficient-glow-strong);
-}
-
-.legend__item--learning .legend__dot {
-    background: var(--skills-learning-color);
-    box-shadow: 0 0 var(--token-space-3) var(--skills-learning-glow-strong);
-}
-
-@media (max-width: #{$breakpoint-md}) {
-    .skills {
-        padding: var(--token-space-fluid-4xl) 0;
+        @media (min-width: $breakpoint-lg) {
+            font-size: var(--token-font-size-2xl);
+        }
     }
 
-    .skills__content {
-        padding: 0 var(--token-space-fluid-sm);
-    }
-
-    .skills__header {
-        margin-bottom: var(--token-space-fluid-4xl);
-    }
-
-    .skills__filters {
+    .skill__meta {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         gap: var(--token-space-fluid-sm);
-        margin-bottom: var(--token-space-fluid-4xl);
+        margin-bottom: var(--token-space-fluid-md);
+        flex-wrap: wrap;
+        position: relative;
+        z-index: 2;
     }
 
-    .filter__button {
-        padding: var(--token-space-fluid-sm) var(--token-space-fluid-md);
+    .skill__level {
         font-size: var(--token-font-size-xs);
+        font-weight: var(--token-font-weight-semibold);
+        text-transform: uppercase;
+        letter-spacing: var(--token-letter-spacing-widest);
+        padding: var(--token-space-2) var(--token-space-3);
+        border-radius: var(--token-radius-sm);
+        background: var(--token-surface-glass-strong);
+        color: var(--token-text-overlay);
+        border: var(--token-border-default-small);
+        backdrop-filter: blur(var(--token-blur-sm));
+        transition: all var(--animation-duration) var(--animation-ease);
+
+        @media (min-width: $breakpoint-md) {
+            font-size: var(--token-font-size-sm);
+            padding: var(--token-space-fluid-xs) var(--token-space-fluid-sm);
+        }
     }
 
-    .skills__grid {
-        gap: var(--token-space-fluid-md);
-        margin-bottom: var(--token-space-fluid-4xl);
+    // Level badge colors (DRY)
+    @each $level in expert, advanced, proficient, learning {
+        .skill__level--#{$level} {
+            color: var(--skill-#{$level});
+            border-color: var(--skill-#{$level});
+        }
+
+        .skill__card:hover .skill__level--#{$level},
+        .skill__card:focus .skill__level--#{$level} {
+            background: var(--skill-#{$level});
+            color: var(--token-text-dark);
+            box-shadow: 0 0 var(--token-space-2) var(--glow-#{$level});
+        }
     }
 
-    .skill__card {
-        padding: var(--token-space-fluid-lg);
-        
-        &:hover.skill__card--scroll-driven {
-            transform: translateY(-3px) scale(1.01) !important;
-            transition: all var(--token-motion-duration-fast) var(--token-motion-ease-out) !important;
+    .skill__years {
+        font-size: var(--token-font-size-xs);
+        font-weight: var(--token-font-weight-medium);
+        color: var(--token-text-tertiary);
+        background: var(--token-surface-glass-strong);
+        padding: var(--token-space-2) var(--token-space-3);
+        border-radius: var(--token-radius-sm);
+        border: var(--token-border-default-small);
+        backdrop-filter: blur(var(--token-blur-sm));
+
+        @media (min-width: $breakpoint-md) {
+            font-size: var(--token-font-size-sm);
+            padding: var(--token-space-fluid-xs) var(--token-space-fluid-sm);
         }
     }
 
     .skill__description {
-        opacity: var(--token-opacity-medium);
-        transform: translateY(0);
+        font-size: var(--token-font-size-sm);
+        line-height: var(--token-line-height-relaxed);
+        color: var(--token-text-overlay);
+        opacity: 0;
+        transform: translateY(var(--token-space-fluid-sm));
+        transition: all var(--animation-duration) var(--animation-ease);
         margin-top: var(--token-space-fluid-sm);
+        position: relative;
+        z-index: 2;
+
+        @media (min-width: $breakpoint-md) {
+            font-size: var(--token-font-size-base);
+        }
     }
 
-    .skill__card:hover .skill__description {
+    .skill__card:hover .skill__description,
+    .skill__card:focus .skill__description {
         opacity: 1;
+        transform: translateY(0);
     }
 
+    // Summary Section
     .skills__summary {
-        padding: var(--token-space-fluid-xl);
-    }
+        background: var(--token-surface-glass-medium);
+        border: var(--token-border-default-small);
+        border-radius: var(--token-radius-lg);
+        padding: var(--token-space-fluid-lg);
+        backdrop-filter: blur(var(--token-blur-lg));
+        animation: fadeInUp var(--token-motion-duration-slow) var(--token-motion-ease-out) 0.6s both;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--token-shadow-default);
 
-    .skills__legend {
-        gap: var(--token-space-fluid-md);
-    }
-}
-
-@media (max-width: #{$breakpoint-sm}) {
-    .skills {
-        padding: var(--token-space-fluid-3xl) 0;
-    }
-
-    .skills__filters {
-        flex-direction: column;
-        align-items: center;
-        gap: var(--token-space-fluid-sm);
-    }
-
-    .filter__button {
-        min-width: var(--token-size-40);
-        justify-content: center;
+        @media (min-width: $breakpoint-md) {
+            padding: var(--token-space-fluid-xl);
+            border-radius: var(--token-radius-xl);
+        }
     }
 
     .summary__grid {
-        grid-template-columns: 1fr;
-        gap: var(--token-space-fluid-md);
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--token-space-fluid-sm);
+        margin-bottom: var(--token-space-fluid-2xl);
+
+        @media (min-width: $breakpoint-md) {
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--token-space-fluid-md);
+        }
     }
 
+    .summary__card {
+        padding: var(--token-space-fluid-md);
+        text-align: center;
+        background: var(--token-gradients-stat-default);
+        border: var(--token-border-default-small);
+        border-radius: var(--token-radius-md);
+        transition: all var(--animation-duration) var(--animation-ease);
+        position: relative;
+        cursor: pointer;
+        overflow: hidden;
+
+        &:hover {
+            transform: translateY(-5px) scale(1.02);
+            background: var(--token-gradients-stat-hover);
+            border-color: var(--token-border-color-hover);
+            box-shadow: var(--token-shadow-interactive), var(--token-shadow-default), 0 0 20px var(--token-shadow-glow-subtle);
+
+            .summary__number {
+                transform: scale(1.1);
+                color: var(--token-text-heading);
+            }
+        }
+
+        &:nth-child(even) {
+            background: var(--token-gradients-stat-alt);
+
+            &:hover {
+                background: var(--token-gradients-stat-alt_hover);
+            }
+        }
+    }
+
+    .summary__number {
+        font-size: var(--token-font-size-2xl);
+        font-weight: var(--token-font-weight-bold);
+        line-height: var(--token-line-height-tight);
+        margin-bottom: var(--token-space-1);
+        color: var(--token-text-emphasis-heading);
+        transition: all var(--animation-duration) var(--animation-ease);
+
+        @media (min-width: $breakpoint-md) {
+            font-size: var(--token-font-size-3xl);
+        }
+
+        @media (min-width: $breakpoint-lg) {
+            font-size: var(--token-font-size-35xl);
+        }
+    }
+
+    .summary__label {
+        font-size: var(--token-font-size-xs);
+        font-weight: var(--token-font-weight-medium);
+        color: var(--token-text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: var(--token-letter-spacing-widest);
+        transition: color var(--animation-duration) var(--animation-ease);
+
+        @media (min-width: $breakpoint-lg) {
+            font-size: var(--token-font-size-sm);
+        }
+    }
+
+    .summary__card:hover .summary__label {
+        color: var(--token-text-secondary);
+    }
+
+    // Legend
     .skills__legend {
-        flex-direction: column;
+        display: flex;
+        justify-content: center;
+        gap: var(--token-space-fluid-xl);
+        flex-wrap: wrap;
+        padding-top: var(--token-space-fluid-xl);
+        border-top: var(--token-border-default-small);
+        animation: fadeInUp var(--token-motion-duration-slow) var(--token-motion-ease-out) 0.8s both;
+
+        @media (min-width: $breakpoint-md) {
+            gap: var(--token-space-fluid-2xl);
+        }
+    }
+
+    .legend__item {
+        display: flex;
         align-items: center;
         gap: var(--token-space-fluid-sm);
-    }
-}
+        font-size: var(--token-font-size-xs);
+        font-weight: var(--token-font-weight-medium);
+        color: var(--token-text-tertiary);
+        cursor: pointer;
+        transition: all var(--animation-duration) var(--animation-ease);
+        padding: var(--token-space-2) var(--token-space-3);
+        border-radius: var(--token-radius-sm);
 
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(var(--token-space-fluid-xl));
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+        @media (min-width: $breakpoint-md) {
+            font-size: var(--token-font-size-sm);
+        }
 
-@keyframes textShimmer {
-    0%, 100% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-}
+        &:hover {
+            color: var(--token-text-primary);
+            transform: translateY(-2px);
 
-@media (prefers-reduced-motion: reduce) {
-    .skill__card,
-    .skills__container,
-    .skills__header,
-    .skills__filters,
-    .skills__summary,
-    .skills__legend {
-        animation: none;
-    }
-    
-    .skill__card--scroll-driven {
-        opacity: 1 !important;
-        transform: none !important;
-        transition: none !important;
+            .legend__dot {
+                transform: scale(1.3);
+            }
+        }
     }
 
-    .skill__card:hover,
-    .filter__button:hover,
-    .summary__card:hover {
-        transform: none !important;
-        transition: none !important;
+    .legend__dot {
+        width: var(--token-space-3);
+        height: var(--token-space-3);
+        border-radius: var(--token-radius-full);
+        flex-shrink: 0;
+        transition: all var(--animation-duration) var(--animation-ease);
+
+        @media (min-width: $breakpoint-md) {
+            width: var(--token-space-4);
+            height: var(--token-space-4);
+        }
     }
 
-    .skill__description {
-        opacity: 1;
-        transform: none;
-    }
-}
-
-@media (prefers-contrast: high) {
-    .skill__card,
-    .filter__button,
-    .summary__card {
-        border-width: var(--token-size-2);
-        border-color: currentColor;
+    // Legend dot colors (DRY)
+    @each $level in expert, advanced, proficient, learning {
+        .legend__item--#{$level} .legend__dot {
+            background: var(--skill-#{$level});
+            box-shadow: 0 0 var(--token-space-3) var(--glow-#{$level}-strong);
+        }
     }
 
-    .skill__name,
-    .summary__number {
-        text-shadow: none;
-        font-weight: var(--token-font-weight-bold);
-    }
-}
+    // Responsive Design
+    @media (max-width: #{$breakpoint-md}) {
+        .skills {
+            padding: var(--token-space-fluid-4xl) 0;
+        }
 
-.skill__card:focus-visible,
-.filter__button:focus-visible {
-    outline: 2px solid var(--token-interactive-color);
-    outline-offset: 2px;
-}
+        .skill__description {
+            opacity: var(--token-opacity-medium);
+            transform: translateY(0);
+        }
 
-@media print {
-    .skills {
-        background: white;
-        color: black;
-        padding: var(--token-space-fluid-lg);
+        /* keep for future responsive tweaks */
+        .skill__card:hover { transform: translateY(-2px); }
     }
 
-    .skill__card,
-    .summary__card {
-        border: var(--token-border-default-small);
-        box-shadow: none;
-        break-inside: avoid;
+    @media (max-width: #{$breakpoint-sm}) {
+        .skills__filters {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .summary__grid {
+            grid-template-columns: 1fr;
+        }
+
+        .skills__legend {
+            flex-direction: column;
+            align-items: center;
+        }
     }
 
-    .skills__filters {
-        display: none;
+    // Animations
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(var(--token-space-fluid-xl));
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
-    .skills__grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: var(--token-space-fluid-lg);
+    @keyframes textShimmer {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
     }
 
-    .skill__description {
-        opacity: 1;
-        transform: none;
+    // Accessibility & Performance
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+
+        .skill__card {
+            opacity: 1 !important;
+            transform: none !important;
+            
+            &--css-animated,
+            &--js-animated {
+                opacity: 1 !important;
+                transform: none !important;
+            }
+        }
+
+        .skill__description {
+            opacity: 1;
+            transform: none;
+        }
     }
-}
+
+    @media (prefers-contrast: high) {
+        .skill__card,
+        .filter__button,
+        .summary__card {
+            border-width: var(--token-size-2);
+            border-color: currentColor;
+        }
+    }
+
+    @media print {
+        .skills {
+            background: white;
+            color: black;
+            padding: var(--token-space-fluid-lg);
+        }
+
+        .skills__filters {
+            display: none;
+        }
+
+        .skill__card {
+            border: var(--token-border-default-small);
+            box-shadow: none;
+            break-inside: avoid;
+            opacity: 1 !important;
+            transform: none !important;
+            
+            &--css-animated,
+            &--js-animated {
+                opacity: 1 !important;
+                transform: none !important;
+            }
+        }
+
+        .skill__description {
+            opacity: 1;
+            transform: none;
+        }
+    }
 </style>
