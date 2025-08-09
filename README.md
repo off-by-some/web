@@ -61,7 +61,7 @@ npm run dev
 
 **Latest production build (Gzipped):**
 
-Anything under 100 KB gzipped for initial load is considered excellent in 2025. For comparison, Many modern React or Angular apps start around 150–300 KB gzipped before you even add any kind of meaningful functionality.
+Anything under 100 KB gzipped for initial load is considered excellent in 2025.
 
 ```
 Main App Bundle:   19.25 KB
@@ -71,7 +71,7 @@ CSS Bundle:        16.57 KB
 Total Initial:    ~49 KB
 ```
 
-We hit about 50kb for the entire application.
+ For comparison, Many modern React or Angular apps start around 150–300 KB gzipped before you even add any kind of meaningful functionality. We hit about 50kb for the entire application.
 
 ### 📡 Pingdom Performance Snapshot 
 
