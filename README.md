@@ -15,7 +15,7 @@ npm run dev
 
 **Local preview:** <http://localhost:5173>
 
------
+---
 
 ## What This Is
 
@@ -45,11 +45,22 @@ Colors are generated from a base palette using perceptually uniform color spaces
 
 ```scss
 $theme: (
-  brand: #1de9b6,
-  interactive: (
-    color: brand-step(100),
-    hover: brand-step(50),  
+  brand: (
+    teal: #1de9b6, // Generates 13 distinct shades from this color
   ),
+  interactive: (
+    color: (
+      teal: 50 // Reference the first color-step in the 'teal' palette
+    ),
+    glow: themes.reference('interactive.color', $alpha: 30%), // Apply an alpha of 30%
+    shadow: themes.reference('interactive.color', $alpha: 40%),
+  )
+);
+
+//   // Compiles into:
+// --interactive-color: rgb(104, 251, 205);        /* teal-50               */
+// --interactive-glow: rgba(104, 251, 205, 0.3);   /* same color, 30% alpha */
+// --interactive-shadow: rgba(104, 251, 205, 0.4); /* same color, 40% alpha */
 );
 ```
 
@@ -72,7 +83,7 @@ The build process enforces quality automatically—linting, formatting, accessib
 
 ```
 Main App:     19.25 KB (your code)
-Vendor:       13.38 KB (Svelte runtime + routing)  
+Vendor:       13.38 KB (Svelte runtime + routing)
 CSS:          16.57 KB (complete design system)
 ```
 
@@ -86,12 +97,12 @@ CSS:          16.57 KB (complete design system)
 
 The first paint only transfers 29KB because of smart bundle splitting:
 
-|Metric           |Value  |Notes               |
-|-----------------|-------|--------------------|
-|Page size        |29.1 KB|First paint transfer|
-|Load time        |211 ms |Cold cache, mobile  |
-|Requests         |3      |HTML, CSS, JS       |
-|Performance grade|98/100 |Pingdom score       |
+| Metric            | Value   | Notes                |
+| ----------------- | ------- | -------------------- |
+| Page size         | 29.1 KB | First paint transfer |
+| Load time         | 211 ms  | Cold cache, mobile   |
+| Requests          | 3       | HTML, CSS, JS        |
+| Performance grade | 98/100  | Pingdom score        |
 
 For context, the average website in 2025 is about 2MB. This entire site is smaller than most hero images.
 
@@ -101,7 +112,7 @@ For context, the average website in 2025 is about 2MB. This entire site is small
 npm run dev       # Development server with hot reload
 npm run build     # Full production build with optimization
 npm run preview   # Test production build locally
-npm run fix       # Auto-fix linting and formatting  
+npm run fix       # Auto-fix linting and formatting
 npm run clean     # Reset all build artifacts
 npm run storybook # Component development environment
 ```
@@ -117,6 +128,6 @@ Building within tight performance and accessibility constraints forced better de
 
 The technical constraints became design advantages. Fast sites feel more responsive. Accessible sites work better for everyone. Systematic design is more cohesive than ad-hoc styling.
 
------
+---
 
 **Stack:** SvelteKit • TypeScript • SCSS • Vite • Puppeteer • GitHub Pages
