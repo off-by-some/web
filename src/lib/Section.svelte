@@ -1,19 +1,17 @@
 <script lang="ts">
-    export let className: string = "";
-    export let id: string = "";
+  export let className: string = '';
+  export let id: string = '';
 </script>
 
 <div class="section-wrapper {className}" {id}>
-    <slot />
+  <slot />
 </div>
 
 <style lang="scss">
-
-    .section-wrapper {
-        max-width: 90vw;
-        position: relative;
-        width: 100%;
-        margin: 0 auto;
-    }
-
+  .section-wrapper {
+    max-width: 90vw;
+    position: relative;
+    width: 100%;
+    margin: 0 auto;
+  }
 </style>

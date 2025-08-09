@@ -12,26 +12,24 @@ export default defineConfig({
       compress: {
         drop_console: true,
         drop_debugger: true,
-        pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.warn']
+        pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.warn'],
       },
       mangle: { toplevel: true },
-      format: { comments: false }
+      format: { comments: false },
     },
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ['svelte']
-        }
+          vendor: ['svelte'],
+        },
       },
-      plugins: [
-        filesize({ showBrotliSize: true, showMinifiedSize: true })
-      ]
-    }
+      plugins: [filesize({ showBrotliSize: true, showMinifiedSize: true })],
+    },
   },
   resolve: {
     alias: {
       styles: path.resolve('./src/styles'),
-      src: path.resolve('./src')
-    }
-  }
+      src: path.resolve('./src'),
+    },
+  },
 });

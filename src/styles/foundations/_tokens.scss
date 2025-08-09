@@ -2,7 +2,6 @@
 @use '../lib/colors' as colors;
 @use '../lib/themes' as themes;
 
-
 $dark-mode-tokens: (
   brand: (
     teal: #1de9b6,
@@ -10,17 +9,21 @@ $dark-mode-tokens: (
     gold: #ffd966,
     neutral: #e3e6f0,
     dark: #0b0f28,
-    purple: #2f1747
+    purple: #2f1747,
   ),
 
   emphasis: (
-    color: (magenta: 200),
+    color: (
+      magenta: 200,
+    ),
     glow: themes.reference('emphasis.color', $alpha: 30%),
     shadow: themes.reference('emphasis.color', $alpha: 40%),
   ),
 
   attention: (
-    color: (gold: 100),
+    color: (
+      gold: 100,
+    ),
     glow: themes.reference('attention.color', $alpha: 40%),
     pulse: (
       from: themes.reference('attention.color', $alpha: 80%),
@@ -29,42 +32,50 @@ $dark-mode-tokens: (
   ),
 
   background: (
-    color: (dark: 900, alpha: 80%),
+    color: (
+      dark: 900,
+      alpha: 80%,
+    ),
   ),
 
   interactive: (
-    color: (teal: 100),
-    hover: (teal: 50),
-    focus: (teal: 0),
-    ring: (teal: 0),
+    color: (
+      teal: 100,
+    ),
+    hover: (
+      teal: 50,
+    ),
+    focus: (
+      teal: 0,
+    ),
+    ring: (
+      teal: 0,
+    ),
     glow: themes.reference('interactive.color', $alpha: 20%),
     shadow: themes.reference('interactive.color', $alpha: 30%),
-    
     pressed: themes.reference('interactive.color', $alpha: 25%),
     magnetic: themes.reference('interactive.color', $alpha: 10%),
   ),
 
   text: (
-    color: (neutral: 0),
-
+    color: (
+      neutral: 0,
+    ),
     hovered: themes.reference('interactive.hover'),
-
-    primary:   themes.reference('text.color', $alpha: 95%),
+    primary: themes.reference('text.color', $alpha: 95%),
     secondary: themes.reference('text.color', $alpha: 85%),
-    tertiary:  themes.reference('text.color', $alpha: 70%),
-    overlay:   themes.reference('text.color', $alpha: 90%),
-    dark:      themes.reference('background.color'),
-    brand:     themes.reference('interactive.color'),
-
+    tertiary: themes.reference('text.color', $alpha: 70%),
+    overlay: themes.reference('text.color', $alpha: 90%),
+    dark: themes.reference('background.color'),
+    brand: themes.reference('interactive.color'),
     emphasis: (
       default: themes.reference('emphasis.color', $step: 250),
       heading: themes.reference('emphasis.color', $step: 300, $alpha: 100%),
     ),
-    
-    body:      themes.reference('text.primary'),
-    heading:   themes.reference('interactive.color'),
+
+    body: themes.reference('text.primary'),
+    heading: themes.reference('interactive.color'),
     attention: themes.reference('attention.color', $step: 50),
-    
     shimmer: (
       from: themes.reference('text.brand'),
       via: themes.reference('text.hovered'),
@@ -73,35 +84,32 @@ $dark-mode-tokens: (
   ),
 
   surface: (
-    color:     themes.reference('background.color'),
-    overlay:   (grayscale: 900, alpha: 90%),
-
+    color: themes.reference('background.color'),
+    overlay: (
+      grayscale: 900,
+      alpha: 90%,
+    ),
     glass: (
-      subtle:   themes.reference('surface.color', $alpha: 2%),
-      light:    themes.reference('surface.color', $alpha: 3%),
-      medium:   themes.reference('surface.color', $alpha: 10%),
-      strong:   themes.reference('surface.color', $alpha: 20%),
-
+      subtle: themes.reference('surface.color', $alpha: 2%),
+      light: themes.reference('surface.color', $alpha: 3%),
+      medium: themes.reference('surface.color', $alpha: 10%),
+      strong: themes.reference('surface.color', $alpha: 20%),
       hover: (
-        'linear-gradient('
-          '135deg',
-          '#{themes.reference("surface.color", $alpha: 5%)} 0%',
-          'transparent 50%',  
-          '#{themes.reference("interactive.color", $alpha: 3%)} 100%'
-        ')'
+        'linear-gradient(' '135deg',
+        '#{themes.reference("surface.color", $alpha: 5%)} 0%',
+        'transparent 50%',
+        '#{themes.reference("interactive.color", $alpha: 3%)} 100%' ')',
       ),
-      
+
       iridescent: (
-        'linear-gradient('
-          '135deg',
-          'rgba(255, 255, 255, 0.1) 0%',
-          'rgba(255, 0, 128, 0.05) 25%',
-          'rgba(0, 255, 255, 0.05) 50%',
-          'rgba(128, 255, 0, 0.05) 75%',
-          'rgba(255, 255, 255, 0.1) 100%'
-        ')'
+        'linear-gradient(' '135deg',
+        'rgba(255, 255, 255, 0.1) 0%',
+        'rgba(255, 0, 128, 0.05) 25%',
+        'rgba(0, 255, 255, 0.05) 50%',
+        'rgba(128, 255, 0, 0.05) 75%',
+        'rgba(255, 255, 255, 0.1) 100%' ')',
       ),
-      
+
       magnetic: themes.reference('surface.color', $alpha: 20%),
       pressed: themes.reference('surface.color', $alpha: 15%),
     ),
@@ -115,17 +123,17 @@ $dark-mode-tokens: (
       text: themes.reference('text.hovered'),
       surface: themes.reference('surface.glass.hover'),
     ),
-    
+
     active: (
       glow: themes.reference('interactive.color', $alpha: 25%),
       shadow: themes.reference('interactive.color', $alpha: 35%),
     ),
-    
+
     focus: (
       ring: themes.reference('interactive.ring'),
       glow: themes.reference('interactive.color', $alpha: 8%),
     ),
-    
+
     available: (
       color: themes.reference('attention.color'),
       glow: themes.reference('attention.glow'),
@@ -134,7 +142,7 @@ $dark-mode-tokens: (
         to: themes.reference('attention.color'),
       ),
     ),
-    
+
     mastery: (
       expert: themes.reference('interactive.color'),
       advanced: themes.reference('interactive.color'),
@@ -145,12 +153,17 @@ $dark-mode-tokens: (
 
   border: (
     color: (
-      default: (grayscale: 100, alpha: 10%),
-      neutral: (neutral: 0, alpha: 10%),
-
-      hover:   themes.reference('interactive.hover'),
-      focus:   themes.reference('interactive.focus'),
-      ring:    themes.reference('interactive.ring'),
+      default: (
+        grayscale: 100,
+        alpha: 10%,
+      ),
+      neutral: (
+        neutral: 0,
+        alpha: 10%,
+      ),
+      hover: themes.reference('interactive.hover'),
+      focus: themes.reference('interactive.focus'),
+      ring: themes.reference('interactive.ring'),
     ),
 
     size: (
@@ -160,51 +173,86 @@ $dark-mode-tokens: (
     ),
 
     default: (
-      small: ('#{themes.reference("border.size.small")} solid #{themes.reference("border.color.default")}'),
-      medium: ('#{themes.reference("border.size.medium")} solid #{themes.reference("border.color.default")}'),
-      large: ('#{themes.reference("border.size.large")} solid #{themes.reference("border.color.default")}'),
+      small: (
+        '#{themes.reference("border.size.small")} solid #{themes.reference("border.color.default")}',
+      ),
+      medium: (
+        '#{themes.reference("border.size.medium")} solid #{themes.reference("border.color.default")}',
+      ),
+      large: (
+        '#{themes.reference("border.size.large")} solid #{themes.reference("border.color.default")}',
+      ),
     ),
 
     neutral: (
-      small: ('#{themes.reference("border.size.small")} solid #{themes.reference("border.color.neutral")}'),
-      medium: ('#{themes.reference("border.size.medium")} solid #{themes.reference("border.color.neutral")}'),
-      large: ('#{themes.reference("border.size.large")} solid #{themes.reference("border.color.neutral")}'),
+      small: (
+        '#{themes.reference("border.size.small")} solid #{themes.reference("border.color.neutral")}',
+      ),
+      medium: (
+        '#{themes.reference("border.size.medium")} solid #{themes.reference("border.color.neutral")}',
+      ),
+      large: (
+        '#{themes.reference("border.size.large")} solid #{themes.reference("border.color.neutral")}',
+      ),
     ),
 
     interactive: (
-      small: ('#{themes.reference("border.size.small")} solid #{themes.reference("interactive.color")}'),
-      medium: ('#{themes.reference("border.size.medium")} solid #{themes.reference("interactive.color")}'),
-      large: ('#{themes.reference("border.size.large")} solid #{themes.reference("interactive.color")}'),
+      small: (
+        '#{themes.reference("border.size.small")} solid #{themes.reference("interactive.color")}',
+      ),
+      medium: (
+        '#{themes.reference("border.size.medium")} solid #{themes.reference("interactive.color")}',
+      ),
+      large: (
+        '#{themes.reference("border.size.large")} solid #{themes.reference("interactive.color")}',
+      ),
     ),
 
     hover: (
-      small: ('#{themes.reference("border.size.small")} solid #{themes.reference("border.color.hover", $alpha: 35%)}'),
-      medium: ('#{themes.reference("border.size.medium")} solid #{themes.reference("border.color.hover", $alpha: 35%)}'),
-      large: ('#{themes.reference("border.size.large")} solid #{themes.reference("border.color.hover", $alpha: 35%)}'),
+      small: (
+        '#{themes.reference("border.size.small")} solid #{themes.reference("border.color.hover", $alpha: 35%)}',
+      ),
+      medium: (
+        '#{themes.reference("border.size.medium")} solid #{themes.reference("border.color.hover", $alpha: 35%)}',
+      ),
+      large: (
+        '#{themes.reference("border.size.large")} solid #{themes.reference("border.color.hover", $alpha: 35%)}',
+      ),
     ),
 
     focus: (
-      small: ('#{themes.reference("border.size.small")} solid #{themes.reference("border.color.focus", $alpha: 35%)}'),
-      medium: ('#{themes.reference("border.size.medium")} solid #{themes.reference("border.color.focus", $alpha: 35%)}'),
-      large: ('#{themes.reference("border.size.large")} solid #{themes.reference("border.color.focus", $alpha: 35%)}'),
+      small: (
+        '#{themes.reference("border.size.small")} solid #{themes.reference("border.color.focus", $alpha: 35%)}',
+      ),
+      medium: (
+        '#{themes.reference("border.size.medium")} solid #{themes.reference("border.color.focus", $alpha: 35%)}',
+      ),
+      large: (
+        '#{themes.reference("border.size.large")} solid #{themes.reference("border.color.focus", $alpha: 35%)}',
+      ),
     ),
 
     ring: (
-      small: ('#{themes.reference("border.size.small")} solid #{themes.reference("border.color.ring", $alpha: 35%)}'),
-      medium: ('#{themes.reference("border.size.medium")} solid #{themes.reference("border.color.ring", $alpha: 35%)}'),
-      large: ('#{themes.reference("border.size.large")} solid #{themes.reference("border.color.ring", $alpha: 35%)}'),
+      small: (
+        '#{themes.reference("border.size.small")} solid #{themes.reference("border.color.ring", $alpha: 35%)}',
+      ),
+      medium: (
+        '#{themes.reference("border.size.medium")} solid #{themes.reference("border.color.ring", $alpha: 35%)}',
+      ),
+      large: (
+        '#{themes.reference("border.size.large")} solid #{themes.reference("border.color.ring", $alpha: 35%)}',
+      ),
     ),
   ),
 
   tint: (
     primary: (
-      rest:     themes.reference('interactive.color', $step: 50, $alpha: 25%),
-      strong:   themes.reference('interactive.color', $step: 50, $alpha: 35%),
-      stronger: themes.reference('interactive.color', $step: 50, $alpha: 55%)
+      rest: themes.reference('interactive.color', $step: 50, $alpha: 25%),
+      strong: themes.reference('interactive.color', $step: 50, $alpha: 35%),
+      stronger: themes.reference('interactive.color', $step: 50, $alpha: 55%),
     ),
-    accent:    themes.reference('attention.color', $alpha: 30%),
+    accent: themes.reference('attention.color', $alpha: 30%),
     highlight: themes.reference('emphasis.color', $alpha: 25%),
-    
     overlay: (
       subtle: themes.reference('interactive.color', $alpha: 10%),
       medium: themes.reference('interactive.color', $alpha: 15%),
@@ -213,14 +261,14 @@ $dark-mode-tokens: (
   ),
 
   shadow: (
-    color:   (grayscale: 950),
-    light:   themes.reference('shadow.color', $alpha: 6%),
-    medium:  themes.reference('shadow.color', $alpha: 10%),
-    strong:  themes.reference('shadow.color', $alpha: 15%),
-    
+    color: (
+      grayscale: 950,
+    ),
+    light: themes.reference('shadow.color', $alpha: 6%),
+    medium: themes.reference('shadow.color', $alpha: 10%),
+    strong: themes.reference('shadow.color', $alpha: 15%),
     interactive: themes.reference('interactive.color', $alpha: 20%, $step: 200),
     default: themes.reference('shadow.color', $alpha: 8%),
-
     glow: (
       subtle: themes.reference('interactive.color', $alpha: 8%),
       medium: themes.reference('interactive.color', $alpha: 15%),
@@ -232,106 +280,106 @@ $dark-mode-tokens: (
     elevated: (
       '0 1px 3px #{themes.reference("shadow.color", $alpha: 8%)}',
       '0 2px 6px #{themes.reference("shadow.color", $alpha: 6%)}',
-      '0 0 0 1px #{themes.reference("interactive.color", $alpha: 4%)}'
+      '0 0 0 1px #{themes.reference("interactive.color", $alpha: 4%)}',
     ),
 
     focus: (
       '0 0 0 2px #{themes.reference("border.color.ring")}',
-      '0 0 8px 2px #{themes.reference("interactive.color", $alpha: 8%)}'
+      '0 0 8px 2px #{themes.reference("interactive.color", $alpha: 8%)}',
     ),
-    
+
     magnetic: (
       '#{themes.reference("shadow.interactive")}',
       '#{themes.reference("shadow.elevated")}',
-      '0 0 30px #{themes.reference("interactive.color", $alpha: 40%)}'
+      '0 0 30px #{themes.reference("interactive.color", $alpha: 40%)}',
     ),
   ),
 
   status: (
     success: (
-      color:  #22c55e,
-      fg:     #22c55e,
-      bg:     rgba(34, 197, 94, 0.04),
+      color: #22c55e,
+      fg: #22c55e,
+      bg: rgba(34, 197, 94, 0.04),
       border: rgba(34, 197, 94, 0.25),
-      glow:   rgba(34, 197, 94, 0.3),
+      glow: rgba(34, 197, 94, 0.3),
     ),
 
     warning: (
-      color:  #f59e0b,
-      fg:     #f59e0b,
-      bg:     rgba(245, 158, 11, 0.04),
+      color: #f59e0b,
+      fg: #f59e0b,
+      bg: rgba(245, 158, 11, 0.04),
       border: rgba(245, 158, 11, 0.25),
     ),
 
     danger: (
-      color:  #ef4444,
-      fg:     #ef4444,
-      bg:     rgba(239, 68, 68, 0.04),
+      color: #ef4444,
+      fg: #ef4444,
+      bg: rgba(239, 68, 68, 0.04),
       border: rgba(239, 68, 68, 0.4),
-      glow:   rgba(239, 68, 68, 0.08),
+      glow: rgba(239, 68, 68, 0.08),
     ),
 
-    expert:     themes.reference('interactive.color'),
-    advanced:   #6366f1,
+    expert: themes.reference('interactive.color'),
+    advanced: #6366f1,
     proficient: #f59e0b,
-    learning:   #06b6d4,
+    learning: #06b6d4,
   ),
 
   gradients: (
-    heading:   (
-      'linear-gradient('
-        '135deg',
-        '#{themes.reference("text.brand")} 0%',
-        '#{themes.reference("text.hovered")} 50%',
-        '#{themes.reference("text.brand")} 100%'
-      ')'
+    heading: (
+      'linear-gradient(' '135deg',
+      '#{themes.reference("text.brand")} 0%',
+      '#{themes.reference("text.hovered")} 50%',
+      '#{themes.reference("text.brand")} 100%' ')',
     ),
-    
+
     frame: (
-      'conic-gradient('
-        'from 0deg',
-        '#{themes.reference("interactive.color")}',
-        '#{themes.reference("emphasis.color")}',
-        '#{themes.reference("attention.color")}',
-        '#{themes.reference("interactive.color")}'
-      ')'
+      'conic-gradient(' 'from 0deg',
+      '#{themes.reference("interactive.color")}',
+      '#{themes.reference("emphasis.color")}',
+      '#{themes.reference("attention.color")}',
+      '#{themes.reference("interactive.color")}' ')',
     ),
 
     hero: (
       'radial-gradient(ellipse at 20% 70%, rgba(29, 233, 182, 0.15) 0%, transparent 50%)',
       'radial-gradient(ellipse at 80% 30%, rgba(255, 60, 172, 0.12) 0%, transparent 50%)',
-      'linear-gradient(135deg, #0B0F28 10%, rgba(46, 26, 71, 0.9) 90%)'
+      'linear-gradient(135deg, #0B0F28 10%, rgba(46, 26, 71, 0.9) 90%)',
     ),
 
     hero-glow: (
       'radial-gradient(circle at 15% 85%, rgba(9, 228, 177, 0.08) 0%, transparent 35%)',
       'radial-gradient(circle at 85% 15%, rgba(252, 60, 170, 0.06) 0%, transparent 40%)',
-      'radial-gradient(circle at 50% 50%, rgba(224, 192, 98, 0.03) 0%, transparent 60%)'
+      'radial-gradient(circle at 50% 50%, rgba(224, 192, 98, 0.03) 0%, transparent 60%)',
     ),
 
     timeline: (
       'radial-gradient(ellipse at 20% 30%, rgba(29, 233, 182, 0.03) 0%, transparent 50%)',
       'radial-gradient(ellipse at 80% 70%, rgba(255, 60, 172, 0.02) 0%, transparent 50%)',
-      'linear-gradient(180deg, rgba(11, 15, 40, 0.95) 0%, rgba(46, 26, 71, 0.9) 100%)'
+      'linear-gradient(180deg, rgba(11, 15, 40, 0.95) 0%, rgba(46, 26, 71, 0.9) 100%)',
     ),
 
     skills: (
       'radial-gradient(ellipse at 30% 20%, rgba(29, 233, 182, 0.04) 0%, transparent 50%)',
       'radial-gradient(ellipse at 70% 80%, rgba(255, 60, 172, 0.03) 0%, transparent 50%)',
-      'linear-gradient(180deg, rgba(46, 26, 71, 0.9) 0%, rgba(11, 15, 40, 0.95) 100%)'
+      'linear-gradient(180deg, rgba(46, 26, 71, 0.9) 0%, rgba(11, 15, 40, 0.95) 100%)',
     ),
 
     contact: (
       'radial-gradient(ellipse at 30% 20%, rgba(29, 233, 182, 0.04) 0%, transparent 50%)',
       'radial-gradient(ellipse at 70% 80%, rgba(255, 60, 172, 0.03) 0%, transparent 50%)',
-      'linear-gradient(180deg, rgba(11, 15, 40, 0.95) 0%, rgba(46, 26, 71, 0.9) 100%)'
+      'linear-gradient(180deg, rgba(11, 15, 40, 0.95) 0%, rgba(46, 26, 71, 0.9) 100%)',
     ),
 
     stat: (
-      default: 'linear-gradient(135deg, #{themes.interpolate(neutral, 0, 6%)} 0%, #{themes.reference("surface.glass.medium")} 50%, #{themes.reference("surface.glass.subtle")} 100%)',
-      hover:   'linear-gradient(135deg, #{themes.reference("surface.glass.hover")} 0%, #{themes.interpolate(neutral, 0, 6%)} 50%, #{themes.reference("surface.glass.light")} 100%)',
-      alt:     'linear-gradient(225deg, #{themes.interpolate(neutral, 0, 6%)} 0%, #{themes.reference("surface.glass.medium")} 50%, #{themes.reference("surface.glass.subtle")} 100%)',
-      alt_hover: 'linear-gradient(225deg, #{themes.reference("surface.glass.hover")} 0%, #{themes.interpolate(neutral, 0, 6%)} 50%, #{themes.reference("surface.glass.light")} 100%)'
+      default:
+        'linear-gradient(135deg, #{themes.interpolate(neutral, 0, 6%)} 0%, #{themes.reference("surface.glass.medium")} 50%, #{themes.reference("surface.glass.subtle")} 100%)',
+      hover:
+        'linear-gradient(135deg, #{themes.reference("surface.glass.hover")} 0%, #{themes.interpolate(neutral, 0, 6%)} 50%, #{themes.reference("surface.glass.light")} 100%)',
+      alt:
+        'linear-gradient(225deg, #{themes.interpolate(neutral, 0, 6%)} 0%, #{themes.reference("surface.glass.medium")} 50%, #{themes.reference("surface.glass.subtle")} 100%)',
+      alt_hover:
+        'linear-gradient(225deg, #{themes.reference("surface.glass.hover")} 0%, #{themes.interpolate(neutral, 0, 6%)} 50%, #{themes.reference("surface.glass.light")} 100%)',
     ),
   ),
 
@@ -354,11 +402,18 @@ $dark-mode-tokens: (
       'normal': 400,
       'medium': 500,
       'semibold': 600,
-      'bold': 700
+      'bold': 700,
     ),
     'family': (
-      'sans': ("Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif)
-    )
+      'sans': (
+        'Inter',
+        -apple-system,
+        BlinkMacSystemFont,
+        'SF Pro Display',
+        system-ui,
+        sans-serif,
+      ),
+    ),
   ),
 
   line: (
@@ -368,10 +423,10 @@ $dark-mode-tokens: (
       'normal': 1.4,
       'relaxed': 1.5,
       'loose': 1.6,
-      'very-loose': 1.75
-    )
+      'very-loose': 1.75,
+    ),
   ),
-  
+
   letter: (
     'spacing': (
       'tighter': -0.025em,
@@ -381,8 +436,8 @@ $dark-mode-tokens: (
       'wide': 0.015em,
       'wider': 0.03em,
       'widest': 0.05em,
-      'extra-wide': 0.1em
-    )
+      'extra-wide': 0.1em,
+    ),
   ),
 
   space: (
@@ -399,7 +454,7 @@ $dark-mode-tokens: (
     '16': 4rem,
     '20': 5rem,
     '24': 6rem,
-    
+
     'fluid': (
       'xs': clamp(0.375rem, 0.375rem + 0.1vw, 0.5rem),
       'sm': clamp(0.5rem, 0.5rem + 0.15vw, 0.75rem),
@@ -410,8 +465,8 @@ $dark-mode-tokens: (
       '3xl': clamp(2.5rem, 2.5rem + 0.8vw, 3.75rem),
       '4xl': clamp(3rem, 3rem + 1vw, 4.5rem),
       '5xl': clamp(4rem, 4rem + 1.2vw, 6rem),
-      '6xl': clamp(5rem, 5rem + 1.5vw, 7.5rem)
-    )
+      '6xl': clamp(5rem, 5rem + 1.5vw, 7.5rem),
+    ),
   ),
 
   radius: (
@@ -421,7 +476,7 @@ $dark-mode-tokens: (
     'lg': clamp(1rem, calc(0.5vw + 0.5vh), 1.8rem),
     'xl': clamp(1.25rem, calc(0.6vw + 0.6vh), 2rem),
     '2xl': clamp(1.5rem, calc(0.8vw + 0.8vh), 2.5rem),
-    'full': 9999px
+    'full': 9999px,
   ),
 
   size: (
@@ -439,24 +494,24 @@ $dark-mode-tokens: (
     '40': 10rem,
     'avatar': (
       'sm': clamp(6.5rem, 20vw, 8rem),
-      'lg': clamp(8.5rem, 14vw, 10.5rem)
-    )
+      'lg': clamp(8.5rem, 14vw, 10.5rem),
+    ),
   ),
 
   blur: (
     'xs': 0.2rem,
     'sm': 0.625rem,
     'md': 1.25rem,
-    'lg': 2.5rem
+    'lg': 2.5rem,
   ),
 
   opacity: (
     default: 0.6,
-    subtle:  0.2,
-    medium:  0.8,
-    full:    1,
-    none:    0,
-    
+    subtle: 0.2,
+    medium: 0.8,
+    full: 1,
+    none: 0,
+
     ring: (
       default: 0.15,
       hover: 0.3,
@@ -466,13 +521,13 @@ $dark-mode-tokens: (
   z: (
     'behind': -1,
     'base': 0,
-    'raised': 10
+    'raised': 10,
   ),
 
   container: (
     '5xl': 64rem,
     '7xl': 80rem,
-    'max': 90rem
+    'max': 90rem,
   ),
 
   motion: (
@@ -480,12 +535,12 @@ $dark-mode-tokens: (
       'fast': 200ms,
       'normal': 300ms,
       'slow': 600ms,
-      'pulse': 2s
+      'pulse': 2s,
     ),
     'ease': (
       'out': cubic-bezier(0.4, 0, 0.2, 1),
-      'bounce': cubic-bezier(0.68, -0.55, 0.265, 1.55)
-    )
+      'bounce': cubic-bezier(0.68, -0.55, 0.265, 1.55),
+    ),
   ),
 );
 

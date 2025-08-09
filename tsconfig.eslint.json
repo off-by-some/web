@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "src",
+    ".storybook",
+    "scripts",
+    "vite.config.ts",
+    "svelte.config.js",
+    "eslint.config.js"
+  ]
+}

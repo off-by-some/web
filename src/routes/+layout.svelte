@@ -9,5 +9,3 @@
 <style lang="scss" global>
   /* Tokens are linked early via app.html to avoid FOUC */
 </style>
-
-

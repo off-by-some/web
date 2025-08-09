@@ -40,7 +40,12 @@ body {
   -moz-text-rendering: optimizeSpeed;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--token-font-family-sans);
   font-weight: var(--token-font-weight-semibold);
   line-height: var(--token-line-height-tight);
@@ -50,9 +55,6 @@ h1, h2, h3, h4, h5, h6 {
   word-wrap: break-word;
   overflow-wrap: break-word;
   text-rendering: optimizeSpeed;
-  -webkit-font-feature-settings: "kern" 1;
-  font-feature-settings: "kern" 1;
+  -webkit-font-feature-settings: 'kern' 1;
+  font-feature-settings: 'kern' 1;
 }
-
-
-
