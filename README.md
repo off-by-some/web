@@ -46,25 +46,26 @@ Colors are generated from a base palette using perceptually uniform color spaces
 ```scss
 $theme: (
   brand: (
-    teal: #1de9b6, // Generates 13 distinct shades from this color
+    teal: #1de9b6,
+    // Generates 13 distinct shades from this color
   ),
   interactive: (
     color: (
-      teal: 50 // Reference the first color-step in the 'teal' palette
+      teal: 50, // Reference the first color-step in the 'teal' palette
     ),
-    glow: themes.reference('interactive.color', $alpha: 30%), // Apply an alpha of 30%
+    glow: themes.reference('interactive.color', $alpha: 30%),
+    // Apply an alpha of 30%
     shadow: themes.reference('interactive.color', $alpha: 40%),
-  )
+  ),
 );
 
 //   // Compiles into:
-// --interactive-color: rgb(104, 251, 205);        /* teal-50               */
-// --interactive-glow: rgba(104, 251, 205, 0.3);   /* same color, 30% alpha */
-// --interactive-shadow: rgba(104, 251, 205, 0.4); /* same color, 40% alpha */
-);
+// --interactive-color:  rgb(104, 251, 205);         /* teal-50               */
+// --interactive-glow:   rgba(104, 251, 205, 0.3);   /* same color, 30% alpha */
+// --interactive-shadow: rgba(104, 251, 205, 0.4);   /* same color, 40% alpha */
 ```
 
-Change that teal value and 21 generated color steps automatically update throughout the site, maintaining visual hierarchy and systematic relationships.
+Change that teal value and 13 generated color steps automatically update throughout the site, maintaining visual hierarchy, complex gradients, and systematic relationships.
 
 ### The Build System
 
