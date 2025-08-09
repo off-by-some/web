@@ -71,7 +71,7 @@ CSS Bundle:        16.57 KB
 Total Initial:    ~49 KB
 ```
 
- For comparison, Many modern React or Angular apps start around 150–300 KB gzipped before you even add any kind of meaningful functionality. We hit about 50kb for the entire application.
+ For comparison, modern React or Angular apps start around 150–300 KB gzipped before you even add any kind of meaningful functionality. We hit about 50kb for the entire application.
 
 ### 📡 Pingdom Performance Snapshot 
 
