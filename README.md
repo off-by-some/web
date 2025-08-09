@@ -1,92 +1,103 @@
-# Personal Website
+---
+
+# 🌐 Personal Website
 
 [![Live Demo](https://img.shields.io/badge/demo-online-green)](https://off-by-some.github.io/web/)
-[![SvelteKit](https://img.shields.io/badge/sveltekit-v5-orange)](https://kit.svelte.dev/)
+[![SvelteKit](https://img.shields.io/badge/sveltekit-green)](https://kit.svelte.dev/)
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)]()
 
 ![Site preview](docs/website-preview.png)
 
-A personal site built as an exploration of modern web development—part portfolio, part engineering playground. Crafted with Svelte 5 and powered by a thoughtfully designed SCSS architecture.
+A **high-performance personal site** — part portfolio, part engineering playground — showcasing:
 
-## Table of Contents
+* **SvelteKit 5** framework
+* A **semantic SCSS design system**
+* A **build pipeline** tuned for speed, resilience, and maintainability
 
-- [Quick Start](#quick-start)
-- [Tech Highlights](#tech-highlights)
-- [Performance Results](#performance-results)
-- [Architecture](#architecture)
-- [Development Workflow](#development-workflow)
-- [Build Pipeline](#build-pipeline)
+---
 
-## Quick Start
+## 📖 Table of Contents
+
+1. [Quick Start](#-quick-start)
+2. [Highlights](#-highlights)
+3. [Performance](#-performance)
+4. [Architecture](#-architecture)
+5. [Development](#-development)
+6. [Build Pipeline](#-build-pipeline)
+7. [Static Asset System](#-static-asset-system)
+
+---
+
+## 🚀 Quick Start
 
 ```bash
-# Install dependencies
+# 1. Install dependencies
 npm install
 
-# Start development server
+# 2. Start dev server (auto-regenerates static assets)
 npm run dev
-
-# > Note: Starting the dev server will automatically regenerate the `static/` directory (images, OG image, and token CSS). No manual edits to `static/` are needed.
 ```
 
-Visit `http://localhost:5173` to see your changes in real-time.
+**Local preview:** [http://localhost:5173](http://localhost:5173)
+💡 _No need to edit `static/` — it’s fully generated._
 
-## Tech Highlights
+---
 
-| Feature                | Tech Used                   | Why It's Interesting                            |
-| ---------------------- | --------------------------- | ----------------------------------------------- |
-| **Critical CSS**       | SCSS + Vite                 | Eliminates FOUC, immediate styling              |
-| **Color Science**      | OKLCH + Sass Maps           | Perceptually uniform, auto-propagating palettes |
-| **Bundle Analysis**    | Rollup + File Size Plugin   | Real-time bundle optimization feedback          |
-| **Pre-commit Quality** | Husky + ESLint + Prettier   | Enforces code standards automatically           |
-| **Security Headers**   | CSP + Trusted Types + COOP  | XSS, clickjacking, and cross-origin protection  |
-| **OG Generation**      | Puppeteer + Headless Chrome | Automated social media previews                 |
-| **Design Tokens**      | Semantic theming system     | Single source of truth for visual consistency   |
+## ✨ Highlights
 
-## Performance Results
+| Feature                     | Tech Used                   | Why It Matters                                      |
+| --------------------------- | --------------------------- | --------------------------------------------------- |
+| **Early CSS (foundations)** | SCSS + Vite                 | Precompiled base styles loaded early to reduce FOUC |
+| **Color Science**           | OKLCH + Sass Maps           | Perceptually uniform, auto-propagating palettes     |
+| **Bundle Analysis**         | Rollup + File Size Plugin   | Built-in performance insights                       |
+| **Pre-commit Quality**      | Husky + ESLint + Prettier   | Standards enforced before every commit              |
+| **Security Hardening**      | CSP + Trusted Types + COOP  | Protects against XSS, clickjacking, cross-origin    |
+| **OG Generation**           | Puppeteer + Headless Chrome | Automated, pixel-perfect social previews            |
+| **Design Tokens**           | Semantic SCSS architecture  | Theme-agnostic, single source of truth              |
 
-Latest build metrics from production bundle:
+---
 
-```
-📦 Bundle Sizes (Gzipped)
-├── Main App Bundle: 19.25 KB
-├── Vendor Chunk: 13.38 KB
-├── CSS Bundle: 16.57 KB
-└── Total Initial Load: ~49 KB
+## 📊 Performance
+
+**Latest production build (Gzipped):**
 
 ```
+Main App Bundle:   19.25 KB
+Vendor Chunk:      13.38 KB
+CSS Bundle:        16.57 KB
+--------------------------------
+Total Initial:    ~49 KB
+```
 
-## Architecture
+> Methodology: First load of the home route on Mobile, cold cache, gzip sizes. Built with `npm run build`, served via `vite preview`, audited with Lighthouse. Include the exact command in PRs when updating these figures.
 
-### SCSS Design System
+---
 
-The project features a sophisticated theming architecture with automatic color propagation:
+## 🏗 Architecture
+
+### 🎨 SCSS Design System
+
+Theme-driven with **automatic color propagation**:
 
 <details>
-<summary>View theme system example</summary>
+<summary>Example</summary>
 
 ```scss
 $dark-mode-tokens: (
   brand: (
     teal: #1de9b6,
-    // Single source of truth
   ),
-
   interactive: (
     color: (
       teal: 100,
     ),
-    // References teal at step 100
     hover: (
-        teal: 50,
-      ),
-    // Auto-generates lighter shade
+      teal: 50,
+    ),
     focus: (
-        teal: 0,
-      ),
-    // Auto-generates lightest shade
+      teal: 0,
+    ),
   ),
-
   text: (
     brand: themes.reference('interactive.color'),
     hovered: themes.reference('interactive.hover'),
@@ -94,111 +105,121 @@ $dark-mode-tokens: (
 );
 ```
 
-**Color Propagation**: Changing `teal: #1de9b6` to any color instantly updates all 21 generated color steps and every reference throughout the app, maintaining mathematically verified color relationships.
+> Change `teal: #1de9b6` → instantly updates all 21 generated steps and every dependent token.
 
 </details>
 
-**Key architectural decisions:**
+**Key Principles**
 
-- **`styles/foundations/`** - Critical CSS loaded in `app.html` to prevent FOUC
-- **`styles/lib/`** - OKLCH color system with perceptual uniformity
-- **Semantic tokens** - Theme-agnostic naming (`interactive.hover` vs `teal-300`)
-- **Reference system** - Dynamic color resolution with alpha manipulation
+- `styles/foundations/` — Early CSS loaded in `app.html`
+- `styles/lib/` — OKLCH palette generator + theme utilities
+- Semantic tokens — (`interactive.hover` vs `teal-300`)
+- Dynamic references — `themes.reference()` with alpha control
 
-### Build Architecture
+---
 
-- **Pre-build**: Lint validation → OG image generation → Critical CSS compilation
-- **Build**: Bundle analysis → Code splitting → Asset optimization
-- **Post-build**: SPA fallback setup → GitHub Pages preparation
+### ℹ️ About critical CSS (Beasties)
 
-## Development Workflow
+We can use Beasties to inline “critical” CSS, but the gains here are likely small and come with tradeoffs. The current setup already front‑loads a small foundations bundle via `app.html`, which largely avoids FOUC without increasing HTML size or complicating CSP. If needed, Beasties can be added as an optional build step.
 
-### Daily Commands
+---
 
-```bash
-npm run dev          # Start development server with HMR
-npm run fix          # Auto-fix linting issues and format code
-npm run lint         # Check code quality and formatting
-npm run check        # Run Svelte type checking
-npm run clean        # Remove build/ and static/ (static will be regenerated automatically)
-```
+## 🛠 Development
 
-### Build & Deploy
+**Daily Commands**
 
 ```bash
-npm run build        # Cleans then regenerates static/ and builds the app
-npm run preview      # Preview production build locally
-npm run deploy       # Deploy to GitHub Pages
+npm run dev     # Live development server
+npm run fix     # ESLint + Prettier auto-fix
+npm run lint    # Code quality check
+npm run check   # Svelte type-checking
+npm run clean   # Wipe build/ & static/
 ```
 
-### Component Development
+**Build & Deploy**
 
 ```bash
-npm run storybook    # Launch Storybook for component development
+npm run build   # Clean → regenerate assets → build
+npm run preview # Preview production
+npm run deploy  # Deploy to GitHub Pages
 ```
 
-## Build Pipeline
-
-The build process orchestrates multiple systems for production optimization:
-
-### Pre-build Phase (`prebuild`)
-
-1. **Clean** - Remove `build/` and `static/`
-2. **Code Quality** - ESLint validation ensures code standards
-3. **Static Assets Setup** - Images, OG image, and critical CSS regenerated into `static/`
-
-### Build Phase
-
-- **Bundle Analysis** - File size reporting with gzip and Brotli metrics
-- **Code Splitting** - Vendor chunks separated for optimal caching
-- **Asset Optimization** - Images converted to WebP, CSS minified
-
-### Post-build Phase
-
-- **SPA fallback** - `404.html` created for client-side routing
-- **GitHub Pages** - `.nojekyll` created to allow assets starting with `_`
-
-## Self-healing Static Assets
-
-The `static/` directory is fully generated and safe to delete. It is rebuilt automatically on both `npm run dev` and `npm run build`.
-
-- **Source of truth**: Place raw assets in `images/` (PNGs, JPGs, SVGs, etc.)
-- **Generated outputs**: Optimized assets are written to `static/`
-
-### How generation works
-
-- **Images → WebP/SVG copy**: `npm run generate:images`
-  - Converts images from `images/` to WebP in `static/` (preserves directory structure)
-  - Copies SVGs as-is
-  - Requires ImageMagick
-    - Arch/Manjaro: `sudo pacman -S imagemagick`
-- **Open Graph**: `npm run generate:og` writes `static/og/og-about.png`
-- **Token CSS**: `npm run css:foundations` compiles `src/styles/foundations/index.scss` to `static/index.css`
-
-### Automation hooks
-
-- **`predev`**: `npm run setup:static` (runs before `vite dev`)
-- **`prebuild`**: `npm run clean && npm run fix && npm run lint && npm run setup:static`
-- **`postbuild`**: Creates `build/404.html` and `build/.nojekyll`
-
-### Script reference
+**Component Development**
 
 ```bash
-npm run clean           # Delete static/ and build/
-npm run generate:images # Build static assets from images/
-npm run generate:og     # Generate OG images into static/og/
-npm run css:foundations # Compile tokens/reset to static/index.css
-npm run setup:static    # Runs all of the above generation tasks
+npm run storybook
 ```
 
-### Open Graph Pipeline
+---
 
-Automated social media preview generation using Puppeteer:
+## 🔄 Build Pipeline
+
+**Pre-build**
+
+1. Clean (`build/` + `static/`)
+2. Lint & format
+3. Regenerate static assets (images, OG, foundations CSS)
+
+**Build**
+
+- Bundle analysis (gzip + Brotli)
+- Code splitting (vendor isolation)
+- Asset optimization (WebP, minified CSS)
+
+**Post-build**
+
+- SPA fallback (`404.html`)
+- GitHub Pages prep (`.nojekyll`)
+
+### Runtime model
+
+Deployed as a fully static SPA using `@sveltejs/adapter-static` with fallback to `index.html`. No SSR or server endpoints at runtime (GitHub Pages hosting).
+
+---
+
+## 📂 Static Asset System
+
+**`static/` is auto-generated — safe to delete.**
+
+**Sources:**
+
+- Raw images → `images/`
+- Tokens & resets → `src/styles/foundations/`
+
+**Generation Scripts**
 
 ```bash
-npm run generate:og  # Generate OG images via headless Chrome
+npm run generate:images  # Convert images to WebP, copy SVGs
+npm run generate:og      # Create OG preview images
+npm run css:foundations  # Compile tokens/reset → static/index.css
+npm run setup:static     # Run all of the above
 ```
 
-The pipeline renders HTML templates, converts images to base64 for reliable loading, and captures high-DPI screenshots at social media dimensions.
+**Prerequisites (ImageMagick)**
 
-**Technology Stack**: SvelteKit • TypeScript • SCSS • Vite • ESLint • Prettier • Puppeteer • GitHub Pages
+- macOS: `brew install imagemagick`
+- Debian/Ubuntu: `sudo apt-get update && sudo apt-get install -y imagemagick`
+- Arch/Manjaro: `sudo pacman -S imagemagick`
+- Windows (PowerShell): `choco install imagemagick` or `scoop install imagemagick`
+
+**Automation Hooks**
+
+- `predev` → `npm run setup:static`
+- `prebuild` → `npm run clean && npm run fix && npm run lint && npm run setup:static`
+- `postbuild` → Create `404.html` + `.nojekyll`
+
+---
+
+**Stack:**
+SvelteKit • TypeScript • SCSS • Vite • ESLint • Prettier • Puppeteer • GitHub Pages
+
+---
+
+## 🔐 Security
+
+GitHub Pages cannot set real HTTP response headers. This repo uses `<meta http-equiv>` tags in `src/app.html` as a best‑effort approximation.
+
+- Effective via meta: Content Security Policy (CSP)
+- Not effective via meta: X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security, Cross-Origin-Opener-Policy, Cross-Origin-Embedder-Policy, Permissions-Policy
+
+For strict headers, deploy to a platform that supports custom headers (e.g., Netlify, Cloudflare Pages) using `static/_headers` as a template.
