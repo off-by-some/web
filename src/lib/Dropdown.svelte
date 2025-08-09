@@ -322,21 +322,18 @@
     }
 }
 
-/* Hover state - only when not disabled, not open, and not focused */
 .dropdown__trigger:hover:not(:disabled):not(.dropdown__trigger--open):not(:focus) {
     border-color: var(--token-border-color-hover);
     background: var(--token-surface-glass-medium);
     box-shadow: var(--token-shadow-default);
 }
 
-/* Additional safeguard: suppress hover when menu is present (modern browsers) */
 .dropdown__trigger:hover:has(+ .dropdown__menu) {
     border-color: inherit;
     background: inherit;
     box-shadow: inherit;
 }
 
-/* Focus state - ONLY when actually focused */
 .dropdown__trigger:focus {
     outline: none;
     border-color: var(--token-interactive-color);
@@ -352,7 +349,6 @@
     outline-offset: 2px;
 }
 
-/* Open state - ONLY when dropdown is open */
 .dropdown__trigger--open {
     border-color: var(--token-interactive-color);
     background: var(--token-surface-glass-medium);
@@ -361,31 +357,26 @@
     box-shadow: 
         var(--token-shadow-focus),
         0 0 20px var(--token-shadow-glow-subtle);
-    /* Ensure hover cannot override these styles */
     pointer-events: auto;
 }
 
-/* Filled state - when has value but NOT open and NOT focused */
 .dropdown__trigger--filled:not(.dropdown__trigger--open):not(:focus) {
     background: var(--token-surface-glass-medium);
     box-shadow: var(--token-shadow-light);
     transform: none;
 }
 
-/* Filled state hover - only when not open and not focused */
 .dropdown__trigger--filled:not(.dropdown__trigger--open):not(:focus):hover {
     border-color: var(--token-border-color-hover);
     box-shadow: var(--token-shadow-default);
 }
 
-/* Error state */
 .dropdown__trigger--error {
     border-color: var(--token-status-danger-border);
     background: var(--token-status-danger-bg);
     box-shadow: 0 0 0 2px var(--token-status-danger-glow);
 }
 
-/* Disabled state */
 .dropdown__trigger:disabled {
     opacity: var(--token-opacity-default);
     cursor: not-allowed;

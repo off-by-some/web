@@ -29,7 +29,6 @@
         categorySelect: { category: SkillCategory };
     }>();
 
-    // Centralized configuration
     const CONFIG = {
         animation: {
             enterOffset: 150,
@@ -48,17 +47,10 @@
 
     const SKILL_LEVELS = ['expert', 'advanced', 'proficient', 'learning'] as const;
 
-    // State
     let selectedCategory: string | null = initialSelectedCategory;
     let hoveredSkill: string | null = null;
     let announcementText: string = '';
     
-
-    
-
-    
-
-    // Optimized event handlers
     const createKeyHandler = (callback: () => void) => (event: KeyboardEvent) => {
         if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
@@ -235,7 +227,6 @@
     @use "styles/animations.scss" as *;
     @use "styles/_tokens.scss" as *;
 
-    // CSS Custom Properties for Skill Levels
     :root {
         --skill-expert: var(--token-status-expert);
         --skill-advanced: var(--token-status-advanced);
@@ -256,7 +247,6 @@
         --animation-ease: cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    // Base Components
     .sr-only {
         position: absolute;
         width: 1px;
@@ -301,7 +291,6 @@
         animation: fadeInUp var(--token-motion-duration-slow) var(--token-motion-ease-out) both;
     }
 
-    // Header Styles
     .skills__header {
         text-align: center;
         margin-bottom: var(--token-space-fluid-5xl);
@@ -348,7 +337,6 @@
         }
     }
 
-    // Filter Styles
     .skills__filters {
         display: flex;
         justify-content: center;
@@ -433,7 +421,6 @@
         backdrop-filter: blur(var(--token-blur-sm));
     }
 
-    // Skills Grid
     .skills__grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -447,9 +434,6 @@
         }
     }
 
-    /* Removed scroll-driven and JS fallback animations */
-
-    // Skill Card Base
     .skill__card {
         display: block;
         width: 100%;
@@ -465,13 +449,10 @@
         z-index: 1;
         
         
-        // JS animated cards - efficient fallback
         &--js-animated {
-            /* Initial off-state */
             opacity: 0;
             transform: translate3d(0, 40px, 0) scale(0.95);
             will-change: transform, opacity;
-            /* Important: scroll drives progress; no easing fights it */
             transition: none;
         }
 
@@ -497,7 +478,6 @@
             z-index: 1;
         }
 
-        /* Hover/focus transitions */
         &:hover,
         &:focus {
             border-color: var(--token-border-color-default);
@@ -514,7 +494,6 @@
         }
     }
 
-    // Skill Level Variations - Restored border colors for all card types
     @each $level in expert, advanced, proficient, learning {
         .skill__card--#{$level}:hover,
         .skill__card--#{$level}:focus {
@@ -528,7 +507,6 @@
         }
     }
 
-    // Skill Card Content
     .skill__image {
         position: relative;
         width: var(--token-size-14);
@@ -649,7 +627,6 @@
         }
     }
 
-    // Level badge colors (DRY)
     @each $level in expert, advanced, proficient, learning {
         .skill__level--#{$level} {
             color: var(--skill-#{$level});
@@ -702,7 +679,6 @@
         transform: translateY(0);
     }
 
-    // Summary Section
     .skills__summary {
         background: var(--token-surface-glass-medium);
         border: var(--token-border-default-small);
@@ -798,7 +774,6 @@
         color: var(--token-text-secondary);
     }
 
-    // Legend
     .skills__legend {
         display: flex;
         justify-content: center;
@@ -852,7 +827,6 @@
         }
     }
 
-    // Legend dot colors (DRY)
     @each $level in expert, advanced, proficient, learning {
         .legend__item--#{$level} .legend__dot {
             background: var(--skill-#{$level});
@@ -871,7 +845,6 @@
             transform: translateY(0);
         }
 
-        /* keep for future responsive tweaks */
         .skill__card:hover { transform: translateY(-2px); }
     }
 
@@ -891,7 +864,6 @@
         }
     }
 
-    // Animations
     @keyframes fadeInUp {
         from {
             opacity: 0;
@@ -908,7 +880,6 @@
         50% { background-position: 100% 50%; }
     }
 
-    // Accessibility & Performance
     @media (prefers-reduced-motion: reduce) {
         *,
         *::before,
