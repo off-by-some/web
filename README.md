@@ -61,6 +61,8 @@ npm run dev
 
 **Latest production build (Gzipped):**
 
+We hit For comparison, Many modern React or Angular apps start around 150–300 KB gzipped before you even add any kind of meaningful functionality.
+
 ```
 Main App Bundle:   19.25 KB
 Vendor Chunk:      13.38 KB
@@ -69,7 +71,34 @@ CSS Bundle:        16.57 KB
 Total Initial:    ~49 KB
 ```
 
-> Methodology: First load of the home route on Mobile, cold cache, gzip sizes. Built with `npm run build`, served via `vite preview`, audited with Lighthouse. Include the exact command in PRs when updating these figures.
+> Methodology: First load of the home route on Mobile, cold cache, gzip sizes. Built with `npm run build`.
+
+
+### 📡 Pingdom Performance Snapshot 
+
+> Last verified: **08-09-2025** from Pingdom (San Jose, mobile agent, cold cache)
+
+**Transfer (network) on first paint**
+
+| Metric            | Value       | Notes                                                   |
+|-------------------|------------:|--------------------------------------------------------|
+| Total page size   | **29.1 KB** | gzip transfer size                                     |
+| Requests          | **3**       | HTML, CSS, main JS (Pingdom labels JS row as “Error”)  |
+| Load time         | **211 ms**  | Agent location + cold cache                            |
+| HTML              | **2.7 KB**  | `content-encoding: gzip`                               |
+| CSS               | **4.9 KB**  | `content-encoding: gzip`                               |
+| JS (entry)        | **21.5 KB** | `content-encoding: gzip`                               |
+
+
+### 📊 Performance Summary
+
+| Metric            | Value       |
+|-------------------|------------:|
+| **Performance grade** | 98/100 (A)        |
+| **Page size**     | 29.1 KB     |
+| **Load time**     | 211 ms      |
+| **Requests**      | 3           |
+
 
 ---
 
