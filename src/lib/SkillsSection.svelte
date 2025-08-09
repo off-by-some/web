@@ -350,6 +350,9 @@
     overflow: hidden;
     box-shadow: var(--token-shadow-light);
 
+    /* Performance optimization: isolate blend mode changes */
+    isolation: isolate;
+
     &::before {
       content: '';
       position: absolute;
@@ -437,12 +440,9 @@
     box-shadow: var(--token-shadow-default);
     z-index: 1;
 
-    &--js-animated {
-      opacity: 0;
-      transform: translate3d(0, 40px, 0) scale(0.95);
-      will-change: transform, opacity;
-      transition: none;
-    }
+    /* Performance optimizations */
+    isolation: isolate;
+    will-change: transform;
 
     &::after {
       content: '';
@@ -471,9 +471,14 @@
       border-color: var(--token-border-color-default);
       box-shadow: var(--token-shadow-elevated);
       z-index: 10;
+
+      /* Use transform instead of multiple property changes */
+      transform: translateY(-2px);
       transition:
+        transform var(--animation-duration) var(--animation-ease),
         border-color var(--animation-duration) var(--animation-ease),
         box-shadow var(--animation-duration) var(--animation-ease);
+
       &::before {
         opacity: 1;
       }
@@ -485,13 +490,14 @@
     }
   }
 
+  /* Optimized level-specific hover effects - reduce blur radius for performance */
   @each $level in expert, advanced, proficient, learning {
     .skill__card--#{$level}:hover,
     .skill__card--#{$level}:focus {
       border-color: var(--skill-#{$level});
       box-shadow:
         var(--token-shadow-elevated),
-        0 0 var(--token-space-fluid-xl) var(--glow-#{$level}-strong);
+        0 0 var(--token-space-fluid-lg) var(--glow-#{$level}-strong);
 
       &::before {
         background: linear-gradient(135deg, var(--skill-#{$level}) 0%, transparent 50%);
@@ -511,8 +517,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all var(--animation-duration) var(--animation-ease);
+    transition: transform var(--animation-duration) var(--animation-ease);
     box-shadow: var(--token-shadow-light);
+
+    /* Performance: composite on own layer */
+    will-change: transform;
 
     img {
       width: 3rem;
@@ -547,7 +556,8 @@
     border-radius: var(--token-radius-full);
     border: var(--token-border-default-small);
     z-index: var(--token-z-raised);
-    transition: all var(--animation-duration) var(--animation-ease);
+    transition: transform var(--animation-duration) var(--animation-ease);
+    will-change: transform;
 
     @media (min-width: $breakpoint-md) {
       width: var(--token-size-5);
@@ -555,11 +565,11 @@
     }
   }
 
-  // Level indicator colors (DRY)
+  /* Reduced glow intensity for better performance */
   @each $level in expert, advanced, proficient, learning {
     .skill__level-indicator--#{$level} {
       background: var(--skill-#{$level});
-      box-shadow: 0 0 var(--token-space-3) var(--glow-#{$level}-strong);
+      box-shadow: 0 0 var(--token-space-2) var(--glow-#{$level}-strong);
     }
   }
 
@@ -632,7 +642,7 @@
     .skill__card:focus .skill__level--#{$level} {
       background: var(--skill-#{$level});
       color: var(--token-text-dark);
-      box-shadow: 0 0 var(--token-space-2) var(--glow-#{$level});
+      box-shadow: 0 0 var(--token-space-1) var(--glow-#{$level});
     }
   }
 
@@ -684,6 +694,7 @@
     position: relative;
     overflow: hidden;
     box-shadow: var(--token-shadow-default);
+    isolation: isolate;
 
     @media (min-width: $breakpoint-md) {
       padding: var(--token-space-fluid-xl);
@@ -713,6 +724,7 @@
     position: relative;
     cursor: pointer;
     overflow: hidden;
+    will-change: transform;
 
     &:hover {
       transform: translateY(-5px) scale(1.02);
@@ -797,6 +809,7 @@
     transition: all var(--animation-duration) var(--animation-ease);
     padding: var(--token-space-2) var(--token-space-3);
     border-radius: var(--token-radius-sm);
+    will-change: transform;
 
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-font-size-sm);
@@ -818,6 +831,7 @@
     border-radius: var(--token-radius-full);
     flex-shrink: 0;
     transition: all var(--animation-duration) var(--animation-ease);
+    will-change: transform;
 
     @media (min-width: $breakpoint-md) {
       width: var(--token-space-4);
@@ -828,11 +842,11 @@
   @each $level in expert, advanced, proficient, learning {
     .legend__item--#{$level} .legend__dot {
       background: var(--skill-#{$level});
-      box-shadow: 0 0 var(--token-space-3) var(--glow-#{$level}-strong);
+      box-shadow: 0 0 var(--token-space-2) var(--glow-#{$level}-strong);
     }
   }
 
-  // Responsive Design
+  /* Responsive Design */
   @media (max-width: #{$breakpoint-md}) {
     .skills {
       padding: var(--token-space-fluid-4xl) 0;
@@ -894,17 +908,6 @@
       transition-duration: 0.01ms !important;
     }
 
-    .skill__card {
-      opacity: 1 !important;
-      transform: none !important;
-
-      &--css-animated,
-      &--js-animated {
-        opacity: 1 !important;
-        transform: none !important;
-      }
-    }
-
     .skill__description {
       opacity: 1;
       transform: none;
@@ -935,14 +938,6 @@
       border: var(--token-border-default-small);
       box-shadow: none;
       break-inside: avoid;
-      opacity: 1 !important;
-      transform: none !important;
-
-      &--css-animated,
-      &--js-animated {
-        opacity: 1 !important;
-        transform: none !important;
-      }
     }
 
     .skill__description {
