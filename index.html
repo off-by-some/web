@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="en">
 	<head>
+		<!-- Critical CSS: foundations bundle (reset + tokens) to avoid FOUC and style landing immediately -->
+		<link rel="preload" href="https://off-by-some.github.io/web/index.css" as="style" />
+		<link rel="stylesheet" href="https://off-by-some.github.io/web/index.css" />
+				
 		<meta charset="utf-8" />
 		<title>Cassidy Bridges - Engineering Resume</title>
 		<link rel="icon" type="image/png" href="https://off-by-some.github.io/web/favicon.webp" />
@@ -38,7 +42,7 @@
 		
 		<link rel="canonical" href="https://off-by-some.github.io/web" />
 		<meta name="theme-color" content="#0a0a0a" />
-		
+
 		<!-- JSON-LD Person schema -->
 		<script type="application/ld+json">
 		{
@@ -57,18 +61,18 @@
 		</script>
 		
 		
-		<link rel="modulepreload" href="https://off-by-some.github.io/web/_app/immutable/entry/start.IUvqR78N.js">
-		<link rel="modulepreload" href="https://off-by-some.github.io/web/_app/immutable/chunks/DCPMxJUn.js">
-		<link rel="modulepreload" href="https://off-by-some.github.io/web/_app/immutable/chunks/BssaQGdm.js">
-		<link rel="modulepreload" href="https://off-by-some.github.io/web/_app/immutable/chunks/Bl2-cUq6.js">
-		<link rel="modulepreload" href="https://off-by-some.github.io/web/_app/immutable/entry/app.DxSScxQX.js">
+		<link rel="modulepreload" href="https://off-by-some.github.io/web/_app/immutable/entry/start.bFPAOGAp.js">
+		<link rel="modulepreload" href="https://off-by-some.github.io/web/_app/immutable/chunks/CUddz5t_.js">
+		<link rel="modulepreload" href="https://off-by-some.github.io/web/_app/immutable/chunks/zxgR-OHY.js">
+		<link rel="modulepreload" href="https://off-by-some.github.io/web/_app/immutable/chunks/iHYy-RLv.js">
+		<link rel="modulepreload" href="https://off-by-some.github.io/web/_app/immutable/entry/app.CVzz9po1.js">
 		<link rel="modulepreload" href="https://off-by-some.github.io/web/_app/immutable/chunks/Cm9PB-7n.js">
 	</head>
 	<body data-sveltekit-preload-data="hover" style="margin: 0;">
 		<div style="display: contents">
 			<script>
 				{
-					__sveltekit_ehsghc = {
+					__sveltekit_7p0wk6 = {
 						base: "/web",
 						assets: "https://off-by-some.github.io/web"
 					};
@@ -76,8 +80,8 @@
 					const element = document.currentScript.parentElement;
 
 					Promise.all([
-						import("https://off-by-some.github.io/web/_app/immutable/entry/start.IUvqR78N.js"),
-						import("https://off-by-some.github.io/web/_app/immutable/entry/app.DxSScxQX.js")
+						import("https://off-by-some.github.io/web/_app/immutable/entry/start.bFPAOGAp.js"),
+						import("https://off-by-some.github.io/web/_app/immutable/entry/app.CVzz9po1.js")
 					]).then(([kit, app]) => {
 						kit.start(app, element);
 					});
