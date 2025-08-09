@@ -1,0 +1,10 @@
+// NOTE: This file is used to import the reset and tokens styles into the app.html file.
+// It is for ensuring the base styles are loaded before the app styles.
+
+// If you need scss styles loaded before the app styles, you may import it here.
+// The files in this folder are NOT to be used in the app or any components.
+
+@use "./_reset.scss";
+@use "./_tokens.scss";
+
+

@@ -708,7 +708,6 @@
 </main>
 
 <style lang="scss">
-	@use "styles/_reset.scss" as *;
 
 	main {
 		min-height: 100vh;

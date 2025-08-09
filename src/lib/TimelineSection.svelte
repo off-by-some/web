@@ -245,7 +245,7 @@
     });
 </script>
 
-<section class="timeline" id="experience" role="region" aria-labelledby="timeline-heading">
+<section class="timeline" id="experience" aria-labelledby="timeline-heading">
     <!-- Screen reader announcements -->
     <div class="sr-only" role="status" aria-live="polite" aria-atomic="true">
         {announcementText}
@@ -278,8 +278,7 @@
                     data-index={index}
                     data-timeline-index={index}
                     role="listitem"
-                    tabindex="0"
-                    on:keydown={(e) => handleTimelineKeydown(e, index)}
+                    on:keydown={(e) => handleTimelineKeydown(e as KeyboardEvent, index)}
                     on:focus={() => handleTimelineFocus(index)}
                     aria-label="{experience.title} at {experience.company}, {experience.date}. {activeIndex === index ? 'Currently active. ' : ''}Press Enter to {expandedItems.has(index) ? 'collapse' : 'expand'} details."
                 >
@@ -312,7 +311,7 @@
                             <button
                                 class="timeline__toggle"
                                 on:click={(e) => handleReadMore(e, experience, index)}
-                                on:keydown={(e) => handleToggleKeydown(e, experience, index)}
+                                on:keydown={handleToggleKeydown(experience, index)}
                                 aria-expanded={expandedItems.has(index)}
                                 aria-controls="experience-{index}-details"
                                 aria-label="{expandedItems.has(index) ? 'Hide' : 'Show'} details for {experience.title} at {experience.company}"
@@ -366,7 +365,7 @@
 
                             <div class="timeline__skills" role="list" aria-label="Skills used in this role">
                                 {#each experience.skills as skill, skillIndex}
-                                    <span class="timeline__skill" role="listitem" tabindex={expandedItems.has(index) ? "0" : "-1"} aria-label="Skill: {skill}">{skill}</span>
+                                    <span class="timeline__skill" role="listitem" tabindex={expandedItems.has(index) ? 0 : -1} aria-label="Skill: {skill}">{skill}</span>
                                 {/each}
                             </div>
                         </div>
@@ -378,9 +377,8 @@
     </section>
 
 <style lang="scss">
-@use "styles/_reset.scss" as *;
 @use "styles/animations.scss" as *;
-@use "styles/_tokens.scss" as *;
+@use "styles/_breakpoints.scss" as *;
 
 /* Screen reader only content */
 .sr-only {

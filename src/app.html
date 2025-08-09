@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="en">
 	<head>
+		<!-- Critical CSS: foundations bundle (reset + tokens) to avoid FOUC and style landing immediately -->
+		<link rel="preload" href="%sveltekit.assets%/index.css" as="style" />
+		<link rel="stylesheet" href="%sveltekit.assets%/index.css" />
+				
 		<meta charset="utf-8" />
 		<title>Cassidy Bridges - Engineering Resume</title>
 		<link rel="icon" type="image/png" href="%sveltekit.assets%/favicon.webp" />
@@ -38,7 +42,7 @@
 		
 		<link rel="canonical" href="https://off-by-some.github.io/web" />
 		<meta name="theme-color" content="#0a0a0a" />
-		
+
 		<!-- JSON-LD Person schema -->
 		<script type="application/ld+json">
 		{

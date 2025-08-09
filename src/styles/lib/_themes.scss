@@ -1086,48 +1086,48 @@ $reference-end: ")" !default;
   }
 }
 
-$example-schema: (
-  brand: (
-    primary: #000000
-  ),
+// $example-schema: (
+//   brand: (
+//     primary: #000000
+//   ),
   
-  basic-value: (primary: 700, alpha: 0.95),
-  basic-value2: (primary: 700, alpha: 95%),
+//   basic-value: (primary: 700, alpha: 0.95),
+//   basic-value2: (primary: 700, alpha: 95%),
   
-  interpolated-string-value: 'test #{interpolate(primary, 700, 0.95)}',
+//   interpolated-string-value: 'test #{interpolate(primary, 700, 0.95)}',
   
-  nested-interpolation: (
-    value: reference('interpolated-string-value')
-  ),
+//   nested-interpolation: (
+//     value: reference('interpolated-string-value')
+//   ),
   
-  adjusted-alpha-reference: reference('basic-value', $alpha: 85%),
-  adjusted-step-reference: reference('basic-value', $step: 50),
+//   adjusted-alpha-reference: reference('basic-value', $alpha: 85%),
+//   adjusted-step-reference: reference('basic-value', $step: 50),
   
-  example: (
-    basic-reference: reference('basic-value'),
-    nested-basic-reference: reference('nested-interpolation.value'),
+//   example: (
+//     basic-reference: reference('basic-value'),
+//     nested-basic-reference: reference('nested-interpolation.value'),
     
-    interpolated-gradient: 'linear-gradient(90deg, #{reference("basic-value")} 0%, transparent 100%)',
-    multi-ref-string: 'Refs: #{reference("basic-value")}, #{reference("nested-interpolation.value")}',
+//     interpolated-gradient: 'linear-gradient(90deg, #{reference("basic-value")} 0%, transparent 100%)',
+//     multi-ref-string: 'Refs: #{reference("basic-value")}, #{reference("nested-interpolation.value")}',
     
-    nested-gradient: 'radial-gradient(ellipse at 30% 80%, #{reference("basic-value")} 0%, transparent 40%)',
-    list-of-references: (reference('basic-value'), reference('nested-interpolation.value')),
-    complex-interpolation: 'linear-gradient(#{interpolate(primary, 700, 0.5)}, #{reference("basic-value")})',
-    quoted-reference: 'This is "#{reference("basic-value")}" inside quotes',
+//     nested-gradient: 'radial-gradient(ellipse at 30% 80%, #{reference("basic-value")} 0%, transparent 40%)',
+//     list-of-references: (reference('basic-value'), reference('nested-interpolation.value')),
+//     complex-interpolation: 'linear-gradient(#{interpolate(primary, 700, 0.5)}, #{reference("basic-value")})',
+//     quoted-reference: 'This is "#{reference("basic-value")}" inside quotes',
     
-    many-refs: (
-      a: reference('basic-value'),
-      b: reference('example.many-refs.a'),
-      c: reference('example.many-refs.b'),
-      d: reference('example.many-refs.c'),
-      e: reference('example.many-refs.d')
-    )
-  )
-);
+//     many-refs: (
+//       a: reference('basic-value'),
+//       b: reference('example.many-refs.a'),
+//       c: reference('example.many-refs.b'),
+//       d: reference('example.many-refs.c'),
+//       e: reference('example.many-refs.d')
+//     )
+//   )
+// );
 
-:root {
-  @include export-semantic-theme($example-schema);
-}
+// :root {
+//   @include export-semantic-theme($example-schema);
+// }
 
 
 

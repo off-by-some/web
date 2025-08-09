@@ -225,7 +225,7 @@
 
 <style lang="scss">
     @use "styles/animations.scss" as *;
-    @use "styles/_tokens.scss" as *;
+    @use "styles/_breakpoints.scss" as *;
 
     :root {
         --skill-expert: var(--token-status-expert);

@@ -141,7 +141,7 @@
 
     const handleEscape = () => {
         resetState();
-        triggerEl?.focus();
+        (triggerEl as HTMLButtonElement | undefined)?.focus();
     };
 
     const selectOption = (selectedValue: string) => {
@@ -289,7 +289,7 @@
 </div>
 
 <style lang="scss">
-@use "styles/_tokens.scss" as *;
+@use "styles/_breakpoints.scss" as *;
 
 .dropdown {
     position: relative;

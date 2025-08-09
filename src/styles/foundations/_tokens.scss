@@ -1,11 +1,6 @@
 @use 'sass:map';
-@use './_colors' as colors;
-@use './_themes' as themes;
-
-$breakpoint-sm: 30rem;
-$breakpoint-md: 48rem;
-$breakpoint-lg: 86rem;
-$breakpoint-xlg: 160rem;
+@use '../lib/colors' as colors;
+@use '../lib/themes' as themes;
 
 
 $dark-mode-tokens: (

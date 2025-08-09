@@ -148,7 +148,7 @@ ${formData.name}`
         hasAttemptedSubmit = true;
         
         if (!validateForm()) {
-            formElement.querySelector('.form__input--error')?.focus();
+            (formElement.querySelector('.form__input--error') as HTMLElement | null)?.focus();
             return;
         }
 
@@ -238,7 +238,7 @@ ${formData.name}`
                                     id="name"
                                     class={getInputClass('name')}
                                     bind:value={formData.name}
-                                    on:input={(e) => handleInputChange('name', e.currentTarget.value)}
+                                    on:input={(e: Event) => handleInputChange('name', (e.currentTarget as HTMLInputElement).value)}
                                     placeholder="Your full name"
                                     disabled={isSubmitting}
                                     required
@@ -267,7 +267,7 @@ ${formData.name}`
                                     id="email"
                                     class={getInputClass('email')}
                                     bind:value={formData.email}
-                                    on:input={(e) => handleInputChange('email', e.currentTarget.value)}
+                                on:input={(e: Event) => handleInputChange('email', (e.currentTarget as HTMLInputElement).value)}
                                     placeholder="your@email.com"
                                     disabled={isSubmitting}
                                     required
@@ -298,7 +298,7 @@ ${formData.name}`
                                     id="company"
                                     class="form__input"
                                     bind:value={formData.company}
-                                    on:input={(e) => handleInputChange('company', e.currentTarget.value)}
+                                    on:input={(e: Event) => handleInputChange('company', (e.currentTarget as HTMLInputElement).value)}
                                     placeholder="Your company"
                                     disabled={isSubmitting}
                                     autocomplete="organization"
@@ -329,7 +329,7 @@ ${formData.name}`
                                 id="subject"
                                 class={getInputClass('subject')}
                                 bind:value={formData.subject}
-                                on:input={(e) => handleInputChange('subject', e.currentTarget.value)}
+                                on:input={(e: Event) => handleInputChange('subject', (e.currentTarget as HTMLInputElement).value)}
                                 placeholder="What's your project about?"
                                 disabled={isSubmitting}
                                 required
@@ -370,7 +370,7 @@ ${formData.name}`
                                 id="message"
                                 class={getInputClass('message')}
                                 bind:value={formData.message}
-                                on:input={(e) => handleInputChange('message', e.currentTarget.value)}
+                                on:input={(e: Event) => handleInputChange('message', (e.currentTarget as HTMLTextAreaElement).value)}
                                 placeholder="Tell me about your project, goals, and any specific requirements..."
                                 rows="5"
                                 disabled={isSubmitting}
@@ -475,9 +475,8 @@ ${formData.name}`
 </section>
 
 <style lang="scss">
-@use "styles/_reset.scss" as *;
 @use "styles/animations.scss" as *;
-@use "styles/_tokens.scss" as *;
+@use "styles/_breakpoints.scss" as *;
 
 .sr-only {
     position: absolute;

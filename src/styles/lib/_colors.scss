@@ -1067,14 +1067,14 @@ $pi: 3.141592653589793 !default;
   @return $primitives;
 }
 
-// // Define your brand colors
-$brand-colors: (
-  'purple': #b200a1,
-  'navy': #090082,
-  'red': #ff3cac,
-  'gold': #ffd966,
-  'white': #fafafa,
-);
+// // // Define your brand colors
+// $brand-colors: (
+//   'purple': #b200a1,
+//   'navy': #090082,
+//   'red': #ff3cac,
+//   'gold': #ffd966,
+//   'white': #fafafa,
+// );
 
-// Generate complete color system
-@include export-color-system($brand-colors);
+// // Generate complete color system
+// @include export-color-system($brand-colors);

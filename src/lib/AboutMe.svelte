@@ -326,7 +326,7 @@
                         <button 
                             class="tech__category" 
                             on:click={() => handleTechCategoryClick(category.title)}
-                            on:keydown={(event) => handleTechCategoryKeydown(event, category.title)}
+                            on:keydown={handleTechCategoryKeydown(category.title)}
                             aria-label="Explore {category.title} technologies - {getMasteryDescription(category.level)}"
                             aria-describedby="tech-category-{index}"
                             type="button"
@@ -339,7 +339,7 @@
                                     role="img"
                                 ></div>
                             </div>
-                            <div class="category__tags" bind:this={techContainers[index]}>
+                            <div class="category__tags" bind:this={techContainers[index]} role="list">
                                 {#each category.visibleTags.visible as tech}
                                     <span class="tech__tag" role="listitem">{tech}</span>
                                 {/each}
@@ -373,9 +373,8 @@
 </section>
 
 <style lang="scss">
-@use "styles/_reset.scss" as *;
 @use "styles/animations.scss" as *;
-@use "styles/_tokens.scss" as *;
+@use "styles/_breakpoints.scss" as *;
 
 .sr-only {
     position: absolute;
@@ -1436,12 +1435,11 @@
     }
 }
 
-.category__tags {
+ .category__tags {
     display: flex;
     flex-wrap: wrap;
     gap: var(--token-space-2);
     align-content: flex-start;
-    role: list;
 }
 
 .tech__tag {
