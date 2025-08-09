@@ -12,7 +12,8 @@
   },
   "scripts": {
     "dev": "vite dev",
-    "prebuild": "npm run lint && npm run generate:og && npm run css:foundations",
+    "predev": "npm run setup:static",
+    "prebuild": "npm run clean && npm run fix && npm run lint && npm run setup:static",
     "build": "rm -rf build && vite build",
     "postbuild": "cp build/index.html build/404.html && touch build/.nojekyll",
     "deploy": "npm run build && npm run postbuild && gh-pages -d build --dotfiles",
@@ -27,7 +28,10 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "css:foundations": "sass src/styles/foundations/index.scss static/index.css --no-source-map --style=compressed",
-    "generate:og": "node scripts/generate-og-images.js"
+    "generate:og": "node scripts/generate-og-images.js",
+    "generate:images": "bash scripts/resize-static.sh",
+    "setup:static": "npm run generate:images && npm run generate:og && npm run css:foundations",
+    "clean": "rm -rf static build"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^4.0.1",

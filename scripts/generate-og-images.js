@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, statSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import puppeteer from 'puppeteer';
@@ -13,6 +13,28 @@ async function generateOGImage() {
 
   let browser;
   try {
+    // Paths used for cache validation
+    const templatePath = join(__dirname, '../templates/og-template.html');
+    const imagePath = join(__dirname, '../images/headshot.PNG');
+    const outputDir = join(__dirname, '../static/og');
+    const outputPath = join(outputDir, 'og-about.png');
+
+    // If output exists and is newer than its inputs, skip regeneration
+    if (existsSync(outputPath)) {
+      try {
+        const outStat = statSync(outputPath);
+        const tplStat = statSync(templatePath);
+        const imgStat = statSync(imagePath);
+        const isUpToDate = outStat.mtimeMs >= tplStat.mtimeMs && outStat.mtimeMs >= imgStat.mtimeMs;
+        if (isUpToDate) {
+          console.log(`✓ OG image up-to-date, skipping: ${outputPath}`);
+          return outputPath;
+        }
+      } catch {
+        // If any stat check fails, fall through to regenerate
+      }
+    }
+
     browser = await puppeteer.launch({
       headless: true,
       args: [
@@ -36,11 +58,9 @@ async function generateOGImage() {
     });
 
     // Read the HTML template
-    const templatePath = join(__dirname, '../templates/og-template.html');
     let html = readFileSync(templatePath, 'utf8');
 
     // Convert image to base64 for high quality and reliable loading
-    const imagePath = join(__dirname, '../images/headshot.PNG');
     let imageDataUrl = '';
     try {
       const imageBuffer = readFileSync(imagePath);
@@ -94,11 +114,9 @@ async function generateOGImage() {
     });
 
     // Ensure output directory exists
-    const outputDir = join(__dirname, '../static/og');
     mkdirSync(outputDir, { recursive: true });
 
     // Write PNG file
-    const outputPath = join(outputDir, 'og-about.png');
     writeFileSync(outputPath, screenshot);
 
     console.log(`✅ Generated: ${outputPath}`);

@@ -1,7 +1,12 @@
 #!/bin/bash
 
-# Check if ImageMagick is installed
-if ! command -v convert >/dev/null 2>&1; then
+# Check if ImageMagick is installed (prefer IM v7 `magick` over deprecated `convert`)
+CONVERT_BIN=""
+if command -v magick >/dev/null 2>&1; then
+    CONVERT_BIN="magick"
+elif command -v convert >/dev/null 2>&1; then
+    CONVERT_BIN="convert"
+else
     echo "Error: ImageMagick is not installed. Please install it first:"
     echo "  macOS:           brew install imagemagick"
     echo "  Debian/Ubuntu:   sudo apt install imagemagick"
@@ -52,18 +57,28 @@ find "$IMAGES_DIR" -type f \( \
     
     # Handle SVG files (copy as-is)
     if [[ "${extension,,}" == "svg" ]]; then
-        cp "$file" "$target_dir/$filename"
-        echo "  Copied SVG: $filename"
+        dest_path="$target_dir/$filename"
+        if [[ -f "$dest_path" && "$dest_path" -nt "$file" ]]; then
+            echo "  Up-to-date SVG, skipping: $filename"
+        else
+            cp "$file" "$dest_path"
+            echo "  Copied SVG: $filename"
+        fi
     else
         # Convert to WebP with transparency preservation
-        convert "$file" \
-            -resize "150x150>" \
-            -strip \
-            -define webp:lossless=true \
-            -define webp:alpha-quality=100 \
-            -define webp:method=6 \
-            "$target_dir/${filename_noext}.webp"
-        echo "  Converted to WebP: ${filename_noext}.webp"
+        dest_path="$target_dir/${filename_noext}.webp"
+        if [[ -f "$dest_path" && "$dest_path" -nt "$file" ]]; then
+            echo "  Up-to-date WebP, skipping: ${filename_noext}.webp"
+        else
+            "$CONVERT_BIN" "$file" \
+                -resize "150x150>" \
+                -strip \
+                -define webp:lossless=true \
+                -define webp:alpha-quality=100 \
+                -define webp:method=6 \
+                "$dest_path"
+            echo "  Converted to WebP: ${filename_noext}.webp"
+        fi
     fi
 done
 
