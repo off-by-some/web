@@ -61,7 +61,7 @@ npm run dev
 
 **Latest production build (Gzipped):**
 
-We hit For comparison, Many modern React or Angular apps start around 150–300 KB gzipped before you even add any kind of meaningful functionality.
+Anything under 100 KB gzipped for initial load is considered excellent in 2025. For comparison, Many modern React or Angular apps start around 150–300 KB gzipped before you even add any kind of meaningful functionality.
 
 ```
 Main App Bundle:   19.25 KB
@@ -71,8 +71,7 @@ CSS Bundle:        16.57 KB
 Total Initial:    ~49 KB
 ```
 
-> Methodology: First load of the home route on Mobile, cold cache, gzip sizes. Built with `npm run build`.
-
+We hit about 50kb for the entire application.
 
 ### 📡 Pingdom Performance Snapshot 
 
@@ -92,6 +91,8 @@ Total Initial:    ~49 KB
 
 ### 📊 Performance Summary
 
+This table shows the final performance summary, landing just shy of 30KB. 
+
 | Metric            | Value       |
 |-------------------|------------:|
 | **Performance grade** | 98/100 (A)        |
@@ -99,6 +100,7 @@ Total Initial:    ~49 KB
 | **Load time**     | 211 ms      |
 | **Requests**      | 3           |
 
+This shows the initial request is even smaller before further resources are fetched. 
 
 ---
 
