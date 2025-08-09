@@ -85,7 +85,7 @@ $dark-mode-tokens: (
       subtle:   themes.reference('surface.color', $alpha: 2%),
       light:    themes.reference('surface.color', $alpha: 3%),
       medium:   themes.reference('surface.color', $alpha: 10%),
-      strong:   themes.reference('surface.color', $alpha: 10%),
+      strong:   themes.reference('surface.color', $alpha: 20%),
 
       hover: (
         'linear-gradient('
