@@ -1,0 +1,6 @@
+// Main SCSS file - import all common styles here
+@use '_reset.scss' as *;
+@use 'animations.scss' as *;
+@use '_tokens.scss' as *;
+@use '_colors.scss' as *;
+@use '_themes.scss' as *;

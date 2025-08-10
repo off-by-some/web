@@ -458,7 +458,7 @@ ${formData.name}`,
       <section class="contact__footer" aria-labelledby="stats-title">
         <div class="footer__stats">
           <div class="stat__item" role="img" aria-label="1 million plus users reached">
-            <div class="stat__number">1m+</div>
+            <div class="stat__number">1M+</div>
             <div class="stat__label">Users Reached</div>
           </div>
           <div class="stat__item" role="img" aria-label="100 percent client satisfaction">

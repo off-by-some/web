@@ -324,7 +324,7 @@
               >
                 0
               </div>
-              <div class="stat__label">{stat.label}</div>
+              <div class="stat__label">{stat.label.split(' ').join('\n')}</div>
             </div>
           {/each}
         </div>
@@ -1241,6 +1241,7 @@
     text-transform: uppercase;
     letter-spacing: var(--token-letter-spacing-widest);
     line-height: var(--token-line-height-relaxed);
+    white-space: pre-line;
     transition: color var(--token-motion-duration-normal) var(--token-motion-ease-out);
 
     @media (min-width: $breakpoint-lg) {

@@ -45,6 +45,7 @@
     open: 'dropdown__trigger--open',
     filled: 'dropdown__trigger--filled',
     error: 'dropdown__trigger--error',
+    disabled: 'dropdown__trigger--disabled',
   };
 
   let dropdownOpen = false;
@@ -65,7 +66,13 @@
   };
 
   const buildTriggerClass = () =>
-    [classes.base, dropdownOpen && classes.open, hasValue && classes.filled, error && classes.error]
+    [
+      classes.base,
+      dropdownOpen && classes.open,
+      hasValue && classes.filled,
+      error && classes.error,
+      disabled && classes.disabled,
+    ]
       .filter(Boolean)
       .join(' ');
 
@@ -214,10 +221,10 @@
     dropdownOpen && classes.open,
     hasValue && classes.filled,
     error && classes.error,
+    disabled && classes.disabled,
   ]
     .filter(Boolean)
     .join(' ');
-  // Scrolling handled in specific events (toggle/open/focus move)
 
   onMount(setupEventListeners);
 </script>
@@ -306,7 +313,10 @@
   /* Base styles */
   .dropdown__trigger {
     width: 100%;
+    /* Apply blur directly to element, not pseudo */
     background: var(--token-surface-glass-strong);
+    backdrop-filter: blur(var(--token-blur-lg));
+    -webkit-backdrop-filter: blur(var(--token-blur-lg));
     border: var(--token-border-default-small);
     border-radius: var(--token-radius-lg);
     padding: var(--token-space-fluid-md) var(--token-space-fluid-lg);
@@ -314,7 +324,6 @@
     font-family: inherit;
     color: var(--token-text-primary);
     transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
-    backdrop-filter: blur(var(--token-blur-lg));
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -322,6 +331,9 @@
     text-align: left;
     box-shadow: var(--token-shadow-light);
     position: relative;
+
+    /* Chrome fixes */
+    isolation: isolate;
 
     @media (min-width: 768px) {
       padding: var(--token-space-fluid-lg) var(--token-space-fluid-xl);
@@ -384,9 +396,44 @@
     box-shadow: 0 0 0 2px var(--token-status-danger-glow);
   }
 
-  .dropdown__trigger:disabled {
-    opacity: var(--token-opacity-default);
+  /* Disabled state without opacity */
+  .dropdown__trigger--disabled {
+    background: var(--token-surface-glass-subtle);
+    backdrop-filter: blur(var(--token-blur-sm));
+    -webkit-backdrop-filter: blur(var(--token-blur-sm));
+    border-color: var(--token-border-color-disabled, var(--token-text-quaternary));
+    color: var(--token-text-disabled, var(--token-text-quaternary));
     cursor: not-allowed;
+    box-shadow: none;
+
+    /* Remove transforms and effects for disabled state */
+    &:hover,
+    &:focus {
+      transform: none;
+      border-color: var(--token-border-color-disabled, var(--token-text-quaternary));
+      background: var(--token-surface-glass-subtle);
+      box-shadow: none;
+    }
+
+    /* Ensure disabled styles override other states */
+    &.dropdown__trigger--filled,
+    &.dropdown__trigger--error {
+      background: var(--token-surface-glass-subtle);
+      border-color: var(--token-border-color-disabled, var(--token-text-quaternary));
+      box-shadow: none;
+    }
+  }
+
+  .dropdown__trigger--disabled .dropdown__value {
+    color: var(--token-text-disabled, var(--token-text-quaternary));
+
+    &--placeholder {
+      color: var(--token-text-disabled, var(--token-text-quaternary));
+    }
+  }
+
+  .dropdown__trigger--disabled .dropdown__chevron {
+    color: var(--token-text-disabled, var(--token-text-quaternary));
   }
 
   .dropdown__value {
@@ -422,12 +469,12 @@
     top: 100%;
     left: 0;
     right: 0;
-    background: var(--token-surface-glass-strong);
+    background: var(--token-surface-glass-stronger);
     border: var(--token-border-default-small);
     border-top: none;
     border-bottom-left-radius: var(--token-radius-lg);
     border-bottom-right-radius: var(--token-radius-lg);
-    backdrop-filter: blur(var(--token-blur-lg));
+    /* NO backdrop-filter here to avoid nested blur conflicts */
     box-shadow:
       var(--token-shadow-elevated),
       0 0 30px var(--token-shadow-glow-subtle);
@@ -451,7 +498,7 @@
       border-radius: var(--token-radius-sm);
 
       &:hover {
-        background: var(--token-surface-glass-strong);
+        background: var(--token-surface-glass-stronger);
       }
     }
 
@@ -509,7 +556,7 @@
     }
 
     &:active {
-      background: var(--token-surface-glass-strong);
+      background: var(--token-surface-glass-stronger);
       transform: scale(0.98);
     }
   }

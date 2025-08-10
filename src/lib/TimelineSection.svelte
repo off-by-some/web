@@ -460,12 +460,26 @@
   }
 
   .timeline__title {
-    font-size: var(--token-font-size-5xl);
+    font-size: var(--token-font-size-4xl);
     font-weight: var(--token-font-weight-bold);
     line-height: var(--token-line-height-tight);
     color: var(--token-text-heading);
     margin-bottom: var(--token-space-fluid-md);
     letter-spacing: var(--token-letter-spacing-tight);
+    background: var(--token-gradients-heading);
+    background-size: 200% 200%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: textShimmer 8s ease-in-out infinite;
+
+    @media (min-width: $breakpoint-md) {
+      font-size: var(--token-font-size-5xl);
+    }
+
+    @media (min-width: $breakpoint-lg) {
+      font-size: var(--token-font-size-6xl);
+    }
   }
 
   .timeline__subtitle {
@@ -474,6 +488,16 @@
     font-weight: var(--token-font-weight-normal);
     line-height: var(--token-line-height-relaxed);
     letter-spacing: var(--token-letter-spacing-normal);
+    max-width: var(--token-container-5xl);
+    margin: 0 auto;
+
+    @media (min-width: $breakpoint-md) {
+      font-size: var(--token-font-size-xl);
+    }
+
+    @media (min-width: $breakpoint-lg) {
+      font-size: var(--token-font-size-2xl);
+    }
   }
 
   .timeline__container {
@@ -1033,9 +1057,13 @@
     .timeline__card {
       padding: var(--token-space-fluid-lg);
       max-width: none;
-      border-left: var(--token-size-2) solid var(--token-interactive-color);
+      border-left: var(--token-size-2) solid transparent;
       border-radius: var(--token-radius-lg) var(--token-radius-lg) var(--token-radius-lg)
         var(--token-radius-md);
+    }
+
+    .timeline__item--active .timeline__card {
+      border-left-color: var(--token-interactive-color);
     }
 
     .timeline__card-header {
@@ -1124,7 +1152,6 @@
     }
 
     .timeline__card {
-      padding: var(--token-space-fluid-md);
       margin: var(--token-space-fluid-md) 0;
     }
 
@@ -1135,12 +1162,10 @@
 
   @media (min-width: $breakpoint-md) {
     .timeline__title {
-      font-size: var(--token-font-size-6xl);
       line-height: var(--token-line-height-snug);
     }
 
     .timeline__subtitle {
-      font-size: var(--token-font-size-xl);
       line-height: var(--token-line-height-loose);
     }
 
@@ -1178,12 +1203,10 @@
 
   @media (min-width: $breakpoint-lg) {
     .timeline__title {
-      font-size: var(--token-font-size-7xl);
       letter-spacing: var(--token-letter-spacing-normal);
     }
 
     .timeline__subtitle {
-      font-size: var(--token-font-size-2xl);
       letter-spacing: var(--token-letter-spacing-wide);
     }
 
@@ -1213,14 +1236,24 @@
     }
   }
 
-  @keyframes fade-in-up {
+  @keyframes fadeInUp {
     from {
       opacity: 0;
-      transform: translateY(var(--token-space-fluid-lg));
+      transform: translateY(var(--token-space-fluid-xl));
     }
     to {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+
+  @keyframes textShimmer {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
     }
   }
 
@@ -1237,6 +1270,10 @@
     .timeline__toggle,
     .timeline__skill {
       transition: none;
+    }
+
+    .timeline__title {
+      animation: none;
     }
   }
 

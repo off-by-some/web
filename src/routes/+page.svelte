@@ -88,16 +88,8 @@
   // Handle tech category clicks from AboutMe
   function handleTechCategoryClick(event: CustomEvent) {
     selectedSkillsCategory = event.detail.category;
-    smoothScrollTo('skills', 100); // Scroll to skills section with offset
+    smoothScrollTo('skills'); // Scroll to skills section with offset
   }
-
-  // AboutMe data
-  const aboutMeStats: Stat[] = [
-    { count: '12', label: 'Years Experience', type: 'years' },
-    { count: '15', label: 'Teams Led', type: 'scale' },
-    { count: '99.99%', label: 'System Uptime', type: 'reliability' },
-    { count: '16x', label: 'Code Reduction', type: 'performance' },
-  ];
 
   // Contact methods data (moved from ContactMe component)
   const emailAddress = 'cassidybridges@gmail.com';
@@ -639,6 +631,16 @@
       ],
       skills: ['React Native', 'Go', 'Python', 'Node.js', 'Full-stack', 'API Design'],
     },
+  ];
+
+  const companyCount = experiences.reduce((acc, experience) => acc + 1, 0);
+
+  // AboutMe data
+  const aboutMeStats: Stat[] = [
+    { count: '12', label: 'Years Experience', type: 'years' },
+    { count: '15', label: 'Teams Led', type: 'scale' },
+    { count: '8', label: 'Programming Languages', type: 'languages' },
+    { count: companyCount.toString(), label: 'Companies Served', type: 'performance' },
   ];
 </script>
 

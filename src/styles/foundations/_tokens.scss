@@ -94,6 +94,7 @@ $dark-mode-tokens: (
       light: themes.reference('surface.color', $alpha: 3%),
       medium: themes.reference('surface.color', $alpha: 10%),
       strong: themes.reference('surface.color', $alpha: 20%),
+      stronger: themes.reference('surface.color', $alpha: 98%),
       hover: (
         'linear-gradient(' '135deg',
         '#{themes.reference("surface.color", $alpha: 5%)} 0%',
@@ -503,6 +504,7 @@ $dark-mode-tokens: (
     'sm': 0.625rem,
     'md': 1.25rem,
     'lg': 2.5rem,
+    'xl': 4rem,
   ),
 
   opacity: (

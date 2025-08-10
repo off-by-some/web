@@ -174,38 +174,37 @@
       </header>
 
       <div class="skills__filters" role="tablist" aria-label="Filter skills by category">
-        {#each skillCategories as category (category.name)}
+        {#each [...skillCategories, { name: 'All Skills', icon: '', skills: allSkills, isAllSkills: true }] as category (category.name)}
           <button
             class="filter__button"
-            class:is-active={selectedCategory === category.name}
-            on:click={() => handleCategoryFilter(category)}
-            on:keydown={createKeyHandler(() => handleCategoryFilter(category))}
+            class:filter__button--all={category.isAllSkills}
+            class:is-active={category.isAllSkills
+              ? !selectedCategory
+              : selectedCategory === category.name}
+            on:click={() => handleCategoryFilter(category.isAllSkills ? null : category)}
+            on:keydown={createKeyHandler(() =>
+              handleCategoryFilter(category.isAllSkills ? null : category),
+            )}
             role="tab"
-            aria-selected={selectedCategory === category.name}
+            aria-selected={category.isAllSkills
+              ? !selectedCategory
+              : selectedCategory === category.name}
             aria-controls="skills-grid"
           >
-            <span class="filter__icon" aria-hidden="true">{category.icon}</span>
-            {category.name}
-            <span class="filter__count" aria-label="{category.skills.length} skills">
-              {category.skills.length}
-            </span>
+            {#if !category.isAllSkills}
+              <span class="filter__icon" aria-hidden="true">{category.icon}</span>
+              {category.name}
+              <span class="filter__count" aria-label="{category.skills.length} skills">
+                {category.skills.length}
+              </span>
+            {:else}
+              All Skills
+              <span class="filter__count" aria-label="{allSkills.length} skills">
+                {allSkills.length}
+              </span>
+            {/if}
           </button>
         {/each}
-
-        <button
-          class="filter__button"
-          class:is-active={!selectedCategory}
-          on:click={() => handleCategoryFilter(null)}
-          on:keydown={createKeyHandler(() => handleCategoryFilter(null))}
-          role="tab"
-          aria-selected={!selectedCategory}
-          aria-controls="skills-grid"
-        >
-          All Skills
-          <span class="filter__count" aria-label="{allSkills.length} skills">
-            {allSkills.length}
-          </span>
-        </button>
       </div>
 
       <div class="skills__grid" id="skills-grid">
@@ -934,8 +933,20 @@
 
   @media (max-width: #{$breakpoint-sm}) {
     .skills__filters {
-      flex-direction: column;
+      justify-content: center;
+      gap: var(--token-space-fluid-sm);
       align-items: center;
+    }
+
+    .filter__button {
+      font-size: var(--token-font-size-xs);
+      padding: var(--token-space-fluid-xs) var(--token-space-fluid-sm);
+    }
+
+    .filter__button--all {
+      padding: var(--token-space-fluid-xs) var(--token-space-fluid-lg);
+      margin-left: 0;
+      margin-right: 0;
     }
 
     .summary__grid {
