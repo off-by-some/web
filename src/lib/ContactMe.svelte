@@ -1,6 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import Section from './Section.svelte';
+  import Image from './Image/Image.svelte';
   import Dropdown from './Dropdown.svelte';
 
   interface ContactForm {
@@ -441,7 +442,7 @@ ${formData.name}`,
                 aria-label="Contact via {method.label}: {method.value} - {method.description}"
               >
                 <div class="method__icon" aria-hidden="true">
-                  <img src={method.imagePath} alt="" />
+                  <Image src={method.imagePath} alt="" sizes="48px" loading="lazy" />
                 </div>
                 <div class="method__content">
                   <h4 class="method__label">{method.label}</h4>
@@ -1178,7 +1179,7 @@ ${formData.name}`,
     box-shadow: var(--token-shadow-light);
     overflow: hidden;
 
-    img {
+    :global(img) {
       width: 100%;
       height: 100%;
       object-fit: contain;
@@ -1197,7 +1198,7 @@ ${formData.name}`,
     transform: scale(1.05);
     box-shadow: var(--token-shadow-default);
 
-    img {
+    :global(img) {
       transform: scale(1.1);
       filter: var(--token-icon-filter-hover, var(--token-icon-filter, none));
     }

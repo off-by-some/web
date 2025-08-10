@@ -2,6 +2,7 @@
   import { onMount, createEventDispatcher } from 'svelte';
   import { SvelteSet } from 'svelte/reactivity';
   import Section from './Section.svelte';
+  import Image from './Image/Image.svelte';
 
   export let name: string;
   export let role: string;
@@ -247,7 +248,13 @@
           type="button"
         >
           <div class="avatar__frame">
-            <img src={avatarSrc} alt={avatarAlt} class="avatar__image" loading="lazy" />
+            <Image
+              src={avatarSrc}
+              alt={avatarAlt}
+              className="avatar__image"
+              sizes="150px"
+              loading="lazy"
+            />
             <div class="avatar__glow" aria-hidden="true"></div>
           </div>
           <div class="avatar__rings" aria-hidden="true">

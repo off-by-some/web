@@ -51,7 +51,8 @@ $theme: (
   ),
   interactive: (
     color: (
-      teal: 50, // Reference the first color-step in the 'teal' palette
+      teal: 50,
+      // Reference the first color-step in the 'teal' palette
     ),
     glow: themes.reference('interactive.color', $alpha: 30%),
     // Apply an alpha of 30%

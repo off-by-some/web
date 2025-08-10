@@ -29,8 +29,7 @@
     "build-storybook": "storybook build",
     "css:foundations": "sass src/styles/foundations/index.scss static/index.css --no-source-map --style=compressed",
     "generate:og": "node scripts/generate-og-images.js",
-    "generate:images": "bash scripts/resize-static.sh",
-    "setup:static": "npm run generate:images && npm run generate:og && npm run css:foundations",
+    "setup:static": "npm run generate:og && npm run css:foundations",
     "clean": "rm -rf static build"
   },
   "devDependencies": {
@@ -43,6 +42,7 @@
     "@storybook/mdx2-csf": "^1.1.0",
     "@storybook/sveltekit": "^9.0.17",
     "@sveltejs/adapter-static": "^3.0.8",
+    "@sveltejs/enhanced-img": "^0.7.1",
     "@types/node": "^20",
     "cssnano": "^7.1.0",
     "eslint": "^9.18.0",
@@ -72,7 +72,8 @@
     "terser": "^5.43.1",
     "typescript": "^5.0.0",
     "typescript-eslint": "^8.20.0",
-    "vite": "^7.0.4"
+    "vite": "^7.1.1",
+    "vite-imagetools": "^7.1.0"
   },
   "dependencies": {
     "@fontsource/inter": "^5.2.6",

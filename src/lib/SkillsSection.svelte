@@ -1,6 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import Section from './Section.svelte';
+  import Image from './Image/Image.svelte';
 
   interface Skill {
     name: string;
@@ -29,23 +30,77 @@
     categorySelect: { category: SkillCategory };
   }>();
 
+  // Pre-computed constants
   const SKILL_LEVELS = ['expert', 'advanced', 'proficient', 'learning'] as const;
+  const LEVEL_INDICES = { expert: 0, advanced: 1, proficient: 2, learning: 3 } as const;
 
-  let selectedCategory: string | null = initialSelectedCategory;
+  let selectedCategory: string | null = null;
   let hoveredSkill: string | null = null;
-  let announcementText: string = '';
+  let announcementText = '';
+  let hasInitializedCategory = false;
 
-  const createKeyHandler = (callback: () => void) => (event: KeyboardEvent) => {
-    if (event.key === 'Enter' || event.key === ' ') {
+  // Cached computations with dirty flags
+  let allSkillsCache: (Skill & { categoryInfo: SkillCategory })[] = [];
+  let categoryMapCache: Record<string, SkillCategory> = {};
+  let skillsByCategoryCache: Record<string, (Skill & { categoryInfo: SkillCategory })[]> = {};
+  let cacheValid = false;
+
+  // Single key handler - no recreation needed
+  const handleKey = (callback: () => void, event: KeyboardEvent) => {
+    const key = event.key;
+    if (key === 'Enter' || key === ' ') {
       event.preventDefault();
       callback();
     }
   };
 
+  // Factory to create a handler with a bound callback
+  const createKeyHandler = (callback: () => void) => (event: KeyboardEvent) =>
+    handleKey(callback, event);
+
+  // Optimized cache building
+  const buildCaches = () => {
+    if (cacheValid) return;
+
+    allSkillsCache = [];
+    categoryMapCache = {};
+    skillsByCategoryCache = {};
+
+    // Single pass to build all caches
+    for (const category of skillCategories) {
+      categoryMapCache[category.name] = category;
+      const categorySkills: (Skill & { categoryInfo: SkillCategory })[] = [];
+
+      for (const skill of category.skills) {
+        const enrichedSkill = { ...skill, categoryInfo: category };
+        allSkillsCache.push(enrichedSkill);
+        categorySkills.push(enrichedSkill);
+      }
+
+      skillsByCategoryCache[category.name] = categorySkills;
+    }
+
+    cacheValid = true;
+  };
+
+  // Optimized level counting - single pass
+  const countSkillsByLevel = (skills: (Skill & { categoryInfo: SkillCategory })[]) => {
+    const counts = { expert: 0, advanced: 0, proficient: 0, learning: 0 };
+
+    for (const skill of skills) {
+      counts[skill.level]++;
+    }
+
+    return counts;
+  };
+
   const handleCategoryFilter = (category: SkillCategory | null) => {
     selectedCategory = category?.name || null;
-    const skillCount = category?.skills.length || allSkills.length;
+
+    buildCaches();
+    const skillCount = category ? category.skills.length : allSkillsCache.length;
     const categoryName = category?.name || 'All Skills';
+
     announcementText = `Filtered to ${categoryName}. Showing ${skillCount} skills.`;
 
     if (category) dispatch('categorySelect', { category });
@@ -56,39 +111,54 @@
     isActive: boolean,
   ) => {
     hoveredSkill = isActive ? skill.name : null;
+
     if (isActive) {
       dispatch('skillSelect', { skill, category: skill.categoryInfo });
-      const parts = [
-        `Selected ${skill.name}`,
-        `${skill.level} level skill`,
-        skill.years && `with ${skill.years} years experience`,
-        skill.description,
-      ].filter(Boolean);
-      announcementText = parts.join('. ');
+
+      // Optimized announcement building
+      let announcement = `Selected ${skill.name}, ${skill.level} level skill`;
+      if (skill.years) announcement += ` with ${skill.years} years experience`;
+      if (skill.description) announcement += `. ${skill.description}`;
+
+      announcementText = announcement;
     }
   };
 
-  // Reactive statements
-  $: selectedCategory =
-    initialSelectedCategory !== undefined
-      ? initialSelectedCategory
-      : skillCategories?.[0]?.name || null;
+  // Reactive computations - only recalculate when necessary
+  $: {
+    // Initialize selectedCategory only once
+    if (
+      !hasInitializedCategory &&
+      selectedCategory === null &&
+      (skillCategories?.length ?? 0) > 0
+    ) {
+      selectedCategory = initialSelectedCategory ?? skillCategories[0]?.name ?? null;
+      hasInitializedCategory = true;
+    }
+  }
 
-  $: allSkills = skillCategories.flatMap((category) =>
-    category.skills.map((skill) => ({ ...skill, categoryInfo: category })),
-  );
+  $: {
+    // Invalidate cache when skillCategories change
+    if (skillCategories) {
+      cacheValid = false;
+    }
+  }
 
-  $: filteredSkills = selectedCategory
-    ? allSkills.filter((skill) => skill.categoryInfo.name === selectedCategory)
-    : allSkills;
+  // Optimized filtered skills - use cached data
+  $: {
+    buildCaches();
+    allSkills = allSkillsCache; // Expose cached allSkills
+    filteredSkills = selectedCategory
+      ? (skillsByCategoryCache[selectedCategory] ?? [])
+      : allSkillsCache;
+  }
 
-  $: skillsByLevel = SKILL_LEVELS.reduce(
-    (acc, level) => ({
-      ...acc,
-      [level]: filteredSkills.filter((skill) => skill.level === level).length,
-    }),
-    {} as Record<string, number>,
-  );
+  // Single-pass level counting
+  $: skillsByLevel = countSkillsByLevel(filteredSkills);
+
+  // Declare reactive variables
+  let filteredSkills: (Skill & { categoryInfo: SkillCategory })[] = [];
+  let allSkills: (Skill & { categoryInfo: SkillCategory })[] = [];
 </script>
 
 <section class="skills" id="skills" aria-labelledby="skills-heading">
@@ -107,7 +177,7 @@
         {#each skillCategories as category (category.name)}
           <button
             class="filter__button"
-            class:filter__button--active={selectedCategory === category.name}
+            class:is-active={selectedCategory === category.name}
             on:click={() => handleCategoryFilter(category)}
             on:keydown={createKeyHandler(() => handleCategoryFilter(category))}
             role="tab"
@@ -124,7 +194,7 @@
 
         <button
           class="filter__button"
-          class:filter__button--active={!selectedCategory}
+          class:is-active={!selectedCategory}
           on:click={() => handleCategoryFilter(null)}
           on:keydown={createKeyHandler(() => handleCategoryFilter(null))}
           role="tab"
@@ -154,7 +224,7 @@
                 : ''}{skill.description ? `. ${skill.description}` : ''}"
             >
               <div class="skill__image">
-                <img src={skill.image} alt="" loading="lazy" role="presentation" />
+                <Image src={skill.image} alt="" sizes="40px" loading="lazy" />
                 <div class="skill__level-indicator skill__level-indicator--{skill.level}"></div>
               </div>
 
@@ -376,7 +446,7 @@
       }
     }
 
-    &--active {
+    &.is-active {
       background: var(--token-surface-glass-strong);
       border-color: var(--token-border-color-hover);
       color: var(--token-text-primary);
@@ -523,7 +593,7 @@
     /* Performance: composite on own layer */
     will-change: transform;
 
-    img {
+    :global(img) {
       width: 3rem;
       height: 3rem;
       border-radius: var(--token-radius-sm);
@@ -542,7 +612,7 @@
     transform: scale(1.05);
     box-shadow: var(--token-shadow-interactive);
 
-    img {
+    :global(img) {
       transform: scale(1.1);
     }
   }

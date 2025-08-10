@@ -107,7 +107,7 @@
       label: 'Email',
       value: emailAddress,
       href: `mailto:${emailAddress}`,
-      imagePath: `${base}/email_brand_icon.svg`,
+      imagePath: 'svg/email_brand_icon.svg',
       description: 'Direct message',
     },
     {
@@ -115,7 +115,7 @@
       label: 'LinkedIn',
       value: '/in/cassidy-bridges-tech',
       href: 'https://linkedin.com/in/cassidy-bridges-tech',
-      imagePath: `${base}/linkedin_brand_icon.svg`,
+      imagePath: 'svg/linkedin_brand_icon.svg',
       description: 'Professional network',
     },
     {
@@ -123,7 +123,7 @@
       label: 'GitHub',
       value: '@off-by-some',
       href: 'https://github.com/off-by-some',
-      imagePath: `${base}/github_brand_icon.svg`,
+      imagePath: 'svg/github_brand_icon.svg',
       description: 'View my code',
     },
     // {
@@ -150,7 +150,7 @@
           years: 11,
           category: 'framework',
           description: 'Advanced patterns, performance optimization',
-          image: `${base}/react-logo.webp`,
+          image: 'icons/react-logo.png',
         },
         {
           name: 'TypeScript',
@@ -158,7 +158,7 @@
           years: 9,
           category: 'language',
           description: 'Complex type systems, advanced generics',
-          image: `${base}/Typescript_logo.svg`,
+          image: 'svg/Typescript_logo.svg',
         },
         {
           name: 'Redux',
@@ -166,7 +166,7 @@
           years: 10,
           category: 'framework',
           description: 'Predictable global state container with immutable updates.',
-          image: `${base}/redux.svg`,
+          image: 'svg/redux.svg',
         },
         {
           name: 'MobX',
@@ -174,7 +174,7 @@
           years: 8,
           category: 'framework',
           description: 'Transparent reactive state management with zero boilerplate.',
-          image: `${base}/mobx.svg`,
+          image: 'svg/mobx.svg',
         },
         {
           name: 'SCSS',
@@ -182,7 +182,7 @@
           years: 11,
           category: 'styling',
           description: 'Advanced CSS preprocessor.',
-          image: `${base}/sass-logo.webp`,
+          image: 'icons/sass-logo.png',
         },
         {
           name: 'Next.js',
@@ -190,7 +190,7 @@
           years: 5,
           category: 'framework',
           description: 'SSR, SSG, App Router, performance',
-          image: `${base}/nextjs.webp`,
+          image: 'icons/nextjs.png',
         },
         {
           name: 'Svelte',
@@ -198,7 +198,7 @@
           years: 1,
           category: 'framework',
           description: 'Modern reactive patterns',
-          image: `${base}/Svelte_Logo.svg`,
+          image: 'svg/Svelte_Logo.svg',
         },
         {
           name: 'GraphQL',
@@ -206,7 +206,7 @@
           years: 4,
           category: 'api',
           description: 'Schema design, optimization',
-          image: `${base}/GraphQL_Logo.svg`,
+          image: 'svg/GraphQL_Logo.svg',
         },
         {
           name: 'Jest',
@@ -214,7 +214,7 @@
           years: 10,
           category: 'testing',
           description: 'Unit testing, integration testing, end-to-end testing',
-          image: `${base}/Jest.svg`,
+          image: 'svg/Jest.svg',
         },
         {
           name: 'Tailwind',
@@ -222,7 +222,7 @@
           years: 4,
           category: 'styling',
           description: 'Tailwind, CSS-in-JS, design systems, scalable token systems',
-          image: `${base}/Tailwind_CSS_Logo.svg`,
+          image: 'svg/Tailwind_CSS_Logo.svg',
         },
         {
           name: 'Storybook',
@@ -230,7 +230,7 @@
           years: 7,
           category: 'testing',
           description: 'Component library, documentation, and testing',
-          image: `${base}/storybook-icon.svg`,
+          image: 'svg/storybook-icon.svg',
         },
         {
           name: 'Webpack',
@@ -238,7 +238,7 @@
           years: 11,
           category: 'framework',
           description: 'Module bundler, performance optimization',
-          image: `${base}/webpack.webp`,
+          image: 'icons/webpack.png',
         },
         {
           name: 'Vite',
@@ -246,7 +246,7 @@
           years: 3,
           category: 'framework',
           description: 'Fast build times, performance optimization',
-          image: `${base}/vite-logo.svg`,
+          image: 'svg/vite-logo.svg',
         },
       ],
     },
@@ -262,7 +262,7 @@
           years: 11,
           category: 'runtime',
           description: 'Microservices, event-driven architecture',
-          image: `${base}/javascript logo.webp`,
+          image: 'icons/nodejs.png',
         },
         {
           name: 'Python',
@@ -270,7 +270,7 @@
           years: 15,
           category: 'language',
           description: 'Django, FastAPI, data processing',
-          image: `${base}/python logo.webp`,
+          image: 'icons/python logo.png',
         },
         {
           name: 'Ruby',
@@ -278,7 +278,7 @@
           years: 13,
           category: 'language',
           description: 'Ruby on Rails, Personal Scripting, and more.',
-          image: `${base}/Ruby_logo.svg`,
+          image: 'svg/Ruby_logo.svg',
         },
         {
           name: 'Go',
@@ -286,7 +286,7 @@
           years: 5,
           category: 'language',
           description: 'High-performance services',
-          image: `${base}/golang logo.webp`,
+          image: 'icons/golang logo.png',
         },
         {
           name: 'PostgreSQL',
@@ -294,7 +294,7 @@
           years: 15,
           category: 'database',
           description: 'Complex queries, optimization',
-          image: `${base}/postgresql.webp`,
+          image: 'icons/postgresql.png',
         },
         {
           name: 'Redis',
@@ -302,7 +302,7 @@
           years: 5,
           category: 'cache',
           description: 'Caching strategies, pub/sub',
-          image: `${base}/Redis-logo.webp`,
+          image: 'icons/Redis-logo.png',
         },
         {
           name: 'Ruby on Rails',
@@ -310,7 +310,7 @@
           years: 9,
           category: 'framework',
           description: 'Full-stack web applications',
-          image: `${base}/RoR.webp`,
+          image: 'icons/RoR.png',
         },
         {
           name: 'Apache Kafka',
@@ -318,7 +318,7 @@
           years: 3,
           category: 'messaging',
           description: 'Event streaming, real-time data processing',
-          image: `${base}/apachekafka.webp`,
+          image: 'icons/apachekafka.png',
         },
         {
           name: 'Elasticsearch',
@@ -326,7 +326,7 @@
           years: 3,
           category: 'database',
           description: 'Search & analytics',
-          image: `${base}/elasticsearch-logo.webp`,
+          image: 'icons/elasticsearch-logo.png',
         },
         {
           name: 'Django',
@@ -334,7 +334,7 @@
           years: 10,
           category: 'framework',
           description: 'Python web framework, REST APIs',
-          image: `${base}/django-icon.svg`,
+          image: 'svg/django-icon.svg',
         },
         {
           name: 'LangChain',
@@ -342,7 +342,7 @@
           years: 2,
           category: 'framework',
           description: 'AI agentic workflows, LLM integration, developer tools, and more.',
-          image: `${base}/langchain-text.webp`,
+          image: 'icons/langchain-text.png',
         },
       ],
     },
@@ -358,7 +358,7 @@
           years: 6,
           category: 'cloud',
           description: 'EC2, Lambda, RDS, S3, CloudFormation',
-          image: `${base}/aws-white.webp`,
+          image: 'icons/aws-white.webp',
         },
         {
           name: 'Kubernetes',
@@ -366,7 +366,7 @@
           years: 4,
           category: 'orchestration',
           description: 'Container orchestration, scaling',
-          image: `${base}/kubernetes.webp`,
+          image: 'icons/kubernetes.png',
         },
         {
           name: 'Helm',
@@ -374,7 +374,7 @@
           years: 4,
           category: 'orchestration',
           description: 'Container orchestration, scaling',
-          image: `${base}/helm.webp`,
+          image: 'icons/helm.webp',
         },
         {
           name: 'Docker',
@@ -382,7 +382,7 @@
           years: 7,
           category: 'containerization',
           description: 'Multi-stage builds, optimization',
-          image: `${base}/docker.webp`,
+          image: 'icons/docker.png',
         },
         {
           name: 'Terraform',
@@ -390,7 +390,7 @@
           years: 3,
           category: 'iac',
           description: 'Infrastructure as Code',
-          image: `${base}/terraform.webp`,
+          image: 'icons/terraform.png',
         },
         {
           name: 'CI/CD',
@@ -398,7 +398,7 @@
           years: 8,
           category: 'automation',
           description: 'GitHub Actions, Jenkins, deployment',
-          image: `${base}/GitHub Actions.webp`,
+          image: 'icons/GitHub Actions.png',
         },
         {
           name: 'Git',
@@ -406,7 +406,7 @@
           years: 15,
           category: 'version-control',
           description: 'Version control, branching strategies',
-          image: `${base}/git.webp`,
+          image: 'icons/git.png',
         },
         {
           name: 'Bash',
@@ -414,7 +414,7 @@
           years: 15,
           category: 'automation',
           description: 'Automated workflows, scripting',
-          image: `${base}/bash.svg`,
+          image: 'svg/bash.svg',
         },
         {
           name: 'Locust',
@@ -422,7 +422,7 @@
           years: 2,
           category: 'framework',
           description: 'Load testing, Chaos Engineering, performance optimization',
-          image: `${base}/locust.webp`,
+          image: 'icons/locust.png',
         },
         {
           name: 'Datadog',
@@ -430,7 +430,7 @@
           years: 4,
           category: 'monitoring',
           description: 'Monitoring, logging, and alerting',
-          image: `${base}/dd_icon_white.webp`,
+          image: 'icons/dd_icon_white.png',
         },
       ],
     },
@@ -446,7 +446,7 @@
           years: 8,
           category: 'management',
           description: 'Led over 15+ engineering teams',
-          image: `${base}/Team Leadership.webp`,
+          image: 'icons/Team Leadership.png',
         },
         {
           name: 'Software Architecture',
@@ -454,7 +454,7 @@
           years: 10,
           category: 'design',
           description: 'System design, scalability planning',
-          image: `${base}/Architecture.webp`,
+          image: 'icons/Architecture.png',
         },
         {
           name: 'Mentoring',
@@ -462,7 +462,7 @@
           years: 9,
           category: 'development',
           description: 'Career development, technical growth',
-          image: `${base}/Mentorship.webp`,
+          image: 'icons/Mentorship.png',
         },
         {
           name: 'Product Strategy',
@@ -470,7 +470,7 @@
           years: 7,
           category: 'business',
           description: 'Technical roadmaps, stakeholder alignment',
-          image: `${base}/Product Strategy.webp`,
+          image: 'icons/Product Strategy.png',
         },
 
         {
@@ -479,7 +479,7 @@
           years: 15,
           category: 'business',
           description: 'WCAG, ACAA & ADA standards for accessible and equitable workplaces.',
-          image: `${base}/ADA.svg`,
+          image: 'svg/ADA.svg',
         },
 
         {
@@ -489,7 +489,7 @@
           category: 'business',
           description:
             'Creating structured, accessible resources for fast onboarding and clear communication.',
-          image: `${base}/Notion-logo.svg`,
+          image: 'svg/Notion-logo.svg',
         },
 
         {
@@ -498,7 +498,7 @@
           years: 10,
           category: 'business',
           description: 'Jira, Notion, Linear, Confluence, and other project management tools.',
-          image: `${base}/Jira.webp`,
+          image: 'icons/Jira.png',
         },
       ],
     },
@@ -516,7 +516,7 @@
     {
       title: 'Senior Software Engineer',
       company: 'Scribe',
-      logo: `${base}/company_logos/scribehow_logo.webp`,
+      logo: 'company_logos/scribehow_logo.jpg',
       date: 'Apr 2023 – Dec 2024',
       dateValue: 'Apr 2023',
       location: 'Remote',
@@ -545,7 +545,7 @@
     {
       title: 'Senior Software Engineer II',
       company: 'Green Bits Inc & Dutchie',
-      logo: `${base}/company_logos/getdutchie_logo.webp`,
+      logo: 'company_logos/getdutchie_logo.jpg',
       date: 'Apr 2017 – Dec 2022',
       dateValue: 'Apr 2017',
       location: 'Remote',
@@ -575,7 +575,7 @@
     {
       title: 'Front-End Engineer',
       company: 'Import.io',
-      logo: `${base}/company_logos/import_io_logo.webp`,
+      logo: 'company_logos/import_io_logo.jpg',
       date: 'Aug 2016 – Apr 2017',
       dateValue: 'Aug 2016',
       location: 'Los Gatos, California',
@@ -606,7 +606,7 @@
     {
       title: 'Software Engineer',
       company: 'UpGuard',
-      logo: `${base}/company_logos/upguard_logo.webp`,
+      logo: 'company_logos/upguard_logo.jpg',
       date: 'Oct 2016 – Sep 2017',
       dateValue: 'Oct 2016',
       location: 'Mountain View, California',
@@ -624,7 +624,7 @@
     {
       title: 'Full-Stack Developer / CTO',
       company: 'LaunchBadge LLC',
-      logo: `${base}/company_logos/launchbadge_logo.webp`,
+      logo: 'company_logos/launchbadge_logo.jpg',
       date: 'Feb 2015 – Sep 2016',
       dateValue: 'Feb 2015',
       location: 'Sacramento, California Area',
@@ -650,7 +650,7 @@
     statusText="Available for new opportunities"
     valueHeadline="I architect systems that scale, lead teams that thrive, and build products that last."
     valueDescription="With over a decade of experience turning complex challenges into elegant solutions, I specialize in building high-performance engineering teams and resilient distributed systems. From React frontends to cloud infrastructure, I create technology that just works."
-    avatarSrc={`${base}/headshot.webp`}
+    avatarSrc="headshot.png"
     avatarAlt="Cassidy Bridges"
     primaryButtonText="View Experience"
     primaryButtonHref="#experience"

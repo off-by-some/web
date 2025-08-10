@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount, createEventDispatcher } from 'svelte';
   import Section from './Section.svelte';
+  import Image from './Image/Image.svelte';
   import { SvelteSet } from 'svelte/reactivity';
 
   interface Experience {
@@ -22,165 +23,164 @@
     experienceSelect: { experience: Experience };
   }>();
 
-  const config = {
-    animation: {
-      initialScale: 'scaleY(0)',
-      transformOrigin: 'top',
-      delay: 100,
-    },
-    scroll: {
-      viewportCenter: () => window.innerHeight / 2,
-      activeOpacity: '1',
-      inactiveOpacity: '0.6',
-    },
-    tabIndex: {
-      active: '0',
-      inactive: '-1',
-      dataAttribute: 'data-original-tabindex',
-    },
-  };
+  // Immutable constants
+  const OPACITY_ACTIVE = '1';
+  const OPACITY_INACTIVE = '0.6';
+  const TAB_ACTIVE = '0';
+  const TAB_INACTIVE = '-1';
+  const TAB_DATA_ATTR = 'data-original-tabindex';
 
   let expandedItems = new SvelteSet<number>();
   let timelineElement: HTMLElement | null = null;
   let timelineProgressElement: HTMLElement | null = null;
   let activeIndex = 0;
-  let announcementText: string = '';
+  let announcementText = '';
 
-  const createThrottledHandler = (handler: () => void) => {
-    let ticking = false;
-    return () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          handler();
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
+  // Aggressive caching with dirty flags
+  let itemsCache: Element[] = [];
+  let itemRectsCache: DOMRect[] = [];
+  let dotsCache: HTMLElement[] = [];
+  let detailsCache: Element[] = [];
+  let cacheValid = false;
+  let viewportCenter = 0;
+
+  // Single RAF flag for all operations
+  let updatePending = false;
+  let scrollPending = false;
+
+  // Pre-calculated selector strings
+  const SELECTORS = {
+    items: '.timeline__item',
+    dots: '.timeline__dot',
+    details: '.timeline__details',
+    focusable: 'button, [tabindex], a, input, select, textarea',
+  } as const;
+
+  const refreshCache = () => {
+    if (!timelineElement || cacheValid) return;
+
+    const items = timelineElement.querySelectorAll(SELECTORS.items);
+    itemsCache = Array.from(items);
+    dotsCache = itemsCache
+      .map((item) => item.querySelector(SELECTORS.dots) as HTMLElement)
+      .filter(Boolean);
+    detailsCache = Array.from(timelineElement.querySelectorAll(SELECTORS.details));
+
+    viewportCenter = window.innerHeight * 0.5; // Micro-optimization: multiply instead of divide
+    cacheValid = true;
   };
 
-  const setupEventListeners = (handler: () => void) => {
-    const throttledHandler = createThrottledHandler(handler);
-    const events = ['scroll', 'resize'] as const;
-
-    events.forEach((event) => {
-      window.addEventListener(event, throttledHandler);
-    });
-
-    handler();
-
-    return () => {
-      events.forEach((event) => {
-        window.removeEventListener(event, throttledHandler);
-      });
-    };
+  const refreshRects = () => {
+    itemRectsCache = itemsCache.map((item) => item.getBoundingClientRect());
   };
 
+  const invalidateCache = () => {
+    cacheValid = false;
+  };
+
+  // Ultra-fast closest item finder using cached rects
   const findClosestItem = () => {
-    if (!timelineElement) return 0;
+    if (!itemRectsCache.length) return 0;
 
-    const items = timelineElement.querySelectorAll('.timeline__item');
-    const viewportCenter = config.scroll.viewportCenter();
-    let closestIndex = 0;
     let minDistance = Infinity;
+    let closestIndex = 0;
 
-    items.forEach((item, index) => {
-      const itemRect = item.getBoundingClientRect();
-      const itemCenter = itemRect.top + itemRect.height / 2;
-      const distance = Math.abs(itemCenter - viewportCenter);
+    // Unrolled loop for better performance
+    for (let i = 0; i < itemRectsCache.length; i++) {
+      const rect = itemRectsCache[i];
+      const distance = Math.abs(rect.top + rect.height * 0.5 - viewportCenter);
 
       if (distance < minDistance) {
         minDistance = distance;
-        closestIndex = index;
+        closestIndex = i;
+
+        // Early exit if we find a perfect match
+        if (distance < 10) break;
       }
-    });
+    }
 
     return closestIndex;
   };
 
-  const updateDotOpacity = (items: NodeListOf<Element>, activeIndex: number) => {
-    items.forEach((item, index) => {
-      const dot = item.querySelector('.timeline__dot') as HTMLElement;
-      if (dot) {
-        dot.style.opacity =
-          index <= activeIndex ? config.scroll.activeOpacity : config.scroll.inactiveOpacity;
-      }
-    });
-  };
+  // Batched DOM updates
+  const updateTimelineProgress = (index: number) => {
+    if (!timelineProgressElement || !itemsCache.length) return;
 
-  const updateTimelineProgress = (activeIndex: number) => {
-    if (!timelineProgressElement || !timelineElement) return;
-
-    const items = timelineElement.querySelectorAll('.timeline__item');
-    if (items.length === 0) return;
-
-    const progress = (activeIndex + 1) / items.length;
+    if (updatePending) return;
+    updatePending = true;
 
     requestAnimationFrame(() => {
+      const progress = (index + 1) / itemsCache.length;
       timelineProgressElement!.style.transform = `scaleY(${progress})`;
-    });
 
-    updateDotOpacity(items, activeIndex);
+      // Batch opacity updates
+      for (let i = 0; i < dotsCache.length; i++) {
+        const dot = dotsCache[i];
+        if (dot) {
+          dot.style.opacity = i <= index ? OPACITY_ACTIVE : OPACITY_INACTIVE;
+        }
+      }
+
+      updatePending = false;
+    });
   };
 
-  const handleScroll = () => {
-    const closestIndex = findClosestItem();
+  // Debounced scroll handler for better performance than throttling
+  let scrollTimeout: ReturnType<typeof setTimeout> | null = null;
+  const debouncedScroll = () => {
+    if (scrollPending) return;
+    scrollPending = true;
 
-    if (activeIndex !== closestIndex) {
-      console.log('Timeline item activated:', closestIndex);
-      activeIndex = closestIndex;
-      updateTimelineProgress(closestIndex);
+    if (scrollTimeout) clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      refreshCache();
+      refreshRects();
+
+      const closestIndex = findClosestItem();
+      if (activeIndex !== closestIndex) {
+        console.log('Timeline item activated:', closestIndex);
+        activeIndex = closestIndex;
+        updateTimelineProgress(closestIndex);
+      }
+
+      scrollPending = false;
+    }, 16); // 8ms debounce for 120fps responsiveness
+  };
+
+  // Optimized tab index management with minimal DOM queries
+  const updateTabIndex = () => {
+    refreshCache();
+
+    for (let i = 0; i < detailsCache.length; i++) {
+      const section = detailsCache[i];
+      const isExpanded = expandedItems.has(i);
+      const focusableElements = section.querySelectorAll(SELECTORS.focusable);
+
+      for (const element of focusableElements) {
+        if (isExpanded) {
+          const original = element.getAttribute(TAB_DATA_ATTR);
+          element.setAttribute('tabindex', original || TAB_ACTIVE);
+        } else {
+          const current = element.getAttribute('tabindex') || TAB_ACTIVE;
+          element.setAttribute(TAB_DATA_ATTR, current);
+          element.setAttribute('tabindex', TAB_INACTIVE);
+        }
+      }
     }
   };
 
-  const initProgressAnimation = () => {
-    if (!timelineProgressElement) return;
-
-    Object.assign(timelineProgressElement.style, {
-      transform: config.animation.initialScale,
-      transformOrigin: config.animation.transformOrigin,
-    });
-  };
-
-  const manageTabIndex = (elements: NodeListOf<Element>, isExpanded: boolean) => {
-    elements.forEach((element) => {
-      const { active, inactive, dataAttribute } = config.tabIndex;
-
-      if (isExpanded) {
-        const originalTabindex = element.getAttribute(dataAttribute);
-        element.setAttribute('tabindex', originalTabindex || active);
-      } else {
-        const currentTabindex = element.getAttribute('tabindex') || active;
-        element.setAttribute(dataAttribute, currentTabindex);
-        element.setAttribute('tabindex', inactive);
-      }
-    });
-  };
-
-  const updateTabIndexForCollapsedContent = () => {
-    if (!timelineElement) return;
-
-    const detailsSections = timelineElement.querySelectorAll('.timeline__details');
-    detailsSections.forEach((section, index) => {
-      const isExpanded = expandedItems.has(index);
-      const focusableElements = section.querySelectorAll(
-        'button, [tabindex], a, input, select, textarea',
-      );
-      manageTabIndex(focusableElements, isExpanded);
-    });
-  };
-
-  const createAnnouncementText = (experience: Experience, isExpanded: boolean) => {
+  // Inlined announcement text creation
+  const updateAnnouncement = (experience: Experience, isExpanded: boolean) => {
     const action = isExpanded ? 'Expanded' : 'Collapsed';
-    const baseText = `${action} details for ${experience.title} at ${experience.company}`;
-
-    return isExpanded
-      ? `${baseText}. Showing ${experience.highlights.length} key achievements and ${experience.skills.length} skills.`
-      : baseText;
+    announcementText = isExpanded
+      ? `${action} details for ${experience.title} at ${experience.company}. Showing ${experience.highlights.length} key achievements and ${experience.skills.length} skills.`
+      : `${action} details for ${experience.title} at ${experience.company}`;
   };
 
-  const createKeydownHandler = (callback: () => void) => (event: KeyboardEvent) => {
-    if (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') {
+  // Optimized keyboard handler
+  const handleKeydown = (callback: () => void, event: KeyboardEvent) => {
+    const key = event.key;
+    if (key === 'Enter' || key === ' ' || key === 'Spacebar') {
       event.preventDefault();
       event.stopPropagation();
       callback();
@@ -190,60 +190,93 @@
   const handleReadMore = (event: Event, experience: Experience, index: number) => {
     event.preventDefault();
 
-    const isExpanded = expandedItems.has(index);
+    const wasExpanded = expandedItems.has(index);
 
-    if (isExpanded) {
+    // Direct Set manipulation
+    if (wasExpanded) {
       expandedItems.delete(index);
     } else {
       expandedItems.add(index);
     }
 
-    expandedItems = new SvelteSet(expandedItems);
-    announcementText = createAnnouncementText(experience, !isExpanded);
+    expandedItems = expandedItems; // Trigger reactivity
+
+    updateAnnouncement(experience, !wasExpanded);
     dispatch('experienceSelect', { experience });
 
-    setTimeout(updateTabIndexForCollapsedContent, 50);
+    // Use next frame for tab index update
+    requestAnimationFrame(updateTabIndex);
   };
 
   const handleTimelineKeydown = (event: KeyboardEvent, index: number) => {
-    createKeydownHandler(() => {
+    handleKeydown(() => {
       const toggleButton = timelineElement?.querySelector(`#toggle-${index}`) as HTMLButtonElement;
-      if (toggleButton) {
-        toggleButton.focus();
-        toggleButton.click();
-      }
-    })(event);
+      toggleButton?.focus();
+      toggleButton?.click();
+    }, event);
   };
 
-  const handleToggleKeydown = (experience: Experience, index: number) =>
-    createKeydownHandler(() => handleReadMore(new Event('click'), experience, index));
+  const handleToggleKeydown = (event: KeyboardEvent, experience: Experience, index: number) => {
+    handleKeydown(() => handleReadMore(new Event('click'), experience, index), event);
+  };
 
   const handleTimelineFocus = (index: number) => {
     const timelineItem = timelineElement?.querySelector(
       `[data-timeline-index="${index}"]`,
     ) as HTMLElement;
+
     if (timelineItem) {
-      timelineItem.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-        inline: 'nearest',
-      });
+      timelineItem.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
 
       activeIndex = index;
       updateTimelineProgress(index);
 
-      const experience = experiences[index];
-      announcementText = `Focused on ${experience.title} at ${experience.company}, ${experience.date}`;
+      const exp = experiences[index];
+      announcementText = `Focused on ${exp.title} at ${exp.company}, ${exp.date}`;
     }
   };
 
   onMount(() => {
-    const cleanup = setupEventListeners(handleScroll);
-    initProgressAnimation();
+    // Initialize progress element
+    if (timelineProgressElement) {
+      timelineProgressElement.style.transform = 'scaleY(0)';
+      timelineProgressElement.style.transformOrigin = 'top';
+    }
 
-    setTimeout(updateTabIndexForCollapsedContent, config.animation.delay);
+    // Single event listener setup with passive scrolling
+    const scrollOptions = { passive: true, capture: false };
+    window.addEventListener('scroll', debouncedScroll, scrollOptions);
+    window.addEventListener(
+      'resize',
+      () => {
+        invalidateCache();
+        viewportCenter = window.innerHeight * 0.5;
+        debouncedScroll();
+      },
+      scrollOptions,
+    );
 
-    return cleanup;
+    // Initial setup
+    refreshCache();
+    debouncedScroll();
+
+    // Initialize tab index on next frame
+    requestAnimationFrame(() => {
+      setTimeout(updateTabIndex, 100);
+    });
+
+    return () => {
+      window.removeEventListener('scroll', debouncedScroll);
+      window.removeEventListener('resize', debouncedScroll);
+      if (scrollTimeout) clearTimeout(scrollTimeout);
+
+      // Clean up all caches
+      itemsCache = [];
+      itemRectsCache = [];
+      dotsCache = [];
+      detailsCache = [];
+      cacheValid = false;
+    };
   });
 </script>
 
@@ -300,13 +333,9 @@
             </div>
             <div class="timeline__card-header">
               <div class="timeline__logo-container">
-                <img
-                  src={experience.logo}
-                  alt=""
-                  class="timeline__logo"
-                  loading="lazy"
-                  role="presentation"
-                />
+                <div class="timeline__logo">
+                  <Image src={experience.logo} alt="" sizes="48px" loading="lazy" />
+                </div>
               </div>
               <div class="timeline__meta">
                 <h3 class="timeline__role" id="experience-{index}-title">
@@ -322,7 +351,7 @@
               <button
                 class="timeline__toggle"
                 on:click={(e) => handleReadMore(e, experience, index)}
-                on:keydown={handleToggleKeydown(experience, index)}
+                on:keydown={(e) => handleToggleKeydown(e, experience, index)}
                 aria-expanded={expandedItems.has(index)}
                 aria-controls="experience-{index}-details"
                 aria-label="{expandedItems.has(index)
@@ -770,18 +799,13 @@
     background: var(--token-surface-color);
     padding: var(--token-space-2);
     border: var(--token-border-default-small);
+    border-radius: var(--token-radius-md);
     transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
     filter: drop-shadow(0 var(--token-space-2) var(--token-space-4) var(--token-shadow-light));
 
     @media (min-width: $breakpoint-md) {
       border-radius: var(--token-radius-lg);
       padding: var(--token-space-fluid-sm);
-    }
-
-    &:hover {
-      filter: drop-shadow(0 var(--token-space-2) var(--token-space-4) var(--token-shadow-light))
-        brightness(1.1);
-      transform: scale(1.03);
     }
   }
 

@@ -14,8 +14,8 @@ async function generateOGImage() {
   let browser;
   try {
     // Paths used for cache validation
-    const templatePath = join(__dirname, '../templates/og-template.html');
-    const imagePath = join(__dirname, '../images/headshot.PNG');
+    const templatePath = join(__dirname, '../assets/templates/og-template.html');
+    const imagePath = join(__dirname, '../assets/images/headshot.png');
     const outputDir = join(__dirname, '../static/og');
     const outputPath = join(outputDir, 'og-about.png');
 
@@ -58,7 +58,7 @@ async function generateOGImage() {
     });
 
     // Read the HTML template
-    let html = readFileSync(templatePath, 'utf8');
+    const html = readFileSync(templatePath, 'utf8');
 
     // Convert image to base64 for high quality and reliable loading
     let imageDataUrl = '';
@@ -84,16 +84,44 @@ async function generateOGImage() {
       imageDataUrl = imagePath; // fallback to original path
     }
 
-    // Replace the hardcoded image path with base64 data
-    html = html.replace('../images/headshot.PNG', imageDataUrl);
-
     // Set HTML content
     await page.setContent(html, {
       waitUntil: 'networkidle0',
     });
 
-    // Wait for fonts and animations to load
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // Ensure fonts are fully ready before injecting image
+    try {
+      await page.evaluate(() => (document.fonts ? document.fonts.ready : Promise.resolve()));
+    } catch {}
+
+    // Inject the avatar image via DOM and wait for it to load robustly
+    await page.evaluate((dataUrl) => {
+      const avatarImg = document.querySelector('[data-og-avatar]');
+      if (!avatarImg) {
+        throw new Error('Missing required [data-og-avatar] element in template');
+      }
+
+      return new Promise((resolve, reject) => {
+        function handleLoad() {
+          resolve(true);
+        }
+        function handleError() {
+          reject(new Error('Avatar image failed to load'));
+        }
+
+        avatarImg.addEventListener('load', handleLoad, { once: true });
+        avatarImg.addEventListener('error', handleError, { once: true });
+
+        // If the image is cached/instantly available, resolve immediately
+        avatarImg.src = dataUrl;
+        if (avatarImg.complete && avatarImg.naturalWidth > 0) {
+          resolve(true);
+        }
+      });
+    }, imageDataUrl);
+
+    // Small settle delay for layout effects
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     // Add 5% zoom by scaling the content
     await page.evaluate(() => {

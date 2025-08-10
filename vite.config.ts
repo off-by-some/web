@@ -1,10 +1,16 @@
 import { defineConfig } from 'vite';
 import { sveltekit } from '@sveltejs/kit/vite';
+import { enhancedImages } from '@sveltejs/enhanced-img';
 import path from 'path';
 import filesize from 'rollup-plugin-filesize';
 
 export default defineConfig({
-  plugins: [sveltekit()],
+  plugins: [enhancedImages(), sveltekit()],
+  server: {
+    fs: {
+      allow: ['src', 'static', 'assets'],
+    },
+  },
   build: {
     cssCodeSplit: true,
     minify: 'terser',
