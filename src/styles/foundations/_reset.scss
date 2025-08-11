@@ -1,20 +1,42 @@
+/* ========= Base Reset (no transforms/backface anywhere) ========= */
 *,
 *::before,
 *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+
+  /* type & rendering */
+  font-feature-settings:
+    'kern' 1,
+    'liga' 1,
+    'calt' 1,
+    'ss01' 1;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* keep borders predictable */
+  border-width: 0;
+  border-style: solid;
+  border-color: transparent;
+
+  /* never create stacking contexts in the reset */
+  /* no transform, filter, perspective, backdrop-filter, etc. */
 }
 
+/* Document/root */
 html {
   scroll-behavior: smooth;
   text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
   overflow-x: hidden;
-  will-change: scroll-position;
+
+  /* iOS momentum scrolling – safe here */
   -webkit-overflow-scrolling: touch;
-  -moz-text-size-adjust: 100%;
-  -moz-overflow-scrolling: touch;
+
+  /* don’t over-hint the compositor on the whole page */
+  /* will-change: scroll-position;  <-- avoid globally */
 }
 
 body {
@@ -29,17 +51,13 @@ body {
   min-height: 100vh;
   min-height: 100dvh;
   overflow-x: hidden;
+
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  transform: translateZ(0);
-  -moz-backface-visibility: hidden;
-  -moz-transform: translateZ(0);
-  -moz-text-rendering: optimizeSpeed;
 }
 
+/* Headings keep your brand rhythm */
 h1,
 h2,
 h3,
@@ -54,7 +72,92 @@ h6 {
   margin-bottom: 0.5em;
   word-wrap: break-word;
   overflow-wrap: break-word;
-  text-rendering: optimizeSpeed;
   -webkit-font-feature-settings: 'kern' 1;
   font-feature-settings: 'kern' 1;
+}
+
+/* ========= Sensible element defaults ========= */
+
+/* Media is responsive by default */
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+  display: block;
+  max-width: 100%;
+}
+img,
+video {
+  height: auto;
+}
+
+/* Typography defaults */
+p,
+figure,
+blockquote {
+  margin-block: 0;
+}
+ul,
+ol {
+  list-style-position: outside;
+}
+
+/* Links keep accessibility; color is handled in theme */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+a:focus-visible {
+  outline: 2px solid var(--token-state-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Form controls inherit typography without nuking UA behavior */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  background: transparent;
+  border: 0;
+}
+button,
+[role='button'] {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* Fieldset/legend normalization */
+fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+legend {
+  padding: 0;
+}
+
+/* Hide things properly */
+[hidden] {
+  display: none !important;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

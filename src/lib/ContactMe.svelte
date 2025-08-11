@@ -454,29 +454,11 @@ ${formData.name}`,
           </div>
         </section>
       </div>
-
-      <section class="contact__footer" aria-labelledby="stats-title">
-        <div class="footer__stats">
-          <div class="stat__item" role="img" aria-label="1 million plus users reached">
-            <div class="stat__number">1M+</div>
-            <div class="stat__label">Users Reached</div>
-          </div>
-          <div class="stat__item" role="img" aria-label="100 percent client satisfaction">
-            <div class="stat__number">100%</div>
-            <div class="stat__label">Client Satisfaction</div>
-          </div>
-          <div class="stat__item" role="img" aria-label="12 plus years experience">
-            <div class="stat__number">12+</div>
-            <div class="stat__label">Years Experience</div>
-          </div>
-        </div>
-      </section>
     </div>
   </Section>
 </section>
 
 <style lang="scss">
-  @use 'styles/animations.scss' as *;
   @use 'styles/_breakpoints.scss' as *;
 
   .sr-only {
@@ -804,7 +786,6 @@ ${formData.name}`,
     font-family: inherit;
     color: var(--token-text-primary);
     transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
-    backdrop-filter: blur(var(--token-blur-lg));
     letter-spacing: var(--token-letter-spacing-normal);
     line-height: var(--token-line-height-normal);
     position: relative;

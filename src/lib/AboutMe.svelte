@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount, createEventDispatcher } from 'svelte';
-  import { SvelteSet } from 'svelte/reactivity';
   import Section from './Section.svelte';
   import Image from './Image/Image.svelte';
 
@@ -38,58 +37,66 @@
     avatarClick: void;
   }>();
 
+  // Breakpoints
+  const breakpoints = {
+    sm: 30, // 480px
+    md: 48, // 768px
+    lg: 86, // 1376px
+    xlg: 160, // 2560px
+  };
+
+  // State
   let mounted = false;
   let statElements: HTMLElement[] = [];
   let techContainers: { [key: number]: HTMLElement } = {};
-  let animatedCounters = new SvelteSet<HTMLElement>();
+  let animatedCounters: HTMLElement[] = [];
 
-  const typeDescriptions = {
-    years: 'years of experience',
-    scale: 'scale metric',
-    reliability: 'reliability percentage',
-    performance: 'performance metric',
-    expert: 'Expert level proficiency',
-    advanced: 'Advanced level proficiency',
-  };
+  // Tech stack with visible tags
+  let techStackWithVisibleTags = techStack.map((category) => ({
+    ...category,
+    visibleTags: { visible: category.technologies, overflow: 0 },
+  }));
 
-  const createClone = (element: HTMLElement) => {
-    const clone = element.cloneNode(true) as HTMLElement;
-    Object.assign(clone.style, {
-      position: 'absolute',
-      visibility: 'hidden',
-      top: '-9999px',
-      width: getComputedStyle(element).width,
-    });
-    document.body.appendChild(clone);
-    return clone;
-  };
+  // Reactive statement to update visible tags when containers are available
+  $: if (Object.keys(techContainers).length > 0) {
+    techStackWithVisibleTags = techStack.map((category, index) => ({
+      ...category,
+      visibleTags: getVisibleTags(category.technologies, techContainers[index]),
+    }));
+  }
 
-  const measureTagHeight = (clone: HTMLElement, technology: string) => {
-    clone.innerHTML = '';
-    const testTag = document.createElement('span');
-    testTag.className = 'tech__tag';
-    testTag.textContent = technology;
-    clone.appendChild(testTag);
-    return clone.offsetHeight;
-  };
-
-  function getVisibleTags(technologies: string[], containerElement: HTMLElement | null) {
+  // Helper functions
+  const getVisibleTags = (technologies: string[], containerElement: HTMLElement | null) => {
     if (!technologies.length || !containerElement) {
       return { visible: technologies, overflow: 0 };
     }
 
-    const clone = createClone(containerElement);
+    const clone = containerElement.cloneNode(true) as HTMLElement;
+    Object.assign(clone.style, {
+      position: 'absolute',
+      visibility: 'hidden',
+      top: '-9999px',
+      width: getComputedStyle(containerElement).width,
+    });
+    document.body.appendChild(clone);
 
     try {
-      const singleLineHeight = measureTagHeight(clone, technologies[0]);
+      // Measure single line height
+      clone.innerHTML = '';
+      const testTag = document.createElement('span');
+      testTag.className = 'tech-tag';
+      testTag.textContent = technologies[0];
+      clone.appendChild(testTag);
+      const singleLineHeight = clone.offsetHeight;
       const maxHeight = singleLineHeight * 2;
 
+      // Test how many tags fit
       clone.innerHTML = '';
       let visibleCount = 0;
 
       for (const tech of technologies) {
         const tag = document.createElement('span');
-        tag.className = 'tech__tag';
+        tag.className = 'tech-tag';
         tag.textContent = tech;
         clone.appendChild(tag);
 
@@ -103,7 +110,7 @@
       const overflow = technologies.length - visibleCount;
       if (overflow > 0) {
         const overflowTag = document.createElement('span');
-        overflowTag.className = 'tech__tag tech__tag--overflow';
+        overflowTag.className = 'tech-tag tech-tag--overflow';
         overflowTag.textContent = `+${overflow}`;
         clone.appendChild(overflowTag);
 
@@ -119,23 +126,11 @@
     } finally {
       document.body.removeChild(clone);
     }
-  }
-
-  let techStackWithVisibleTags = techStack.map((category, index) => ({
-    ...category,
-    visibleTags: getVisibleTags(category.technologies, techContainers[index]),
-  }));
-
-  function recomputeVisibleTags() {
-    techStackWithVisibleTags = techStack.map((category, index) => ({
-      ...category,
-      visibleTags: getVisibleTags(category.technologies, techContainers[index]),
-    }));
-  }
+  };
 
   const animateCounter = (element: HTMLElement, target: string) => {
     const match = target.match(/^([\d.]+)(.*)$/);
-    if (!match || animatedCounters.has(element)) return;
+    if (!match || animatedCounters.includes(element)) return;
 
     const [, numStr, suffix] = match;
     const num = parseFloat(numStr);
@@ -143,9 +138,7 @@
     const duration = 2000;
     const startTime = performance.now();
 
-    animatedCounters.add(element);
-    element.setAttribute('aria-live', 'polite');
-    element.setAttribute('aria-atomic', 'true');
+    animatedCounters = [...animatedCounters, element];
 
     const updateCounter = (currentTime: number) => {
       const progress = Math.min((currentTime - startTime) / duration, 1);
@@ -156,8 +149,6 @@
 
       if (progress < 1) {
         requestAnimationFrame(updateCounter);
-      } else {
-        element.setAttribute('aria-live', 'off');
       }
     };
 
@@ -184,25 +175,26 @@
     statElements.forEach((stat) => observer.observe(stat));
   };
 
-  const createEventHandler =
-    <T = unknown,>(eventType: string, payload?: T) =>
-    () =>
-      dispatch(eventType as never, payload as never);
-
-  const createKeydownHandler = (callback: () => void) => (event: KeyboardEvent) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      callback();
-    }
+  const recomputeVisibleTags = () => {
+    techStackWithVisibleTags = techStack.map((category, index) => ({
+      ...category,
+      visibleTags: getVisibleTags(category.technologies, techContainers[index]),
+    }));
   };
+
+  // Event handlers
+  const handlePrimaryAction = () => dispatch('primaryAction', { href: primaryButtonHref });
+  const handleSecondaryAction = () => dispatch('secondaryAction', { href: secondaryButtonHref });
+  const handleScrollIndicator = () => dispatch('scrollIndicator');
+  const handleAvatarClick = () => dispatch('avatarClick');
+  const handleTechCategoryClick = (categoryTitle: string) =>
+    dispatch('techCategoryClick', { category: categoryTitle });
 
   onMount(() => {
     mounted = true;
     initStatCounters();
 
-    const resizeObserver = new ResizeObserver(() => {
-      recomputeVisibleTags();
-    });
+    const resizeObserver = new ResizeObserver(recomputeVisibleTags);
 
     setTimeout(() => {
       Object.values(techContainers).forEach((container) => {
@@ -212,24 +204,6 @@
 
     return () => resizeObserver.disconnect();
   });
-
-  const handlePrimaryAction = createEventHandler('primaryAction', { href: primaryButtonHref });
-  const handleSecondaryAction = createEventHandler('secondaryAction', {
-    href: secondaryButtonHref,
-  });
-  const handleScrollIndicator = createEventHandler('scrollIndicator');
-  const handleAvatarClick = createEventHandler('avatarClick');
-  const handleTechCategoryClick = (categoryTitle: string) =>
-    createEventHandler('techCategoryClick', { category: categoryTitle })();
-
-  const handleTechCategoryKeydown = (categoryTitle: string) =>
-    createKeydownHandler(() => handleTechCategoryClick(categoryTitle));
-  const handleAvatarKeydown = createKeydownHandler(handleAvatarClick);
-
-  const getMasteryDescription = (level: 'expert' | 'advanced'): string => typeDescriptions[level];
-
-  const getStatDescription = (stat: (typeof stats)[0]): string =>
-    `${stat.count} ${typeDescriptions[stat.type]}: ${stat.label}`;
 </script>
 
 <section class="hero" id="about" role="main" aria-labelledby="profile-name">
@@ -237,13 +211,13 @@
     <div class="hero__canvas" id="hero-canvas-container" aria-hidden="true"></div>
   {/if}
 
-  <Section className="hero__content">
-    <div class="hero__container">
-      <div class="hero__profile">
+  <Section className="hero__container">
+    <div class="hero-grid">
+      <!-- Profile Section -->
+      <div class="profile-section">
         <button
           class="avatar"
           on:click={handleAvatarClick}
-          on:keydown={handleAvatarKeydown}
           aria-label="View profile details for {name}"
           type="button"
         >
@@ -252,7 +226,7 @@
               src={avatarSrc}
               alt={avatarAlt}
               className="avatar__image"
-              sizes="150px"
+              sizes="(max-width: 768px) 120px, (max-width: 1376px) 150px, 180px"
               loading="lazy"
             />
             <div class="avatar__glow" aria-hidden="true"></div>
@@ -264,116 +238,87 @@
           </div>
         </button>
 
-        <div class="profile__content">
-          <div class="profile__header">
-            <h1 class="profile__name" id="profile-name">{name}</h1>
-            <div class="profile__accent" aria-hidden="true"></div>
+        <div class="profile-content">
+          <div class="profile-header">
+            <h1 class="profile-name" id="profile-name">{name}</h1>
+            <div class="profile-accent" aria-hidden="true"></div>
           </div>
-          <p class="profile__role">{role}</p>
-          <div class="profile__status" role="status" aria-live="polite">
-            <div class="status__indicator" aria-hidden="true"></div>
-            <span class="status__text">{statusText}</span>
+
+          <p class="profile-role">{role}</p>
+
+          <div class="profile-status" role="status" aria-live="polite">
+            <div class="status-indicator" aria-hidden="true"></div>
+            <span class="status-text">{statusText}</span>
           </div>
         </div>
       </div>
 
-      <div class="hero__value">
-        <h2 class="value__headline">{valueHeadline}</h2>
-        <p class="value__description">{valueDescription}</p>
+      <!-- Value Proposition -->
+      <div class="value-section">
+        <h2 class="value-headline">{valueHeadline}</h2>
+        <p class="value-description">{valueDescription}</p>
 
-        <div class="hero__actions">
-          <button
-            class="btn btn--primary"
-            on:click={handlePrimaryAction}
-            aria-describedby="primary-btn-desc"
-          >
+        <div class="actions">
+          <button class="btn btn--primary" on:click={handlePrimaryAction}>
             <span>{primaryButtonText}</span>
             <div class="btn__glow" aria-hidden="true"></div>
           </button>
-          <span id="primary-btn-desc" class="sr-only">Navigate to {primaryButtonHref}</span>
 
-          <button
-            class="btn btn--secondary"
-            on:click={handleSecondaryAction}
-            aria-describedby="secondary-btn-desc"
-          >
+          <button class="btn btn--secondary" on:click={handleSecondaryAction}>
             <span>{secondaryButtonText}</span>
           </button>
-          <span id="secondary-btn-desc" class="sr-only">Navigate to {secondaryButtonHref}</span>
         </div>
       </div>
 
-      <section class="stats" aria-labelledby="stats-title">
-        <div class="section__header">
-          <h3 class="section__title" id="stats-title">Key Metrics</h3>
-          <div class="section__accent" aria-hidden="true"></div>
+      <!-- Stats Section -->
+      <section class="stats-section" aria-labelledby="stats-title">
+        <div class="section-header">
+          <h3 class="section-title" id="stats-title">Key Metrics</h3>
+          <div class="section-accent" aria-hidden="true"></div>
         </div>
-        <div class="stats__grid" role="group" aria-label="Performance statistics">
+
+        <div class="stats-grid">
           {#each stats as stat, index (index)}
-            <div
-              class="stat"
-              data-type={stat.type}
-              role="img"
-              aria-label={getStatDescription(stat)}
-            >
-              <div
-                class="stat__number"
-                data-count={stat.count}
-                bind:this={statElements[index]}
-                aria-label="Animated counter showing {stat.count}"
-              >
+            <div class="stat-card" data-type={stat.type}>
+              <div class="stat-number" data-count={stat.count} bind:this={statElements[index]}>
                 0
               </div>
-              <div class="stat__label">{stat.label.split(' ').join('\n')}</div>
+              <div class="stat-label">{stat.label.split(' ').join('\n')}</div>
             </div>
           {/each}
         </div>
       </section>
 
-      <section class="tech" aria-labelledby="tech-title">
-        <div class="section__header">
-          <h3 class="section__title" id="tech-title">Core Technologies & Skills</h3>
-          <div class="section__accent" aria-hidden="true"></div>
+      <!-- Tech Section -->
+      <section class="tech-section" aria-labelledby="tech-title">
+        <div class="section-header">
+          <h3 class="section-title" id="tech-title">Core Technologies & Skills</h3>
+          <div class="section-accent" aria-hidden="true"></div>
         </div>
-        <div class="tech__grid" role="group" aria-label="Technology categories">
+
+        <div class="tech-grid">
           {#each techStackWithVisibleTags as category, index (index)}
             <button
-              class="tech__category"
+              class="tech-category"
               on:click={() => handleTechCategoryClick(category.title)}
-              on:keydown={handleTechCategoryKeydown(category.title)}
-              aria-label="Explore {category.title} technologies - {getMasteryDescription(
-                category.level,
-              )}"
-              aria-describedby="tech-category-{index}"
+              aria-label="Explore {category.title} technologies"
               type="button"
             >
-              <div class="category__header">
-                <span class="category__title">{category.title}</span>
-                <div
-                  class="mastery__indicator mastery__indicator--{category.level}"
-                  aria-label={getMasteryDescription(category.level)}
-                  role="img"
-                ></div>
+              <div class="category-header">
+                <span class="category-title">{category.title}</span>
+                <div class="mastery-indicator mastery-indicator--{category.level}"></div>
               </div>
-              <div class="category__tags" bind:this={techContainers[index]} role="list">
-                {#each category.visibleTags.visible as tech, tIdx (tIdx)}
-                  <span class="tech__tag" role="listitem">{tech}</span>
+
+              <div class="category-tags" bind:this={techContainers[index]}>
+                {#each category.visibleTags.visible as tech (tech)}
+                  <span class="tech-tag">{tech}</span>
                 {/each}
                 {#if category.visibleTags.overflow > 0}
-                  <span
-                    class="tech__tag tech__tag--overflow"
-                    role="listitem"
-                    aria-label="{category.visibleTags.overflow} more technologies"
-                    >+{category.visibleTags.overflow}</span
-                  >
+                  <span class="tech-tag tech-tag--overflow">
+                    +{category.visibleTags.overflow}
+                  </span>
                 {/if}
               </div>
-              <span id="tech-category-{index}" class="sr-only">
-                Contains {category.technologies.length} technologies including {category.technologies
-                  .slice(0, 3)
-                  .join(', ')}
-                {#if category.technologies.length > 3}and {category.technologies.length - 3} more{/if}
-              </span>
             </button>
           {/each}
         </div>
@@ -381,43 +326,23 @@
     </div>
   </Section>
 
+  <!-- Scroll Indicator -->
   <button
-    class="scroll__indicator"
+    class="scroll-indicator"
     on:click={handleScrollIndicator}
     aria-label="Scroll to next section"
     type="button"
   >
-    <div class="scroll__mouse" aria-hidden="true">
-      <div class="scroll__wheel"></div>
+    <div class="scroll-mouse" aria-hidden="true">
+      <div class="scroll-wheel"></div>
     </div>
-    <div class="scroll__arrow" aria-hidden="true"></div>
-    <span class="scroll__text">{scrollText}</span>
+    <div class="scroll-arrow" aria-hidden="true"></div>
+    <span class="scroll-text">{scrollText}</span>
   </button>
 </section>
 
 <style lang="scss">
-  @use 'styles/animations.scss' as *;
-  @use 'styles/_breakpoints.scss' as *;
-
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
-
-  #about {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: var(--token-space-fluid-lg) var(--token-space-fluid-md);
-  }
+  @use '../styles/breakpoints' as *;
 
   .hero {
     position: relative;
@@ -425,7 +350,7 @@
     min-height: 100dvh;
     background: var(--token-gradients-hero);
     overflow: hidden;
-    padding: var(--token-space-fluid-2xl) var(--token-space-fluid-lg);
+    padding: var(--token-space-fluid-2xl) 0;
     font-family: var(--token-font-family-sans);
     font-feature-settings:
       'kern' 1,
@@ -435,7 +360,8 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    will-change: transform;
+    display: flex;
+    flex-direction: column;
 
     &::before {
       content: '';
@@ -445,30 +371,40 @@
       opacity: 0;
       animation: backgroundGlow 4s ease-in-out 1s both;
       pointer-events: none;
-      z-index: var(--token-z-behind);
     }
-  }
 
-  .hero__content {
-    position: relative;
-    z-index: var(--token-z-base);
-    width: 100%;
-    max-width: var(--token-container-7xl);
-    margin: 0 auto;
-
-    @media (min-width: 100rem) {
-      max-width: var(--token-container-max);
+    @media (max-height: 600px) {
+      padding: var(--token-space-fluid-lg) 0;
     }
   }
 
   .hero__container {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    max-width: min(var(--token-container-max), calc(100vw - var(--token-space-fluid-2xl)));
+    margin: 0 auto;
+    padding: 0 var(--token-space-fluid-lg);
+    width: 100%;
+
+    @media (min-width: $breakpoint-md) {
+      padding: 0 var(--token-space-fluid-xl);
+    }
+
+    @media (min-width: $breakpoint-lg) {
+      padding: 0 var(--token-space-fluid-2xl);
+    }
+  }
+
+  .hero-grid {
     display: grid;
     gap: var(--token-space-fluid-xl);
     animation: heroEntrance 1.2s var(--token-motion-ease-out) both;
-    margin: auto;
-    margin-top: var(--token-space-fluid-md);
+    width: 100%;
+    overflow: hidden;
 
-    grid-template-columns: 1fr;
     grid-template-areas:
       'profile'
       'value'
@@ -481,7 +417,6 @@
 
     @media (min-width: $breakpoint-lg) {
       grid-template-columns: 1.3fr 1fr;
-      grid-template-rows: auto auto;
       grid-template-areas:
         'profile stats'
         'value tech';
@@ -493,16 +428,22 @@
       grid-template-columns: 1.4fr 0.9fr;
       gap: var(--token-space-fluid-3xl) var(--token-space-fluid-4xl);
     }
+
+    @media (max-height: 600px) {
+      max-height: calc(100vh - var(--token-space-fluid-2xl));
+      gap: var(--token-space-fluid-lg);
+    }
   }
 
-  .hero__profile {
+  // Profile Section
+  .profile-section {
     grid-area: profile;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: var(--token-space-fluid-lg);
     text-align: center;
-    animation: cardReveal 1.4s var(--token-motion-ease-out) 0.3s both;
+    animation: fadeInUp 1s var(--token-motion-ease-out) 0.3s both;
 
     @media (min-width: $breakpoint-md) {
       flex-direction: row;
@@ -519,45 +460,36 @@
 
   .avatar {
     position: relative;
-    width: clamp(6rem, 16vw, 7rem);
-    height: clamp(6rem, 16vw, 7rem);
+    width: var(--token-size-avatar-sm);
+    height: var(--token-size-avatar-sm);
     padding: var(--token-space-fluid-xs);
     flex-shrink: 0;
     cursor: pointer;
-    transition: transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
+    transition: transform 0.4s var(--token-motion-ease-out);
     background: none;
     border: none;
 
     @media (min-width: $breakpoint-lg) {
       width: var(--token-size-avatar-lg);
       height: var(--token-size-avatar-lg);
-      margin-left: -15px;
     }
 
-    &:focus-visible {
-      outline: 3px solid var(--token-interactive-color);
+    &:focus {
+      outline: 2px solid var(--token-interactive-color);
       outline-offset: 4px;
       border-radius: var(--token-radius-full);
     }
 
-    @media (hover: hover) {
-      &:hover {
-        transform: scale(1.05);
+    &:hover {
+      transform: scale(1.05);
 
-        .avatar__glow {
-          opacity: var(--token-opacity-default);
-          filter: blur(var(--token-blur-md));
-        }
-
-        .ring {
-          opacity: var(--token-opacity-ring-hover);
-        }
+      .avatar__glow {
+        opacity: 0.6;
+        filter: blur(var(--token-blur-md));
       }
-    }
 
-    @media (hover: none) {
-      &:active {
-        transform: scale(0.98);
+      .ring {
+        opacity: 0.8;
       }
     }
   }
@@ -570,7 +502,7 @@
     background: var(--token-gradients-hero);
     padding: 3px;
     overflow: hidden;
-    transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
+    transition: all 0.4s var(--token-motion-ease-out);
 
     &::before {
       content: '';
@@ -580,14 +512,12 @@
       border-radius: inherit;
       opacity: 0;
       animation: frameRotate 8s linear infinite;
-      transition: opacity var(--token-motion-duration-normal) var(--token-motion-ease-out);
+      transition: opacity 0.4s var(--token-motion-ease-out);
     }
 
-    @media (hover: hover) {
-      .avatar:hover & {
-        &::before {
-          opacity: var(--token-opacity-default);
-        }
+    .avatar:hover & {
+      &::before {
+        opacity: 0.6;
       }
     }
   }
@@ -600,12 +530,10 @@
     object-fit: cover;
     border: var(--token-border-default-small);
     z-index: 1;
-    transition: filter var(--token-motion-duration-normal) var(--token-motion-ease-out);
+    transition: filter 0.4s var(--token-motion-ease-out);
 
-    @media (hover: hover) {
-      .avatar:hover & {
-        filter: brightness(1.1) contrast(1.1);
-      }
+    .avatar:hover & {
+      filter: brightness(1.1) contrast(1.1);
     }
   }
 
@@ -615,10 +543,10 @@
     background: var(--token-gradients-hero);
     border-radius: var(--token-radius-full);
     filter: blur(var(--token-blur-sm));
-    opacity: var(--token-opacity-ring-hover);
+    opacity: 0.2;
     z-index: -1;
     animation: avatarPulse 6s ease-in-out infinite alternate;
-    transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
+    transition: all 0.4s var(--token-motion-ease-out);
   }
 
   .avatar__rings {
@@ -626,7 +554,7 @@
     inset: calc(-1 * var(--token-space-fluid-sm));
     pointer-events: none;
 
-    @media (max-width: $breakpoint-lg) {
+    @media (max-width: calc($breakpoint-lg - 1px)) {
       display: none;
     }
   }
@@ -635,45 +563,44 @@
     position: absolute;
     border: var(--token-border-hover-small);
     border-radius: var(--token-radius-full);
-    opacity: var(--token-opacity-ring-default);
-    transition: opacity var(--token-motion-duration-normal) var(--token-motion-ease-out);
+    opacity: 0.15;
+    transition: opacity 0.4s var(--token-motion-ease-out);
 
-    &.ring--1 {
+    &--1 {
       inset: 0;
       animation: ringRotate1 30s linear infinite;
       border-style: solid;
     }
 
-    &.ring--2 {
+    &--2 {
       inset: var(--token-space-fluid-xs);
       border-style: dashed;
       animation: ringRotate2 45s linear infinite reverse;
     }
 
-    &.ring--3 {
+    &--3 {
       inset: var(--token-space-fluid-sm);
       border-style: dotted;
       animation: ringRotate3 60s linear infinite;
     }
   }
 
-  .profile__content {
+  .profile-content {
     flex: 1;
     min-width: 0;
   }
 
-  .profile__header {
+  .profile-header {
     position: relative;
     margin-bottom: var(--token-space-fluid-sm);
   }
 
-  .profile__name {
+  .profile-name {
     font-size: var(--token-font-size-4xl);
     font-weight: var(--token-font-weight-bold);
     line-height: var(--token-line-height-tight);
     margin-bottom: var(--token-space-fluid-xs);
     color: var(--token-text-heading);
-    text-shadow: 0 0 5px var(--token-shadow-interactive);
     letter-spacing: var(--token-letter-spacing-tight);
     background: var(--token-gradients-heading);
     background-size: 200% 200%;
@@ -681,12 +608,9 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: textShimmer 8s ease-in-out infinite;
-    cursor: default;
-    transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
 
     @media (min-width: $breakpoint-md) {
       line-height: var(--token-line-height-snug);
-      margin-left: -5px;
     }
 
     @media (min-width: $breakpoint-lg) {
@@ -696,23 +620,14 @@
     @media (min-width: $breakpoint-xlg) {
       font-size: var(--token-font-size-6xl);
     }
-
-    @media (hover: hover) {
-      &:hover {
-        animation-duration: 2s;
-        text-shadow: 0 0 5px var(--token-interactive-hover);
-      }
-    }
   }
 
-  .profile__accent {
+  .profile-accent {
     width: 0;
     height: 3px;
     background: var(--token-emphasis-color);
     border-radius: var(--token-radius-full);
     animation: accentExpand 1.8s var(--token-motion-ease-out) 0.8s both;
-    position: relative;
-    overflow: hidden;
     margin: 0 auto;
 
     @media (min-width: $breakpoint-md) {
@@ -720,14 +635,14 @@
     }
   }
 
-  .profile__role {
+  .profile-role {
     font-size: var(--token-font-size-lg);
     font-weight: var(--token-font-weight-medium);
     color: var(--token-text-secondary);
     letter-spacing: var(--token-letter-spacing-wide);
     line-height: var(--token-line-height-relaxed);
     opacity: 0;
-    animation: fadeInUp var(--token-motion-duration-slow) var(--token-motion-ease-out) 1s both;
+    animation: fadeInUp 0.6s var(--token-motion-ease-out) 1s both;
     margin-bottom: var(--token-space-fluid-2xl);
 
     @media (min-width: $breakpoint-md) {
@@ -741,11 +656,10 @@
     }
   }
 
-  .profile__status {
+  .profile-status {
     display: inline-flex;
     align-items: center;
     gap: var(--token-space-fluid-sm);
-    margin-left: -5px;
     padding: var(--token-space-fluid-md) var(--token-space-fluid-lg);
     background: var(--token-surface-glass-strong);
     border: var(--token-border-default-small);
@@ -753,65 +667,60 @@
     font-size: var(--token-font-size-sm);
     font-weight: var(--token-font-weight-medium);
     color: var(--token-text-overlay);
-    backdrop-filter: blur(var(--token-blur-sm));
-    animation: statusReveal var(--token-motion-duration-slow) var(--token-motion-ease-out) 1.4s both;
-    letter-spacing: var(--token-letter-spacing-wide);
-    line-height: var(--token-line-height-snug);
-    cursor: pointer;
-    transition: all var(--token-motion-duration-fast) var(--token-motion-ease-out);
+    backdrop-filter: blur(var(--token-blur-lg));
+    animation: fadeInUp 0.6s var(--token-motion-ease-out) 1.4s both;
+    transition: all 0.3s var(--token-motion-ease-out);
     position: relative;
     overflow: hidden;
-    min-height: var(--token-size-12);
+    cursor: pointer;
 
     &::before {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, var(--token-tint-overlay-subtle) 0%, transparent 50%);
+      background: var(--token-surface-glass-iridescent);
       opacity: 0;
-      transition: opacity var(--token-motion-duration-fast) var(--token-motion-ease-out);
+      transition: opacity 0.3s var(--token-motion-ease-out);
+      border-radius: inherit;
+      pointer-events: none;
     }
 
-    @media (hover: hover) {
-      &:hover {
-        transform: translateY(-2px);
-        border-color: var(--token-border-color-hover);
-        box-shadow: var(--token-shadow-interactive);
+    &:hover {
+      transform: translateY(-2px);
+      border-color: var(--token-border-color-hover);
+      box-shadow: var(--token-shadow-elevated);
 
-        &::before {
-          opacity: 1;
-        }
+      &::before {
+        opacity: 0.8;
+      }
 
-        .status__indicator {
-          transform: scale(1.2);
-          animation-duration: 1s;
-        }
+      .status-indicator {
+        transform: scale(1.2);
       }
     }
 
-    @media (hover: none) {
-      &:active {
-        transform: scale(0.98);
-      }
+    &:focus {
+      outline: 2px solid var(--token-interactive-color);
+      outline-offset: 2px;
+      border-radius: var(--token-radius-full);
     }
   }
 
-  .status__indicator {
+  .status-indicator {
     width: var(--token-size-3);
     height: var(--token-size-3);
     background: var(--token-attention-color);
     border-radius: var(--token-radius-full);
-    animation: statusPulse var(--token-motion-duration-pulse) ease-in-out infinite;
+    animation: statusPulse 2s ease-in-out infinite;
     box-shadow: 0 0 10px var(--token-attention-glow);
-    transition: transform var(--token-motion-duration-fast) var(--token-motion-ease-out);
+    transition: transform 0.3s var(--token-motion-ease-out);
   }
 
-  .hero__value {
+  // Value Section
+  .value-section {
     grid-area: value;
-    animation: valueReveal 1s var(--token-motion-ease-out) 0.6s both;
+    animation: fadeInUp 1s var(--token-motion-ease-out) 0.6s both;
     display: flex;
-    height: 100%;
-    justify-content: flex-start;
     flex-direction: column;
     gap: var(--token-space-fluid-lg);
     text-align: center;
@@ -821,14 +730,13 @@
     }
   }
 
-  .value__headline {
+  .value-headline {
     font-size: var(--token-font-size-2xl);
     font-weight: var(--token-font-weight-semibold);
     line-height: var(--token-line-height-tight);
     color: var(--token-text-primary);
     letter-spacing: var(--token-letter-spacing-tight);
-    cursor: default;
-    transition: color var(--token-motion-duration-normal) var(--token-motion-ease-out);
+    transition: color 0.3s var(--token-motion-ease-out);
 
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-font-size-3xl);
@@ -845,24 +753,19 @@
       font-size: var(--token-font-size-4xl);
     }
 
-    @media (hover: hover) {
-      &:hover {
-        color: var(--token-text-hovered);
-      }
+    &:hover {
+      color: var(--token-text-hovered);
     }
   }
 
-  .value__description {
+  .value-description {
     font-size: var(--token-font-size-base);
     line-height: var(--token-line-height-relaxed);
     color: var(--token-text-secondary);
-    letter-spacing: var(--token-letter-spacing-normal);
-    font-weight: var(--token-font-weight-normal);
-    transition: color var(--token-motion-duration-normal) var(--token-motion-ease-out);
+    transition: color 0.3s var(--token-motion-ease-out);
 
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-font-size-lg);
-      margin-bottom: var(--token-space-fluid-sm);
       line-height: var(--token-line-height-loose);
     }
 
@@ -871,19 +774,15 @@
       letter-spacing: var(--token-letter-spacing-wide);
     }
 
-    @media (hover: hover) {
-      &:hover {
-        color: var(--token-text-primary);
-      }
+    &:hover {
+      color: var(--token-text-primary);
     }
   }
 
-  .hero__actions {
+  .actions {
     display: flex;
     gap: var(--token-space-fluid-md);
-    animation: actionsReveal var(--token-motion-duration-slow) var(--token-motion-ease-out) 0.8s
-      both;
-
+    animation: fadeInUp 0.6s var(--token-motion-ease-out) 0.8s both;
     flex-direction: column;
     margin-top: var(--token-space-fluid-md);
 
@@ -906,13 +805,10 @@
     border: none;
     border-radius: var(--token-radius-full);
     cursor: pointer;
-    transition: all var(--token-motion-duration-fast) var(--token-motion-ease-out);
+    transition: all 0.3s var(--token-motion-ease-out);
     overflow: hidden;
-    min-height: var(--token-size-12);
     letter-spacing: var(--token-letter-spacing-wide);
     line-height: var(--token-line-height-snug);
-    will-change: transform;
-    z-index: 1;
 
     span {
       position: relative;
@@ -927,19 +823,7 @@
 
     @media (min-width: $breakpoint-lg) {
       flex: 0 1 auto;
-      min-width: var(--token-size-40);
-    }
-
-    &::after {
-      content: '';
-      position: absolute;
-      inset: -2px;
-      background: transparent;
-      border-radius: inherit;
-      opacity: 0;
-      transition: opacity var(--token-motion-duration-fast) var(--token-motion-ease-out);
-      pointer-events: none;
-      z-index: 0;
+      min-width: 10rem;
     }
 
     &--primary {
@@ -949,119 +833,95 @@
         var(--token-shadow-elevated),
         0 0 20px var(--token-interactive-glow);
       position: relative;
-      overflow: hidden;
 
       &::before {
         content: '';
         position: absolute;
         inset: 0;
-        background: linear-gradient(
-          135deg,
-          var(--token-tint-overlay-medium) 0%,
-          transparent 50%,
-          var(--token-tint-overlay-subtle) 100%
-        );
+        background: var(--token-surface-glass-iridescent);
         opacity: 0;
-        transition: opacity var(--token-motion-duration-fast) var(--token-motion-ease-out);
+        transition: opacity 0.3s var(--token-motion-ease-out);
         border-radius: inherit;
         z-index: 0;
       }
 
-      &::after {
-        background: linear-gradient(
-          135deg,
-          var(--token-interactive-hover) 0%,
-          var(--token-interactive-color) 100%
-        );
+      &:hover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow:
+          var(--token-shadow-elevated),
+          0 0 30px var(--token-interactive-glow);
+
+        &::before {
+          opacity: 0.8;
+        }
       }
 
-      @media (hover: hover) {
-        &:hover {
-          transform: translateY(-4px) scale(1.02);
-          box-shadow:
-            var(--token-shadow-interactive),
-            var(--token-shadow-elevated),
-            0 0 30px var(--token-state-hover-glow);
-
-          &::before {
-            opacity: 1;
-          }
-
-          &::after {
-            opacity: 1;
-          }
-        }
+      &:focus {
+        outline: 2px solid var(--token-interactive-color);
+        outline-offset: 3px;
+        border-radius: var(--token-radius-full);
       }
 
       &:active {
         transform: translateY(-2px) scale(1);
-        box-shadow: var(--token-shadow-interactive), var(--token-shadow-default);
-        transition: all 0.1s ease-out;
-      }
-
-      &:focus-visible {
-        outline: var(--token-border-ring-large);
-        outline-offset: 3px;
       }
     }
 
     &--secondary {
       background: var(--token-surface-glass-strong);
       color: var(--token-text-overlay);
-      border: var(--token-border-default-medium);
-      backdrop-filter: blur(var(--token-blur-sm));
+      border: var(--token-border-default-small);
+      backdrop-filter: blur(var(--token-blur-lg));
       position: relative;
-      overflow: hidden;
 
       &::before {
         content: '';
         position: absolute;
         inset: 0;
-        background: linear-gradient(135deg, var(--token-tint-overlay-subtle) 0%, transparent 50%);
+        background: var(--token-surface-glass-iridescent);
         opacity: 0;
-        transition: opacity var(--token-motion-duration-fast) var(--token-motion-ease-out);
+        transition: opacity 0.3s var(--token-motion-ease-out);
         border-radius: inherit;
         z-index: 0;
       }
 
-      @media (hover: hover) {
-        &:hover {
-          transform: translateY(-3px) scale(1.02);
-          background: var(--token-surface-glass-strong);
-          border-color: var(--token-border-color-hover);
-          color: var(--token-text-primary);
-          box-shadow:
-            var(--token-shadow-default),
-            0 0 20px var(--token-shadow-glow-subtle);
+      &:hover {
+        transform: translateY(-3px) scale(1.02);
+        border-color: var(--token-border-color-hover);
+        color: var(--token-text-primary);
+        box-shadow: var(--token-shadow-elevated);
 
-          &::before {
-            opacity: 1;
-          }
+        &::before {
+          opacity: 0.8;
         }
+      }
+
+      &:focus {
+        outline: 2px solid var(--token-interactive-color);
+        outline-offset: 2px;
+        border-radius: var(--token-radius-full);
       }
 
       &:active {
         transform: translateY(-1px) scale(1);
-        box-shadow: var(--token-shadow-light);
-      }
-
-      &:focus-visible {
-        outline: 2px solid var(--token-border-ring);
-        outline-offset: 2px;
       }
     }
   }
 
-  .stats {
+  // Stats Section
+  .stats-section {
     grid-area: stats;
     background: var(--token-surface-glass-medium);
     border: var(--token-border-default-small);
-    border-radius: var(--token-radius-lg);
-    padding: var(--token-space-fluid-lg);
+    border-radius: var(--token-radius-xl);
+    padding: var(--token-space-fluid-md);
     backdrop-filter: blur(var(--token-blur-lg));
-    animation: statsReveal 1.4s var(--token-motion-ease-out) 0.5s both;
+    animation: fadeInUp 1s var(--token-motion-ease-out) 0.5s both;
     position: relative;
     overflow: hidden;
+    transform: scale(0.8);
+    transform-origin: top left;
+    margin-top: auto;
 
     &::before {
       content: '';
@@ -1069,87 +929,78 @@
       inset: 0;
       background: var(--token-surface-glass-iridescent);
       opacity: 0;
-      transition: opacity var(--token-motion-duration-normal) var(--token-motion-ease-out);
+      transition: opacity 0.3s var(--token-motion-ease-out);
       border-radius: inherit;
+      pointer-events: none;
     }
 
-    @media (hover: hover) {
-      &:hover::before {
-        opacity: 1;
+    &:hover {
+      &::before {
+        opacity: 0.6;
       }
 
-      &:hover .section__accent {
-        width: var(--token-space-fluid-xl);
+      .section-accent {
+        width: var(--token-space-fluid-md);
       }
 
-      &:hover .section__title {
+      .section-title {
         color: var(--token-text-secondary);
       }
     }
 
-    @media (min-width: $breakpoint-lg) {
-      background: var(--token-surface-glass-strong);
-      border-color: var(--token-border-color-default);
+    @media (min-width: $breakpoint-md) {
+      padding: var(--token-space-fluid-md);
     }
   }
 
-  .section__header {
-    margin-bottom: var(--token-space-fluid-lg);
+  .section-header {
+    margin-bottom: var(--token-space-fluid-md);
   }
 
-  .section__title {
-    font-size: var(--token-font-size-sm);
+  .section-title {
+    font-size: var(--token-font-size-xs);
     font-weight: var(--token-font-weight-semibold);
     color: var(--token-text-tertiary);
     text-transform: uppercase;
     letter-spacing: var(--token-letter-spacing-extra-wide);
-    margin-bottom: var(--token-space-fluid-sm);
+    margin-bottom: var(--token-space-fluid-xs);
     line-height: var(--token-line-height-snug);
-    transition: color var(--token-motion-duration-normal) var(--token-motion-ease-out);
+    transition: color 0.3s var(--token-motion-ease-out);
 
     @media (min-width: $breakpoint-lg) {
-      font-size: var(--token-font-size-base);
-      letter-spacing: var(--token-letter-spacing-widest);
+      font-size: var(--token-font-size-sm);
     }
   }
 
-  .section__accent {
+  .section-accent {
     width: var(--token-space-fluid-md);
     height: 2px;
     background: var(--token-emphasis-color);
     border-radius: var(--token-radius-full);
-    transition: width var(--token-motion-duration-normal) var(--token-motion-ease-out);
+    transition: width 0.3s var(--token-motion-ease-out);
   }
 
-  .stats__grid {
+  .stats-grid {
     display: grid;
-    gap: var(--token-space-fluid-lg);
-
+    gap: var(--token-space-fluid-md);
     grid-template-columns: 1fr;
 
     @media (min-width: $breakpoint-sm) {
       grid-template-columns: repeat(2, 1fr);
-      gap: var(--token-space-fluid-lg);
-    }
-
-    @media (min-width: $breakpoint-lg) {
-      grid-template-columns: repeat(2, 1fr);
-      gap: var(--token-space-fluid-lg);
     }
   }
 
-  .stat {
-    padding: var(--token-space-fluid-lg);
+  .stat-card {
+    padding: var(--token-space-fluid-md);
     text-align: center;
-    background: var(--token-gradients-stat-default);
+    background: var(--token-surface-glass-strong);
     border: var(--token-border-default-small);
-    border-radius: var(--token-radius-md);
-    transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
-    animation: statReveal 0.8s var(--token-motion-ease-bounce) both;
+    border-radius: var(--token-radius-lg);
+    transition: all 0.3s var(--token-motion-ease-out);
+    animation: statReveal 0.8s var(--token-motion-ease-out) both;
     position: relative;
     cursor: pointer;
     overflow: hidden;
-    min-height: var(--token-size-40);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -1171,58 +1022,45 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, var(--token-tint-overlay-subtle) 0%, transparent 70%);
+      background: var(--token-surface-glass-iridescent);
       opacity: 0;
-      transition: opacity var(--token-motion-duration-normal) var(--token-motion-ease-out);
+      transition: opacity 0.3s var(--token-motion-ease-out);
       border-radius: inherit;
+      pointer-events: none;
     }
 
-    @media (hover: hover) {
-      &:hover {
-        transform: translateY(-5px) scale(1.02);
-        background: var(--token-gradients-stat-hover);
-        border-color: var(--token-border-color-hover);
-        box-shadow:
-          var(--token-shadow-interactive),
-          var(--token-shadow-default),
-          0 0 20px var(--token-shadow-glow-subtle);
+    &:hover {
+      transform: translateY(-4px) scale(1.02);
+      border-color: var(--token-border-color-hover);
+      box-shadow: var(--token-shadow-elevated);
 
-        &::before {
-          opacity: 1;
-        }
+      &::before {
+        opacity: 0.8;
+      }
 
-        .stat__number {
-          transform: scale(1.1);
-          color: var(--token-text-heading);
-        }
+      .stat-number {
+        transform: scale(1.1);
+        color: var(--token-text-heading);
+      }
+
+      .stat-label {
+        color: var(--token-text-secondary);
       }
     }
 
-    @media (hover: none) {
-      &:active {
-        transform: scale(0.98);
-      }
-    }
-
-    &:nth-child(even) {
-      background: var(--token-gradients-stat-alt);
-
-      @media (hover: hover) {
-        &:hover {
-          background: var(--token-gradients-stat-alt_hover);
-        }
-      }
+    @media (min-width: $breakpoint-md) {
+      padding: var(--token-space-fluid-xl);
     }
   }
 
-  .stat__number {
+  .stat-number {
     font-size: var(--token-font-size-2xl);
     font-weight: var(--token-font-weight-bold);
     line-height: var(--token-line-height-tight);
     margin-bottom: var(--token-space-2);
     color: var(--token-text-emphasis-heading);
     letter-spacing: var(--token-letter-spacing-tight);
-    transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
+    transition: all 0.3s var(--token-motion-ease-out);
 
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-font-size-3xl);
@@ -1230,11 +1068,10 @@
 
     @media (min-width: $breakpoint-lg) {
       font-size: var(--token-font-size-35xl);
-      line-height: var(--token-line-height-snug);
     }
   }
 
-  .stat__label {
+  .stat-label {
     font-size: var(--token-font-size-sm);
     font-weight: var(--token-font-weight-semibold);
     color: var(--token-text-tertiary);
@@ -1242,30 +1079,27 @@
     letter-spacing: var(--token-letter-spacing-widest);
     line-height: var(--token-line-height-relaxed);
     white-space: pre-line;
-    transition: color var(--token-motion-duration-normal) var(--token-motion-ease-out);
+    transition: color 0.3s var(--token-motion-ease-out);
 
     @media (min-width: $breakpoint-lg) {
       font-size: var(--token-font-size-base);
-      letter-spacing: var(--token-letter-spacing-extra-wide);
-    }
-
-    @media (hover: hover) {
-      .stat:hover & {
-        color: var(--token-text-secondary);
-      }
     }
   }
 
-  .tech {
+  // Tech Section
+  .tech-section {
     grid-area: tech;
     background: var(--token-surface-glass-medium);
     border: var(--token-border-default-small);
-    border-radius: var(--token-radius-lg);
-    padding: var(--token-space-fluid-lg);
+    border-radius: var(--token-radius-xl);
+    padding: var(--token-space-fluid-md);
     backdrop-filter: blur(var(--token-blur-lg));
-    animation: techReveal 1.4s var(--token-motion-ease-out) 0.7s both;
+    animation: fadeInUp 1s var(--token-motion-ease-out) 0.7s both;
     position: relative;
     overflow: hidden;
+    transform: scale(0.8);
+    transform-origin: top left;
+    margin-top: auto;
 
     &::before {
       content: '';
@@ -1273,68 +1107,53 @@
       inset: 0;
       background: var(--token-surface-glass-iridescent);
       opacity: 0;
-      transition: opacity var(--token-motion-duration-normal) var(--token-motion-ease-out);
+      transition: opacity 0.3s var(--token-motion-ease-out);
       border-radius: inherit;
+      pointer-events: none;
     }
 
-    @media (hover: hover) {
-      &:hover::before {
-        opacity: 1;
+    &:hover {
+      &::before {
+        opacity: 0.6;
       }
 
-      &:hover .section__title {
+      .section-title {
         color: var(--token-text-secondary);
       }
 
-      &:hover .section__accent {
-        width: var(--token-space-fluid-xl);
+      .section-accent {
+        width: var(--token-space-fluid-md);
       }
     }
 
-    @media (min-width: $breakpoint-lg) {
-      background: var(--token-surface-glass-strong);
-      border-color: var(--token-border-color-default);
-    }
-
     @media (min-width: $breakpoint-md) {
-      margin-bottom: var(--token-space-fluid-6xl);
+      padding: var(--token-space-fluid-md);
     }
   }
 
-  .tech__grid {
+  .tech-grid {
     display: grid;
-    gap: var(--token-space-fluid-lg);
-
+    gap: var(--token-space-fluid-md);
     grid-template-columns: 1fr;
 
     @media (min-width: $breakpoint-sm) {
       grid-template-columns: repeat(2, 1fr);
-      gap: var(--token-space-fluid-lg);
-    }
-
-    @media (min-width: $breakpoint-lg) {
-      gap: var(--token-space-fluid-lg);
     }
   }
 
-  .tech__category {
-    background: var(--token-gradients-stat-default);
+  .tech-category {
+    background: var(--token-surface-glass-strong);
     border: var(--token-border-default-small);
-    border-radius: var(--token-radius-md);
-    padding: var(--token-space-fluid-lg);
-    transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
-    animation: categoryReveal 0.8s var(--token-motion-ease-out) both;
+    border-radius: var(--token-radius-lg);
+    padding: var(--token-space-fluid-md);
+    transition: all 0.3s var(--token-motion-ease-out);
+    animation: fadeInUp 0.6s var(--token-motion-ease-out) both;
     position: relative;
     cursor: pointer;
     overflow: hidden;
-    min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: var(--token-space-fluid-lg);
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
+    gap: var(--token-space-fluid-md);
     text-align: left;
 
     &:nth-child(1) {
@@ -1350,139 +1169,105 @@
       animation-delay: 1.7s;
     }
 
-    &:focus-visible {
-      outline: 3px solid var(--token-interactive-color);
-      outline-offset: 2px;
-      z-index: 10;
-    }
-
     &::before {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, var(--token-shadow-glow-subtle) 0%, transparent 60%);
+      background: var(--token-surface-glass-iridescent);
       opacity: 0;
-      transition: opacity var(--token-motion-duration-normal) var(--token-motion-ease-out);
+      transition: opacity 0.3s var(--token-motion-ease-out);
       border-radius: inherit;
+      pointer-events: none;
     }
 
-    @media (hover: hover) {
-      &:hover {
-        transform: translateY(-4px) scale(1.02);
-        background: var(--token-gradients-stat-hover);
-        border-color: var(--token-border-color-hover);
-        box-shadow:
-          var(--token-shadow-interactive),
-          var(--token-shadow-default),
-          0 0 15px var(--token-shadow-glow-subtle);
+    &:hover {
+      transform: translateY(-4px) scale(1.02);
+      border-color: var(--token-border-color-hover);
+      box-shadow: var(--token-shadow-elevated);
 
-        &::before {
-          opacity: 1;
-        }
+      &::before {
+        opacity: 0.8;
+      }
 
-        .category__title {
-          color: var(--token-text-heading);
-        }
+      .category-title {
+        color: var(--token-text-heading);
+      }
 
-        .tech__tag {
-          background: var(--token-surface-glass-strong);
-          color: var(--token-text-primary);
-          transform: scale(1.05);
-        }
+      .tech-tag {
+        background: var(--token-surface-glass-strong);
+        color: var(--token-text-primary);
+        transform: scale(1.05);
+      }
+
+      .mastery-indicator {
+        transform: scale(1.3);
       }
     }
 
-    @media (hover: none) {
-      &:active {
-        transform: scale(0.98);
-      }
+    &:focus {
+      outline: 2px solid var(--token-interactive-color);
+      outline-offset: 2px;
+      border-radius: var(--token-radius-lg);
     }
 
-    &:nth-child(even) {
-      background: var(--token-gradients-stat-alt);
-
-      @media (hover: hover) {
-        &:hover {
-          background: var(--token-gradients-stat-alt_hover);
-        }
-      }
+    @media (min-width: $breakpoint-md) {
+      padding: var(--token-space-fluid-xl);
     }
   }
 
-  .category__header {
+  .category-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--token-space-fluid-sm);
-    min-width: 0;
+    gap: var(--token-space-fluid-xs);
   }
 
-  .category__title {
+  .category-title {
     font-size: var(--token-font-size-base);
     font-weight: var(--token-font-weight-semibold);
     color: var(--token-text-overlay);
     letter-spacing: var(--token-letter-spacing-wide);
     line-height: var(--token-line-height-snug);
-    transition: color var(--token-motion-duration-normal) var(--token-motion-ease-out);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-width: 0;
+    transition: color 0.3s var(--token-motion-ease-out);
     flex: 1;
+    min-width: 0;
 
     @media (min-width: $breakpoint-lg) {
       font-size: var(--token-font-size-lg);
-      letter-spacing: var(--token-letter-spacing-normal);
     }
   }
 
-  .mastery__indicator {
+  .mastery-indicator {
     width: var(--token-size-4);
     height: var(--token-size-4);
     border-radius: var(--token-radius-full);
     flex-shrink: 0;
-    transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
+    transition: transform 0.3s var(--token-motion-ease-out);
 
     &--expert,
     &--advanced {
       background: var(--token-interactive-color);
       box-shadow: 0 0 8px var(--token-interactive-glow);
     }
-
-    @media (hover: hover) {
-      .tech__category:hover & {
-        transform: scale(1.3);
-        box-shadow: 0 0 12px var(--token-state-hover-glow);
-      }
-    }
   }
 
-  .category__tags {
+  .category-tags {
     display: flex;
     flex-wrap: wrap;
     gap: var(--token-space-2);
-    align-content: flex-start;
   }
 
-  .tech__tag {
-    padding: var(--token-space-2) var(--token-space-4);
+  .tech-tag {
+    padding: var(--token-space-1) var(--token-space-3);
     background: var(--token-surface-glass-strong);
     border: var(--token-border-default-small);
     border-radius: var(--token-radius-full);
-    font-size: var(--token-font-size-sm);
+    font-size: var(--token-font-size-xs);
     font-weight: var(--token-font-weight-medium);
     color: var(--token-text-secondary);
-    transition: all var(--token-motion-duration-fast) var(--token-motion-ease-out);
+    transition: all 0.3s var(--token-motion-ease-out);
     white-space: nowrap;
-    letter-spacing: var(--token-letter-spacing-normal);
-    line-height: var(--token-line-height-snug);
-    cursor: pointer;
     flex-shrink: 0;
-
-    @media (max-width: $breakpoint-md) {
-      padding: var(--token-space-3) var(--token-space-4);
-      font-size: var(--token-font-size-base);
-    }
 
     &--overflow {
       background: var(--token-surface-glass-medium);
@@ -1491,23 +1276,14 @@
       border-style: dashed;
     }
 
-    @media (hover: hover) {
-      &:hover {
-        background: var(--token-gradients-stat-hover);
-        border-color: var(--token-border-color-hover);
-        color: var(--token-text-primary);
-        transform: scale(1.05);
-      }
-    }
-
-    @media (hover: none) {
-      &:active {
-        transform: scale(0.95);
-      }
+    @media (min-width: $breakpoint-md) {
+      padding: var(--token-space-2) var(--token-space-3);
+      font-size: var(--token-font-size-sm);
     }
   }
 
-  .scroll__indicator {
+  // Scroll Indicator
+  .scroll-indicator {
     position: absolute;
     bottom: var(--token-space-fluid-2xl);
     left: 50%;
@@ -1519,50 +1295,42 @@
     background: none;
     border: none;
     color: var(--token-attention-color);
-    opacity: var(--token-opacity-medium);
+    opacity: 0.6;
     cursor: pointer;
     animation: scrollFloat 2s ease-in-out infinite;
-    z-index: var(--token-z-raised);
-    transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
+    z-index: 10;
+    transition: all 0.3s var(--token-motion-ease-out);
 
-    &:focus-visible {
+    &:focus {
       outline: 2px solid var(--token-interactive-color);
       outline-offset: 4px;
       border-radius: var(--token-radius-sm);
     }
 
-    @media (max-height: 600px) {
-      display: none;
-    }
+    &:hover {
+      opacity: 1;
+      transform: translateX(-50%) scale(1.1);
 
-    @media (max-width: $breakpoint-sm) {
-      display: none;
-    }
-
-    @media (hover: hover) {
-      &:hover {
-        opacity: 1;
-        transform: translateX(-50%) scale(1.1);
-
-        .scroll__mouse {
-          border-color: var(--token-attention-color);
-          box-shadow: 0 0 15px var(--token-attention-glow);
-        }
-
-        .scroll__wheel {
-          background: var(--token-attention-color);
-          animation-duration: 1s;
-        }
-
-        .scroll__arrow {
-          border-top-color: var(--token-attention-color);
-          animation-duration: 1s;
-        }
+      .scroll-mouse {
+        border-color: var(--token-attention-color);
+        box-shadow: 0 0 15px var(--token-attention-glow);
       }
+
+      .scroll-wheel {
+        background: var(--token-attention-color);
+      }
+
+      .scroll-arrow {
+        border-top-color: var(--token-attention-color);
+      }
+    }
+
+    @media (max-height: 600px), (max-width: calc($breakpoint-sm - 1px)) {
+      display: none;
     }
   }
 
-  .scroll__mouse {
+  .scroll-mouse {
     width: var(--token-size-6);
     height: 1.75rem;
     border: var(--token-border-default-medium);
@@ -1570,11 +1338,10 @@
     position: relative;
     background: var(--token-surface-glass-medium);
     backdrop-filter: blur(var(--token-blur-sm));
-    animation: mouseFloat 3s ease-in-out infinite;
-    transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
+    transition: all 0.3s var(--token-motion-ease-out);
   }
 
-  .scroll__wheel {
+  .scroll-wheel {
     position: absolute;
     width: 1.5px;
     height: var(--token-size-1);
@@ -1583,37 +1350,30 @@
     top: 0.375rem;
     transform: translateX(-50%);
     border-radius: var(--token-radius-full);
-    animation: wheelScroll var(--token-motion-duration-pulse) ease-in-out infinite;
-    transition: background var(--token-motion-duration-normal) var(--token-motion-ease-out);
+    animation: wheelScroll 2s ease-in-out infinite;
+    transition: background 0.3s var(--token-motion-ease-out);
   }
 
-  .scroll__arrow {
+  .scroll-arrow {
     width: 0;
     height: 0;
     border-left: 0.25rem solid transparent;
     border-right: 0.25rem solid transparent;
     border-top: 0.375rem solid var(--token-interactive-color);
-    animation: arrowBounce var(--token-motion-duration-pulse) ease-in-out infinite 0.5s;
-    transition: border-top-color var(--token-motion-duration-normal) var(--token-motion-ease-out);
+    animation: arrowBounce 2s ease-in-out infinite 0.5s;
+    transition: border-top-color 0.3s var(--token-motion-ease-out);
   }
 
-  .scroll__text {
+  .scroll-text {
     font-size: var(--token-font-size-xs);
     font-weight: var(--token-font-weight-medium);
     text-transform: uppercase;
     letter-spacing: var(--token-letter-spacing-extra-wide);
-    opacity: var(--token-opacity-default);
     color: var(--token-attention-color);
     line-height: var(--token-line-height-snug);
-    transition: opacity var(--token-motion-duration-normal) var(--token-motion-ease-out);
-
-    @media (hover: hover) {
-      .scroll__indicator:hover & {
-        opacity: 1;
-      }
-    }
   }
 
+  // Animations
   @keyframes heroEntrance {
     from {
       opacity: 0;
@@ -1625,30 +1385,24 @@
     }
   }
 
-  @keyframes cardReveal {
+  @keyframes fadeInUp {
     from {
       opacity: 0;
-      transform: translateY(1.5rem) scale(0.95);
+      transform: translateY(1.5rem);
     }
     to {
       opacity: 1;
-      transform: translateY(0) scale(1);
+      transform: translateY(0);
     }
   }
 
   @keyframes backgroundGlow {
-    from {
-      opacity: 0;
-    }
     to {
       opacity: 1;
     }
   }
 
   @keyframes frameRotate {
-    from {
-      transform: rotate(0deg);
-    }
     to {
       transform: rotate(360deg);
     }
@@ -1656,37 +1410,28 @@
 
   @keyframes avatarPulse {
     from {
-      opacity: var(--token-opacity-ring-hover);
+      opacity: 0.2;
       transform: scale(1);
     }
     to {
-      opacity: var(--token-opacity-default);
+      opacity: 0.4;
       transform: scale(1.02);
     }
   }
 
   @keyframes ringRotate1 {
-    from {
-      transform: rotate(0deg);
-    }
     to {
       transform: rotate(360deg);
     }
   }
 
   @keyframes ringRotate2 {
-    from {
-      transform: rotate(360deg);
-    }
     to {
-      transform: rotate(0deg);
+      transform: rotate(-360deg);
     }
   }
 
   @keyframes ringRotate3 {
-    from {
-      transform: rotate(0deg);
-    }
     to {
       transform: rotate(360deg);
     }
@@ -1703,80 +1448,22 @@
   }
 
   @keyframes accentExpand {
-    from {
-      width: 0;
-    }
     to {
       width: clamp(3rem, 3rem + 2vw, 6rem);
-    }
-  }
-
-  @keyframes statusReveal {
-    from {
-      opacity: 0;
-      transform: translateY(1rem) scale(0.9);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
     }
   }
 
   @keyframes statusPulse {
     0%,
     100% {
-      opacity: var(--token-opacity-medium);
+      opacity: 0.8;
       transform: scale(1);
       box-shadow: 0 0 10px var(--token-attention-glow);
     }
     50% {
       opacity: 1;
       transform: scale(1.1);
-      box-shadow: 0 0 20px var(--token-state-hover-glow);
-    }
-  }
-
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(1rem);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes valueReveal {
-    from {
-      opacity: 0;
-      transform: translateY(1.5rem) scale(0.98);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-  }
-
-  @keyframes actionsReveal {
-    from {
-      opacity: 0;
-      transform: translateY(2rem);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes statsReveal {
-    from {
-      opacity: 0;
-      transform: translateY(1.5rem) scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
+      box-shadow: 0 0 20px var(--token-attention-glow);
     }
   }
 
@@ -1791,28 +1478,6 @@
     }
   }
 
-  @keyframes techReveal {
-    from {
-      opacity: 0;
-      transform: translateY(1.5rem) scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-  }
-
-  @keyframes categoryReveal {
-    from {
-      opacity: 0;
-      transform: scale(0.95) translateY(1rem);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1) translateY(0);
-    }
-  }
-
   @keyframes scrollFloat {
     0%,
     100% {
@@ -1820,16 +1485,6 @@
     }
     50% {
       transform: translateX(-50%) translateY(-0.5rem);
-    }
-  }
-
-  @keyframes mouseFloat {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-0.25rem);
     }
   }
 
@@ -1852,7 +1507,7 @@
     0%,
     100% {
       transform: translateY(0);
-      opacity: var(--token-opacity-default);
+      opacity: 0.6;
     }
     50% {
       transform: translateY(0.25rem);
@@ -1860,142 +1515,92 @@
     }
   }
 
+  // Accessibility & Motion Preferences
   @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-    }
-
-    .profile__accent {
-      width: clamp(3rem, 3rem + 2vw, 6rem);
-    }
-
-    .btn:hover,
-    .stat:hover,
-    .tech__category:hover,
-    .avatar:hover {
+    .hero-grid,
+    .profile-section,
+    .value-section,
+    .stats-section,
+    .tech-section,
+    .stat-card,
+    .tech-category {
+      animation: none;
+      opacity: 1;
       transform: none;
+    }
+
+    .profile-name {
+      animation: none;
+    }
+
+    .profile-accent {
+      width: clamp(3rem, 3rem + 2vw, 6rem);
     }
 
     .avatar__rings {
       display: none;
     }
+
+    .btn:hover,
+    .stat-card:hover,
+    .tech-category:hover,
+    .avatar:hover {
+      transform: none;
+    }
   }
 
   @media (prefers-contrast: high) {
-    .stats,
-    .stat,
-    .tech,
-    .tech__category {
+    .stats-section,
+    .stat-card,
+    .tech-section,
+    .tech-category {
       border-width: 2px;
       border-color: currentColor;
-      background: var(--token-text-inverse);
     }
 
     .btn--primary {
-      border: var(--token-border-neutral-large);
-      background: var(--token-text-primary);
-      color: var(--token-text-inverse);
+      border: 2px solid currentColor;
     }
 
-    .btn--secondary {
-      border-width: 2px;
-      border-color: currentColor;
-    }
-
-    .profile__name,
-    .value__headline,
-    .stat__number {
+    .profile-name,
+    .value-headline,
+    .stat-number {
       text-shadow: none;
       font-weight: var(--token-font-weight-bold);
       color: var(--token-text-primary);
       -webkit-text-fill-color: var(--token-text-primary);
-    }
-
-    .mastery__indicator {
-      border: 2px solid currentColor;
     }
   }
 
   @media print {
     .hero {
       min-height: auto;
-      height: auto;
+      max-height: none;
       background: white;
       color: black;
       padding: var(--token-space-fluid-lg);
     }
 
-    .hero__actions,
+    .actions,
     .avatar__glow,
     .avatar__rings,
-    .scroll__indicator {
+    .scroll-indicator {
       display: none;
     }
 
-    .hero__container {
+    .hero-grid {
       grid-template-columns: 1fr;
       gap: var(--token-space-fluid-lg);
     }
 
-    .profile__name {
-      font-size: var(--token-font-size-4xl);
-      page-break-after: avoid;
+    .profile-name {
       color: black;
       -webkit-text-fill-color: black;
     }
 
-    .value__headline {
-      font-size: var(--token-font-size-2xl);
-      page-break-after: avoid;
-      color: black;
-    }
-
-    .value__description {
-      font-size: var(--token-font-size-base);
-      line-height: var(--token-line-height-loose);
-      color: black;
-    }
-
-    .stats__grid {
+    .stats-grid,
+    .tech-grid {
       grid-template-columns: repeat(2, 1fr);
-    }
-
-    .tech__grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  .hero,
-  .hero__canvas,
-  .avatar,
-  .btn,
-  .stat,
-  .tech__category {
-    will-change: transform;
-  }
-
-  .avatar__glow,
-  .ring {
-    will-change: transform, opacity;
-  }
-
-  .profile__name {
-    will-change: background-position;
-  }
-
-  @media (hover: none) {
-    .avatar__rings {
-      display: none;
-    }
-
-    .btn,
-    .stat,
-    .tech__category {
-      will-change: auto;
     }
   }
 </style>

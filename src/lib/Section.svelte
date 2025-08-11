@@ -13,5 +13,7 @@
     position: relative;
     width: 100%;
     margin: 0 auto;
+    margin-top: auto;
+    margin-bottom: auto;
   }
 </style>

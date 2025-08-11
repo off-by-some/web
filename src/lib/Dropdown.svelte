@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from 'svelte';
+  import { createEventDispatcher, onMount, tick } from 'svelte';
 
   interface DropdownOption {
     value: string;
@@ -19,239 +19,187 @@
     change: { value: string; option: DropdownOption };
   }>();
 
-  const keyActions = {
-    trigger: {
-      Enter: () => (dropdownOpen ? selectFocusedOption() : toggleDropdown()),
-      ' ': () => (dropdownOpen ? selectFocusedOption() : toggleDropdown()),
-      Escape: () => dropdownOpen && handleEscape(),
-      ArrowDown: () => (dropdownOpen ? moveFocus(1) : toggleDropdown()),
-      ArrowUp: () => dropdownOpen && moveFocus(-1),
-      Home: () => dropdownOpen && setFocus(0),
-      End: () => dropdownOpen && setFocus(options.length - 1),
-    },
-    option: {
-      Enter: (index: number) => selectOption(options[index].value),
-      ' ': (index: number) => selectOption(options[index].value),
-      ArrowDown: () => moveFocusAndApply(1),
-      ArrowUp: () => moveFocusAndApply(-1),
-      Home: () => setFocusAndApply(0),
-      End: () => setFocusAndApply(options.length - 1),
-      Escape: () => handleEscape(),
-    },
-  };
-
-  const classes = {
-    base: 'dropdown__trigger',
-    open: 'dropdown__trigger--open',
-    filled: 'dropdown__trigger--filled',
-    error: 'dropdown__trigger--error',
-    disabled: 'dropdown__trigger--disabled',
-  };
-
-  let dropdownOpen = false;
-  let dropdownEl: HTMLDivElement;
-  let triggerEl: HTMLButtonElement;
+  // State
+  let isOpen = false;
   let focusedIndex = -1;
+  let triggerRef: HTMLButtonElement;
+  let menuRef: HTMLDivElement;
+  let containerRef: HTMLDivElement;
 
-  const getOptionElement = (index: number): HTMLElement | null =>
-    dropdownEl?.querySelector(`[data-index="${index}"]`) as HTMLElement;
+  // Computed values
+  $: selectedOption = options.find((opt) => opt.value === value);
+  $: displayText = selectedOption?.label || placeholder;
+  $: hasValue = Boolean(value?.trim());
 
-  const scrollFocusedOptionIntoView = () => {
-    if (focusedIndex >= 0 && dropdownOpen) {
-      getOptionElement(focusedIndex)?.scrollIntoView({
-        block: 'nearest',
-        behavior: 'smooth',
-      });
+  // CSS classes
+  $: triggerClasses = [
+    'dropdown-trigger',
+    isOpen && 'dropdown-trigger--open',
+    hasValue && 'dropdown-trigger--filled',
+    error && 'dropdown-trigger--error',
+    disabled && 'dropdown-trigger--disabled',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  // Open/close dropdown
+  const openDropdown = async () => {
+    if (disabled || isOpen) return;
+
+    isOpen = true;
+    focusedIndex = value ? options.findIndex((opt) => opt.value === value) : 0;
+
+    await tick();
+
+    // Focus the menu for keyboard navigation
+    if (menuRef) {
+      menuRef.focus();
     }
   };
 
-  const buildTriggerClass = () =>
-    [
-      classes.base,
-      dropdownOpen && classes.open,
-      hasValue && classes.filled,
-      error && classes.error,
-      disabled && classes.disabled,
-    ]
-      .filter(Boolean)
-      .join(' ');
+  const closeDropdown = () => {
+    if (!isOpen) return;
 
-  const resetState = () => {
-    dropdownOpen = false;
+    isOpen = false;
     focusedIndex = -1;
-  };
 
-  const wrapIndex = (index: number): number => {
-    if (options.length === 0) return -1;
-    if (index < 0) return options.length - 1;
-    if (index >= options.length) return 0;
-    return index;
-  };
-
-  const setFocusWithBounds = (index: number): boolean => {
-    if (index >= 0 && index < options.length) {
-      focusedIndex = index;
-      scrollFocusedOptionIntoView();
-      return true;
-    }
-    return false;
-  };
-
-  const focusOptionElement = (index: number) => {
-    getOptionElement(index)?.focus();
-  };
-
-  const moveFocus = (direction: number) => {
-    if (options.length === 0) return;
-    focusedIndex = wrapIndex(focusedIndex + direction);
-    scrollFocusedOptionIntoView();
-  };
-
-  const moveFocusAndApply = (direction: number) => {
-    moveFocus(direction);
-    focusOptionElement(focusedIndex);
-  };
-
-  const setFocus = (index: number) => {
-    setFocusWithBounds(index);
-  };
-
-  const setFocusAndApply = (index: number) => {
-    if (setFocusWithBounds(index)) {
-      focusOptionElement(focusedIndex);
+    // Return focus to trigger
+    if (triggerRef) {
+      triggerRef.focus();
     }
   };
 
   const toggleDropdown = () => {
-    if (disabled) return;
-
-    dropdownOpen = !dropdownOpen;
-
-    if (dropdownOpen) {
-      focusedIndex = 0;
-      setTimeout(() => {
-        scrollFocusedOptionIntoView();
-        focusOptionElement(0);
-      }, 0);
+    if (isOpen) {
+      closeDropdown();
     } else {
-      focusedIndex = -1;
+      openDropdown();
     }
   };
 
-  const selectFocusedOption = () => {
-    if (focusedIndex >= 0) {
-      selectOption(options[focusedIndex].value);
-    }
-  };
-
-  const handleEscape = () => {
-    resetState();
-    (triggerEl as HTMLButtonElement | undefined)?.focus();
-  };
-
+  // Option selection
   const selectOption = (selectedValue: string) => {
     const option = options.find((opt) => opt.value === selectedValue);
     if (!option) return;
 
     value = selectedValue;
     dispatch('change', { value: selectedValue, option });
-    resetState();
-    triggerEl?.blur();
-
-    setTimeout(() => (dropdownOpen = false), 0);
+    closeDropdown();
   };
 
-  const handleTabNavigation = (event: KeyboardEvent, index: number) => {
-    const isFirstOption = index === 0;
-    const isLastOption = index === options.length - 1;
-
-    if (event.shiftKey && isFirstOption) {
-      resetState();
-      triggerEl?.focus();
-    } else if (!event.shiftKey && isLastOption) {
-      resetState();
-    }
-  };
-
-  type ActionMap = Record<string, (index: number) => void>;
-
-  const createKeydownHandler = (actionMap: ActionMap, index?: number) => (event: KeyboardEvent) => {
+  // Keyboard navigation
+  const handleTriggerKeydown = (event: KeyboardEvent) => {
     if (disabled) return;
 
-    if (event.key === 'Tab' && index !== undefined) {
-      handleTabNavigation(event, index);
-      return;
-    }
-
-    const action = actionMap[event.key];
-    if (action) {
-      event.preventDefault();
-      action(index ?? -1);
-    }
-  };
-
-  const createBlurHandler = (condition: (target: Node) => boolean) => (event: FocusEvent) => {
-    const relatedTarget = event.relatedTarget as Node;
-    if (condition(relatedTarget)) {
-      resetState();
-    }
-  };
-
-  const handleTriggerBlur = createBlurHandler((target) => !dropdownEl?.contains(target));
-
-  const handleOptionBlur = createBlurHandler((target) => !dropdownEl?.contains(target));
-
-  const handleClickOutside = (event: PointerEvent) => {
-    if (dropdownEl && !dropdownEl.contains(event.target as Node)) {
-      resetState();
-      triggerEl?.blur();
+    switch (event.key) {
+      case 'Enter':
+      case ' ':
+      case 'ArrowDown':
+        event.preventDefault();
+        openDropdown();
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        openDropdown();
+        // Set focus to last option when opening with up arrow
+        focusedIndex = options.length - 1;
+        break;
+      case 'Escape':
+        closeDropdown();
+        break;
     }
   };
 
-  const setupEventListeners = () => {
-    document.addEventListener('pointerdown', handleClickOutside);
-    return () => document.removeEventListener('pointerdown', handleClickOutside);
+  const handleMenuKeydown = (event: KeyboardEvent) => {
+    if (!isOpen || options.length === 0) return;
+
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        focusedIndex = focusedIndex < options.length - 1 ? focusedIndex + 1 : 0;
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        focusedIndex = focusedIndex > 0 ? focusedIndex - 1 : options.length - 1;
+        break;
+      case 'Home':
+        event.preventDefault();
+        focusedIndex = 0;
+        break;
+      case 'End':
+        event.preventDefault();
+        focusedIndex = options.length - 1;
+        break;
+      case 'Enter':
+      case ' ':
+        event.preventDefault();
+        if (focusedIndex >= 0) {
+          selectOption(options[focusedIndex].value);
+        }
+        break;
+      case 'Escape':
+        event.preventDefault();
+        closeDropdown();
+        break;
+      case 'Tab':
+        // Allow normal tab behavior to close dropdown
+        closeDropdown();
+        break;
+    }
   };
 
-  $: selectedOption = options.find((opt) => opt.value === value);
-  $: displayText = selectedOption?.label || placeholder;
-  $: hasValue = Boolean(value?.trim());
-  $: triggerClass = [
-    classes.base,
-    dropdownOpen && classes.open,
-    hasValue && classes.filled,
-    error && classes.error,
-    disabled && classes.disabled,
-  ]
-    .filter(Boolean)
-    .join(' ');
+  // Click outside handler
+  const handleClickOutside = (event: MouseEvent) => {
+    if (!isOpen) return;
 
-  onMount(setupEventListeners);
+    const target = event.target as Node;
+    if (containerRef && !containerRef.contains(target)) {
+      closeDropdown();
+    }
+  };
+
+  // Set up event listeners
+  onMount(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  });
+
+  // Handle option click
+  const handleOptionClick = (optionValue: string, event: MouseEvent) => {
+    event.stopPropagation();
+    selectOption(optionValue);
+  };
+
+  // Handle option mouse enter for focus
+  const handleOptionMouseEnter = (index: number) => {
+    focusedIndex = index;
+  };
 </script>
 
-<div class="dropdown" bind:this={dropdownEl}>
+<div class="dropdown" bind:this={containerRef}>
   <button
     type="button"
-    class={triggerClass}
+    class={triggerClasses}
     {id}
-    bind:this={triggerEl}
+    bind:this={triggerRef}
     on:click={toggleDropdown}
-    on:keydown={createKeydownHandler(keyActions.trigger)}
-    on:blur={handleTriggerBlur}
+    on:keydown={handleTriggerKeydown}
     {disabled}
     aria-haspopup="listbox"
-    aria-expanded={dropdownOpen}
+    aria-expanded={isOpen}
     aria-label={ariaLabel}
   >
-    <span class="dropdown__value" class:dropdown__value--placeholder={!hasValue}>
+    <span class="dropdown-trigger__text" class:dropdown-trigger__text--placeholder={!hasValue}>
       {displayText}
     </span>
     <svg
-      class="dropdown__chevron"
-      class:dropdown__chevron--rotated={dropdownOpen}
+      class="dropdown-trigger__icon"
+      class:dropdown-trigger__icon--rotated={isOpen}
       viewBox="0 0 20 20"
       aria-hidden="true"
-      focusable="false"
     >
       <path
         d="M6 8l4 4 4-4"
@@ -264,32 +212,38 @@
     </svg>
   </button>
 
-  {#if dropdownOpen}
-    <div class="dropdown__menu" role="listbox" aria-labelledby={id}>
+  {#if isOpen}
+    <!-- Backdrop to prevent clicks through -->
+    <div class="dropdown-backdrop" aria-hidden="true"></div>
+
+    <div
+      class="dropdown-menu"
+      role="listbox"
+      aria-labelledby={id}
+      bind:this={menuRef}
+      on:keydown={handleMenuKeydown}
+      tabindex="-1"
+    >
       {#each options as option, index (option.value)}
         <button
           type="button"
-          class="dropdown__option"
-          class:dropdown__option--focused={focusedIndex === index}
-          class:dropdown__option--selected={value === option.value}
+          class="dropdown-option"
+          class:dropdown-option--focused={focusedIndex === index}
+          class:dropdown-option--selected={value === option.value}
           role="option"
           aria-selected={value === option.value}
-          on:click={() => selectOption(option.value)}
-          on:mouseenter={() => (focusedIndex = index)}
-          on:keydown={createKeydownHandler(keyActions.option, index)}
-          on:focus={() => (focusedIndex = index)}
-          on:blur={handleOptionBlur}
-          data-index={index}
-          tabindex={focusedIndex === index ? 0 : -1}
+          on:click={(e) => handleOptionClick(option.value, e)}
+          on:mouseenter={() => handleOptionMouseEnter(index)}
+          tabindex="-1"
         >
-          <div class="dropdown__option-content">
-            <span class="dropdown__option-label">{option.label}</span>
+          <div class="dropdown-option__content">
+            <span class="dropdown-option__label">{option.label}</span>
             {#if option.description}
-              <span class="dropdown__option-description">{option.description}</span>
+              <span class="dropdown-option__description">{option.description}</span>
             {/if}
           </div>
           {#if value === option.value}
-            <svg class="dropdown__check" viewBox="0 0 20 20" aria-hidden="true">
+            <svg class="dropdown-option__check" viewBox="0 0 20 20" aria-hidden="true">
               <path
                 fill="currentColor"
                 d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -303,146 +257,94 @@
 </div>
 
 <style lang="scss">
-  @use 'styles/_breakpoints.scss' as *;
-
   .dropdown {
     position: relative;
     width: 100%;
   }
 
-  /* Base styles */
-  .dropdown__trigger {
+  .dropdown-trigger {
     width: 100%;
-    /* Apply blur directly to element, not pseudo */
-    background: var(--token-surface-glass-strong);
-    backdrop-filter: blur(var(--token-blur-lg));
-    -webkit-backdrop-filter: blur(var(--token-blur-lg));
-    border: var(--token-border-default-small);
-    border-radius: var(--token-radius-lg);
-    padding: var(--token-space-fluid-md) var(--token-space-fluid-lg);
-    font-size: var(--token-font-size-base);
-    font-family: inherit;
-    color: var(--token-text-primary);
-    transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
-    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    text-align: left;
-    box-shadow: var(--token-shadow-light);
-    position: relative;
+    gap: var(--token-space-fluid-sm);
 
-    /* Chrome fixes */
-    isolation: isolate;
+    background: var(--token-surface-glass-strong);
+    border: var(--token-border-default-small);
+    border-radius: var(--token-radius-lg);
+    padding: var(--token-space-fluid-md) var(--token-space-fluid-lg);
+
+    font-size: var(--token-font-size-base);
+    font-family: inherit;
+    color: var(--token-text-primary);
+    text-align: left;
+
+    cursor: pointer;
+    transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
+    box-shadow: var(--token-shadow-light);
 
     @media (min-width: 768px) {
       padding: var(--token-space-fluid-lg) var(--token-space-fluid-xl);
       font-size: var(--token-font-size-lg);
     }
-  }
 
-  .dropdown__trigger:hover:not(:disabled):not(.dropdown__trigger--open):not(:focus) {
-    border-color: var(--token-border-color-hover);
-    background: var(--token-surface-glass-medium);
-    box-shadow: var(--token-shadow-default);
-  }
+    &:hover:not(:disabled):not(.dropdown-trigger--open) {
+      border-color: var(--token-border-color-hover);
+      background: var(--token-surface-glass-medium);
+      box-shadow: var(--token-shadow-default);
+    }
 
-  .dropdown__trigger:hover:has(+ .dropdown__menu) {
-    border-color: inherit;
-    background: inherit;
-    box-shadow: inherit;
-  }
-
-  .dropdown__trigger:focus {
-    outline: none;
-    border-color: var(--token-interactive-color);
-    background: var(--token-surface-glass-medium);
-    box-shadow:
-      var(--token-shadow-focus),
-      0 0 20px var(--token-shadow-glow-subtle);
-    transform: translateY(-2px);
-  }
-
-  .dropdown__trigger:focus-visible {
-    outline: 3px solid var(--token-interactive-color);
-    outline-offset: 2px;
-  }
-
-  .dropdown__trigger--open {
-    border-color: var(--token-interactive-color);
-    background: var(--token-surface-glass-medium);
-    border-bottom-left-radius: var(--token-radius-sm);
-    border-bottom-right-radius: var(--token-radius-sm);
-    box-shadow:
-      var(--token-shadow-focus),
-      0 0 20px var(--token-shadow-glow-subtle);
-    pointer-events: auto;
-  }
-
-  .dropdown__trigger--filled:not(.dropdown__trigger--open):not(:focus) {
-    background: var(--token-surface-glass-medium);
-    box-shadow: var(--token-shadow-light);
-    transform: none;
-  }
-
-  .dropdown__trigger--filled:not(.dropdown__trigger--open):not(:focus):hover {
-    border-color: var(--token-border-color-hover);
-    box-shadow: var(--token-shadow-default);
-  }
-
-  .dropdown__trigger--error {
-    border-color: var(--token-status-danger-border);
-    background: var(--token-status-danger-bg);
-    box-shadow: 0 0 0 2px var(--token-status-danger-glow);
-  }
-
-  /* Disabled state without opacity */
-  .dropdown__trigger--disabled {
-    background: var(--token-surface-glass-subtle);
-    backdrop-filter: blur(var(--token-blur-sm));
-    -webkit-backdrop-filter: blur(var(--token-blur-sm));
-    border-color: var(--token-border-color-disabled, var(--token-text-quaternary));
-    color: var(--token-text-disabled, var(--token-text-quaternary));
-    cursor: not-allowed;
-    box-shadow: none;
-
-    /* Remove transforms and effects for disabled state */
-    &:hover,
     &:focus {
-      transform: none;
-      border-color: var(--token-border-color-disabled, var(--token-text-quaternary));
+      outline: none;
+      border-color: var(--token-interactive-color);
+      background: var(--token-surface-glass-medium);
+      box-shadow: var(--token-shadow-focus);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--token-interactive-color);
+      outline-offset: 2px;
+    }
+
+    &--open {
+      border-color: var(--token-interactive-color);
+      background: var(--token-surface-glass-medium);
+      border-bottom-left-radius: var(--token-radius-sm);
+      border-bottom-right-radius: var(--token-radius-sm);
+      box-shadow: var(--token-shadow-focus);
+    }
+
+    &--filled:not(.dropdown-trigger--open):not(:focus) {
+      background: var(--token-surface-glass-medium);
+    }
+
+    &--error {
+      border-color: var(--token-status-danger-border);
+      background: var(--token-status-danger-bg);
+      box-shadow: 0 0 0 2px var(--token-status-danger-glow);
+    }
+
+    &--disabled {
       background: var(--token-surface-glass-subtle);
-      box-shadow: none;
-    }
+      border-color: var(--token-border-color-disabled);
+      color: var(--token-text-disabled);
+      cursor: not-allowed;
+      opacity: 0.6;
 
-    /* Ensure disabled styles override other states */
-    &.dropdown__trigger--filled,
-    &.dropdown__trigger--error {
-      background: var(--token-surface-glass-subtle);
-      border-color: var(--token-border-color-disabled, var(--token-text-quaternary));
-      box-shadow: none;
-    }
-  }
-
-  .dropdown__trigger--disabled .dropdown__value {
-    color: var(--token-text-disabled, var(--token-text-quaternary));
-
-    &--placeholder {
-      color: var(--token-text-disabled, var(--token-text-quaternary));
+      &:hover,
+      &:focus {
+        border-color: var(--token-border-color-disabled);
+        background: var(--token-surface-glass-subtle);
+        box-shadow: none;
+      }
     }
   }
 
-  .dropdown__trigger--disabled .dropdown__chevron {
-    color: var(--token-text-disabled, var(--token-text-quaternary));
-  }
-
-  .dropdown__value {
+  .dropdown-trigger__text {
     flex: 1;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    letter-spacing: var(--token-letter-spacing-normal);
-    line-height: var(--token-line-height-normal);
     color: var(--token-text-primary);
 
     &--placeholder {
@@ -450,13 +352,12 @@
     }
   }
 
-  .dropdown__chevron {
+  .dropdown-trigger__icon {
     width: var(--token-size-4);
     height: var(--token-size-4);
     color: var(--token-text-tertiary);
-    transition: all var(--token-motion-duration-fast) var(--token-motion-ease-out);
+    transition: transform var(--token-motion-duration-fast) var(--token-motion-ease-out);
     flex-shrink: 0;
-    margin-left: var(--token-space-fluid-sm);
 
     &--rotated {
       transform: rotate(180deg);
@@ -464,28 +365,44 @@
     }
   }
 
-  .dropdown__menu {
+  .dropdown-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    background: transparent;
+    pointer-events: auto;
+  }
+
+  .dropdown-menu {
     position: absolute;
     top: 100%;
     left: 0;
     right: 0;
+    z-index: 1001;
+
     background: var(--token-surface-glass-stronger);
     border: var(--token-border-default-small);
     border-top: none;
     border-bottom-left-radius: var(--token-radius-lg);
     border-bottom-right-radius: var(--token-radius-lg);
-    /* NO backdrop-filter here to avoid nested blur conflicts */
-    box-shadow:
-      var(--token-shadow-elevated),
-      0 0 30px var(--token-shadow-glow-subtle);
-    z-index: 1000;
+
     max-height: 20rem;
     overflow-y: auto;
-    animation: dropdownSlideIn var(--token-motion-duration-fast) var(--token-motion-ease-out);
+
+    box-shadow: var(--token-shadow-elevated);
+
+    animation: slideDown 0.15s ease-out;
+
+    &:focus {
+      outline: none;
+    }
 
     // Custom scrollbar
     &::-webkit-scrollbar {
-      width: var(--token-space-2);
+      width: 8px;
     }
 
     &::-webkit-scrollbar-track {
@@ -501,35 +418,30 @@
         background: var(--token-surface-glass-stronger);
       }
     }
-
-    scrollbar-width: thin;
-    scrollbar-color: var(--token-surface-glass-medium) var(--token-surface-glass-subtle);
   }
 
-  .dropdown__option {
+  .dropdown-option {
     width: 100%;
-    background: transparent;
-    border: none;
-    padding: var(--token-space-fluid-md) var(--token-space-fluid-lg);
-    font-size: var(--token-font-size-sm);
-    font-family: inherit;
-    color: var(--token-text-primary);
-    cursor: pointer;
-    transition: all var(--token-motion-duration-fast) var(--token-motion-ease-out);
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: var(--token-space-fluid-sm);
+
+    background: transparent;
+    border: none;
+    padding: var(--token-space-fluid-md) var(--token-space-fluid-lg);
+
+    font-size: var(--token-font-size-sm);
+    font-family: inherit;
+    color: var(--token-text-primary);
     text-align: left;
-    position: relative;
+
+    cursor: pointer;
+    transition: all var(--token-motion-duration-fast) var(--token-motion-ease-out);
 
     @media (min-width: 768px) {
       padding: var(--token-space-fluid-lg) var(--token-space-fluid-xl);
       font-size: var(--token-font-size-base);
-    }
-
-    &:first-child {
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
     }
 
     &:last-child {
@@ -551,53 +463,47 @@
 
     &:focus {
       outline: none;
-      background: var(--token-surface-glass-medium);
-      color: var(--token-text-heading);
     }
 
     &:active {
       background: var(--token-surface-glass-stronger);
-      transform: scale(0.98);
     }
   }
 
-  .dropdown__option-content {
+  .dropdown-option__content {
     flex: 1;
     min-width: 0;
   }
 
-  .dropdown__option-label {
+  .dropdown-option__label {
     display: block;
     font-weight: var(--token-font-weight-medium);
     line-height: var(--token-line-height-snug);
-    letter-spacing: var(--token-letter-spacing-normal);
     margin-bottom: var(--token-space-1);
   }
 
-  .dropdown__option-description {
+  .dropdown-option__description {
     display: block;
     font-size: var(--token-font-size-xs);
     color: var(--token-text-tertiary);
     line-height: var(--token-line-height-relaxed);
-    letter-spacing: var(--token-letter-spacing-normal);
 
     @media (min-width: 768px) {
       font-size: var(--token-font-size-sm);
     }
   }
 
-  .dropdown__check {
+  .dropdown-option__check {
     width: var(--token-size-4);
     height: var(--token-size-4);
     color: var(--token-interactive-color);
     flex-shrink: 0;
-    margin-left: var(--token-space-fluid-sm);
   }
 
-  @keyframes dropdownSlideIn {
+  @keyframes slideDown {
     from {
       opacity: 0;
-      transform: translateY(-var(--token-space-2)) scale(0.98);
+      transform: translateY(-8px) scale(0.98);
     }
     to {
       opacity: 1;
@@ -605,27 +511,21 @@
     }
   }
 
-  // Accessibility & Motion Preferences
+  // Accessibility
   @media (prefers-reduced-motion: reduce) {
-    .dropdown__menu {
+    .dropdown-menu {
       animation: none;
-    }
-
-    .dropdown__trigger:hover,
-    .dropdown__trigger:focus {
-      transform: none;
     }
   }
 
   @media (prefers-contrast: high) {
-    .dropdown__trigger,
-    .dropdown__menu {
-      border-width: var(--token-size-2);
-      border-color: currentColor;
+    .dropdown-trigger,
+    .dropdown-menu {
+      border-width: 2px;
     }
 
-    .dropdown__option--focused,
-    .dropdown__option--selected {
+    .dropdown-option--focused,
+    .dropdown-option--selected {
       outline: 2px solid currentColor;
       outline-offset: -2px;
     }

@@ -343,33 +343,33 @@ $dark-mode-tokens: (
     ),
 
     hero: (
-      'radial-gradient(ellipse at 20% 70%, rgba(29, 233, 182, 0.15) 0%, transparent 50%)',
-      'radial-gradient(ellipse at 80% 30%, rgba(255, 60, 172, 0.12) 0%, transparent 50%)',
-      'linear-gradient(135deg, #0B0F28 10%, rgba(46, 26, 71, 0.9) 90%)',
+      'radial-gradient(ellipse at 22% 72%, rgba(9, 228, 177, 0.12) 0%, transparent 52%)',
+      'radial-gradient(ellipse at 82% 28%, rgba(252, 60, 170, 0.08) 0%, transparent 54%)',
+      'linear-gradient(180deg, rgba(3, 4, 24, 0.98) 0%, rgba(9, 13, 37, 0.98) 52%, rgba(22, 26, 50, 0.98) 100%)',
     ),
 
     hero-glow: (
-      'radial-gradient(circle at 15% 85%, rgba(9, 228, 177, 0.08) 0%, transparent 35%)',
-      'radial-gradient(circle at 85% 15%, rgba(252, 60, 170, 0.06) 0%, transparent 40%)',
+      'radial-gradient(circle at 15% 85%, rgba(9, 228, 177, 0.06) 0%, transparent 38%)',
+      'radial-gradient(circle at 85% 15%, rgba(252, 60, 170, 0.04) 0%, transparent 42%)',
       'radial-gradient(circle at 50% 50%, rgba(224, 192, 98, 0.03) 0%, transparent 60%)',
     ),
 
-    timeline: (
-      'radial-gradient(ellipse at 20% 30%, rgba(29, 233, 182, 0.03) 0%, transparent 50%)',
-      'radial-gradient(ellipse at 80% 70%, rgba(255, 60, 172, 0.02) 0%, transparent 50%)',
-      'linear-gradient(180deg, rgba(11, 15, 40, 0.95) 0%, rgba(46, 26, 71, 0.9) 100%)',
+    skills: (
+      'radial-gradient(ellipse at 28% 22%, rgba(9, 228, 177, 0.05) 0%, transparent 50%)',
+      'radial-gradient(circle at 78% 32%, rgba(224, 192, 98, 0.035) 0%, transparent 60%)',
+      'linear-gradient(180deg, rgba(3, 4, 24, 0.98) 0%, rgba(9, 13, 37, 0.98) 52%, rgba(22, 26, 50, 0.98) 100%)',
     ),
 
-    skills: (
-      'radial-gradient(ellipse at 30% 20%, rgba(29, 233, 182, 0.04) 0%, transparent 50%)',
-      'radial-gradient(ellipse at 70% 80%, rgba(255, 60, 172, 0.03) 0%, transparent 50%)',
-      'linear-gradient(180deg, rgba(46, 26, 71, 0.9) 0%, rgba(11, 15, 40, 0.95) 100%)',
+    timeline: (
+      'radial-gradient(ellipse at 50% 18%, rgba(9, 228, 177, 0.035) 0%, transparent 50%)',
+      'radial-gradient(ellipse at 88% 82%, rgba(252, 60, 170, 0.02) 0%, transparent 54%)',
+      'linear-gradient(180deg, rgba(3, 4, 24, 0.98) 0%, rgba(9, 13, 37, 0.98) 52%, rgba(22, 26, 50, 0.98) 100%)',
     ),
 
     contact: (
-      'radial-gradient(ellipse at 30% 20%, rgba(29, 233, 182, 0.04) 0%, transparent 50%)',
-      'radial-gradient(ellipse at 70% 80%, rgba(255, 60, 172, 0.03) 0%, transparent 50%)',
-      'linear-gradient(180deg, rgba(11, 15, 40, 0.95) 0%, rgba(46, 26, 71, 0.9) 100%)',
+      'radial-gradient(ellipse at 72% 28%, rgba(252, 60, 170, 0.05) 0%, transparent 52%)',
+      'radial-gradient(circle at 50% 72%, rgba(224, 192, 98, 0.045) 0%, transparent 60%)',
+      'linear-gradient(180deg, rgba(3, 4, 24, 0.98) 0%, rgba(9, 13, 37, 0.98) 52%, rgba(22, 26, 50, 0.98) 100%)',
     ),
 
     stat: (

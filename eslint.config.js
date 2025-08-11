@@ -84,6 +84,7 @@ export default tseslint.config(
       'svelte/valid-compile': 'error',
       'svelte/no-at-html-tags': 'error',
       'svelte/no-target-blank': 'error',
+      'svelte/prefer-svelte-reactivity': 'off',
       'sonarjs/deprecation': 'off', // Prevents crash Index out of range (requested index 23824, but source text has length 22975).
       'import-x/no-duplicates': 'off',
     },

@@ -2,7 +2,6 @@
   import { onMount, createEventDispatcher } from 'svelte';
   import Section from './Section.svelte';
   import Image from './Image/Image.svelte';
-  import { SvelteSet } from 'svelte/reactivity';
 
   interface Experience {
     title: string;
@@ -23,406 +22,334 @@
     experienceSelect: { experience: Experience };
   }>();
 
-  // Immutable constants
-  const OPACITY_ACTIVE = '1';
-  const OPACITY_INACTIVE = '0.6';
-  const TAB_ACTIVE = '0';
-  const TAB_INACTIVE = '-1';
-  const TAB_DATA_ATTR = 'data-original-tabindex';
-
-  let expandedItems = new SvelteSet<number>();
-  let timelineElement: HTMLElement | null = null;
-  let timelineProgressElement: HTMLElement | null = null;
+  // State
+  let timelineElement: HTMLElement;
+  let progressElement: HTMLElement;
   let activeIndex = 0;
+  let expandedItems = new Set<number>();
   let announcementText = '';
+  let touchStartY = 0;
+  let touchEndY = 0;
+  let showFloatingNav = false;
 
-  // Aggressive caching with dirty flags
-  let itemsCache: Element[] = [];
-  let itemRectsCache: DOMRect[] = [];
-  let dotsCache: HTMLElement[] = [];
-  let detailsCache: Element[] = [];
-  let cacheValid = false;
-  let viewportCenter = 0;
+  // Reactive values
+  $: progressValue = ((activeIndex + 1) / experiences.length) * 100;
 
-  // Single RAF flag for all operations
-  let updatePending = false;
-  let scrollPending = false;
+  // Navigation
+  const setActiveExperience = (index: number) => {
+    if (index === activeIndex || index < 0 || index >= experiences.length) return;
 
-  // Pre-calculated selector strings
-  const SELECTORS = {
-    items: '.timeline__item',
-    dots: '.timeline__dot',
-    details: '.timeline__details',
-    focusable: 'button, [tabindex], a, input, select, textarea',
-  } as const;
+    activeIndex = index;
+    updateProgress();
 
-  const refreshCache = () => {
-    if (!timelineElement || cacheValid) return;
+    const experience = experiences[index];
+    announcementText = `Focused on ${experience.title} at ${experience.company}, ${experience.date}`;
 
-    const items = timelineElement.querySelectorAll(SELECTORS.items);
-    itemsCache = Array.from(items);
-    dotsCache = itemsCache
-      .map((item) => item.querySelector(SELECTORS.dots) as HTMLElement)
-      .filter(Boolean);
-    detailsCache = Array.from(timelineElement.querySelectorAll(SELECTORS.details));
-
-    viewportCenter = window.innerHeight * 0.5; // Micro-optimization: multiply instead of divide
-    cacheValid = true;
-  };
-
-  const refreshRects = () => {
-    itemRectsCache = itemsCache.map((item) => item.getBoundingClientRect());
-  };
-
-  const invalidateCache = () => {
-    cacheValid = false;
-  };
-
-  // Ultra-fast closest item finder using cached rects
-  const findClosestItem = () => {
-    if (!itemRectsCache.length) return 0;
-
-    let minDistance = Infinity;
-    let closestIndex = 0;
-
-    // Unrolled loop for better performance
-    for (let i = 0; i < itemRectsCache.length; i++) {
-      const rect = itemRectsCache[i];
-      const distance = Math.abs(rect.top + rect.height * 0.5 - viewportCenter);
-
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestIndex = i;
-
-        // Early exit if we find a perfect match
-        if (distance < 10) break;
-      }
-    }
-
-    return closestIndex;
-  };
-
-  // Batched DOM updates
-  const updateTimelineProgress = (index: number) => {
-    if (!timelineProgressElement || !itemsCache.length) return;
-
-    if (updatePending) return;
-    updatePending = true;
-
-    requestAnimationFrame(() => {
-      const progress = (index + 1) / itemsCache.length;
-      timelineProgressElement!.style.transform = `scaleY(${progress})`;
-
-      // Batch opacity updates
-      for (let i = 0; i < dotsCache.length; i++) {
-        const dot = dotsCache[i];
-        if (dot) {
-          dot.style.opacity = i <= index ? OPACITY_ACTIVE : OPACITY_INACTIVE;
-        }
-      }
-
-      updatePending = false;
-    });
-  };
-
-  // Debounced scroll handler for better performance than throttling
-  let scrollTimeout: ReturnType<typeof setTimeout> | null = null;
-  const debouncedScroll = () => {
-    if (scrollPending) return;
-    scrollPending = true;
-
-    if (scrollTimeout) clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(() => {
-      refreshCache();
-      refreshRects();
-
-      const closestIndex = findClosestItem();
-      if (activeIndex !== closestIndex) {
-        console.log('Timeline item activated:', closestIndex);
-        activeIndex = closestIndex;
-        updateTimelineProgress(closestIndex);
-      }
-
-      scrollPending = false;
-    }, 16); // 8ms debounce for 120fps responsiveness
-  };
-
-  // Optimized tab index management with minimal DOM queries
-  const updateTabIndex = () => {
-    refreshCache();
-
-    for (let i = 0; i < detailsCache.length; i++) {
-      const section = detailsCache[i];
-      const isExpanded = expandedItems.has(i);
-      const focusableElements = section.querySelectorAll(SELECTORS.focusable);
-
-      for (const element of focusableElements) {
-        if (isExpanded) {
-          const original = element.getAttribute(TAB_DATA_ATTR);
-          element.setAttribute('tabindex', original || TAB_ACTIVE);
-        } else {
-          const current = element.getAttribute('tabindex') || TAB_ACTIVE;
-          element.setAttribute(TAB_DATA_ATTR, current);
-          element.setAttribute('tabindex', TAB_INACTIVE);
-        }
-      }
+    // Smooth scroll to item
+    const item = timelineElement?.querySelector(`[data-timeline-index="${index}"]`);
+    if (item) {
+      item.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   };
 
-  // Inlined announcement text creation
-  const updateAnnouncement = (experience: Experience, isExpanded: boolean) => {
-    const action = isExpanded ? 'Expanded' : 'Collapsed';
-    announcementText = isExpanded
-      ? `${action} details for ${experience.title} at ${experience.company}. Showing ${experience.highlights.length} key achievements and ${experience.skills.length} skills.`
-      : `${action} details for ${experience.title} at ${experience.company}`;
-  };
-
-  // Optimized keyboard handler
-  const handleKeydown = (callback: () => void, event: KeyboardEvent) => {
-    const key = event.key;
-    if (key === 'Enter' || key === ' ' || key === 'Spacebar') {
-      event.preventDefault();
-      event.stopPropagation();
-      callback();
-    }
-  };
-
-  const handleReadMore = (event: Event, experience: Experience, index: number) => {
-    event.preventDefault();
-
+  const toggleExpanded = (index: number) => {
+    const experience = experiences[index];
     const wasExpanded = expandedItems.has(index);
 
-    // Direct Set manipulation
     if (wasExpanded) {
       expandedItems.delete(index);
     } else {
       expandedItems.add(index);
     }
-
     expandedItems = expandedItems; // Trigger reactivity
 
-    updateAnnouncement(experience, !wasExpanded);
+    const action = wasExpanded ? 'Collapsed' : 'Expanded';
+    announcementText = `${action} details for ${experience.title} at ${experience.company}`;
+
     dispatch('experienceSelect', { experience });
-
-    // Use next frame for tab index update
-    requestAnimationFrame(updateTabIndex);
   };
 
-  const handleTimelineKeydown = (event: KeyboardEvent, index: number) => {
-    handleKeydown(() => {
-      const toggleButton = timelineElement?.querySelector(`#toggle-${index}`) as HTMLButtonElement;
-      toggleButton?.focus();
-      toggleButton?.click();
-    }, event);
+  const updateProgress = () => {
+    if (!progressElement) return;
+
+    requestAnimationFrame(() => {
+      progressElement.style.transform = `scaleY(${progressValue / 100})`;
+    });
   };
 
-  const handleToggleKeydown = (event: KeyboardEvent, experience: Experience, index: number) => {
-    handleKeydown(() => handleReadMore(new Event('click'), experience, index), event);
+  // Scroll detection for active item
+  const handleScroll = () => {
+    if (!timelineElement) return;
+
+    const rect = timelineElement.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+
+    // Show floating nav when section is in view
+    const contentStart = rect.top + 200;
+    const contentEnd = rect.bottom - viewportHeight * 0.25;
+    showFloatingNav = contentStart < viewportHeight && contentEnd > 0;
+
+    const items = timelineElement.querySelectorAll('[data-timeline-index]');
+    const viewportCenter = window.innerHeight / 2;
+    let closestIndex = 0;
+    let minDistance = Infinity;
+
+    items.forEach((item, index) => {
+      const itemRect = item.getBoundingClientRect();
+      const itemCenter = itemRect.top + itemRect.height / 2;
+      const distance = Math.abs(itemCenter - viewportCenter);
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestIndex = index;
+      }
+    });
+
+    if (activeIndex !== closestIndex) {
+      activeIndex = closestIndex;
+      updateProgress();
+    }
   };
 
-  const handleTimelineFocus = (index: number) => {
-    const timelineItem = timelineElement?.querySelector(
-      `[data-timeline-index="${index}"]`,
-    ) as HTMLElement;
+  // Touch handling for mobile
+  const handleTouchStart = (event: TouchEvent) => {
+    touchStartY = event.touches[0].clientY;
+  };
 
-    if (timelineItem) {
-      timelineItem.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+  const handleTouchMove = (event: TouchEvent) => {
+    touchEndY = event.touches[0].clientY;
+  };
 
-      activeIndex = index;
-      updateTimelineProgress(index);
+  const handleTouchEnd = () => {
+    if (!touchStartY || !touchEndY) return;
 
-      const exp = experiences[index];
-      announcementText = `Focused on ${exp.title} at ${exp.company}, ${exp.date}`;
+    const difference = touchStartY - touchEndY;
+    const isUpSwipe = difference > 50;
+    const isDownSwipe = difference < -50;
+
+    if (isUpSwipe && activeIndex < experiences.length - 1) {
+      setActiveExperience(activeIndex + 1);
+    } else if (isDownSwipe && activeIndex > 0) {
+      setActiveExperience(activeIndex - 1);
+    }
+
+    touchStartY = 0;
+    touchEndY = 0;
+  };
+
+  // Keyboard navigation
+  const handleKeydown = (event: KeyboardEvent) => {
+    if (!timelineElement?.contains(event.target as Node)) return;
+
+    const actions: Record<string, () => void> = {
+      ArrowUp: () => setActiveExperience(Math.max(0, activeIndex - 1)),
+      ArrowDown: () => setActiveExperience(Math.min(experiences.length - 1, activeIndex + 1)),
+      Home: () => setActiveExperience(0),
+      End: () => setActiveExperience(experiences.length - 1),
+    };
+
+    if (actions[event.key]) {
+      event.preventDefault();
+      actions[event.key]();
     }
   };
 
   onMount(() => {
-    // Initialize progress element
-    if (timelineProgressElement) {
-      timelineProgressElement.style.transform = 'scaleY(0)';
-      timelineProgressElement.style.transformOrigin = 'top';
-    }
+    // Initialize progress
+    updateProgress();
 
-    // Single event listener setup with passive scrolling
-    const scrollOptions = { passive: true, capture: false };
-    window.addEventListener('scroll', debouncedScroll, scrollOptions);
-    window.addEventListener(
-      'resize',
-      () => {
-        invalidateCache();
-        viewportCenter = window.innerHeight * 0.5;
-        debouncedScroll();
-      },
-      scrollOptions,
-    );
+    // Event listeners
+    const scrollOptions = { passive: true };
+    window.addEventListener('scroll', handleScroll, scrollOptions);
+    window.addEventListener('keydown', handleKeydown);
 
-    // Initial setup
-    refreshCache();
-    debouncedScroll();
-
-    // Initialize tab index on next frame
-    requestAnimationFrame(() => {
-      setTimeout(updateTabIndex, 100);
-    });
+    // Initial scroll check
+    setTimeout(handleScroll, 100);
 
     return () => {
-      window.removeEventListener('scroll', debouncedScroll);
-      window.removeEventListener('resize', debouncedScroll);
-      if (scrollTimeout) clearTimeout(scrollTimeout);
-
-      // Clean up all caches
-      itemsCache = [];
-      itemRectsCache = [];
-      dotsCache = [];
-      detailsCache = [];
-      cacheValid = false;
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('keydown', handleKeydown);
     };
   });
 </script>
 
-<section class="timeline" id="experience" aria-labelledby="timeline-heading">
+<section
+  class="timeline"
+  id="experience"
+  aria-labelledby="timeline-heading"
+  bind:this={timelineElement}
+  on:touchstart={handleTouchStart}
+  on:touchmove={handleTouchMove}
+  on:touchend={handleTouchEnd}
+>
   <!-- Screen reader announcements -->
   <div class="sr-only" role="status" aria-live="polite" aria-atomic="true">
     {announcementText}
   </div>
-  <Section className="timeline__content">
-    <div class="timeline__header">
-      <h2 class="timeline__title" id="timeline-heading">{title}</h2>
-      <div class="timeline__subtitle">
+
+  <Section className="timeline__container">
+    <!-- Header -->
+    <header class="header">
+      <h2 class="header__title" id="timeline-heading">{title}</h2>
+      <p class="header__subtitle">
         Engineering exceptional products & empowering exceptional teams across {experiences.length} organizations.
+      </p>
+    </header>
+
+    <!-- Timeline Content -->
+    <div class="timeline-content">
+      <!-- Progress Line -->
+      <div class="timeline-line" aria-hidden="true">
+        <div class="timeline-progress" bind:this={progressElement}></div>
+      </div>
+
+      <!-- Experience Items -->
+      <div class="timeline-items" role="list" aria-label="Professional experience timeline">
+        {#each experiences as experience, index (index)}
+          <article
+            class="timeline-item"
+            class:timeline-item--active={activeIndex === index}
+            class:timeline-item--expanded={expandedItems.has(index)}
+            class:timeline-item--left={index % 2 === 0}
+            class:timeline-item--right={index % 2 === 1}
+            data-timeline-index={index}
+            data-company={experience.company}
+            role="listitem"
+            style="animation-delay: {index * 0.1}s"
+          >
+            <!-- Timeline Marker -->
+            <div class="timeline-marker" aria-hidden="true">
+              <div class="timeline-dot"></div>
+              <div class="timeline-date">{experience.dateValue}</div>
+            </div>
+
+            <!-- Experience Card -->
+            <div class="experience-card">
+              <header class="card-header">
+                <div class="card-logo">
+                  <Image src={experience.logo} alt="" sizes="56px" loading="lazy" />
+                </div>
+
+                <div class="card-meta">
+                  <h3 class="card-title">{experience.title}</h3>
+                  <div class="card-company">{experience.company}</div>
+                  <div class="card-period">{experience.date} • {experience.location}</div>
+                </div>
+
+                <button
+                  class="expand-button"
+                  on:click={() => toggleExpanded(index)}
+                  aria-expanded={expandedItems.has(index)}
+                  aria-controls="experience-{index}-details"
+                  aria-label="{expandedItems.has(index)
+                    ? 'Hide'
+                    : 'Show'} details for {experience.title}"
+                >
+                  <span class="expand-button__text">
+                    {expandedItems.has(index) ? 'Less' : 'More'}
+                  </span>
+                  <svg
+                    class="expand-button__icon"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <path
+                      d="M6 9L12 15L18 9"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </button>
+              </header>
+
+              <div class="card-summary">{experience.summary}</div>
+
+              <div
+                class="card-details"
+                class:card-details--expanded={expandedItems.has(index)}
+                id="experience-{index}-details"
+                aria-hidden={!expandedItems.has(index)}
+              >
+                <div class="highlights">
+                  <h4 class="highlights__title">Key Achievements</h4>
+                  <ul class="highlights__list">
+                    {#each experience.highlights as highlight, highlightIndex (highlightIndex)}
+                      <li class="highlights__item">{highlight}</li>
+                    {/each}
+                  </ul>
+                </div>
+
+                <div class="skills">
+                  {#each experience.skills as skill, skillIndex (skillIndex)}
+                    <span class="skill">{skill}</span>
+                  {/each}
+                </div>
+              </div>
+            </div>
+          </article>
+        {/each}
       </div>
     </div>
 
+    <!-- Floating Mobile Navigation -->
     <div
-      class="timeline__container"
-      bind:this={timelineElement}
-      role="list"
-      aria-label="Professional experience timeline"
+      class="floating-nav"
+      class:floating-nav--visible={showFloatingNav}
+      aria-label="Timeline navigation"
     >
-      <div class="timeline__line" role="presentation" aria-hidden="true">
-        <div
-          class="timeline__progress"
-          bind:this={timelineProgressElement}
-          aria-label="Timeline progress indicator"
-        ></div>
-      </div>
-
-      {#each experiences as experience, index (index)}
-        <div
-          class="timeline__item"
-          class:timeline__item--active={activeIndex === index}
-          class:timeline__item--expanded={expandedItems.has(index)}
-          class:timeline__item--left={index % 2 === 0}
-          class:timeline__item--right={index % 2 === 1}
-          data-index={index}
-          data-timeline-index={index}
-          role="listitem"
-          on:focus={() => handleTimelineFocus(index)}
-          aria-label="{experience.title} at {experience.company}, {experience.date}. {activeIndex ===
-          index
-            ? 'Currently active. '
-            : ''}Press Enter to {expandedItems.has(index) ? 'collapse' : 'expand'} details."
+      <div class="floating-nav__content">
+        <button
+          class="floating-nav__button floating-nav__button--prev"
+          on:click={() => setActiveExperience(Math.max(0, activeIndex - 1))}
+          disabled={activeIndex === 0}
+          aria-label="Previous experience"
         >
-          <div class="timeline__card">
-            <div class="timeline__marker" role="presentation" aria-hidden="true">
-              <div
-                class="timeline__dot"
-                aria-label="Timeline marker for {experience.dateValue}"
-              ></div>
-              <div class="timeline__date">{experience.dateValue}</div>
-            </div>
-            <div class="timeline__card-header">
-              <div class="timeline__logo-container">
-                <div class="timeline__logo">
-                  <Image src={experience.logo} alt="" sizes="48px" loading="lazy" />
-                </div>
-              </div>
-              <div class="timeline__meta">
-                <h3 class="timeline__role" id="experience-{index}-title">
-                  {experience.title}
-                </h3>
-                <div class="timeline__company" id="experience-{index}-company">
-                  {experience.company}
-                </div>
-                <div class="timeline__period" id="experience-{index}-period">
-                  {experience.date} • {experience.location}
-                </div>
-              </div>
-              <button
-                class="timeline__toggle"
-                on:click={(e) => handleReadMore(e, experience, index)}
-                on:keydown={(e) => handleToggleKeydown(e, experience, index)}
-                aria-expanded={expandedItems.has(index)}
-                aria-controls="experience-{index}-details"
-                aria-label="{expandedItems.has(index)
-                  ? 'Hide'
-                  : 'Show'} details for {experience.title} at {experience.company}"
-                id="toggle-{index}"
-              >
-                <span class="toggle__text">
-                  {expandedItems.has(index) ? 'Hide Details' : 'View Details'}
-                </span>
-                <svg
-                  class="toggle__chevron"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M6 9L12 15L18 9"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-              </button>
-            </div>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M18 15L12 9L6 15"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
 
-            <div class="timeline__summary" id="experience-{index}-summary">
-              {experience.summary}
-            </div>
-
-            <div
-              class="timeline__details"
-              class:timeline__details--expanded={expandedItems.has(index)}
-              id="experience-{index}-details"
-              role="region"
-              aria-labelledby="experience-{index}-title"
-              aria-hidden={!expandedItems.has(index)}
-              inert={!expandedItems.has(index)}
-            >
-              <div class="timeline__highlights">
-                <h4 id="experience-{index}-achievements">Key Achievements</h4>
-                <ul role="list" aria-labelledby="experience-{index}-achievements">
-                  {#each experience.highlights as highlight, highlightIndex (highlightIndex)}
-                    <li role="listitem">{highlight}</li>
-                  {/each}
-                </ul>
-              </div>
-
-              <div class="timeline__skills" role="list" aria-label="Skills used in this role">
-                {#each experience.skills as skill, skillIndex (skillIndex)}
-                  <span class="timeline__skill" role="listitem" aria-label="Skill: {skill}"
-                    >{skill}</span
-                  >
-                {/each}
-              </div>
-            </div>
+        <div class="floating-nav__progress">
+          <div class="floating-nav__track">
+            <div class="floating-nav__fill" style="height: {progressValue}%"></div>
           </div>
+          <span class="floating-nav__counter">{activeIndex + 1}/{experiences.length}</span>
         </div>
-      {/each}
+
+        <button
+          class="floating-nav__button floating-nav__button--next"
+          on:click={() => setActiveExperience(Math.min(experiences.length - 1, activeIndex + 1))}
+          disabled={activeIndex === experiences.length - 1}
+          aria-label="Next experience"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="M6 9l6 6 6-6"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+      </div>
     </div>
   </Section>
 </section>
 
 <style lang="scss">
-  @use 'styles/animations.scss' as *;
-  @use 'styles/_breakpoints.scss' as *;
+  @use 'styles/_breakpoints' as *;
 
-  /* Screen reader only content */
   .sr-only {
     position: absolute;
     width: 1px;
@@ -438,33 +365,56 @@
   .timeline {
     position: relative;
     background: var(--token-gradients-timeline);
-    padding: var(--token-space-fluid-5xl) var(--token-space-fluid-md);
+    padding: var(--token-space-fluid-6xl) 0;
     overflow: hidden;
     font-family: var(--token-font-family-sans);
+    font-feature-settings:
+      'kern' 1,
+      'liga' 1,
+      'calt' 1,
+      'ss01' 1;
+    text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--token-gradients-hero-glow);
+      opacity: 0.4;
+      pointer-events: none;
+    }
+  }
+
+  .timeline__container {
+    position: relative;
+    z-index: 1;
+    margin: 0 auto;
+    padding: 0 var(--token-space-fluid-lg);
+
     @media (min-width: $breakpoint-md) {
-      padding: var(--token-space-fluid-5xl) var(--token-space-fluid-lg);
+      padding: 0 var(--token-space-fluid-xl);
     }
 
     @media (min-width: $breakpoint-lg) {
-      padding: var(--token-space-fluid-5xl) var(--token-space-fluid-xl);
+      padding: 0 var(--token-space-fluid-2xl);
     }
   }
 
-  .timeline__header {
+  // Header styles
+  .header {
     text-align: center;
     margin-bottom: var(--token-space-fluid-5xl);
-    animation: fade-in-up 1s var(--token-motion-ease-out) both;
+    animation: fadeInUp 1s var(--token-motion-ease-out) both;
   }
 
-  .timeline__title {
+  .header__title {
     font-size: var(--token-font-size-4xl);
     font-weight: var(--token-font-weight-bold);
     line-height: var(--token-line-height-tight);
     color: var(--token-text-heading);
-    margin-bottom: var(--token-space-fluid-md);
+    margin-bottom: var(--token-space-fluid-lg);
     letter-spacing: var(--token-letter-spacing-tight);
     background: var(--token-gradients-heading);
     background-size: 200% 200%;
@@ -482,13 +432,11 @@
     }
   }
 
-  .timeline__subtitle {
+  .header__subtitle {
     font-size: var(--token-font-size-lg);
     color: var(--token-text-secondary);
-    font-weight: var(--token-font-weight-normal);
     line-height: var(--token-line-height-relaxed);
-    letter-spacing: var(--token-letter-spacing-normal);
-    max-width: var(--token-container-5xl);
+    max-width: 70ch;
     margin: 0 auto;
 
     @media (min-width: $breakpoint-md) {
@@ -500,253 +448,172 @@
     }
   }
 
-  .timeline__container {
+  // Timeline content
+  .timeline-content {
     position: relative;
-    padding: var(--token-space-fluid-2xl) 0;
-    gap: var(--token-space-fluid-lg);
+    animation: fadeInUp 1s var(--token-motion-ease-out) 0.3s both;
   }
 
-  .timeline__line {
+  .timeline-line {
     position: absolute;
-    left: var(--token-space-fluid-lg);
     top: 0;
     bottom: 0;
-    width: var(--token-size-px);
-    background: linear-gradient(
-      to bottom,
-      transparent 0%,
-      var(--token-tint-primary-rest) 20%,
-      var(--token-tint-primary-rest) 80%,
-      transparent 100%
-    );
+    width: 2px;
+    left: var(--token-space-fluid-2xl);
+    background: var(--token-surface-glass-strong);
     border-radius: var(--token-radius-full);
-    opacity: var(--token-opacity-subtle);
+    opacity: 0.3;
+
+    @media (min-width: $breakpoint-md) {
+      left: var(--token-space-fluid-3xl);
+      width: 3px;
+    }
 
     @media (min-width: $breakpoint-lg) {
       left: 50%;
       transform: translateX(-50%);
-      width: var(--token-size-2);
-    }
-
-    @media (max-width: calc(#{$breakpoint-md} - 1px)) {
-      display: none;
-    }
-
-    @media (min-width: $breakpoint-md) and (max-width: #{$breakpoint-lg}) {
-      width: var(--token-size-2);
-      left: calc(var(--token-space-fluid-md) - var(--token-size-1));
+      width: 4px;
     }
   }
 
-  .timeline__progress {
-    position: absolute;
-    top: 0;
-    left: 0;
+  .timeline-progress {
     width: 100%;
     height: 100%;
     background: linear-gradient(
       to bottom,
       transparent 0%,
-      var(--token-interactive-color) 20%,
-      var(--token-interactive-color) 80%,
+      var(--token-interactive-color) 10%,
+      var(--token-interactive-color) 90%,
       transparent 100%
     );
     border-radius: inherit;
     transform: scaleY(0);
     transform-origin: top;
     transition: transform 0.6s var(--token-motion-ease-out);
-    box-shadow: 0 0 var(--token-space-2) var(--token-shadow-glow-subtle);
+    box-shadow: 0 0 12px var(--token-interactive-glow);
   }
 
-  .timeline__item {
+  .timeline-items {
     position: relative;
-    margin-bottom: var(--token-space-fluid-2xl);
-    padding-left: var(--token-space-fluid-4xl);
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: var(--token-space-fluid-4xl);
+    padding-left: var(--token-space-fluid-5xl);
     opacity: 0;
-    transform: translateY(var(--token-space-fluid-lg));
-    animation: timeline-entrance 0.8s var(--token-motion-ease-out) forwards;
+    transform: translateY(40px);
+    animation: timelineItemFadeIn 0.8s var(--token-motion-ease-out) forwards;
 
-    @media (max-width: calc(#{$breakpoint-md} - 1px)) {
-      padding-left: 0;
-    }
-
-    &[data-index='0'] {
-      animation-delay: 0.1s;
-    }
-    &[data-index='1'] {
-      animation-delay: 0.2s;
-    }
-    &[data-index='2'] {
-      animation-delay: 0.3s;
-    }
-    &[data-index='3'] {
-      animation-delay: 0.4s;
-    }
-    &[data-index='4'] {
-      animation-delay: 0.5s;
-    }
-    &[data-index='5'] {
-      animation-delay: 0.6s;
-    }
-    &[data-index='6'] {
-      animation-delay: 0.7s;
-    }
-    &[data-index='7'] {
-      animation-delay: 0.8s;
-    }
-    &[data-index='8'] {
-      animation-delay: 0.9s;
-    }
-    &[data-index='9'] {
-      animation-delay: 1s;
+    @media (min-width: $breakpoint-md) {
+      padding-left: var(--token-space-fluid-6xl);
     }
 
     @media (min-width: $breakpoint-lg) {
       display: grid;
-      grid-template-columns: 1.2fr auto 1.2fr;
-      gap: var(--token-space-fluid-lg) var(--token-space-fluid-2xl);
+      grid-template-columns: 1fr auto 1fr;
+      gap: var(--token-space-fluid-2xl);
       padding-left: 0;
-      margin-bottom: var(--token-space-fluid-3xl);
-    }
-
-    &:focus {
-      outline: none;
-    }
-  }
-
-  @media (min-width: $breakpoint-lg) {
-    .timeline__item--left {
-      .timeline__card {
-        grid-column: 1;
-        justify-self: end;
-        margin-right: 35px;
-      }
-    }
-
-    .timeline__item--right {
-      .timeline__card {
-        grid-column: 3;
-        justify-self: start;
-        margin-left: 35px;
-      }
-    }
-  }
-
-  .timeline__item--active {
-    .timeline__marker .timeline__dot {
-      background: var(--token-interactive-color);
-      backdrop-filter: blur(var(--token-blur-sm));
-      box-shadow:
-        0 0 0 var(--token-size-2) var(--token-surface-color),
-        0 0 0 var(--token-size-3) var(--token-interactive-hover),
-        0 0 var(--token-space-fluid-md) var(--token-interactive-glow),
-        var(--token-shadow-focus);
-      transform: scale(1.2);
-      opacity: 1;
-    }
-
-    .timeline__card {
-      border-color: var(--token-interactive-hover);
-      background: var(--token-surface-glass-medium);
-      box-shadow:
-        var(--token-shadow-interactive),
-        var(--token-shadow-elevated),
-        0 0 20px var(--token-shadow-glow-subtle);
-
-      &::before {
-        background: linear-gradient(
-          135deg,
-          var(--token-tint-overlay-medium) 0%,
-          transparent 50%,
-          var(--token-tint-overlay-subtle) 100%
-        );
-      }
-
-      &:hover {
-        transform: translateY(-6px) scale(1.02);
-        box-shadow:
-          var(--token-shadow-interactive),
-          var(--token-shadow-elevated),
-          0 0 30px var(--token-state-hover-glow);
-      }
-    }
-  }
-
-  .timeline__marker {
-    width: 7rem;
-    position: absolute;
-    top: 50%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    z-index: var(--token-z-raised);
-
-    @media (min-width: $breakpoint-md) and (max-width: calc(#{$breakpoint-lg} - 1px)) {
-      left: -115px;
+      margin-bottom: var(--token-space-fluid-5xl);
     }
 
     @media (min-width: $breakpoint-lg) {
-      .timeline__item--left & {
-        right: -8.3rem;
+      &--left .experience-card {
+        grid-column: 1;
+        justify-self: end;
+        margin-top: -5rem;
       }
 
-      .timeline__item--right & {
-        left: -8.4rem;
+      &--right .experience-card {
+        margin-top: 2rem;
+        grid-column: 3;
+        justify-self: start;
       }
-    }
-
-    @media (max-width: calc(#{$breakpoint-md} - 1px)) {
-      display: none;
     }
   }
 
-  .timeline__dot {
-    width: var(--token-size-5);
-    height: var(--token-size-5);
+  // Timeline markers
+  .timeline-marker {
+    position: absolute;
+    left: 0;
+    top: var(--token-space-fluid-xl);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 2;
+
+    @media (min-width: $breakpoint-md) {
+      left: var(--token-space-fluid-sm);
+    }
+
+    @media (min-width: $breakpoint-lg) {
+      grid-column: 2;
+      position: relative;
+      left: auto;
+      top: var(--token-space-fluid-2xl);
+    }
+  }
+
+  .timeline-dot {
+    width: 1rem;
+    height: 1rem;
     border-radius: var(--token-radius-full);
     background: var(--token-surface-glass-strong);
-    border: var(--token-border-default-small);
-    transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
-    margin-bottom: var(--token-space-fluid-sm);
-    z-index: var(--token-z-raised);
-    position: relative;
-    opacity: var(--token-opacity-medium);
+    border: 2px solid var(--token-border-color-default);
+    transition: all 0.4s var(--token-motion-ease-out);
+    opacity: 0.6;
     backdrop-filter: blur(var(--token-blur-sm));
-    box-shadow: var(--token-shadow-light);
+
+    @media (min-width: $breakpoint-md) {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    @media (min-width: $breakpoint-lg) {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+
+    .timeline-item--active & {
+      background: var(--token-interactive-color);
+      border-color: var(--token-interactive-color);
+      opacity: 1;
+      transform: scale(1.2);
+      box-shadow: 0 0 20px var(--token-interactive-glow);
+    }
   }
 
-  .timeline__date {
+  .timeline-date {
+    margin-top: var(--token-space-fluid-sm);
     font-size: var(--token-font-size-xs);
     font-weight: var(--token-font-weight-semibold);
-    letter-spacing: var(--token-letter-spacing-extra-wide);
-    line-height: var(--token-line-height-snug);
     color: var(--token-text-tertiary);
-    opacity: var(--token-opacity-medium);
     text-transform: uppercase;
+    letter-spacing: var(--token-letter-spacing-widest);
     white-space: nowrap;
     background: var(--token-surface-glass-strong);
     padding: var(--token-space-fluid-xs) var(--token-space-fluid-sm);
     border-radius: var(--token-radius-sm);
-    backdrop-filter: blur(var(--token-blur-lg));
     border: var(--token-border-default-small);
-    box-shadow: var(--token-shadow-light);
+    backdrop-filter: blur(var(--token-blur-lg));
 
-    @media (max-width: #{$breakpoint-lg}) {
+    @media (max-width: calc($breakpoint-lg - 1px)) {
       display: none;
     }
   }
 
-  .timeline__card {
+  // Experience cards
+  .experience-card {
     background: var(--token-surface-glass-medium);
     border: var(--token-border-default-small);
-    border-radius: var(--token-radius-lg);
-    padding: var(--token-space-fluid-lg);
-    margin: var(--token-space-fluid-lg) 0;
+    border-radius: var(--token-radius-xl);
+    padding: var(--token-space-fluid-xl);
     backdrop-filter: blur(var(--token-blur-lg));
-    transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
-    position: relative;
-    width: 100%;
     box-shadow: var(--token-shadow-default);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s var(--token-motion-ease-out);
+    width: 100%;
 
     &::before {
       content: '';
@@ -754,492 +621,520 @@
       inset: 0;
       background: var(--token-surface-glass-iridescent);
       opacity: 0;
-      transition: opacity var(--token-motion-duration-normal) var(--token-motion-ease-out);
+      transition: opacity 0.4s var(--token-motion-ease-out);
       border-radius: inherit;
       pointer-events: none;
     }
 
-    @media (min-width: $breakpoint-md) {
-      padding: var(--token-space-fluid-xl);
-      border-radius: var(--token-radius-xl);
-    }
-
     &:hover {
-      transform: translateY(-4px) scale(1.02);
-      border-color: var(--token-border-color-default);
+      transform: translateY(-4px) scale(1.01);
+      border-color: var(--token-border-color-hover);
       box-shadow: var(--token-shadow-elevated);
 
       &::before {
-        opacity: 1;
+        opacity: 0.6;
       }
     }
 
-    &:focus-within {
-      box-shadow: var(--token-shadow-focus);
-      border-color: var(--token-border-focus);
+    @media (min-width: $breakpoint-md) {
+      padding: var(--token-space-fluid-2xl);
+    }
+
+    @media (min-width: $breakpoint-lg) {
+      padding: var(--token-space-fluid-3xl);
+    }
+
+    .timeline-item--active & {
+      border-color: var(--token-interactive-color);
+      box-shadow:
+        var(--token-shadow-elevated),
+        0 0 30px var(--token-interactive-glow);
+
+      &::before {
+        opacity: 0.4;
+      }
+
+      &:hover {
+        box-shadow:
+          var(--token-shadow-elevated),
+          0 0 40px var(--token-interactive-glow);
+
+        &::before {
+          opacity: 0.8;
+        }
+      }
+    }
+
+    .timeline-item--expanded & {
+      box-shadow:
+        var(--token-shadow-elevated),
+        0 0 25px var(--token-shadow-glow-subtle);
     }
   }
 
-  .timeline__item--expanded .timeline__card {
-    box-shadow:
-      var(--token-shadow-elevated),
-      0 0 15px var(--token-shadow-glow-subtle);
-    border-color: var(--token-border-color-hover);
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--token-space-fluid-lg);
+    margin-bottom: var(--token-space-fluid-lg);
+    position: relative;
+    z-index: 1;
+
+    @media (min-width: $breakpoint-md) {
+      gap: var(--token-space-fluid-xl);
+    }
+  }
+
+  .card-logo {
+    width: 3.5rem;
+    height: 3.5rem;
+    background: var(--token-surface-color);
+    border: var(--token-border-default-small);
+    border-radius: var(--token-radius-lg);
+    padding: var(--token-space-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.3s var(--token-motion-ease-out);
+
+    :global(img) {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: grayscale(0.2);
+    }
 
     &:hover {
-      box-shadow:
-        var(--token-shadow-interactive),
-        var(--token-shadow-elevated),
-        0 0 25px var(--token-shadow-glow-medium);
-      transform: translateY(-5px) scale(1.02);
+      transform: scale(1.05);
     }
-
-    &:focus-within {
-      box-shadow: var(--token-shadow-focus);
-    }
-  }
-
-  .timeline__card-header {
-    display: flex;
-    gap: var(--token-space-fluid-md);
-    margin-bottom: var(--token-space-fluid-lg);
-    align-items: flex-start;
 
     @media (min-width: $breakpoint-md) {
-      gap: var(--token-space-fluid-lg);
+      width: 4rem;
+      height: 4rem;
     }
   }
 
-  .timeline__logo-container {
-    flex-shrink: 0;
-    position: relative;
-  }
-
-  .timeline__logo {
-    width: var(--token-size-12);
-    height: var(--token-size-12);
-    border-radius: var(--token-radius-md);
-    object-fit: contain;
-    background: var(--token-surface-color);
-    padding: var(--token-space-2);
-    border: var(--token-border-default-small);
-    border-radius: var(--token-radius-md);
-    transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
-    filter: drop-shadow(0 var(--token-space-2) var(--token-space-4) var(--token-shadow-light));
-
-    @media (min-width: $breakpoint-md) {
-      border-radius: var(--token-radius-lg);
-      padding: var(--token-space-fluid-sm);
-    }
-  }
-
-  .timeline__meta {
+  .card-meta {
     flex: 1;
     min-width: 0;
   }
 
-  .timeline__role {
-    font-size: clamp(var(--token-font-size-lg), 3.2cqw, var(--token-font-size-3xl));
+  .card-title {
+    font-size: var(--token-font-size-lg);
     font-weight: var(--token-font-weight-semibold);
     color: var(--token-text-primary);
     margin-bottom: var(--token-space-fluid-xs);
     line-height: var(--token-line-height-snug);
-    letter-spacing: var(--token-letter-spacing-normal);
+
+    @media (min-width: $breakpoint-md) {
+      font-size: var(--token-font-size-xl);
+    }
+
+    @media (min-width: $breakpoint-lg) {
+      font-size: var(--token-font-size-2xl);
+    }
   }
 
-  .timeline__company {
-    font-size: clamp(var(--token-font-size-base), 1.8cqw, var(--token-font-size-lg));
+  .card-company {
+    font-size: var(--token-font-size-base);
     font-weight: var(--token-font-weight-medium);
     color: var(--token-text-emphasis-default);
     margin-bottom: var(--token-space-fluid-xs);
-    line-height: var(--token-line-height-snug);
-    letter-spacing: var(--token-letter-spacing-normal);
+
+    @media (min-width: $breakpoint-md) {
+      font-size: var(--token-font-size-lg);
+    }
   }
 
-  .timeline__period {
+  .card-period {
     font-size: var(--token-font-size-sm);
     color: var(--token-text-tertiary);
-    font-weight: var(--token-font-weight-normal);
-    letter-spacing: var(--token-letter-spacing-wide);
     line-height: var(--token-line-height-relaxed);
-    opacity: var(--token-opacity-medium);
-  }
 
-  .timeline__summary {
-    font-size: clamp(var(--token-font-size-base), 1.5cqw, var(--token-font-size-lg));
-    line-height: var(--token-line-height-relaxed);
-    color: var(--token-text-secondary);
-    margin-bottom: var(--token-space-fluid-lg);
-    letter-spacing: var(--token-letter-spacing-normal);
-  }
-
-  .timeline__details {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s var(--token-motion-ease-out);
-
-    /* Ensure collapsed content is completely inaccessible */
-    &:not(.timeline__details--expanded) {
-      visibility: hidden;
-    }
-  }
-
-  .timeline__details--expanded {
-    max-height: 80rem;
-    margin-bottom: var(--token-space-fluid-lg);
-  }
-
-  .timeline__highlights {
-    background: var(--token-surface-glass-strong);
-    border: var(--token-border-default-small);
-    border-radius: var(--token-radius-lg);
-    padding: var(--token-space-fluid-lg);
-    margin-bottom: var(--token-space-fluid-lg);
-    backdrop-filter: blur(var(--token-blur-lg));
-    box-shadow: var(--token-shadow-light);
-    position: relative;
-
-    &::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: var(--token-surface-glass-iridescent);
-      opacity: 0;
-      transition: opacity var(--token-motion-duration-normal) var(--token-motion-ease-out);
-      border-radius: inherit;
-      pointer-events: none;
-    }
-
-    &:hover::before {
-      opacity: 0.5;
-    }
-
-    h4 {
+    @media (min-width: $breakpoint-md) {
       font-size: var(--token-font-size-base);
-      font-weight: var(--token-font-weight-semibold);
-      color: var(--token-text-emphasis-default);
-      margin-bottom: var(--token-space-fluid-md);
-      letter-spacing: var(--token-letter-spacing-normal);
-      line-height: var(--token-line-height-snug);
-    }
-
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-
-      li {
-        position: relative;
-        padding-left: var(--token-space-fluid-lg);
-        margin-bottom: var(--token-space-fluid-sm);
-        line-height: var(--token-line-height-relaxed);
-        color: var(--token-text-overlay);
-        font-size: var(--token-font-size-sm);
-        letter-spacing: var(--token-letter-spacing-normal);
-
-        &::before {
-          content: '✓';
-          position: absolute;
-          left: 0;
-          color: var(--token-text-emphasis-default);
-          font-weight: var(--token-font-weight-semibold);
-          font-size: var(--token-font-size-sm);
-        }
-
-        &:last-child {
-          margin-bottom: 0;
-        }
-      }
     }
   }
 
-  .timeline__skills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--token-space-fluid-xs);
-  }
-
-  .timeline__skill {
-    padding: var(--token-space-fluid-xs) var(--token-space-fluid-sm);
-    background: var(--token-tint-highlight);
-    border: var(--token-border-default-small);
-    border-radius: var(--token-radius-sm);
-    font-size: var(--token-font-size-xs);
-    font-weight: var(--token-font-weight-medium);
-    letter-spacing: var(--token-letter-spacing-normal);
-    line-height: var(--token-line-height-snug);
-    color: var(--token-text-primary);
-    white-space: nowrap;
-    transition: all var(--token-motion-duration-fast) var(--token-motion-ease-out);
-
-    &:hover {
-      background: var(--token-tint-highlight);
-      border-color: var(--token-text-emphasis-default);
-      transform: translateY(-1px);
-    }
-
-    &:focus {
-      outline: 2px solid var(--token-interactive-color);
-      outline-offset: 2px;
-      background: var(--token-interactive-color);
-      color: var(--token-text-dark);
-      transform: translateY(-1px);
-    }
-  }
-
-  .timeline__toggle {
+  .expand-button {
     background: var(--token-surface-glass-strong);
     border: var(--token-border-default-small);
     border-radius: var(--token-radius-full);
     padding: var(--token-space-fluid-sm) var(--token-space-fluid-lg);
     font-size: var(--token-font-size-sm);
     font-weight: var(--token-font-weight-medium);
-    letter-spacing: var(--token-letter-spacing-wide);
-    line-height: var(--token-line-height-snug);
-    color: var(--token-text-overlay);
+    color: var(--token-text-secondary);
     cursor: pointer;
-    transition: all var(--token-motion-duration-fast) var(--token-motion-ease-out);
+    transition: all 0.3s var(--token-motion-ease-out);
     backdrop-filter: blur(var(--token-blur-lg));
-    margin-top: var(--token-space-fluid-md);
-    margin-left: auto;
     display: flex;
     align-items: center;
     gap: var(--token-space-fluid-xs);
-    box-shadow: var(--token-shadow-light);
+    flex-shrink: 0;
+
+    &:hover {
+      background: var(--token-interactive-color);
+      color: var(--token-text-dark);
+      transform: translateY(-2px) scale(1.05);
+      border-color: var(--token-interactive-color);
+      box-shadow: 0 0 15px var(--token-interactive-glow);
+    }
+
+    &:focus {
+      outline: 2px solid var(--token-interactive-color);
+      outline-offset: 2px;
+    }
+
+    .timeline-item--expanded & {
+      .expand-button__icon {
+        transform: rotate(180deg);
+      }
+    }
+
+    @media (max-width: calc($breakpoint-sm - 1px)) {
+      padding: var(--token-space-2);
+      border-radius: var(--token-radius-full);
+      min-width: 2.5rem;
+      height: 2.5rem;
+      justify-content: center;
+
+      .expand-button__text {
+        display: none;
+      }
+    }
+  }
+
+  .expand-button__icon {
+    transition: transform 0.3s var(--token-motion-ease-out);
+    flex-shrink: 0;
+  }
+
+  .card-summary {
+    font-size: var(--token-font-size-base);
+    line-height: var(--token-line-height-relaxed);
+    color: var(--token-text-secondary);
+    margin-bottom: var(--token-space-fluid-lg);
+    position: relative;
+    z-index: 1;
+
+    @media (min-width: $breakpoint-md) {
+      font-size: var(--token-font-size-lg);
+    }
+  }
+
+  .card-details {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s var(--token-motion-ease-out);
+    position: relative;
+    z-index: 1;
+
+    &--expanded {
+      max-height: 100rem;
+    }
+  }
+
+  .highlights {
+    background: var(--token-surface-glass-strong);
+    border: var(--token-border-default-small);
+    border-radius: var(--token-radius-lg);
+    padding: var(--token-space-fluid-lg);
+    margin-bottom: var(--token-space-fluid-lg);
+    backdrop-filter: blur(var(--token-blur-lg));
     position: relative;
 
     &::before {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, var(--token-tint-overlay-subtle) 0%, transparent 50%);
+      background: var(--token-surface-glass-iridescent);
       opacity: 0;
-      transition: opacity var(--token-motion-duration-fast) var(--token-motion-ease-out);
+      transition: opacity 0.3s var(--token-motion-ease-out);
       border-radius: inherit;
       pointer-events: none;
     }
 
-    &:hover {
-      background: var(--token-surface-glass-strong);
-      color: var(--token-text-primary);
-      border-color: var(--token-border-color-hover);
-      transform: translateY(-3px) scale(1.02);
-      box-shadow:
-        var(--token-shadow-default),
-        0 0 20px var(--token-shadow-glow-subtle);
-
-      &::before {
-        opacity: 1;
-      }
+    &:hover::before {
+      opacity: 0.3;
     }
 
-    &:active {
-      transform: translateY(-1px) scale(1);
-      box-shadow: var(--token-shadow-light);
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--token-interactive-color);
-      outline-offset: 2px;
+    @media (min-width: $breakpoint-md) {
+      padding: var(--token-space-fluid-xl);
     }
   }
 
-  .toggle__chevron {
-    transition: transform var(--token-motion-duration-fast) var(--token-motion-ease-out);
-    flex-shrink: 0;
-  }
+  .highlights__title {
+    font-size: var(--token-font-size-base);
+    font-weight: var(--token-font-weight-semibold);
+    color: var(--token-text-primary);
+    margin-bottom: var(--token-space-fluid-md);
+    line-height: var(--token-line-height-snug);
 
-  .timeline__item--expanded .toggle__chevron {
-    transform: rotate(180deg);
-  }
-
-  @media (max-width: #{$breakpoint-md}) {
-    .timeline__card {
-      padding: var(--token-space-fluid-lg);
-      max-width: none;
-      border-left: var(--token-size-2) solid transparent;
-      border-radius: var(--token-radius-lg) var(--token-radius-lg) var(--token-radius-lg)
-        var(--token-radius-md);
-    }
-
-    .timeline__item--active .timeline__card {
-      border-left-color: var(--token-interactive-color);
-    }
-
-    .timeline__card-header {
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      gap: var(--token-space-fluid-md);
-      align-items: center;
-      text-align: left;
-    }
-
-    .timeline__meta {
-      min-width: 0;
-    }
-
-    .timeline__role {
+    @media (min-width: $breakpoint-md) {
       font-size: var(--token-font-size-lg);
-      margin-bottom: var(--token-space-fluid-xs);
+    }
+  }
+
+  .highlights__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .highlights__item {
+    position: relative;
+    padding-left: var(--token-space-fluid-lg);
+    margin-bottom: var(--token-space-fluid-sm);
+    line-height: var(--token-line-height-relaxed);
+    color: var(--token-text-secondary);
+    font-size: var(--token-font-size-sm);
+
+    &::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--token-text-emphasis-default);
+      font-weight: var(--token-font-weight-semibold);
     }
 
-    .timeline__company {
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    @media (min-width: $breakpoint-md) {
       font-size: var(--token-font-size-base);
-      margin-bottom: var(--token-space-fluid-xs);
+    }
+  }
+
+  .skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--token-space-fluid-sm);
+  }
+
+  .skill {
+    padding: var(--token-space-fluid-xs) var(--token-space-fluid-sm);
+    background: var(--token-tint-highlight);
+    border: var(--token-border-default-small);
+    border-radius: var(--token-radius-sm);
+    font-size: var(--token-font-size-xs);
+    font-weight: var(--token-font-weight-medium);
+    color: var(--token-text-primary);
+    white-space: nowrap;
+    transition: all 0.3s var(--token-motion-ease-out);
+
+    &:hover {
+      background: var(--token-interactive-color);
+      color: var(--token-text-dark);
+      transform: translateY(-1px);
     }
 
-    .timeline__period {
-      font-size: var(--token-font-size-xs);
+    @media (min-width: $breakpoint-md) {
+      font-size: var(--token-font-size-sm);
+      padding: var(--token-space-fluid-sm) var(--token-space-fluid-md);
+    }
+  }
+
+  // Floating navigation
+  .floating-nav {
+    position: fixed;
+    bottom: var(--token-space-fluid-2xl);
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s var(--token-motion-ease-out);
+    z-index: 50;
+
+    &--visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+      pointer-events: all;
     }
 
-    .timeline__details {
-      margin-top: var(--token-space-fluid-md);
-    }
-
-    .timeline__toggle {
-      flex-shrink: 0;
-      padding: var(--token-space-2);
-      border-radius: var(--token-radius-full);
-      min-width: var(--token-size-12);
-      height: var(--token-size-12);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-left: auto;
-      background: var(--token-surface-glass-strong);
-      backdrop-filter: blur(var(--token-blur-lg));
-      box-shadow: var(--token-shadow-light);
-
-      &:hover {
-        background: var(--token-interactive-color);
-        color: var(--token-text-dark);
-        transform: translateY(-2px) scale(1.05);
-        box-shadow:
-          var(--token-shadow-interactive),
-          0 0 15px var(--token-interactive-glow);
-      }
-
-      &:active {
-        transform: translateY(-1px) scale(0.98);
-      }
-    }
-
-    .toggle__text {
+    @media (min-width: $breakpoint-lg) {
       display: none;
     }
   }
 
-  @media (max-width: #{$breakpoint-sm}) {
+  .floating-nav__content {
+    display: flex;
+    align-items: center;
+    gap: var(--token-space-fluid-md);
+    background: var(--token-surface-glass-stronger);
+    border: var(--token-border-default-small);
+    border-radius: var(--token-radius-xl);
+    padding: var(--token-space-fluid-md);
+    backdrop-filter: blur(var(--token-blur-xl));
+    box-shadow:
+      var(--token-shadow-elevated),
+      0 0 40px var(--token-shadow-glow-subtle);
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--token-surface-glass-iridescent);
+      opacity: 0.3;
+      border-radius: inherit;
+      pointer-events: none;
+    }
+  }
+
+  .floating-nav__button {
+    width: 2.5rem;
+    height: 2.5rem;
+    background: var(--token-surface-glass-medium);
+    border: var(--token-border-default-small);
+    border-radius: var(--token-radius-lg);
+    color: var(--token-text-secondary);
+    cursor: pointer;
+    transition: all 0.3s var(--token-motion-ease-out);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+
+    &:hover:not(:disabled) {
+      background: var(--token-interactive-color);
+      color: var(--token-text-dark);
+      transform: scale(1.1);
+      border-color: var(--token-interactive-color);
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  }
+
+  .floating-nav__progress {
+    display: flex;
+    align-items: center;
+    gap: var(--token-space-fluid-md);
+    flex: 1;
+    position: relative;
+    z-index: 1;
+  }
+
+  .floating-nav__track {
+    width: 4px;
+    height: 3rem;
+    background: var(--token-surface-glass-strong);
+    border-radius: var(--token-radius-full);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .floating-nav__fill {
+    width: 100%;
+    background: linear-gradient(
+      to top,
+      var(--token-interactive-color),
+      var(--token-interactive-hover)
+    );
+    border-radius: inherit;
+    transition: height 0.6s var(--token-motion-ease-out);
+    transform-origin: bottom;
+  }
+
+  .floating-nav__counter {
+    font-size: var(--token-font-size-sm);
+    font-weight: var(--token-font-weight-medium);
+    color: var(--token-text-brand);
+    white-space: nowrap;
+  }
+
+  // Mobile responsive adjustments for smallest screens
+  @media (max-width: calc($breakpoint-sm - 1px)) {
     .timeline {
       padding: var(--token-space-fluid-4xl) 0;
     }
 
-    .timeline__header {
-      margin-bottom: var(--token-space-fluid-4xl);
+    .timeline-line {
+      display: none;
     }
 
-    .timeline__item {
-      padding-left: var(--token-space-fluid-lg);
+    .timeline-item {
+      padding-left: 0;
       margin-bottom: var(--token-space-fluid-2xl);
     }
 
-    .timeline__line {
+    .timeline-marker {
       display: none;
     }
 
-    .timeline__marker {
-      display: none;
+    .experience-card {
+      padding: var(--token-space-fluid-lg);
+      border-left: 3px solid transparent;
+      border-radius: var(--token-radius-lg) var(--token-radius-lg) var(--token-radius-lg)
+        var(--token-radius-sm);
     }
 
-    .timeline__card {
-      margin: var(--token-space-fluid-md) 0;
+    .timeline-item--active .experience-card {
+      border-left-color: var(--token-interactive-color);
+      box-shadow:
+        var(--token-shadow-elevated),
+        3px 0 20px var(--token-interactive-glow);
     }
 
-    .timeline__highlights {
+    .card-header {
+      gap: var(--token-space-fluid-md);
+      margin-bottom: var(--token-space-fluid-md);
+    }
+
+    .card-logo {
+      width: 3rem;
+      height: 3rem;
+    }
+
+    .card-title {
+      font-size: var(--token-font-size-lg);
+      margin-bottom: var(--token-space-1);
+    }
+
+    .card-company {
+      font-size: var(--token-font-size-base);
+      margin-bottom: var(--token-space-1);
+    }
+
+    .card-period {
+      font-size: var(--token-font-size-sm);
+    }
+
+    .card-summary {
+      font-size: var(--token-font-size-base);
+      margin-bottom: var(--token-space-fluid-md);
+    }
+
+    .expand-button {
+      padding: var(--token-space-2);
+      border-radius: var(--token-radius-full);
+      min-width: 2.5rem;
+      height: 2.5rem;
+      justify-content: center;
+
+      .expand-button__text {
+        display: none;
+      }
+    }
+
+    .highlights {
       padding: var(--token-space-fluid-md);
+      margin-bottom: var(--token-space-fluid-md);
     }
   }
 
-  @media (min-width: $breakpoint-md) {
-    .timeline__title {
-      line-height: var(--token-line-height-snug);
-    }
-
-    .timeline__subtitle {
-      line-height: var(--token-line-height-loose);
-    }
-
-    .timeline__role {
-      font-size: var(--token-font-size-xl);
-      line-height: var(--token-line-height-normal);
-    }
-
-    .timeline__company {
-      font-size: var(--token-font-size-lg);
-    }
-
-    .timeline__summary {
-      font-size: var(--token-font-size-lg);
-      line-height: var(--token-line-height-loose);
-    }
-
-    .timeline__highlights h4 {
-      font-size: var(--token-font-size-lg);
-    }
-
-    .timeline__highlights ul li {
-      font-size: var(--token-font-size-base);
-      line-height: var(--token-line-height-loose);
-    }
-
-    .timeline__skill {
-      font-size: var(--token-font-size-sm);
-    }
-
-    .timeline__toggle {
-      font-size: var(--token-font-size-base);
-    }
-  }
-
-  @media (min-width: $breakpoint-lg) {
-    .timeline__title {
-      letter-spacing: var(--token-letter-spacing-normal);
-    }
-
-    .timeline__subtitle {
-      letter-spacing: var(--token-letter-spacing-wide);
-    }
-
-    .timeline__role {
-      font-size: var(--token-font-size-2xl);
-      letter-spacing: var(--token-letter-spacing-tight);
-    }
-
-    .timeline__summary {
-      letter-spacing: var(--token-letter-spacing-wide);
-    }
-
-    .timeline__date {
-      font-size: var(--token-font-size-sm);
-      letter-spacing: var(--token-letter-spacing-widest);
-    }
-  }
-
-  @keyframes timeline-entrance {
-    from {
-      opacity: 0;
-      transform: translateY(var(--token-space-fluid-lg));
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
+  // Animations
   @keyframes fadeInUp {
     from {
       opacity: 0;
-      transform: translateY(var(--token-space-fluid-xl));
+      transform: translateY(40px);
     }
     to {
       opacity: 1;
@@ -1257,31 +1152,47 @@
     }
   }
 
+  @keyframes timelineItemFadeIn {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  // Accessibility & Motion Preferences
   @media (prefers-reduced-motion: reduce) {
-    .timeline__item {
+    .header,
+    .timeline-content,
+    .timeline-item {
       animation: none;
       opacity: 1;
       transform: none;
     }
 
-    .timeline__dot,
-    .timeline__card,
-    .timeline__progress,
-    .timeline__toggle,
-    .timeline__skill {
-      transition: none;
+    .header__title {
+      animation: none;
     }
 
-    .timeline__title {
-      animation: none;
+    .timeline-dot,
+    .experience-card,
+    .expand-button,
+    .skill {
+      transition: none;
     }
   }
 
   @media (prefers-contrast: high) {
-    .timeline__card,
-    .timeline__highlights {
-      border-width: var(--token-size-2);
+    .experience-card,
+    .highlights {
+      border-width: 2px;
       border-color: currentColor;
+    }
+
+    .header__title {
+      text-shadow: none;
+      font-weight: var(--token-font-weight-bold);
+      color: var(--token-text-primary);
+      -webkit-text-fill-color: var(--token-text-primary);
     }
   }
 
@@ -1289,21 +1200,31 @@
     .timeline {
       background: white;
       color: black;
+      padding: var(--token-space-fluid-lg);
     }
 
-    .timeline__card {
-      border: var(--token-border-default-small);
-      box-shadow: none;
-      break-inside: avoid;
-    }
-
-    .timeline__toggle {
+    .floating-nav {
       display: none;
     }
 
-    .timeline__details {
-      max-height: none;
-      overflow: visible;
+    .experience-card {
+      border: var(--token-border-default-small);
+      background: white;
+      break-inside: avoid;
+    }
+
+    .expand-button {
+      display: none;
+    }
+
+    .card-details {
+      max-height: none !important;
+      overflow: visible !important;
+    }
+
+    .header__title {
+      color: black;
+      -webkit-text-fill-color: black;
     }
   }
 </style>

@@ -2,6 +2,7 @@
   import AboutMe from '$lib/AboutMe.svelte';
   import TimelineSection from '$lib/TimelineSection.svelte';
   import SkillsSection from '$lib/SkillsSection.svelte';
+  import Testimonials from '$lib/Testimonials.svelte';
   import ContactMe from '$lib/ContactMe.svelte';
   import { base } from '$app/paths';
 
@@ -138,7 +139,6 @@
       skills: [
         {
           name: 'React',
-          level: 'expert',
           years: 11,
           category: 'framework',
           description: 'Advanced patterns, performance optimization',
@@ -146,7 +146,6 @@
         },
         {
           name: 'TypeScript',
-          level: 'expert',
           years: 9,
           category: 'language',
           description: 'Complex type systems, advanced generics',
@@ -154,7 +153,6 @@
         },
         {
           name: 'Redux',
-          level: 'expert',
           years: 10,
           category: 'framework',
           description: 'Predictable global state container with immutable updates.',
@@ -162,7 +160,6 @@
         },
         {
           name: 'MobX',
-          level: 'expert',
           years: 8,
           category: 'framework',
           description: 'Transparent reactive state management with zero boilerplate.',
@@ -170,7 +167,6 @@
         },
         {
           name: 'SCSS',
-          level: 'expert',
           years: 11,
           category: 'styling',
           description: 'Advanced CSS preprocessor.',
@@ -178,7 +174,6 @@
         },
         {
           name: 'Next.js',
-          level: 'advanced',
           years: 5,
           category: 'framework',
           description: 'SSR, SSG, App Router, performance',
@@ -186,7 +181,6 @@
         },
         {
           name: 'Svelte',
-          level: 'learning',
           years: 1,
           category: 'framework',
           description: 'Modern reactive patterns',
@@ -194,7 +188,6 @@
         },
         {
           name: 'GraphQL',
-          level: 'advanced',
           years: 4,
           category: 'api',
           description: 'Schema design, optimization',
@@ -202,7 +195,6 @@
         },
         {
           name: 'Jest',
-          level: 'expert',
           years: 10,
           category: 'testing',
           description: 'Unit testing, integration testing, end-to-end testing',
@@ -210,7 +202,6 @@
         },
         {
           name: 'Tailwind',
-          level: 'advanced',
           years: 4,
           category: 'styling',
           description: 'Tailwind, CSS-in-JS, design systems, scalable token systems',
@@ -218,7 +209,6 @@
         },
         {
           name: 'Storybook',
-          level: 'expert',
           years: 7,
           category: 'testing',
           description: 'Component library, documentation, and testing',
@@ -226,7 +216,6 @@
         },
         {
           name: 'Webpack',
-          level: 'expert',
           years: 11,
           category: 'framework',
           description: 'Module bundler, performance optimization',
@@ -234,7 +223,6 @@
         },
         {
           name: 'Vite',
-          level: 'advanced',
           years: 3,
           category: 'framework',
           description: 'Fast build times, performance optimization',
@@ -250,7 +238,6 @@
       skills: [
         {
           name: 'Node.js',
-          level: 'expert',
           years: 11,
           category: 'runtime',
           description: 'Microservices, event-driven architecture',
@@ -258,7 +245,6 @@
         },
         {
           name: 'Python',
-          level: 'expert',
           years: 15,
           category: 'language',
           description: 'Django, FastAPI, data processing',
@@ -266,7 +252,6 @@
         },
         {
           name: 'Ruby',
-          level: 'expert',
           years: 13,
           category: 'language',
           description: 'Ruby on Rails, Personal Scripting, and more.',
@@ -274,7 +259,6 @@
         },
         {
           name: 'Go',
-          level: 'advanced',
           years: 5,
           category: 'language',
           description: 'High-performance services',
@@ -282,7 +266,6 @@
         },
         {
           name: 'PostgreSQL',
-          level: 'expert',
           years: 15,
           category: 'database',
           description: 'Complex queries, optimization',
@@ -290,7 +273,6 @@
         },
         {
           name: 'Redis',
-          level: 'advanced',
           years: 5,
           category: 'cache',
           description: 'Caching strategies, pub/sub',
@@ -298,7 +280,6 @@
         },
         {
           name: 'Ruby on Rails',
-          level: 'expert',
           years: 9,
           category: 'framework',
           description: 'Full-stack web applications',
@@ -306,7 +287,6 @@
         },
         {
           name: 'Apache Kafka',
-          level: 'advanced',
           years: 3,
           category: 'messaging',
           description: 'Event streaming, real-time data processing',
@@ -314,7 +294,6 @@
         },
         {
           name: 'Elasticsearch',
-          level: 'advanced',
           years: 3,
           category: 'database',
           description: 'Search & analytics',
@@ -322,7 +301,6 @@
         },
         {
           name: 'Django',
-          level: 'expert',
           years: 10,
           category: 'framework',
           description: 'Python web framework, REST APIs',
@@ -330,7 +308,6 @@
         },
         {
           name: 'LangChain',
-          level: 'advanced',
           years: 2,
           category: 'framework',
           description: 'AI agentic workflows, LLM integration, developer tools, and more.',
@@ -346,7 +323,6 @@
       skills: [
         {
           name: 'AWS',
-          level: 'expert',
           years: 6,
           category: 'cloud',
           description: 'EC2, Lambda, RDS, S3, CloudFormation',
@@ -354,7 +330,6 @@
         },
         {
           name: 'Kubernetes',
-          level: 'advanced',
           years: 4,
           category: 'orchestration',
           description: 'Container orchestration, scaling',
@@ -362,7 +337,6 @@
         },
         {
           name: 'Helm',
-          level: 'advanced',
           years: 4,
           category: 'orchestration',
           description: 'Container orchestration, scaling',
@@ -370,7 +344,6 @@
         },
         {
           name: 'Docker',
-          level: 'expert',
           years: 7,
           category: 'containerization',
           description: 'Multi-stage builds, optimization',
@@ -378,7 +351,6 @@
         },
         {
           name: 'Terraform',
-          level: 'advanced',
           years: 3,
           category: 'iac',
           description: 'Infrastructure as Code',
@@ -386,7 +358,6 @@
         },
         {
           name: 'CI/CD',
-          level: 'expert',
           years: 8,
           category: 'automation',
           description: 'GitHub Actions, Jenkins, deployment',
@@ -394,7 +365,6 @@
         },
         {
           name: 'Git',
-          level: 'expert',
           years: 15,
           category: 'version-control',
           description: 'Version control, branching strategies',
@@ -402,7 +372,6 @@
         },
         {
           name: 'Bash',
-          level: 'expert',
           years: 15,
           category: 'automation',
           description: 'Automated workflows, scripting',
@@ -410,7 +379,6 @@
         },
         {
           name: 'Locust',
-          level: 'advanced',
           years: 2,
           category: 'framework',
           description: 'Load testing, Chaos Engineering, performance optimization',
@@ -418,7 +386,6 @@
         },
         {
           name: 'Datadog',
-          level: 'advanced',
           years: 4,
           category: 'monitoring',
           description: 'Monitoring, logging, and alerting',
@@ -434,7 +401,6 @@
       skills: [
         {
           name: 'Team Leadership',
-          level: 'expert',
           years: 8,
           category: 'management',
           description: 'Led over 15+ engineering teams',
@@ -442,7 +408,6 @@
         },
         {
           name: 'Software Architecture',
-          level: 'expert',
           years: 10,
           category: 'design',
           description: 'System design, scalability planning',
@@ -450,7 +415,6 @@
         },
         {
           name: 'Mentoring',
-          level: 'expert',
           years: 9,
           category: 'development',
           description: 'Career development, technical growth',
@@ -458,7 +422,6 @@
         },
         {
           name: 'Product Strategy',
-          level: 'expert',
           years: 7,
           category: 'business',
           description: 'Technical roadmaps, stakeholder alignment',
@@ -467,7 +430,6 @@
 
         {
           name: 'ADA Accessibility',
-          level: 'expert',
           years: 15,
           category: 'business',
           description: 'WCAG, ACAA & ADA standards for accessible and equitable workplaces.',
@@ -476,7 +438,6 @@
 
         {
           name: 'Documentation',
-          level: 'expert',
           years: 15,
           category: 'business',
           description:
@@ -486,7 +447,6 @@
 
         {
           name: 'Project Management',
-          level: 'expert',
           years: 10,
           category: 'business',
           description: 'Jira, Notion, Linear, Confluence, and other project management tools.',
@@ -635,6 +595,85 @@
 
   const companyCount = experiences.reduce((acc, experience) => acc + 1, 0);
 
+  // Testimonials data
+  interface Testimonial {
+    id: string;
+    quote: string;
+    author: string;
+    role: string;
+    company: string;
+    relationship: string;
+    date: string;
+    avatar: string;
+    companyLogo?: string;
+    context: string;
+    projectHighlight?: string;
+    tags: string[];
+  }
+
+  const testimonials: Testimonial[] = [
+    {
+      id: 'jourdan',
+      quote:
+        'I had the pleasure of working closely with Cassidy during our time at Scribe, where they brought over a decade of frontend development experience and a strong enthusiasm for modernizing our stack.\n\nWhat stood out most to me was his early and active interest in AI tooling and workflows, well before it became a company-wide focus.',
+      author: 'Jourdan Rodrigues',
+      role: 'Software Engineer',
+      company: 'Scribe',
+      relationship: 'Same Team',
+      date: 'July 2025',
+      avatar: 'employees/jourdan.jpg',
+      companyLogo: 'company_logos/scribehow_logo.jpg',
+      context: 'Frontend Architecture & AI Innovation',
+      projectHighlight: 'Redux to React Query Migration',
+      tags: ['Technical Leadership', 'AI/ML', 'React', 'Architecture'],
+    },
+    {
+      id: 'alex',
+      quote:
+        'Cassidy is a great technical and cultural resource.\n\nWhen working together and adjacently on differing teams, I found him a great sounding board for technical ideas and approaches that helped hone the product perspective on the way things were being built, implemented, or already had been done.',
+      author: 'Alex Gong',
+      role: 'Product Leader',
+      company: 'Green Bits Inc & Dutchie',
+      relationship: 'Cross-functional Partner',
+      date: 'March 2023',
+      avatar: 'employees/alex_gong.jpg',
+      companyLogo: 'company_logos/greenbitslogo.jpg',
+      context: 'Technical Strategy & Team Culture',
+      projectHighlight: 'Product-Engineering Collaboration',
+      tags: ['Product Strategy', 'Team Culture', 'Cross-functional', 'Leadership'],
+    },
+    {
+      id: 'seth',
+      quote:
+        "Cassidy is one of those rare engineers that can tackle any problem or any language you throw at him.\n\nIf he doesn't know something he can jump in, attack the problem from multiple angles, and get up to speed in record time.\n\nAs a designer, you can't ask for a more capable partner in bringing solutions to life.",
+      author: 'Seth B',
+      role: 'Product Designer',
+      company: 'Green Bits Inc & Dutchie',
+      relationship: 'Design Partner',
+      date: 'August 2019',
+      avatar: 'employees/seth.jpg',
+      companyLogo: 'company_logos/greenbitslogo.jpg',
+      context: 'Design-Engineering Partnership',
+      projectHighlight: 'Multi-language Problem Solving',
+      tags: ['Design Systems', 'Full-stack', 'Problem Solving', 'Adaptability'],
+    },
+    {
+      id: 'cliff',
+      quote:
+        'During my time working with Cassidy I found him to be a very productive contributor to the team.\n\nHe cares very deeply about frontend architecture as well as design and UX.\n\nCassidy is relentlessly positive in his approach to work, and is a pleasure to be around.',
+      author: 'Cliff Moon',
+      role: 'Engineering Manager',
+      company: 'UpGuard',
+      relationship: 'Direct Manager',
+      date: 'July 2017',
+      avatar: 'employees/cliff_moon.jpg',
+      companyLogo: 'company_logos/upguard_logo.jpg',
+      context: 'Frontend Architecture & Team Leadership',
+      projectHighlight: 'UX-Focused Development',
+      tags: ['Frontend', 'UX/UI', 'Team Leadership', 'Architecture'],
+    },
+  ];
+
   // AboutMe data
   const aboutMeStats: Stat[] = [
     { count: '12', label: 'Years Experience', type: 'years' },
@@ -668,13 +707,6 @@
     on:techCategoryClick={handleTechCategoryClick}
   />
 
-  <!-- Timeline Section -->
-  <TimelineSection
-    {experiences}
-    on:experienceSelect={(e) => console.log('Experience selected:', e.detail)}
-    on:profileClick={() => console.log('Profile clicked')}
-  />
-
   <!-- Skills Section -->
   <SkillsSection
     title="Technical Expertise"
@@ -684,6 +716,16 @@
     on:skillSelect={(e) => console.log('Skill selected:', e.detail)}
     on:categorySelect={(e) => console.log('Category selected:', e.detail)}
   />
+
+  <!-- Timeline Section -->
+  <TimelineSection
+    {experiences}
+    on:experienceSelect={(e) => console.log('Experience selected:', e.detail)}
+    on:profileClick={() => console.log('Profile clicked')}
+  />
+
+  <!-- Testimonials Section -->
+  <Testimonials {testimonials} />
 
   <!-- Contact Me Section -->
   <ContactMe
