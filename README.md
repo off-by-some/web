@@ -45,7 +45,7 @@ npm run lighthouse
 
 ### Bundle Composition
 
-[![Bundle stats](docs/bundle-stats-report.png)](docs/bundle-stats.html)
+[![Bundle stats](docs/bundle-stats-report.png)](docs/bundle-stats-report.png)
 
 **The breakdown:** While the total download includes a substantial amount of content, most of that is images—photos, graphics, and generated social previews. The critical JavaScript that actually runs the site and affects initial load time is much smaller, consisting of just the essential SvelteKit runtime and application code.
 
@@ -55,7 +55,7 @@ npm run lighthouse
 
 ```bash
 npm run build
-# Reports generated at docs/bundle-stats.html
+# Reports generated at .bundle-stats/bundle-stats.html
 ```
 
 ---
