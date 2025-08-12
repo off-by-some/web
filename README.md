@@ -20,7 +20,7 @@ npm install && npm run dev
 
 ## What This Is
 
-My personal website and a place to experiment with web technologies. I wanted to see if I could build something that feels modern and polished while keeping the actual code lightweight and maintainable. This is my first svelte project, so i really wanted to get familiar with the ecosystem 🌟
+My personal website and a place to experiment with web technologies. I wanted to see if I could build something that feels modern and polished while keeping the actual code lightweight and maintainable. This is my first Svelte project, so i really wanted to get familiar with the ecosystem 🌟
 
 It's also become a testing ground for ideas around design systems, build optimization, and developer experience—the kind of stuff that's easier to explore in a personal project than at work.
 
