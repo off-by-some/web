@@ -37,8 +37,7 @@ These scores are captured automatically after each build against the actual depl
 **Reproduce these results:**
 
 ```bash
-npm run build && npm run preview
-npm run lighthouse
+npm run build && npm run lighthouse
 ```
 
 ---
