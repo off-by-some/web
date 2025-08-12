@@ -206,7 +206,7 @@
   });
 </script>
 
-<section class="hero" id="about" role="main" aria-labelledby="profile-name">
+<section class="hero" id="about" role="main" aria-labelledby="profile-name" data-section="about-me">
   {#if showCanvasBackground}
     <div class="hero__canvas" id="hero-canvas-container" aria-hidden="true"></div>
   {/if}

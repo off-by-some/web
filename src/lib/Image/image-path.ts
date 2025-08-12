@@ -16,12 +16,13 @@ export interface PictureSourceSet {
   isVector?: boolean;
 }
 
+// Import all current image formats but enhanced image will output only webp
 const rasterModules = import.meta.glob('/assets/images/**/*.{jpg,jpeg,png,webp,avif}', {
   import: 'default',
   query: {
     enhanced: true,
-    w: '25;50;150',
-    format: 'avif;webp;jpeg',
+    w: '50;150',
+    format: 'webp',
   },
 });
 

@@ -3,6 +3,7 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { enhancedImages } from '@sveltejs/enhanced-img';
 import path from 'path';
 import filesize from 'rollup-plugin-filesize';
+import { bundleStats } from 'rollup-plugin-bundle-stats';
 
 export default defineConfig({
   plugins: [enhancedImages(), sveltekit()],
@@ -25,11 +26,22 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
+        assetFileNames: 'assets/[name].[hash][extname]',
+        chunkFileNames: 'assets/[name].[hash].js',
+        entryFileNames: 'assets/[name].[hash].js',
         manualChunks: {
           vendor: ['svelte'],
         },
       },
-      plugins: [filesize({ showBrotliSize: true, showMinifiedSize: true })],
+      plugins: [
+        filesize({ showBrotliSize: true, showMinifiedSize: true }),
+        bundleStats({
+          outDir: '../../../.bundle-stats',
+          html: true,
+          json: true,
+          compare: true,
+        }),
+      ],
     },
   },
   resolve: {

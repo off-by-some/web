@@ -97,3 +97,7 @@ storybook-static
 .svelte-kit
 
 build/
+# Lighthouse CI output
+.lighthouseci/
+metrics/
+.bundle-stats/
