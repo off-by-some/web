@@ -1,0 +1,1 @@
+const e={sources:{webp:new URL("../assets/langchain-icon.DRheZlkR.webp",import.meta.url).href+" 50w, "+new URL("../assets/langchain-icon.DvEYeMnV.webp",import.meta.url).href+" 150w"},img:{src:""+new URL("../assets/langchain-icon.DvEYeMnV.webp",import.meta.url).href,w:150,h:150}};export{e as default};

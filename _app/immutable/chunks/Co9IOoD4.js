@@ -1,0 +1,1 @@
+const e={sources:{webp:new URL("../assets/circleci.WzK7-OM5.webp",import.meta.url).href+" 50w, "+new URL("../assets/circleci.BBcWOac2.webp",import.meta.url).href+" 150w"},img:{src:""+new URL("../assets/circleci.BBcWOac2.webp",import.meta.url).href,w:150,h:150}};export{e as default};

@@ -1,0 +1,1 @@
+const e={sources:{webp:new URL("../assets/angularjs.CQ4EdIVL.webp",import.meta.url).href+" 50w, "+new URL("../assets/angularjs.4FrvHl62.webp",import.meta.url).href+" 150w"},img:{src:""+new URL("../assets/angularjs.4FrvHl62.webp",import.meta.url).href,w:150,h:123}};export{e as default};

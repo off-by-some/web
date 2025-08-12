@@ -1,0 +1,1 @@
+const e={sources:{webp:new URL("../assets/golang logo.B14A-p26.webp",import.meta.url).href+" 50w, "+new URL("../assets/golang logo.u35CH-LI.webp",import.meta.url).href+" 150w"},img:{src:""+new URL("../assets/golang logo.u35CH-LI.webp",import.meta.url).href,w:150,h:150}};export{e as default};

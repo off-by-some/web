@@ -1,0 +1,1 @@
+const e={sources:{webp:new URL("../assets/Product Strategy.B88rT8JF.webp",import.meta.url).href+" 50w, "+new URL("../assets/Product Strategy.BUCbZvEM.webp",import.meta.url).href+" 150w"},img:{src:""+new URL("../assets/Product Strategy.BUCbZvEM.webp",import.meta.url).href,w:150,h:150}};export{e as default};

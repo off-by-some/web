@@ -1,0 +1,1 @@
+const e={sources:{webp:new URL("../assets/nextjs.DLbh9SPv.webp",import.meta.url).href+" 50w, "+new URL("../assets/nextjs.Clmds16R.webp",import.meta.url).href+" 150w"},img:{src:""+new URL("../assets/nextjs.Clmds16R.webp",import.meta.url).href,w:150,h:150}};export{e as default};

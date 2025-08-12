@@ -1,0 +1,1 @@
+const e={sources:{webp:new URL("../assets/docker-logo.BpCbcTE1.webp",import.meta.url).href+" 50w, "+new URL("../assets/docker-logo.CKnysWRo.webp",import.meta.url).href+" 150w"},img:{src:""+new URL("../assets/docker-logo.CKnysWRo.webp",import.meta.url).href,w:150,h:104}};export{e as default};

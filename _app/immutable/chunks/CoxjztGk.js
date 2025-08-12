@@ -1,0 +1,1 @@
+const s={sources:{webp:new URL("../assets/sass-logo.NAfFRDmc.webp",import.meta.url).href+" 50w, "+new URL("../assets/sass-logo._TFIqZTC.webp",import.meta.url).href+" 150w"},img:{src:""+new URL("../assets/sass-logo._TFIqZTC.webp",import.meta.url).href,w:150,h:150}};export{s as default};

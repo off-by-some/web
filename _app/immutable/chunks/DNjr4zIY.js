@@ -1,0 +1,1 @@
+const r={sources:{webp:new URL("../assets/terraform.R7tb9X3o.webp",import.meta.url).href+" 50w, "+new URL("../assets/terraform.D5NUD7rc.webp",import.meta.url).href+" 150w"},img:{src:""+new URL("../assets/terraform.D5NUD7rc.webp",import.meta.url).href,w:150,h:150}};export{r as default};

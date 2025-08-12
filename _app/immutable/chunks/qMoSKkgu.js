@@ -1,0 +1,1 @@
+const e={sources:{webp:new URL("../assets/elasticsearch-logo.C4p-WObZ.webp",import.meta.url).href+" 50w, "+new URL("../assets/elasticsearch-logo.Y9-eLFKH.webp",import.meta.url).href+" 150w"},img:{src:""+new URL("../assets/elasticsearch-logo.Y9-eLFKH.webp",import.meta.url).href,w:150,h:150}};export{e as default};

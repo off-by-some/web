@@ -1,0 +1,1 @@
+const e={sources:{webp:new URL("../assets/github_brand_icon.Wl2pbz-_.webp",import.meta.url).href+" 50w, "+new URL("../assets/github_brand_icon.Bx9MqzRy.webp",import.meta.url).href+" 150w"},img:{src:""+new URL("../assets/github_brand_icon.Bx9MqzRy.webp",import.meta.url).href,w:150,h:150}};export{e as default};
