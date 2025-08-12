@@ -30,6 +30,11 @@
     categorySelect: { category: SkillCategory };
   }>();
 
+  // Helper function to convert skill levels to title-case
+  const toTitleCase = (str: string): string => {
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  };
+
   // Function to calculate proficiency level based on years of experience
   const calculateProficiencyLevel = (
     years?: number,
@@ -49,14 +54,30 @@
   let hasInitialized = false;
 
   // Reactive values
-  $: allSkills = skillCategories.flatMap((category) =>
-    category.skills.map((skill) => ({
-      ...skill,
-      categoryInfo: category,
-      // Calculate level automatically if not provided or if years are available
-      level: skill.level || calculateProficiencyLevel(skill.years),
-    })),
-  );
+  $: allSkills = skillCategories
+    .flatMap((category) =>
+      category.skills.map((skill) => ({
+        ...skill,
+        categoryInfo: category,
+        // Calculate level automatically if not provided or if years are available
+        level: skill.level || calculateProficiencyLevel(skill.years),
+      })),
+    )
+    .sort((a, b) => {
+      // Define proficiency order (highest to lowest)
+      const proficiencyOrder = { expert: 4, advanced: 3, proficient: 2, learning: 1 };
+
+      // First sort by proficiency level
+      const levelComparison = proficiencyOrder[b.level] - proficiencyOrder[a.level];
+      if (levelComparison !== 0) {
+        return levelComparison;
+      }
+
+      // If proficiency levels are the same, sort by years of experience (highest first)
+      const aYears = a.years || 0;
+      const bYears = b.years || 0;
+      return bYears - aYears;
+    });
 
   $: filteredSkills = selectedCategory
     ? allSkills.filter((skill) => skill.categoryInfo.name === selectedCategory)
@@ -95,7 +116,7 @@
     if (isActive) {
       dispatch('skillSelect', { skill, category: skill.categoryInfo });
 
-      let announcement = `Selected ${skill.name}, ${skill.level} level skill`;
+      let announcement = `Selected ${skill.name}, ${toTitleCase(skill.level)} level skill`;
       if (skill.years) announcement += ` with ${skill.years} years experience`;
       if (skill.description) announcement += `. ${skill.description}`;
 
@@ -199,7 +220,7 @@
             on:click={() => selectSkill(skill, true)}
             on:mouseenter={() => selectSkill(skill, true)}
             on:mouseleave={() => selectSkill(skill, false)}
-            aria-label="{skill.name}. {skill.level} level skill{skill.years
+            aria-label="{skill.name}. {toTitleCase(skill.level)} level skill{skill.years
               ? ` with ${skill.years} years experience`
               : ''}{skill.description ? `. ${skill.description}` : ''}"
           >
@@ -213,7 +234,7 @@
 
               <div class="skill-meta">
                 <span class="skill-level skill-level--{skill.level}">
-                  {skill.level}
+                  {toTitleCase(skill.level)}
                 </span>
                 {#if skill.years}
                   <span class="skill-years">{skill.years}y</span>
@@ -236,7 +257,7 @@
         {#each ['expert', 'advanced', 'proficient', 'learning'] as level (level)}
           <div class="legend-item legend-item--{level}">
             <div class="legend-dot"></div>
-            <span class="legend-label">{level}</span>
+            <span class="legend-label">{toTitleCase(level)}</span>
             <span class="legend-count">{skillsByLevel[level] || 0}</span>
           </div>
         {/each}

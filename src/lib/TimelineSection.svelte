@@ -28,15 +28,42 @@
   let activeIndex = 0;
   let expandedItems = new Set<number>();
   let announcementText = '';
-  let touchStartY = 0;
-  let touchEndY = 0;
   let showFloatingNav = false;
+  let isDesktop = false;
 
-  // Reactive values
   $: progressValue = ((activeIndex + 1) / experiences.length) * 100;
 
+  // Check if we're on desktop
+  const checkDesktop = () => {
+    isDesktop = window.innerWidth >= 1376; // $breakpoint-lg
+
+    // Update floating nav visibility when switching views
+    updateFloatingNavVisibility();
+  };
+
+  // Handle card click for desktop expansion
+  const handleCardClick = (index: number, event: MouseEvent) => {
+    // Only handle card clicks on desktop
+    if (!isDesktop) return;
+
+    // Don't expand if clicking on the expand button (let button handle it)
+    if ((event.target as Element)?.closest('.expand-button')) return;
+
+    toggleExpanded(index);
+  };
+
+  // Handle card keyboard events for desktop
+  const handleCardKeydown = (index: number, event: KeyboardEvent) => {
+    if (!isDesktop) return;
+
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleCardClick(index, event as any);
+    }
+  };
+
   // Navigation
-  const setActiveExperience = (index: number) => {
+  const setActiveExperience = (index: number, shouldScroll: boolean = true) => {
     if (index === activeIndex || index < 0 || index >= experiences.length) return;
 
     activeIndex = index;
@@ -45,10 +72,11 @@
     const experience = experiences[index];
     announcementText = `Focused on ${experience.title} at ${experience.company}, ${experience.date}`;
 
-    // Smooth scroll to item
-    const item = timelineElement?.querySelector(`[data-timeline-index="${index}"]`);
-    if (item) {
-      item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (shouldScroll) {
+      const item = timelineElement?.querySelector(`[data-timeline-index="${index}"]`);
+      if (item) {
+        item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     }
   };
 
@@ -77,8 +105,8 @@
     });
   };
 
-  // Scroll detection for active item
-  const handleScroll = () => {
+  // Handle floating navigation visibility
+  const updateFloatingNavVisibility = () => {
     if (!timelineElement) return;
 
     const rect = timelineElement.getBoundingClientRect();
@@ -86,8 +114,16 @@
 
     // Show floating nav when section is in view
     const contentStart = rect.top + 200;
-    const contentEnd = rect.bottom - viewportHeight * 0.25;
+    const contentEnd = rect.bottom - viewportHeight * 0.65;
     showFloatingNav = contentStart < viewportHeight && contentEnd > 0;
+  };
+
+  // Scroll detection for active item (works on both desktop and mobile)
+  const handleScroll = () => {
+    // Only handle scroll-based active item detection if timeline element exists
+    if (!timelineElement) return;
+
+    updateFloatingNavVisibility();
 
     const items = timelineElement.querySelectorAll('[data-timeline-index]');
     const viewportCenter = window.innerHeight / 2;
@@ -111,41 +147,15 @@
     }
   };
 
-  // Touch handling for mobile
-  const handleTouchStart = (event: TouchEvent) => {
-    touchStartY = event.touches[0].clientY;
-  };
-
-  const handleTouchMove = (event: TouchEvent) => {
-    touchEndY = event.touches[0].clientY;
-  };
-
-  const handleTouchEnd = () => {
-    if (!touchStartY || !touchEndY) return;
-
-    const difference = touchStartY - touchEndY;
-    const isUpSwipe = difference > 50;
-    const isDownSwipe = difference < -50;
-
-    if (isUpSwipe && activeIndex < experiences.length - 1) {
-      setActiveExperience(activeIndex + 1);
-    } else if (isDownSwipe && activeIndex > 0) {
-      setActiveExperience(activeIndex - 1);
-    }
-
-    touchStartY = 0;
-    touchEndY = 0;
-  };
-
   // Keyboard navigation
   const handleKeydown = (event: KeyboardEvent) => {
     if (!timelineElement?.contains(event.target as Node)) return;
 
     const actions: Record<string, () => void> = {
-      ArrowUp: () => setActiveExperience(Math.max(0, activeIndex - 1)),
-      ArrowDown: () => setActiveExperience(Math.min(experiences.length - 1, activeIndex + 1)),
-      Home: () => setActiveExperience(0),
-      End: () => setActiveExperience(experiences.length - 1),
+      ArrowUp: () => setActiveExperience(Math.max(0, activeIndex - 1), true),
+      ArrowDown: () => setActiveExperience(Math.min(experiences.length - 1, activeIndex + 1), true),
+      Home: () => setActiveExperience(0, true),
+      End: () => setActiveExperience(experiences.length - 1, true),
     };
 
     if (actions[event.key]) {
@@ -160,15 +170,25 @@
 
     // Event listeners
     const scrollOptions = { passive: true };
-    window.addEventListener('scroll', handleScroll, scrollOptions);
-    window.addEventListener('keydown', handleKeydown);
 
-    // Initial scroll check
+    // Add scroll listener for both desktop and mobile
+    window.addEventListener('scroll', handleScroll, scrollOptions);
+
+    // Update floating nav visibility on mount
+    updateFloatingNavVisibility();
+
+    window.addEventListener('keydown', handleKeydown);
+    window.addEventListener('resize', checkDesktop);
+
+    checkDesktop(); // Set initial desktop state
+
+    // Initial scroll check to set active index
     setTimeout(handleScroll, 100);
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('keydown', handleKeydown);
+      window.removeEventListener('resize', checkDesktop);
     };
   });
 </script>
@@ -178,9 +198,6 @@
   id="experience"
   aria-labelledby="timeline-heading"
   bind:this={timelineElement}
-  on:touchstart={handleTouchStart}
-  on:touchmove={handleTouchMove}
-  on:touchend={handleTouchEnd}
 >
   <!-- Screen reader announcements -->
   <div class="sr-only" role="status" aria-live="polite" aria-atomic="true">
@@ -224,7 +241,13 @@
             </div>
 
             <!-- Experience Card -->
-            <div class="experience-card">
+            <div
+              class="experience-card"
+              class:experience-card--clickable={isDesktop}
+              on:click={isDesktop ? (event) => handleCardClick(index, event) : undefined}
+              on:keydown={isDesktop ? (event) => handleCardKeydown(index, event) : undefined}
+              role={isDesktop ? 'button' : undefined}
+            >
               <header class="card-header">
                 <div class="card-logo">
                   <Image src={experience.logo} alt="" sizes="56px" loading="lazy" />
@@ -304,7 +327,7 @@
       <div class="floating-nav__content">
         <button
           class="floating-nav__button floating-nav__button--prev"
-          on:click={() => setActiveExperience(Math.max(0, activeIndex - 1))}
+          on:click={() => setActiveExperience(Math.max(0, activeIndex - 1), true)}
           disabled={activeIndex === 0}
           aria-label="Previous experience"
         >
@@ -328,7 +351,8 @@
 
         <button
           class="floating-nav__button floating-nav__button--next"
-          on:click={() => setActiveExperience(Math.min(experiences.length - 1, activeIndex + 1))}
+          on:click={() =>
+            setActiveExperience(Math.min(experiences.length - 1, activeIndex + 1), true)}
           disabled={activeIndex === experiences.length - 1}
           aria-label="Next experience"
         >
@@ -614,6 +638,8 @@
     overflow: hidden;
     transition: all 0.4s var(--token-motion-ease-out);
     width: 100%;
+    font-family: inherit;
+    text-align: left;
 
     &::before {
       content: '';
@@ -633,6 +659,31 @@
 
       &::before {
         opacity: 0.6;
+      }
+    }
+
+    // Desktop clickable state
+    &--clickable {
+      cursor: pointer;
+
+      &:hover {
+        transform: translateY(-4px) scale(1.01);
+        border-color: var(--token-border-color-hover);
+        box-shadow: var(--token-shadow-elevated);
+
+        &::before {
+          opacity: 0.6;
+        }
+      }
+
+      &:active {
+        transform: translateY(-2px) scale(1.005);
+        transition: transform 0.1s var(--token-motion-ease-out);
+      }
+
+      &:focus {
+        outline: 2px solid var(--token-interactive-color);
+        outline-offset: 2px;
       }
     }
 

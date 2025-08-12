@@ -615,7 +615,7 @@
     {
       id: 'jourdan',
       quote:
-        'I had the pleasure of working closely with Cassidy during our time at Scribe, where they brought over a decade of frontend development experience and a strong enthusiasm for modernizing our stack.\n\nWhat stood out most to me was his early and active interest in AI tooling and workflows, well before it became a company-wide focus.',
+        'I had the pleasure of working closely with Cassidy during our time at Scribe, where they brought over a decade of frontend development experience and a strong enthusiasm for modernizing our stack.\n\nWhat stood out most to me was their early and active interest in AI tooling and workflows, well before it became a company-wide focus.',
       author: 'Jourdan Rodrigues',
       role: 'Software Engineer',
       company: 'Scribe',
@@ -630,7 +630,7 @@
     {
       id: 'alex',
       quote:
-        'Cassidy is a great technical and cultural resource.\n\nWhen working together and adjacently on differing teams, I found him a great sounding board for technical ideas and approaches that helped hone the product perspective on the way things were being built, implemented, or already had been done.',
+        'Cassidy is a great technical and cultural resource.\n\nWhen working together and adjacently on differing teams, I found them a great sounding board for technical ideas and approaches that helped hone the product perspective on the way things were being built, implemented, or already had been done.',
       author: 'Alex Gong',
       role: 'Product Leader',
       company: 'Green Bits Inc & Dutchie',
@@ -645,7 +645,7 @@
     {
       id: 'seth',
       quote:
-        "Cassidy is one of those rare engineers that can tackle any problem or any language you throw at him.\n\nIf he doesn't know something he can jump in, attack the problem from multiple angles, and get up to speed in record time.\n\nAs a designer, you can't ask for a more capable partner in bringing solutions to life.",
+        "Cassidy is one of those rare engineers that can tackle any problem or any language you throw at them.\n\nIf they don't know something they can jump in, attack the problem from multiple angles, and get up to speed in record time.\n\nAs a designer, you can't ask for a more capable partner in bringing solutions to life.",
       author: 'Seth B',
       role: 'Product Designer',
       company: 'Green Bits Inc & Dutchie',
@@ -660,7 +660,7 @@
     {
       id: 'cliff',
       quote:
-        'During my time working with Cassidy I found him to be a very productive contributor to the team.\n\nHe cares very deeply about frontend architecture as well as design and UX.\n\nCassidy is relentlessly positive in his approach to work, and is a pleasure to be around.',
+        'During my time working with Cassidy I found them to be a very productive contributor to the team.\n\nThey care very deeply about frontend architecture as well as design and UX.\n\nCassidy is relentlessly positive in their approach to work, and is a pleasure to be around.',
       author: 'Cliff Moon',
       role: 'Engineering Manager',
       company: 'UpGuard',
@@ -690,7 +690,7 @@
     role="Software Engineering Leader"
     statusText="Available for new opportunities"
     valueHeadline="I architect systems that scale, lead teams that thrive, and build products that last."
-    valueDescription="With over a decade of experience turning complex challenges into elegant solutions, I specialize in building high-performance engineering teams and resilient distributed systems. From React frontends to cloud infrastructure, I create technology that just works."
+    valueDescription="With over a decade of experience turning complex challenges into elegant solutions, I specialize in helping high-performance engineering teams thrive while designing resilient distributed systems. From React frontends to cloud infrastructure, I create technology that just works."
     avatarSrc="headshot.png"
     avatarAlt="Cassidy Bridges"
     primaryButtonText="View Experience"

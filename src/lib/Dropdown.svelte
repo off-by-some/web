@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount, tick } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
 
   interface DropdownOption {
     value: string;
@@ -25,6 +25,7 @@
   let triggerRef: HTMLButtonElement;
   let menuRef: HTMLDivElement;
   let containerRef: HTMLDivElement;
+  let optionRefs: HTMLButtonElement[] = [];
 
   // Computed values
   $: selectedOption = options.find((opt) => opt.value === value);
@@ -42,93 +43,131 @@
     .filter(Boolean)
     .join(' ');
 
-  // Open/close dropdown
-  const openDropdown = async () => {
-    if (disabled || isOpen) return;
+  // Scroll focused item into view
+  function scrollFocusedItemIntoView() {
+    // Small delay to ensure DOM has updated
+    setTimeout(() => {
+      if (focusedIndex >= 0 && optionRefs[focusedIndex]) {
+        optionRefs[focusedIndex].scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'nearest',
+        });
+      }
+    }, 0);
+  }
 
+  // Core dropdown functions
+  function openDropdown() {
+    if (disabled) return;
     isOpen = true;
     focusedIndex = value ? options.findIndex((opt) => opt.value === value) : 0;
 
-    await tick();
+    // Reset option refs for clean binding
+    optionRefs = [];
 
-    // Focus the menu for keyboard navigation
-    if (menuRef) {
-      menuRef.focus();
-    }
-  };
+    // Focus menu on next tick
+    setTimeout(() => {
+      menuRef?.focus();
+      // Scroll to initially focused item if keyboard opened
+      scrollFocusedItemIntoView();
+    }, 0);
+  }
 
-  const closeDropdown = () => {
-    if (!isOpen) return;
-
+  function closeDropdown() {
     isOpen = false;
     focusedIndex = -1;
 
     // Return focus to trigger
-    if (triggerRef) {
-      triggerRef.focus();
-    }
-  };
+    setTimeout(() => {
+      triggerRef?.focus();
+    }, 0);
+  }
 
-  const toggleDropdown = () => {
-    if (isOpen) {
-      closeDropdown();
-    } else {
-      openDropdown();
-    }
-  };
-
-  // Option selection
-  const selectOption = (selectedValue: string) => {
+  function selectOption(selectedValue: string) {
     const option = options.find((opt) => opt.value === selectedValue);
     if (!option) return;
 
     value = selectedValue;
     dispatch('change', { value: selectedValue, option });
     closeDropdown();
-  };
+  }
 
-  // Keyboard navigation
-  const handleTriggerKeydown = (event: KeyboardEvent) => {
+  // Event handlers
+  function handleTriggerClick() {
+    if (disabled) return;
+
+    if (isOpen) {
+      closeDropdown();
+    } else {
+      openDropdown();
+    }
+  }
+
+  function handleTriggerKeydown(event: KeyboardEvent) {
     if (disabled) return;
 
     switch (event.key) {
       case 'Enter':
       case ' ':
+        event.preventDefault();
+        if (isOpen) {
+          closeDropdown();
+        } else {
+          openDropdown();
+        }
+        break;
       case 'ArrowDown':
         event.preventDefault();
-        openDropdown();
+        if (!isOpen) {
+          openDropdown();
+        } else {
+          focusedIndex = focusedIndex < options.length - 1 ? focusedIndex + 1 : 0;
+          scrollFocusedItemIntoView();
+        }
         break;
       case 'ArrowUp':
         event.preventDefault();
-        openDropdown();
-        // Set focus to last option when opening with up arrow
-        focusedIndex = options.length - 1;
+        if (!isOpen) {
+          openDropdown();
+          focusedIndex = options.length - 1;
+        } else {
+          focusedIndex = focusedIndex > 0 ? focusedIndex - 1 : options.length - 1;
+          scrollFocusedItemIntoView();
+        }
         break;
       case 'Escape':
-        closeDropdown();
+        if (isOpen) {
+          event.preventDefault();
+          closeDropdown();
+        }
         break;
     }
-  };
+  }
 
-  const handleMenuKeydown = (event: KeyboardEvent) => {
+  function handleMenuKeydown(event: KeyboardEvent) {
     if (!isOpen || options.length === 0) return;
 
     switch (event.key) {
       case 'ArrowDown':
         event.preventDefault();
         focusedIndex = focusedIndex < options.length - 1 ? focusedIndex + 1 : 0;
+        scrollFocusedItemIntoView();
         break;
       case 'ArrowUp':
         event.preventDefault();
         focusedIndex = focusedIndex > 0 ? focusedIndex - 1 : options.length - 1;
+        scrollFocusedItemIntoView();
         break;
       case 'Home':
         event.preventDefault();
         focusedIndex = 0;
+        scrollFocusedItemIntoView();
         break;
       case 'End':
         event.preventDefault();
         focusedIndex = options.length - 1;
+        scrollFocusedItemIntoView();
         break;
       case 'Enter':
       case ' ':
@@ -142,41 +181,48 @@
         closeDropdown();
         break;
       case 'Tab':
-        // Allow normal tab behavior to close dropdown
         closeDropdown();
         break;
     }
-  };
+  }
 
-  // Click outside handler
-  const handleClickOutside = (event: MouseEvent) => {
+  function handleOptionClick(optionValue: string) {
+    selectOption(optionValue);
+  }
+
+  function handleOptionMouseEnter(index: number) {
+    focusedIndex = index;
+  }
+
+  // Click outside detection
+  function handleDocumentClick(event: MouseEvent) {
     if (!isOpen) return;
 
-    const target = event.target as Node;
-    if (containerRef && !containerRef.contains(target)) {
+    const target = event.target as Element;
+
+    // If click is outside the dropdown container, close it
+    if (!containerRef?.contains(target)) {
       closeDropdown();
     }
-  };
+  }
 
-  // Set up event listeners
+  // Escape key detection
+  function handleDocumentKeydown(event: KeyboardEvent) {
+    if (isOpen && event.key === 'Escape') {
+      closeDropdown();
+    }
+  }
+
+  // Setup event listeners
   onMount(() => {
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('click', handleDocumentClick);
+    document.addEventListener('keydown', handleDocumentKeydown);
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('click', handleDocumentClick);
+      document.removeEventListener('keydown', handleDocumentKeydown);
     };
   });
-
-  // Handle option click
-  const handleOptionClick = (optionValue: string, event: MouseEvent) => {
-    event.stopPropagation();
-    selectOption(optionValue);
-  };
-
-  // Handle option mouse enter for focus
-  const handleOptionMouseEnter = (index: number) => {
-    focusedIndex = index;
-  };
 </script>
 
 <div class="dropdown" bind:this={containerRef}>
@@ -185,7 +231,7 @@
     class={triggerClasses}
     {id}
     bind:this={triggerRef}
-    on:click={toggleDropdown}
+    on:click={handleTriggerClick}
     on:keydown={handleTriggerKeydown}
     {disabled}
     aria-haspopup="listbox"
@@ -213,9 +259,6 @@
   </button>
 
   {#if isOpen}
-    <!-- Backdrop to prevent clicks through -->
-    <div class="dropdown-backdrop" aria-hidden="true"></div>
-
     <div
       class="dropdown-menu"
       role="listbox"
@@ -232,7 +275,8 @@
           class:dropdown-option--selected={value === option.value}
           role="option"
           aria-selected={value === option.value}
-          on:click={(e) => handleOptionClick(option.value, e)}
+          bind:this={optionRefs[index]}
+          on:click={() => handleOptionClick(option.value)}
           on:mouseenter={() => handleOptionMouseEnter(index)}
           tabindex="-1"
         >
@@ -353,8 +397,8 @@
   }
 
   .dropdown-trigger__icon {
-    width: var(--token-size-4);
-    height: var(--token-size-4);
+    width: var(--token-size-5);
+    height: var(--token-size-5);
     color: var(--token-text-tertiary);
     transition: transform var(--token-motion-duration-fast) var(--token-motion-ease-out);
     flex-shrink: 0;
@@ -363,17 +407,11 @@
       transform: rotate(180deg);
       color: var(--token-interactive-color);
     }
-  }
 
-  .dropdown-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1000;
-    background: transparent;
-    pointer-events: auto;
+    @media (min-width: 768px) {
+      width: var(--token-size-6);
+      height: var(--token-size-6);
+    }
   }
 
   .dropdown-menu {
