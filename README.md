@@ -58,8 +58,6 @@ npm run build
 # Reports generated at docs/bundle-stats.html
 ```
 
-[→ Interactive bundle breakdown](docs/bundle-stats.html)
-
 ---
 
 ## 🎨 Design System
