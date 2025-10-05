@@ -466,6 +466,35 @@
   // Timeline data
   const experiences: Experience[] = [
     {
+      title: 'Independent Research',
+      company: 'Information Theory & Theoretical Physics',
+      logo: 'company_logos/independent-research.png',
+      date: 'Jan 2025 – Sep 2025',
+      dateValue: 'Jan 2025',
+      location: 'Remote',
+      summary:
+        'I developed a mathematical framework measuring the cost of forcing incompatible perspectives to agree—showing that disagreement obeys precise information-theoretic laws. From this work, I created tools for quantifying and managing these trade-offs in real systems.',
+      highlights: [
+        'Authored ["A Mathematical Theory of Contradiction"](https://zenodo.org/records/17203336), showing that any valid measure of disagreement must take a specific form, and introducing the contradiction bit as a fundamental quantity alongside Shannon entropy.',
+        'Demonstrated that this "K-bit tax" emerges universally: compression requires K extra bits per symbol, predictions lose accuracy at an exponential rate, and communication capacity drops by K—all from one principle.',
+        'Showed the framework is mathematically inevitable: starting from six axioms, the contradiction measure is uniquely determined.',
+        'Built [contrakit](https://github.com/off-by-some/contrakit), an open-source Python library implementing concepts from the paper alongside reproducible examples—making the theory directly usable by researchers and engineers.',
+        'Revealed deep unifications: the same measure explains conflicts in quantum measurement, distributed consensus, ensemble models, and voting paradoxes.',
+        "Derived fundamental laws: contradiction can't be created by simplification, it accumulates across independent systems like entropy, and vanishes only when perspectives perfectly align.",
+        'Designed coordination protocols that treat disagreement as a measurable resource—distinguishing when consensus is impossible versus merely costly.',
+      ],
+      skills: [
+        'Python',
+        'Computer Science',
+        'Information Theory',
+        'Statistics & Probability',
+        'Quantum Physics',
+        'Open-Source Development',
+        'Technical Writing',
+        'Philosophy of Science',
+      ],
+    },
+    {
       title: 'Senior Software Engineer',
       company: 'Scribe',
       logo: 'company_logos/scribehow_logo.jpg',

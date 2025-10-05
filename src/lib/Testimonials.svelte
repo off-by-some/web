@@ -18,7 +18,7 @@
     tags: string[];
   }
 
-  export let title: string = 'Going Above and Beyond';
+  export let title: string = 'Going Above & Beyond';
   export let subtitle: string =
     "Perspectives from colleagues, designers, and leaders I've collaborated with across different teams and projects.";
 
@@ -461,7 +461,7 @@
   }
 
   .header__content {
-    max-width: 100ch;
+    max-width: 110ch;
     margin: 0 auto;
   }
 

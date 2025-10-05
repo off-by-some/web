@@ -22,6 +22,54 @@
     experienceSelect: { experience: Experience };
   }>();
 
+  function parseMarkdownToSegments(
+    text: string,
+  ): Array<{ type: 'text' | 'link'; content: string; url?: string }> {
+    const segments: Array<{ type: 'text' | 'link'; content: string; url?: string }> = [];
+    const markdownLinkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+
+    let lastIndex = 0;
+    let match;
+
+    while ((match = markdownLinkRegex.exec(text)) !== null) {
+      // Add text before the link
+      if (match.index > lastIndex) {
+        segments.push({
+          type: 'text',
+          content: text.slice(lastIndex, match.index),
+        });
+      }
+
+      const linkText = match[1];
+      const url = match[2];
+
+      const isValidUrl = url.match(/^(https?:\/\/|\/)/);
+      if (isValidUrl) {
+        segments.push({
+          type: 'link',
+          content: linkText,
+          url: url,
+        });
+      } else {
+        segments.push({
+          type: 'text',
+          content: match[0],
+        });
+      }
+
+      lastIndex = markdownLinkRegex.lastIndex;
+    }
+
+    if (lastIndex < text.length) {
+      segments.push({
+        type: 'text',
+        content: text.slice(lastIndex),
+      });
+    }
+
+    return segments;
+  }
+
   // State
   let timelineElement: HTMLElement;
   let progressElement: HTMLElement;
@@ -289,7 +337,20 @@
                 </button>
               </header>
 
-              <div class="card-summary">{experience.summary}</div>
+              <div class="card-summary">
+                {#each parseMarkdownToSegments(experience.summary) as segment, i (segment.type + i)}
+                  {#if segment.type === 'link'}
+                    <a
+                      href={segment.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="highlight-link">{segment.content}</a
+                    >
+                  {:else}
+                    {segment.content}
+                  {/if}
+                {/each}
+              </div>
 
               <div
                 class="card-details"
@@ -301,7 +362,20 @@
                   <h4 class="highlights__title">Key Achievements</h4>
                   <ul class="highlights__list">
                     {#each experience.highlights as highlight, highlightIndex (highlightIndex)}
-                      <li class="highlights__item">{highlight}</li>
+                      <li class="highlights__item">
+                        {#each parseMarkdownToSegments(highlight) as segment, j (segment.type + j)}
+                          {#if segment.type === 'link'}
+                            <a
+                              href={segment.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              class="highlight-link">{segment.content}</a
+                            >
+                          {:else}
+                            {segment.content}
+                          {/if}
+                        {/each}
+                      </li>
                     {/each}
                   </ul>
                 </div>
@@ -872,6 +946,26 @@
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-font-size-lg);
     }
+
+    :global(.highlight-link) {
+      color: var(--token-interactive-color);
+      text-decoration: underline;
+      text-decoration-color: transparent;
+      text-underline-offset: 2px;
+      transition: all 0.2s var(--token-motion-ease-out);
+      font-weight: var(--token-font-weight-medium);
+
+      &:hover {
+        color: var(--token-interactive-hover);
+        text-decoration-color: var(--token-interactive-hover);
+      }
+
+      &:focus {
+        outline: 2px solid var(--token-interactive-color);
+        outline-offset: 2px;
+        border-radius: var(--token-radius-xs);
+      }
+    }
   }
 
   .card-details {
@@ -955,6 +1049,26 @@
 
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-font-size-base);
+    }
+
+    :global(.highlight-link) {
+      color: var(--token-interactive-color);
+      text-decoration: underline;
+      text-decoration-color: transparent;
+      text-underline-offset: 2px;
+      transition: all 0.2s var(--token-motion-ease-out);
+      font-weight: var(--token-font-weight-medium);
+
+      &:hover {
+        color: var(--token-interactive-hover);
+        text-decoration-color: var(--token-interactive-hover);
+      }
+
+      &:focus {
+        outline: 2px solid var(--token-interactive-color);
+        outline-offset: 2px;
+        border-radius: var(--token-radius-xs);
+      }
     }
   }
 

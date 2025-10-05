@@ -417,6 +417,11 @@
 
     @media (min-width: $breakpoint-lg) {
       grid-template-columns: 1.3fr 1fr;
+      scale: clamp(
+        0.9,
+        0.9 + 0.05 * (100vw - $breakpoint-lg) / ($breakpoint-xlg - $breakpoint-lg),
+        0.95
+      );
       grid-template-areas:
         'profile stats'
         'value tech';
@@ -425,6 +430,7 @@
     }
 
     @media (min-width: $breakpoint-xlg) {
+      scale: 1;
       grid-template-columns: 1.4fr 0.9fr;
       gap: var(--token-space-fluid-3xl) var(--token-space-fluid-4xl);
     }
@@ -448,7 +454,7 @@
     @media (min-width: $breakpoint-md) {
       flex-direction: row;
       text-align: left;
-      gap: var(--token-space-fluid-xl);
+      gap: var(--token-space-fluid-lg);
     }
 
     @media (min-width: $breakpoint-lg) {
