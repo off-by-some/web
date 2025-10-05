@@ -146,7 +146,7 @@
     </header>
 
     <!-- Navigation -->
-    <nav class="navigation" aria-label="Navigate testimonials">
+    <div class="navigation" role="tablist" aria-label="Navigate testimonials">
       {#each testimonials as testimonial, index (testimonial.id)}
         <button
           class="nav-item"
@@ -167,7 +167,7 @@
           </div>
         </button>
       {/each}
-    </nav>
+    </div>
 
     <!-- Progress indicator -->
     <div class="progress">

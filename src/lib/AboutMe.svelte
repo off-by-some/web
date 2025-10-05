@@ -346,10 +346,10 @@
     aria-label="Scroll to next section"
     type="button"
   >
-    <div class="scroll-mouse" aria-hidden="true">
+    <div class="scroll-mouse">
       <div class="scroll-wheel"></div>
     </div>
-    <div class="scroll-arrow" aria-hidden="true"></div>
+    <div class="scroll-arrow"></div>
     <span class="scroll-text">{scrollText}</span>
   </button>
 </section>

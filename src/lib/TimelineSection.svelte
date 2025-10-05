@@ -269,7 +269,7 @@
       </div>
 
       <!-- Experience Items -->
-      <div class="timeline-items" role="list" aria-label="Professional experience timeline">
+      <div class="timeline-items" aria-label="Professional experience timeline">
         {#each experiences as experience, index (index)}
           <article
             class="timeline-item"
@@ -279,7 +279,6 @@
             class:timeline-item--right={index % 2 === 1}
             data-timeline-index={index}
             data-company={experience.company}
-            role="listitem"
             style="animation-delay: {index * 0.1}s"
           >
             <!-- Timeline Marker -->
@@ -294,7 +293,9 @@
               class:experience-card--clickable={isDesktop}
               on:click={isDesktop ? (event) => handleCardClick(index, event) : undefined}
               on:keydown={isDesktop ? (event) => handleCardKeydown(index, event) : undefined}
-              role={isDesktop ? 'button' : undefined}
+              role="button"
+              tabindex={isDesktop ? 0 : -1}
+              aria-label="View details for {experience.title} at {experience.company}"
             >
               <header class="card-header">
                 <div class="card-logo">
@@ -357,6 +358,7 @@
                 class:card-details--expanded={expandedItems.has(index)}
                 id="experience-{index}-details"
                 aria-hidden={!expandedItems.has(index)}
+                inert={!expandedItems.has(index) || undefined}
               >
                 <div class="highlights">
                   <h4 class="highlights__title">Key Achievements</h4>

@@ -177,7 +177,7 @@
     </header>
 
     <!-- Category Filters -->
-    <nav class="filters" aria-label="Filter skills by category">
+    <div class="filters" role="tablist" aria-label="Filter skills by category">
       <button
         class="filter-button"
         class:filter-button--active={!selectedCategory}
@@ -204,10 +204,10 @@
           <span class="filter-button__count">{category.skills.length}</span>
         </button>
       {/each}
-    </nav>
+    </div>
 
     <!-- Skills Grid -->
-    <div class="skills-grid" id="skills-grid" role="grid">
+    <div class="skills-grid" id="skills-grid">
       {#each filteredSkills as skill, index (skill.name)}
         <article
           class="skill-card"
@@ -251,7 +251,7 @@
     </div>
 
     <!-- Legend -->
-    <footer class="legend" role="region" aria-labelledby="legend-heading">
+    <div class="legend" role="region" aria-labelledby="legend-heading">
       <h3 id="legend-heading" class="sr-only">Skill level legend</h3>
       <div class="legend-items">
         {#each ['expert', 'advanced', 'proficient', 'learning'] as level (level)}
@@ -262,7 +262,7 @@
           </div>
         {/each}
       </div>
-    </footer>
+    </div>
   </Section>
 </section>
 
