@@ -1,0 +1,9 @@
+import{p as c,r as u,m as p,a as m,d as v,f as b,v as f,c as g}from"./iframe-BLnyrAbd.js";import{c as h,i as y,d as _}from"./create-runtime-stories-6YqJbw7_.js";import{D as o}from"./Dropdown-CpjjX_6D.js";import"./preload-helper-k3ZeA0S-.js";import"./each-Bgy59y8t.js";import"./attributes-BRcvgC9p.js";import"./this-BD_dkMeU.js";import"./Input-BSeZ51Iw.js";const a=[{value:"discuss",label:"Let's discuss",description:"Custom pricing for unique work"},{value:"under-10k",label:"Under $10K",description:"Small projects and quick fixes"},{value:"25k-50k",label:"$25K - $50K",description:"Complex web applications"}],w={title:"Library/Primitives/Forms/Dropdown",component:o,tags:["autodocs"],args:{id:"storybook-budget",options:a,value:"discuss",placeholder:"Select budget range",ariaLabel:"Select your project budget range"},parameters:{docs:{description:{component:"Custom listbox, not a native <select> — needed so each option can carry a description line under its label. That tradeoff only pays off if the keyboard behavior matches what a native select would do: try Arrow Up/Down, Home, End, and Escape here."}}}},{Story:D}=_();var $=b('<div class="story-width svelte-1ufkktv"><!></div>');function r(s,i){c(i,!1);let e=f("discuss");y(),D(s,{name:"Default",asChild:!0,children:(n,S)=>{var t=$(),d=g(t);o(d,{id:"storybook-budget",get options(){return a},placeholder:"Select budget range",ariaLabel:"Select your project budget range",get value(){return p(e)},set value(l){u(e,l)},$$legacy:!0}),m(n,t)},$$slots:{default:!0},parameters:{__svelteCsf:{rawCode:`<div class="story-width">
+  <Dropdown
+    id="storybook-budget"
+    {options}
+    bind:value
+    placeholder="Select budget range"
+    ariaLabel="Select your project budget range"
+  />
+</div>`}}}),v()}r.__docgen={data:[],name:"Dropdown.stories.svelte"};const k=h(r,w),U=["Default"],A={...k.Default,tags:["svelte-csf-v5"]};export{A as Default,U as __namedExportsOrder,w as default};
