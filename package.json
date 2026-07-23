@@ -14,7 +14,7 @@
     "dev": "vite dev",
     "predev": "npm run setup:static",
     "prebuild": "npm run clean && npm run fix && npm run lint && npm run setup:static",
-    "build": "vite build",
+    "build": "vite build && npm run build-storybook:pages",
     "postbuild": "cp build/index.html build/404.html && touch build/.nojekyll",
     "deploy": "npm run build && npm run build-storybook:pages && gh-pages -d build --dotfiles",
     "preview": "node scripts/preview.js",

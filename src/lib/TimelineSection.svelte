@@ -69,14 +69,15 @@
 
   const toggleExpanded = (index: number) => {
     const experience = experiences[index];
-    const wasExpanded = expandedItems.has(index);
+    const nextExpandedItems = new Set(expandedItems);
+    const wasExpanded = nextExpandedItems.has(index);
 
     if (wasExpanded) {
-      expandedItems.delete(index);
+      nextExpandedItems.delete(index);
     } else {
-      expandedItems.add(index);
+      nextExpandedItems.add(index);
     }
-    expandedItems = expandedItems; // Trigger reactivity
+    expandedItems = nextExpandedItems;
 
     const action = wasExpanded ? 'Collapsed' : 'Expanded';
     announcementText = `${action} details for ${experience.title} at ${experience.company}`;
