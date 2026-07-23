@@ -1,0 +1,1 @@
+const b={sources:{webp:"/web/storybook/assets/github_brand_icon-Wl2pbz-_.webp 50w, /web/storybook/assets/github_brand_icon-Bx9MqzRy.webp 150w"},img:{src:"/web/storybook/assets/github_brand_icon-Bx9MqzRy.webp",w:150,h:150}};export{b as default};

@@ -1,0 +1,1 @@
+const s={sources:{webp:"/web/storybook/assets/bash-logo-DgnwaTLv.webp 50w, /web/storybook/assets/bash-logo-D6RVFEGx.webp 150w"},img:{src:"/web/storybook/assets/bash-logo-D6RVFEGx.webp",w:150,h:63}};export{s as default};

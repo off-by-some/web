@@ -1,0 +1,1 @@
+const o={sources:{webp:"/web/storybook/assets/docker-logo-BpCbcTE1.webp 50w, /web/storybook/assets/docker-logo-CKnysWRo.webp 150w"},img:{src:"/web/storybook/assets/docker-logo-CKnysWRo.webp",w:150,h:104}};export{o as default};

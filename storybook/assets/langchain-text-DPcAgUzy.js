@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/storybook/assets/langchain-text-zb1OItIo.webp 50w, /web/storybook/assets/langchain-text-Dm2bhrFv.webp 150w"},img:{src:"/web/storybook/assets/langchain-text-Dm2bhrFv.webp",w:150,h:31}};export{e as default};

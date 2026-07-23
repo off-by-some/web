@@ -1,0 +1,1 @@
+const o={sources:{webp:"/web/storybook/assets/golang%20logo-B14A-p26.webp 50w, /web/storybook/assets/golang%20logo-u35CH-LI.webp 150w"},img:{src:"/web/storybook/assets/golang%20logo-u35CH-LI.webp",w:150,h:150}};export{o as default};

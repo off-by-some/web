@@ -1,0 +1,1 @@
+const s={sources:{webp:"/web/storybook/assets/django-CGEkNdbJ.webp 50w, /web/storybook/assets/django-CPzcUcpn.webp 150w"},img:{src:"/web/storybook/assets/django-CPzcUcpn.webp",w:150,h:150}};export{s as default};

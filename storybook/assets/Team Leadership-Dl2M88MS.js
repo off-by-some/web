@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/storybook/assets/Team%20Leadership-DHQMshDT.webp 50w, /web/storybook/assets/Team%20Leadership-D_82T9Io.webp 150w"},img:{src:"/web/storybook/assets/Team%20Leadership-D_82T9Io.webp",w:150,h:150}};export{e as default};

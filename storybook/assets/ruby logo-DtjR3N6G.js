@@ -1,0 +1,1 @@
+const o={sources:{webp:"/web/storybook/assets/ruby%20logo-BiyXClY4.webp 50w, /web/storybook/assets/ruby%20logo-Dk5xmmHQ.webp 150w"},img:{src:"/web/storybook/assets/ruby%20logo-Dk5xmmHQ.webp",w:150,h:150}};export{o as default};

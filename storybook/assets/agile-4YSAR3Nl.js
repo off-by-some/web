@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/storybook/assets/agile-la0MJo9_.webp 50w, /web/storybook/assets/agile-BOC9-WRn.webp 150w"},img:{src:"/web/storybook/assets/agile-BOC9-WRn.webp",w:150,h:150}};export{e as default};

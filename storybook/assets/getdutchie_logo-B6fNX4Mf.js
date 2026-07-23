@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/storybook/assets/getdutchie_logo-CbcV3_hR.webp 50w, /web/storybook/assets/getdutchie_logo-DW6WgfCz.webp 100w"},img:{src:"/web/storybook/assets/getdutchie_logo-DW6WgfCz.webp",w:100,h:100}};export{e as default};

@@ -1,0 +1,1 @@
+const s={sources:{webp:"/web/storybook/assets/locust-Q3pHZtI3.webp 50w, /web/storybook/assets/locust-Bl9DziRp.webp 150w"},img:{src:"/web/storybook/assets/locust-Bl9DziRp.webp",w:150,h:150}};export{s as default};

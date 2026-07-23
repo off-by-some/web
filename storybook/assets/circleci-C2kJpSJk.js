@@ -1,0 +1,1 @@
+const c={sources:{webp:"/web/storybook/assets/circleci-WzK7-OM5.webp 50w, /web/storybook/assets/circleci-BBcWOac2.webp 150w"},img:{src:"/web/storybook/assets/circleci-BBcWOac2.webp",w:150,h:150}};export{c as default};

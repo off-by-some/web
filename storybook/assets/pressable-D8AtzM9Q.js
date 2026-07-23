@@ -1,0 +1,1 @@
+const u=new Set(["button","a","input","select","textarea"]);function a({as:n,disabled:e,onclick:r}){return!r||u.has(n)?{}:{role:"button",tabindex:e?-1:0,onkeydown:t=>{e||t.key!=="Enter"&&t.key!==" "||(t.preventDefault(),r(t))}}}export{a as p};

@@ -1,0 +1,1 @@
+const o={sources:{webp:"/web/storybook/assets/java%20logo-D5Ou7O-W.webp 50w, /web/storybook/assets/java%20logo-DSue3oIG.webp 150w"},img:{src:"/web/storybook/assets/java%20logo-DSue3oIG.webp",w:150,h:150}};export{o as default};

@@ -1,0 +1,11 @@
+import{n as H,h as g,e as x,a as s,f as n,c as o,s as u,p as w,d as M,g as m}from"./iframe-bDISe4Ti.js";import{c as j,i as D,d as I}from"./create-runtime-stories-BCa2lVrs.js";import{C as h}from"./Card-TAmAF6kq.js";import{a as P}from"./design-notes-DHcFwxFZ.js";import"./preload-helper-k3ZeA0S-.js";import"./svelte-element-D0Z77-h1.js";import"./attributes-BF6ZGX27.js";import"./pressable-D8AtzM9Q.js";const R=(i,r=H)=>{var e=$(),a=o(e);h(a,{children:(d,p)=>{var c=T(),t=g(c),l=o(t),v=u(t,2),f=o(v);x(()=>{m(l,r().headline),m(f,r().body)}),s(d,c)},$$slots:{default:!0}}),s(i,e)},S={title:"Library/Primitives/Surfaces/Card",component:h,render:R,tags:["autodocs"],argTypes:{headline:{control:"text"},body:{control:"text"}},args:{headline:"Hover Me!",body:"This is the shared composable card surface."},parameters:{docs:{description:{component:`The glass layer, border lift, and iridescent hover state live here once, so every card on the site — contact methods, hero panels, skill tiles — inherits the same feel instead of reimplementing it. Reference: [W3C cognitive accessibility guidance](${P.cognitive}), which favors this kind of one-pattern-everywhere consistency.`}}}},{Story:_}=I();var T=n('<h3 class="svelte-8sogj4"> </h3> <p class="svelte-8sogj4"> </p>',1),$=n('<div class="story-surface svelte-8sogj4"><!></div>'),k=n('<h3 class="svelte-8sogj4">Hover Me!</h3> <p class="svelte-8sogj4">Move across the card to preview the shared iridescent hover state.</p>',1),E=n("<!> <!>",1);function y(i,r){w(r,!1),D();var e=E(),a=g(e);_(a,{name:"Default",parameters:{__svelteCsf:{rawCode:`<div class="story-surface">
+  <Card>
+    <h3>{args.headline}</h3>
+    <p>{args.body}</p>
+  </Card>
+</div>`}}});var d=u(a,2);_(d,{name:"Hover Interaction",asChild:!0,children:(p,c)=>{var t=$(),l=o(t);h(l,{children:(v,f)=>{var b=k();s(v,b)},$$slots:{default:!0}}),s(p,t)},$$slots:{default:!0},parameters:{__svelteCsf:{rawCode:`<div class="story-surface">
+  <Card>
+    <h3>Hover Me!</h3>
+    <p>Move across the card to preview the shared iridescent hover state.</p>
+  </Card>
+</div>`}}}),s(i,e),M()}y.__docgen={data:[],name:"Card.stories.svelte"};const C=j(y,S),G=["Default","HoverInteraction"],J={...C.Default,tags:["svelte-csf-v5"]},K={...C.HoverInteraction,tags:["svelte-csf-v5"]};export{J as Default,K as HoverInteraction,G as __namedExportsOrder,S as default};
