@@ -1,5 +1,5 @@
 <script lang="ts">
-  export let children: import('svelte').Snippet;
+  const { children }: { children: import('svelte').Snippet } = $props();
 </script>
 
 <div class="app">

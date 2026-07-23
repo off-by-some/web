@@ -48,7 +48,7 @@ async function screenshotReports() {
     },
     {
       name: 'lighthouseci',
-      dir: '.lighthouseci',
+      dir: 'metrics/lhci',
       outputName: 'lighthouse-report',
       viewport: { width: 1000, height: 800, deviceScaleFactor: 1 },
     },

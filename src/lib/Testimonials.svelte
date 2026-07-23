@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { onMount, createEventDispatcher } from 'svelte';
-  import Section from './Section.svelte';
-  import Image from './Image/Image.svelte';
+  import { onMount } from 'svelte';
+  import Image from './components/primitives/media/Image/Image.svelte';
+  import Section from './components/primitives/layout/Section';
+  import SectionHeader from './components/site/section-headings/SectionHeader';
 
   interface Testimonial {
     id: string;
@@ -18,28 +19,36 @@
     tags: string[];
   }
 
-  export let title: string = 'Going Above & Beyond';
-  export let subtitle: string =
-    "Perspectives from colleagues, designers, and leaders I've collaborated with across different teams and projects.";
+  type Props = {
+    title?: string;
+    subtitle?: string;
+    testimonials: Testimonial[];
+    onTestimonialView?: (testimonial: Testimonial) => void;
+    onTestimonialInteraction?: (payload: {
+      testimonial: Testimonial;
+      action: string;
+      company?: string;
+    }) => void;
+  };
 
-  export let testimonials: Testimonial[];
-
-  const dispatch = createEventDispatcher<{
-    testimonialView: { testimonial: Testimonial };
-    testimonialInteraction: { testimonial: Testimonial; action: string; company?: string };
-  }>();
+  let {
+    title = 'Lorem Ipsum Dolor',
+    subtitle = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    testimonials,
+    onTestimonialView,
+    onTestimonialInteraction,
+  }: Props = $props();
 
   // State
-  let activeIndex = 0;
-  let isTransitioning = false;
-  let sectionElement: HTMLElement;
-  let progressValue = 0;
-  let announcementText = '';
-  let showFloatingNav = false;
+  let activeIndex = $state(0);
+  let isTransitioning = $state(false);
+  let sectionElement: HTMLElement | undefined = $state();
+  let announcementText = $state('');
+  let showFloatingNav = $state(false);
 
   // Reactive values
-  $: activeTestimonial = testimonials[activeIndex];
-  $: progressValue = ((activeIndex + 1) / testimonials.length) * 100;
+  const activeTestimonial = $derived(testimonials[activeIndex]);
+  const progressValue = $derived(((activeIndex + 1) / testimonials.length) * 100);
 
   // Navigation
   const setActiveTestimonial = (index: number) => {
@@ -51,7 +60,7 @@
     const testimonial = testimonials[index];
     announcementText = `Now viewing testimonial ${index + 1} of ${testimonials.length} from ${testimonial.author}, ${testimonial.role} at ${testimonial.company}`;
 
-    dispatch('testimonialView', { testimonial });
+    onTestimonialView?.(testimonial);
 
     setTimeout(() => {
       isTransitioning = false;
@@ -70,7 +79,7 @@
         targetItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
 
-      dispatch('testimonialInteraction', {
+      onTestimonialInteraction?.({
         testimonial: testimonials.find((t) => t.company === companyName) || testimonials[0],
         action: 'navigate-to-timeline',
         company: companyName,
@@ -138,12 +147,13 @@
 
   <Section className="testimonials__container">
     <!-- Header -->
-    <header class="header">
-      <div class="header__content">
-        <h2 class="header__title" id="testimonials-heading">{title}</h2>
-        <p class="header__subtitle">{subtitle}</p>
-      </div>
-    </header>
+    <SectionHeader
+      {title}
+      {subtitle}
+      titleId="testimonials-heading"
+      variant="compact"
+      contentClass="header__content"
+    />
 
     <!-- Navigation -->
     <div class="navigation" role="tablist" aria-label="Navigate testimonials">
@@ -151,7 +161,7 @@
         <button
           class="nav-item"
           class:nav-item--active={index === activeIndex}
-          on:click={() => setActiveTestimonial(index)}
+          onclick={() => setActiveTestimonial(index)}
           role="tab"
           aria-selected={index === activeIndex}
           aria-controls="testimonial-{testimonial.id}"
@@ -203,7 +213,7 @@
               <div class="attribution__role">{activeTestimonial.role}</div>
               <button
                 class="attribution__company"
-                on:click={() => navigateToTimeline(activeTestimonial.company)}
+                onclick={() => navigateToTimeline(activeTestimonial.company)}
                 aria-label="Go to {activeTestimonial.company} experience in timeline"
               >
                 {activeTestimonial.company}
@@ -268,7 +278,7 @@
                 <div class="context-card__role">{testimonial.role}</div>
                 <button
                   class="context-card__company"
-                  on:click={() => navigateToTimeline(testimonial.company)}
+                  onclick={() => navigateToTimeline(testimonial.company)}
                 >
                   {testimonial.company}
                 </button>
@@ -316,7 +326,7 @@
         <!-- Previous/Next arrows -->
         <button
           class="floating-nav__arrow floating-nav__arrow--prev"
-          on:click={() => setActiveTestimonial(Math.max(0, activeIndex - 1))}
+          onclick={() => setActiveTestimonial(Math.max(0, activeIndex - 1))}
           disabled={activeIndex === 0 || isTransitioning}
           aria-label="Previous testimonial"
         >
@@ -343,7 +353,7 @@
             <button
               class="floating-nav__dot"
               class:floating-nav__dot--active={index === activeIndex}
-              on:click={() => setActiveTestimonial(index)}
+              onclick={() => setActiveTestimonial(index)}
               disabled={isTransitioning}
               aria-label="Go to testimonial {index + 1}: {testimonial.author}"
             >
@@ -357,7 +367,7 @@
         <!-- Next arrow -->
         <button
           class="floating-nav__arrow floating-nav__arrow--next"
-          on:click={() => setActiveTestimonial(Math.min(testimonials.length - 1, activeIndex + 1))}
+          onclick={() => setActiveTestimonial(Math.min(testimonials.length - 1, activeIndex + 1))}
           disabled={activeIndex === testimonials.length - 1 || isTransitioning}
           aria-label="Next testimonial"
         >
@@ -433,7 +443,7 @@
     }
   }
 
-  .testimonials__container {
+  :global(.testimonials__container) {
     position: relative;
     z-index: 1;
     margin: 0 auto;
@@ -449,62 +459,6 @@
     }
   }
 
-  // Header styles (keeping as requested)
-  .header {
-    text-align: center;
-    margin-bottom: var(--token-space-fluid-3xl);
-    animation: fadeInUp 1s var(--token-motion-ease-out) both;
-
-    @media (min-width: $breakpoint-md) {
-      margin-bottom: var(--token-space-fluid-4xl);
-    }
-  }
-
-  .header__content {
-    max-width: 110ch;
-    margin: 0 auto;
-  }
-
-  .header__title {
-    font-size: var(--token-font-size-4xl);
-    font-weight: var(--token-font-weight-bold);
-    line-height: var(--token-line-height-tight);
-    color: var(--token-text-heading);
-    margin-bottom: var(--token-space-fluid-lg);
-    letter-spacing: var(--token-letter-spacing-tight);
-    background: var(--token-gradients-heading);
-    background-size: 200% 200%;
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: textShimmer 8s ease-in-out infinite;
-
-    @media (min-width: $breakpoint-md) {
-      font-size: var(--token-font-size-5xl);
-    }
-
-    @media (min-width: $breakpoint-lg) {
-      font-size: var(--token-font-size-6xl);
-    }
-  }
-
-  .header__subtitle {
-    font-size: var(--token-font-size-lg);
-    color: var(--token-text-secondary);
-    line-height: var(--token-line-height-relaxed);
-    max-width: 70ch;
-    margin: 0 auto;
-
-    @media (min-width: $breakpoint-md) {
-      font-size: var(--token-font-size-xl);
-    }
-
-    @media (min-width: $breakpoint-lg) {
-      font-size: var(--token-font-size-2xl);
-    }
-  }
-
-  // Navigation styles
   .navigation {
     display: flex;
     gap: var(--token-space-fluid-sm);
@@ -1554,16 +1508,6 @@
     }
   }
 
-  @keyframes textShimmer {
-    0%,
-    100% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-  }
-
   @keyframes tagFadeIn {
     to {
       opacity: 1;
@@ -1573,7 +1517,6 @@
 
   // Accessibility & Motion Preferences
   @media (prefers-reduced-motion: reduce) {
-    .header,
     .navigation,
     .progress,
     .content {
@@ -1581,11 +1524,6 @@
       opacity: 1;
       transform: none;
     }
-
-    .header__title {
-      animation: none;
-    }
-
     .context-card,
     .nav-item,
     .tag {
@@ -1604,13 +1542,6 @@
     .nav-item {
       border-width: 2px;
       border-color: currentColor;
-    }
-
-    .header__title {
-      text-shadow: none;
-      font-weight: var(--token-font-weight-bold);
-      color: var(--token-text-primary);
-      -webkit-text-fill-color: var(--token-text-primary);
     }
   }
 
@@ -1639,11 +1570,6 @@
       border: var(--token-border-default-small);
       background: white;
       break-inside: avoid;
-    }
-
-    .header__title {
-      color: black;
-      -webkit-text-fill-color: black;
     }
   }
 </style>

@@ -3,6 +3,22 @@
 import { spawn } from 'child_process';
 import { screenshotURL } from './screenshot.js';
 
+function getNpmCommand() {
+  const npmExecPath = process.env.npm_execpath;
+
+  if (npmExecPath?.endsWith('.js')) {
+    return {
+      command: process.execPath,
+      args: [npmExecPath, 'run', 'preview'],
+    };
+  }
+
+  return {
+    command: npmExecPath || 'npm',
+    args: ['run', 'preview'],
+  };
+}
+
 /**
  * Screenshot the website's about me section
  */
@@ -14,9 +30,9 @@ async function screenshotWebsite() {
   try {
     // Start the preview server
     console.log('🚀 Starting preview server...');
-    serverProcess = spawn('/usr/bin/npm', ['run', 'preview'], {
+    const npmCommand = getNpmCommand();
+    serverProcess = spawn(npmCommand.command, npmCommand.args, {
       stdio: ['pipe', 'pipe', 'pipe'],
-      shell: true,
     });
 
     // Wait for server to be ready

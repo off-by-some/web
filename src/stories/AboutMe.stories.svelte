@@ -1,85 +1,45 @@
-<script module>
+<script module lang="ts">
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import AboutMe from '$lib/AboutMe.svelte';
-  import { fn } from 'storybook/test';
 
-  const { Story } = defineMeta({
-    title: 'Components/AboutMe',
-    component: AboutMe,
-    tags: ['autodocs'],
-    argTypes: {
-      name: {
-        control: { type: 'text' },
-        description: 'Full name to display',
-      },
-      role: {
-        control: { type: 'text' },
-        description: 'Professional role/title',
-      },
-      statusText: {
-        control: { type: 'text' },
-        description: 'Current availability status',
-      },
-      valueHeadline: {
-        control: { type: 'text' },
-        description: 'Main value proposition headline',
-      },
-      valueDescription: {
-        control: { type: 'text' },
-        description: 'Detailed value proposition description',
-      },
-      avatarSrc: {
-        control: { type: 'text' },
-        description: 'Avatar image source',
-      },
-      avatarAlt: {
-        control: { type: 'text' },
-        description: 'Avatar image alt text',
-      },
-      primaryButtonText: {
-        control: { type: 'text' },
-        description: 'Primary button text',
-      },
-      primaryButtonHref: {
-        control: { type: 'text' },
-        description: 'Primary button link',
-      },
-      secondaryButtonText: {
-        control: { type: 'text' },
-        description: 'Secondary button text',
-      },
-      secondaryButtonHref: {
-        control: { type: 'text' },
-        description: 'Secondary button link',
-      },
-      scrollText: {
-        control: { type: 'text' },
-        description: 'Scroll indicator text',
-      },
-      showCanvasBackground: {
-        control: { type: 'boolean' },
-        description: 'Whether to show canvas background container',
-      },
-      stats: {
-        control: { type: 'object' },
-        description: 'Array of stats to display',
-      },
-      techStack: {
-        control: { type: 'object' },
-        description: 'Array of tech stack categories',
-      },
-    },
-    args: {
-      primaryAction: fn(),
-      secondaryAction: fn(),
-      scrollIndicator: fn(),
-    },
-  });
-</script>
+  type StatType = 'years' | 'scale' | 'reliability' | 'performance' | 'languages';
+  type TechLevel = 'expert' | 'advanced';
 
-<Story
-  name="Default"
-  args={{
+  const aboutMeStats: Array<{ count: string; label: string; type: StatType }> = [
+    { count: '12', label: 'Years Experience', type: 'years' },
+    { count: '15', label: 'Teams Led', type: 'scale' },
+    { count: '99.99%', label: 'System Uptime', type: 'reliability' },
+    { count: '16x', label: 'Code Reduction', type: 'performance' },
+  ];
+
+  const aboutMeTechStack: Array<{
+    title: string;
+    level: TechLevel;
+    technologies: string[];
+  }> = [
+    {
+      title: 'Frontend',
+      level: 'expert',
+      technologies: ['React', 'TypeScript', 'Next.js'],
+    },
+    {
+      title: 'Backend',
+      level: 'expert',
+      technologies: ['Node.js', 'Python', 'Go'],
+    },
+    {
+      title: 'Infrastructure',
+      level: 'advanced',
+      technologies: ['AWS', 'Kubernetes', 'Terraform'],
+    },
+    {
+      title: 'Leadership',
+      level: 'expert',
+      technologies: ['Team Building', 'Architecture', 'Strategy'],
+    },
+  ];
+
+  const aboutMeArgs = {
     name: 'Cassidy Bridges',
     role: 'Software Engineering Leader',
     statusText: 'Available for new opportunities',
@@ -87,88 +47,64 @@
       'I architect systems that scale, lead teams that thrive, and build products that last.',
     valueDescription:
       'With over a decade of experience turning complex challenges into elegant solutions, I specialize in building high-performance engineering teams and resilient distributed systems. From React frontends to cloud infrastructure, I create technology that just works.',
-    avatarSrc: '/headshot.webp',
+    avatarSrc: 'headshot.png',
     avatarAlt: 'Cassidy Bridges',
     primaryButtonText: 'View Experience',
-    primaryButtonHref: '#experience',
     secondaryButtonText: 'Get in Touch',
-    secondaryButtonHref: '#contact',
     scrollText: 'Explore my work',
     showCanvasBackground: true,
-    stats: [
-      { count: '12', label: 'Years<br>Experience', type: 'years' },
-      { count: '15', label: 'Teams<br>Lead', type: 'scale' },
-      { count: '99.99%', label: 'System<br>Uptime', type: 'reliability' },
-      { count: '16x', label: 'Code<br>Reduction', type: 'performance' },
-    ],
-    techStack: [
-      {
-        title: 'Frontend',
-        level: 'expert',
-        technologies: ['React', 'TypeScript', 'Next.js'],
+    stats: aboutMeStats,
+    techStack: aboutMeTechStack,
+  };
+
+  const { Story } = defineMeta({
+    title: 'Page Sections/About Me',
+    component: AboutMe,
+    tags: ['autodocs'],
+    argTypes: {
+      name: { control: { type: 'text' } },
+      role: { control: { type: 'text' } },
+      statusText: { control: { type: 'text' } },
+      valueHeadline: { control: { type: 'text' } },
+      valueDescription: { control: { type: 'text' } },
+      avatarSrc: { control: { type: 'text' } },
+      avatarAlt: { control: { type: 'text' } },
+      primaryButtonText: { control: { type: 'text' } },
+      secondaryButtonText: { control: { type: 'text' } },
+      scrollText: { control: { type: 'text' } },
+      showCanvasBackground: {
+        control: { type: 'boolean' },
+        description:
+          'Turn off when AboutMe is nested inside a section that already paints its own background, to avoid stacking two canvases.',
       },
-      {
-        title: 'Backend',
-        level: 'expert',
-        technologies: ['Node.js', 'Python', 'Go'],
+      stats: {
+        control: { type: 'object' },
+        description:
+          "{count, label, type} tiles rendered in array order — type selects the tile's icon and accent color, it does not affect sorting.",
       },
-      {
-        title: 'Infrastructure',
-        level: 'advanced',
-        technologies: ['AWS', 'Kubernetes', 'Terraform'],
+      techStack: {
+        control: { type: 'object' },
+        description:
+          '{title, level, technologies} groups rendered in array order — level ("expert" | "advanced") drives the badge shown next to the group title.',
       },
-      {
-        title: 'Leadership',
-        level: 'expert',
-        technologies: ['Team Building', 'Architecture', 'Strategy'],
+    },
+    args: aboutMeArgs,
+    parameters: {
+      docs: {
+        description: {
+          component:
+            "Assembles the entire hero section — profile, value prop, stats panel, tech panel, GitHub link, and scroll indicator — from one flat prop list; none of AboutMe's own props are rendered directly, they're all just passed through to whichever of the seven child components owns that piece of content. `showCanvasBackground` only toggles an empty `#hero-canvas-container` div — AboutMe doesn't render a canvas itself, so turning this on without something else painting into that container does nothing visible.",
+        },
       },
-    ],
-  }}
->
+    },
+  });
+</script>
+
+<Story name="Default" args={aboutMeArgs}>
   <AboutMe
-    name="Cassidy Bridges"
-    role="Software Engineering Leader"
-    statusText="Available for new opportunities"
-    valueHeadline="I architect systems that scale, lead teams that thrive, and build products that last."
-    valueDescription="With over a decade of experience turning complex challenges into elegant solutions, I specialize in building high-performance engineering teams and resilient distributed systems. From React frontends to cloud infrastructure, I create technology that just works."
-    avatarSrc="/headshot.webp"
-    avatarAlt="Cassidy Bridges"
-    primaryButtonText="View Experience"
-    primaryButtonHref="#experience"
-    secondaryButtonText="Get in Touch"
-    secondaryButtonHref="#contact"
-    scrollText="Explore my work"
-    showCanvasBackground={true}
-    stats={[
-      { count: '12', label: 'Years<br>Experience', type: 'years' },
-      { count: '15', label: 'Teams<br>Lead', type: 'scale' },
-      { count: '99.99%', label: 'System<br>Uptime', type: 'reliability' },
-      { count: '16x', label: 'Code<br>Reduction', type: 'performance' },
-    ]}
-    techStack={[
-      {
-        title: 'Frontend',
-        level: 'expert',
-        technologies: ['React', 'TypeScript', 'Next.js'],
-      },
-      {
-        title: 'Backend',
-        level: 'expert',
-        technologies: ['Node.js', 'Python', 'Go'],
-      },
-      {
-        title: 'Infrastructure',
-        level: 'advanced',
-        technologies: ['AWS', 'Kubernetes', 'Terraform'],
-      },
-      {
-        title: 'Leadership',
-        level: 'expert',
-        technologies: ['Team Building', 'Architecture', 'Strategy'],
-      },
-    ]}
-    on:primaryAction={(e) => console.log('Primary action:', e.detail)}
-    on:secondaryAction={(e) => console.log('Secondary action:', e.detail)}
-    on:scrollIndicator={() => console.log('Scroll indicator clicked')}
+    {...aboutMeArgs}
+    onPrimaryAction={() => console.log('Primary action')}
+    onSecondaryAction={() => console.log('Secondary action')}
+    onScrollIndicator={() => console.log('Scroll indicator clicked')}
   />
 </Story>

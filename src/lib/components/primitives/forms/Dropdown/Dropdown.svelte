@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from 'svelte';
+  import { onMount } from 'svelte';
+  import Input from '$lib/components/primitives/forms/Input';
 
   interface DropdownOption {
     value: string;
@@ -7,41 +8,48 @@
     description?: string;
   }
 
-  export let options: DropdownOption[] = [];
-  export let value: string = '';
-  export let placeholder: string = 'Select an option';
-  export let disabled: boolean = false;
-  export let id: string = '';
-  export let ariaLabel: string = '';
-  export let error: boolean = false;
+  type Props = {
+    options?: DropdownOption[];
+    value?: string;
+    placeholder?: string;
+    disabled?: boolean;
+    id?: string;
+    ariaLabel?: string;
+    error?: boolean;
+  };
 
-  const dispatch = createEventDispatcher<{
-    change: { value: string; option: DropdownOption };
-  }>();
+  let {
+    options = [],
+    value = $bindable(''),
+    placeholder = 'Select an option',
+    disabled = false,
+    id = '',
+    ariaLabel = '',
+    error = false,
+  }: Props = $props();
 
-  // State
-  let isOpen = false;
-  let focusedIndex = -1;
-  let triggerRef: HTMLButtonElement;
-  let menuRef: HTMLDivElement;
-  let containerRef: HTMLDivElement;
-  let optionRefs: HTMLButtonElement[] = [];
+  let isOpen = $state(false);
+  let focusedIndex = $state(-1);
+  let triggerRef: HTMLButtonElement | undefined = $state();
+  let menuRef: HTMLDivElement | undefined = $state();
+  let containerRef: HTMLDivElement | undefined = $state();
+  let optionRefs: HTMLButtonElement[] = $state([]);
 
-  // Computed values
-  $: selectedOption = options.find((opt) => opt.value === value);
-  $: displayText = selectedOption?.label || placeholder;
-  $: hasValue = Boolean(value?.trim());
+  const selectedOption = $derived(options.find((opt) => opt.value === value));
+  const displayText = $derived(selectedOption?.label || placeholder);
+  const hasValue = $derived(Boolean(value?.trim()));
 
-  // CSS classes
-  $: triggerClasses = [
-    'dropdown-trigger',
-    isOpen && 'dropdown-trigger--open',
-    hasValue && 'dropdown-trigger--filled',
-    error && 'dropdown-trigger--error',
-    disabled && 'dropdown-trigger--disabled',
-  ]
-    .filter(Boolean)
-    .join(' ');
+  const triggerClasses = $derived(
+    [
+      'dropdown-trigger',
+      isOpen && 'dropdown-trigger--open',
+      hasValue && 'dropdown-trigger--filled',
+      error && 'dropdown-trigger--error',
+      disabled && 'dropdown-trigger--disabled',
+    ]
+      .filter(Boolean)
+      .join(' '),
+  );
 
   // Scroll focused item into view
   function scrollFocusedItemIntoView() {
@@ -89,7 +97,6 @@
     if (!option) return;
 
     value = selectedValue;
-    dispatch('change', { value: selectedValue, option });
     closeDropdown();
   }
 
@@ -226,13 +233,13 @@
 </script>
 
 <div class="dropdown" bind:this={containerRef}>
-  <button
-    type="button"
-    class={triggerClasses}
+  <Input
+    as="button"
+    className={triggerClasses}
     {id}
-    bind:this={triggerRef}
-    on:click={handleTriggerClick}
-    on:keydown={handleTriggerKeydown}
+    bind:element={triggerRef}
+    onclick={handleTriggerClick}
+    onkeydown={(event: Event) => handleTriggerKeydown(event as unknown as KeyboardEvent)}
     {disabled}
     aria-haspopup="listbox"
     aria-expanded={isOpen}
@@ -256,7 +263,7 @@
         stroke-width="1.5"
       />
     </svg>
-  </button>
+  </Input>
 
   {#if isOpen}
     <div
@@ -264,7 +271,7 @@
       role="listbox"
       aria-labelledby={id}
       bind:this={menuRef}
-      on:keydown={handleMenuKeydown}
+      onkeydown={handleMenuKeydown}
       tabindex="-1"
     >
       {#each options as option, index (option.value)}
@@ -276,8 +283,8 @@
           role="option"
           aria-selected={value === option.value}
           bind:this={optionRefs[index]}
-          on:click={() => handleOptionClick(option.value)}
-          on:mouseenter={() => handleOptionMouseEnter(index)}
+          onclick={() => handleOptionClick(option.value)}
+          onmouseenter={() => handleOptionMouseEnter(index)}
           tabindex="-1"
         >
           <div class="dropdown-option__content">
@@ -301,87 +308,45 @@
 </div>
 
 <style lang="scss">
+  @use 'lib/components/primitives/root' as root;
+
   .dropdown {
+    @include root.component-root;
+
     position: relative;
     width: 100%;
   }
 
-  .dropdown-trigger {
+  .dropdown :global(.dropdown-trigger) {
+    --input-text-align: left;
+
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--token-space-fluid-sm);
 
-    background: var(--token-surface-glass-strong);
-    border: var(--token-border-default-small);
-    border-radius: var(--token-radius-lg);
-    padding: var(--token-space-fluid-md) var(--token-space-fluid-lg);
-
-    font-size: var(--token-font-size-base);
-    font-family: inherit;
-    color: var(--token-text-primary);
-    text-align: left;
-
     cursor: pointer;
-    transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
-    box-shadow: var(--token-shadow-light);
+  }
 
-    @media (min-width: 768px) {
-      padding: var(--token-space-fluid-lg) var(--token-space-fluid-xl);
-      font-size: var(--token-font-size-lg);
-    }
+  .dropdown :global(.dropdown-trigger--open) {
+    --input-filled-border-color: var(--token-interactive-color);
+    --input-filled-background: var(--token-surface-glass-medium);
+    --input-shadow: var(--token-shadow-focus);
 
-    &:hover:not(:disabled):not(.dropdown-trigger--open) {
-      border-color: var(--token-border-color-hover);
-      background: var(--token-surface-glass-medium);
-      box-shadow: var(--token-shadow-default);
-    }
+    border-bottom-left-radius: var(--token-radius-sm);
+    border-bottom-right-radius: var(--token-radius-sm);
+  }
 
-    &:focus {
-      outline: none;
-      border-color: var(--token-interactive-color);
-      background: var(--token-surface-glass-medium);
-      box-shadow: var(--token-shadow-focus);
-    }
+  .dropdown :global(.dropdown-trigger--error) {
+    --input-error-border-color: var(--token-status-danger-border);
+    --input-error-background: var(--token-status-danger-bg);
+    --input-error-glow: var(--token-status-danger-glow);
+  }
 
-    &:focus-visible {
-      outline: 2px solid var(--token-interactive-color);
-      outline-offset: 2px;
-    }
-
-    &--open {
-      border-color: var(--token-interactive-color);
-      background: var(--token-surface-glass-medium);
-      border-bottom-left-radius: var(--token-radius-sm);
-      border-bottom-right-radius: var(--token-radius-sm);
-      box-shadow: var(--token-shadow-focus);
-    }
-
-    &--filled:not(.dropdown-trigger--open):not(:focus) {
-      background: var(--token-surface-glass-medium);
-    }
-
-    &--error {
-      border-color: var(--token-status-danger-border);
-      background: var(--token-status-danger-bg);
-      box-shadow: 0 0 0 2px var(--token-status-danger-glow);
-    }
-
-    &--disabled {
-      background: var(--token-surface-glass-subtle);
-      border-color: var(--token-border-color-disabled);
-      color: var(--token-text-disabled);
-      cursor: not-allowed;
-      opacity: 0.6;
-
-      &:hover,
-      &:focus {
-        border-color: var(--token-border-color-disabled);
-        background: var(--token-surface-glass-subtle);
-        box-shadow: none;
-      }
-    }
+  .dropdown :global(.dropdown-trigger--disabled) {
+    --input-disabled-background: var(--token-surface-glass-subtle);
+    --input-disabled-color: var(--token-text-disabled, var(--token-text-tertiary));
   }
 
   .dropdown-trigger__text {
@@ -459,6 +424,8 @@
   }
 
   .dropdown-option {
+    @include root.interactive-root;
+
     width: 100%;
     display: flex;
     align-items: center;
@@ -557,7 +524,7 @@
   }
 
   @media (prefers-contrast: high) {
-    .dropdown-trigger,
+    .dropdown :global(.dropdown-trigger),
     .dropdown-menu {
       border-width: 2px;
     }

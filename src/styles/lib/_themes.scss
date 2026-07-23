@@ -134,10 +134,16 @@ $reference-end: ')' !default;
   }
 
   $is-percentage: string.slice($trimmed, -1) == '%';
-  $numeric-part: if($is-percentage, string.slice($trimmed, 1, -2), $trimmed);
+  $numeric-part: $trimmed;
+  @if $is-percentage {
+    $numeric-part: string.slice($trimmed, 1, -2);
+  }
 
   $is-negative: string.slice($numeric-part, 1, 1) == '-';
-  $absolute-part: if($is-negative, string.slice($numeric-part, 2), $numeric-part);
+  $absolute-part: $numeric-part;
+  @if $is-negative {
+    $absolute-part: string.slice($numeric-part, 2);
+  }
 
   @if string.length($absolute-part) == 0 {
     @return null;
@@ -148,8 +154,14 @@ $reference-end: ')' !default;
     @return null;
   }
 
-  $final: if($is-negative, -1 * $parsed, $parsed);
-  @return if($is-percentage, $final * 1%, $final);
+  $final: $parsed;
+  @if $is-negative {
+    $final: -1 * $parsed;
+  }
+  @if $is-percentage {
+    @return $final * 1%;
+  }
+  @return $final;
 }
 
 @function parse-digits($string) {
@@ -185,7 +197,10 @@ $reference-end: ')' !default;
     }
   }
 
-  $integer-end: if($decimal-pos != null, $decimal-pos - 1, $length);
+  $integer-end: $length;
+  @if $decimal-pos != null {
+    $integer-end: $decimal-pos - 1;
+  }
   @for $i from 1 through $integer-end {
     $char: string.slice($string, $i, $i);
     $result: $result * 10 + map.get($digits, $char);
@@ -218,7 +233,10 @@ $reference-end: ')' !default;
   @if meta.type-of($value) == 'number' {
     @if math.unit($value) == '%' {
       $unitless: math.div($value, 1%);
-      @return if($unitless >= 0 and $unitless <= 100, math.div($unitless, 100), null);
+      @if $unitless >= 0 and $unitless <= 100 {
+        @return math.div($unitless, 100);
+      }
+      @return null;
     }
 
     @if math.is-unitless($value) {
@@ -235,7 +253,10 @@ $reference-end: ')' !default;
 
   @if meta.type-of($value) == 'string' {
     $parsed: parse-number($value);
-    @return if($parsed != null, parse-alpha($parsed), null);
+    @if $parsed != null {
+      @return parse-alpha($parsed);
+    }
+    @return null;
   }
 
   @return null;
@@ -254,8 +275,14 @@ $reference-end: ')' !default;
     $type
   );
 
-  $context-msg: if($context != '', ' in #{$context}', '');
-  $detail-msg: if(list.length($details) > 0, ". #{join($details, '. ')}", '');
+  $context-msg: '';
+  @if $context != '' {
+    $context-msg: ' in #{$context}';
+  }
+  $detail-msg: '';
+  @if list.length($details) > 0 {
+    $detail-msg: ". #{join($details, '. ')}";
+  }
 
   @return '#{$base}#{$context-msg}#{$detail-msg}';
 }
@@ -771,11 +798,10 @@ $reference-end: ')' !default;
         }
       }
 
-      $path: if(
-        $params != null and meta.type-of($params) == 'map',
-        map.get($params, 'path'),
-        $params
-      );
+      $path: $params;
+      @if $params != null and meta.type-of($params) == 'map' {
+        $path: map.get($params, 'path');
+      }
       $resolved-value: resolve-reference(
         $path,
         $resolved-schema,
@@ -924,7 +950,10 @@ $reference-end: ')' !default;
       @if $params != null {
         $color: get-primitive($primitives, map.get($params, 'color'), map.get($params, 'step'));
         $alpha: map.get($params, 'alpha');
-        $final-color: if($alpha == 1, $color, rgba($color, $alpha));
+        $final-color: $color;
+        @if $alpha != 1 {
+          $final-color: rgba($color, $alpha);
+        }
 
         $before: string.slice($result, 1, $start - 1);
         $after: string.slice($result, $end + string.length($resolve-end));
@@ -1216,7 +1245,10 @@ $reference-end: ')' !default;
 @function process-semantic-schema($schema, $primitives: null, $prefix: 'semantic') {
   $valid-schema: validate-map($schema, 'semantic schema');
 
-  $brand-colors: if(map.has-key($schema, 'brand'), map.get($schema, 'brand'), ());
+  $brand-colors: ();
+  @if map.has-key($schema, 'brand') {
+    $brand-colors: map.get($schema, 'brand');
+  }
 
   @if $primitives == null {
     @if list.length($brand-colors) == 0 {

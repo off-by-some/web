@@ -175,73 +175,73 @@ $dark-mode-tokens: (
 
     default: (
       small: (
-        '#{themes.reference("border.size.small")} solid #{themes.reference("border.color.default")}',
+        '#{themes.reference("border.size.small")} solid #{themes.reference("border.color.default")}'
       ),
       medium: (
-        '#{themes.reference("border.size.medium")} solid #{themes.reference("border.color.default")}',
+        '#{themes.reference("border.size.medium")} solid #{themes.reference("border.color.default")}'
       ),
       large: (
-        '#{themes.reference("border.size.large")} solid #{themes.reference("border.color.default")}',
+        '#{themes.reference("border.size.large")} solid #{themes.reference("border.color.default")}'
       ),
     ),
 
     neutral: (
       small: (
-        '#{themes.reference("border.size.small")} solid #{themes.reference("border.color.neutral")}',
+        '#{themes.reference("border.size.small")} solid #{themes.reference("border.color.neutral")}'
       ),
       medium: (
-        '#{themes.reference("border.size.medium")} solid #{themes.reference("border.color.neutral")}',
+        '#{themes.reference("border.size.medium")} solid #{themes.reference("border.color.neutral")}'
       ),
       large: (
-        '#{themes.reference("border.size.large")} solid #{themes.reference("border.color.neutral")}',
+        '#{themes.reference("border.size.large")} solid #{themes.reference("border.color.neutral")}'
       ),
     ),
 
     interactive: (
       small: (
-        '#{themes.reference("border.size.small")} solid #{themes.reference("interactive.color")}',
+        '#{themes.reference("border.size.small")} solid #{themes.reference("interactive.color")}'
       ),
       medium: (
-        '#{themes.reference("border.size.medium")} solid #{themes.reference("interactive.color")}',
+        '#{themes.reference("border.size.medium")} solid #{themes.reference("interactive.color")}'
       ),
       large: (
-        '#{themes.reference("border.size.large")} solid #{themes.reference("interactive.color")}',
+        '#{themes.reference("border.size.large")} solid #{themes.reference("interactive.color")}'
       ),
     ),
 
     hover: (
       small: (
-        '#{themes.reference("border.size.small")} solid #{themes.reference("border.color.hover", $alpha: 35%)}',
+        '#{themes.reference("border.size.small")} solid #{themes.reference("border.color.hover", $alpha: 35%)}'
       ),
       medium: (
-        '#{themes.reference("border.size.medium")} solid #{themes.reference("border.color.hover", $alpha: 35%)}',
+        '#{themes.reference("border.size.medium")} solid #{themes.reference("border.color.hover", $alpha: 35%)}'
       ),
       large: (
-        '#{themes.reference("border.size.large")} solid #{themes.reference("border.color.hover", $alpha: 35%)}',
+        '#{themes.reference("border.size.large")} solid #{themes.reference("border.color.hover", $alpha: 35%)}'
       ),
     ),
 
     focus: (
       small: (
-        '#{themes.reference("border.size.small")} solid #{themes.reference("border.color.focus", $alpha: 35%)}',
+        '#{themes.reference("border.size.small")} solid #{themes.reference("border.color.focus", $alpha: 35%)}'
       ),
       medium: (
-        '#{themes.reference("border.size.medium")} solid #{themes.reference("border.color.focus", $alpha: 35%)}',
+        '#{themes.reference("border.size.medium")} solid #{themes.reference("border.color.focus", $alpha: 35%)}'
       ),
       large: (
-        '#{themes.reference("border.size.large")} solid #{themes.reference("border.color.focus", $alpha: 35%)}',
+        '#{themes.reference("border.size.large")} solid #{themes.reference("border.color.focus", $alpha: 35%)}'
       ),
     ),
 
     ring: (
       small: (
-        '#{themes.reference("border.size.small")} solid #{themes.reference("border.color.ring", $alpha: 35%)}',
+        '#{themes.reference("border.size.small")} solid #{themes.reference("border.color.ring", $alpha: 35%)}'
       ),
       medium: (
-        '#{themes.reference("border.size.medium")} solid #{themes.reference("border.color.ring", $alpha: 35%)}',
+        '#{themes.reference("border.size.medium")} solid #{themes.reference("border.color.ring", $alpha: 35%)}'
       ),
       large: (
-        '#{themes.reference("border.size.large")} solid #{themes.reference("border.color.ring", $alpha: 35%)}',
+        '#{themes.reference("border.size.large")} solid #{themes.reference("border.color.ring", $alpha: 35%)}'
       ),
     ),
   ),
@@ -441,6 +441,10 @@ $dark-mode-tokens: (
     ),
   ),
 
+  scale: (
+    root: 90%,
+  ),
+
   space: (
     '0': 0,
     '1': 0.25rem,
@@ -494,8 +498,8 @@ $dark-mode-tokens: (
     '16': 4.25rem,
     '40': 10rem,
     'avatar': (
-      'sm': clamp(6.5rem, 20vw, 8rem),
-      'lg': clamp(8.5rem, 14vw, 10.5rem),
+      'sm': clamp(6.5rem, 20vw, 11rem),
+      'lg': clamp(8.5rem, 14vw, 11.25rem),
     ),
   ),
 

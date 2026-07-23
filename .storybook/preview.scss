@@ -1,0 +1,88 @@
+:root {
+  color-scheme: dark;
+}
+
+body,
+.sb-show-main,
+.docs-story,
+.sbdocs,
+.sbdocs-wrapper,
+.sbdocs-content {
+  background: var(--token-gradients-hero, #080a18) !important;
+  color: var(--token-text-primary, #f8fafc) !important;
+}
+
+.sbdocs-content {
+  max-width: 1200px;
+}
+
+.sbdocs h1,
+.sbdocs h2,
+.sbdocs h3,
+.sbdocs h4,
+.sbdocs p,
+.sbdocs li,
+.sbdocs code {
+  color: inherit;
+}
+
+.docblock-argstable,
+.docblock-source,
+.docblock-code-toggle,
+.docblock-code-toggle--expanded {
+  background: var(--token-surface-glass-strong, rgba(255, 255, 255, 0.08)) !important;
+  color: var(--token-text-primary, #f8fafc) !important;
+}
+
+.docblock-argstable table,
+.sbdocs table {
+  color: var(--token-text-dark, #080a18) !important;
+}
+
+.docblock-argstable thead th,
+.docblock-argstable-head th,
+.sbdocs table thead th,
+.docblock-argstable thead th *,
+.docblock-argstable-head th *,
+.sbdocs table thead th * {
+  color: var(--token-text-primary, #f8fafc) !important;
+}
+
+.docblock-argstable tbody td,
+.docblock-argstable-body td,
+.sbdocs table tbody td {
+  color: var(--token-text-dark, #080a18) !important;
+}
+
+.docblock-argstable-body td > span,
+.docblock-argstable-body td > div,
+.docblock-argstable-body td > label,
+.docblock-argstable-body td .css-in3yi3,
+.docblock-argstable-body td .css-s7utv5,
+.docblock-argstable-body td .css-o1d7ko {
+  color: var(--token-text-dark, #080a18) !important;
+}
+
+.docblock-argstable tbody td code,
+.docblock-argstable-body td code,
+.sbdocs table tbody td code {
+  color: var(--token-text-dark, #080a18) !important;
+}
+
+.docblock-argstable-body td button:not(.css-d474as),
+.docblock-argstable tbody td textarea,
+.docblock-argstable-body td textarea,
+.sbdocs table tbody td textarea,
+.docblock-argstable tbody td input,
+.docblock-argstable-body td input,
+.sbdocs table tbody td input {
+  color: var(--token-text-dark, #080a18) !important;
+}
+
+.docs-story {
+  border-radius: var(--token-radius-lg, 1rem);
+}
+
+#storybook-root {
+  min-height: 100vh;
+}

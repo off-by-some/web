@@ -37,6 +37,7 @@ module.exports = {
         'lcp-discovery-insight': 'off',
         'lcp-lazy-loaded': 'off',
         'forced-reflow-insight': 'off',
+        'network-dependency-tree-insight': 'off',
         'cache-insight': 'off',
         'uses-long-cache-ttl': 'off',
       },

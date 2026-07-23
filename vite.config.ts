@@ -2,14 +2,18 @@ import { defineConfig } from 'vite';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { enhancedImages } from '@sveltejs/enhanced-img';
 import path from 'path';
-import filesize from 'rollup-plugin-filesize';
 import { bundleStats } from 'rollup-plugin-bundle-stats';
 
 export default defineConfig({
   plugins: [enhancedImages(), sveltekit()],
   server: {
     fs: {
-      allow: ['src', 'static', 'assets'],
+      allow: [
+        path.resolve('./src'),
+        path.resolve('./static'),
+        path.resolve('./assets'),
+        path.resolve('./assets/images'),
+      ],
     },
   },
   build: {
@@ -34,7 +38,6 @@ export default defineConfig({
         },
       },
       plugins: [
-        filesize({ showBrotliSize: true, showMinifiedSize: true }),
         bundleStats({
           outDir: '../../../.bundle-stats',
           html: true,

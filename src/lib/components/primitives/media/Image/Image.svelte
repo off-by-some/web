@@ -48,26 +48,43 @@ TROUBLESHOOTING 🔧
       console.log(Object.keys(import.meta.glob('/assets/images/**/*')))
 -->
 <!-- <Image/> — normal <img> with optional responsive sources -->
-<!-- src/lib/components/Image.svelte -->
+<!-- src/lib/components/primitives/media/Image/Image.svelte -->
 <script lang="ts">
   import type { HTMLImgAttributes } from 'svelte/elements';
-  import { onMount, afterUpdate } from 'svelte';
-  import type { PictureSourceSet } from '$lib/Image/image-path';
-  import { loadImage } from '$lib/Image/image-path';
+  import type { PictureSourceSet } from '$lib/components/primitives/media/Image/image-path';
+  import { loadImage } from '$lib/components/primitives/media/Image/image-path';
 
-  // Match <img> API
-  export let src: string; // acts like <img src="">
-  export let alt: string = '';
-  export let sizes: string | undefined = undefined; // browser hint; default computed below
-  export let loading: HTMLImgAttributes['loading'] = 'lazy';
-  export let decoding: HTMLImgAttributes['decoding'] = 'async';
-  export let fetchpriority: HTMLImgAttributes['fetchpriority'] = undefined;
-  export let priority = false; // set to true for LCP images
+  type Props = {
+    src: string; // acts like <img src="">
+    alt?: string;
+    sizes?: string; // browser hint; default computed below
+    loading?: HTMLImgAttributes['loading'];
+    decoding?: HTMLImgAttributes['decoding'];
+    fetchpriority?: HTMLImgAttributes['fetchpriority'];
+    priority?: boolean; // set to true for LCP images
+    className?: string;
+    width?: number;
+    height?: number;
+    [key: string]: unknown;
+  };
+
+  let {
+    src,
+    alt = '',
+    sizes,
+    loading = 'lazy',
+    decoding = 'async',
+    fetchpriority,
+    priority = false,
+    className = '',
+    width,
+    height,
+    ...rest
+  }: Props = $props();
 
   // Internal state
-  let data: PictureSourceSet | undefined;
-  let err: string | null = null;
-  let lastObservedSrc: string | undefined;
+  let data = $state<PictureSourceSet | undefined>(undefined);
+  let err = $state<string | null>(null);
   let requestSequence = 0;
 
   async function startLoadFor(currentSrc: string | undefined) {
@@ -90,39 +107,28 @@ TROUBLESHOOTING 🔧
     }
   }
 
-  // Grab any class passed to <Image class="..."> so we can put it on the real <img>
-  $: klass = (($$props as any).class || '') as string;
-
   // Helper: turn a src string into a catalog "name" under /assets/images/**
   function toName(s: string): string | undefined {
     if (!s) return;
     if (/^https?:\/\//i.test(s) || s.startsWith('data:')) return; // external: render plain <img>
-    // Accept "/assets/images/foo.png" or "foo.png"
-    return s.replace(/^\/assets\/images\//, '');
+    // Accept "/assets/images/foo.png", "assets/images/foo.png", "/foo.png", or "foo.png"
+    return s.replace(/^\/?assets\/images\//, '').replace(/^\/+/, '');
   }
 
-  onMount(() => {
-    lastObservedSrc = src;
+  // Reruns on mount and whenever `src` changes — replaces the old
+  // onMount + afterUpdate + "did src change" bookkeeping.
+  $effect(() => {
     void startLoadFor(src);
   });
 
-  afterUpdate(() => {
-    if (src !== lastObservedSrc) {
-      lastObservedSrc = src;
-      void startLoadFor(src);
-    }
-  });
+  const isExternalSrc = $derived(/^https?:\/\//i.test(src) || src?.startsWith('data:'));
 
   // If user passes a numeric width (like <Image width={48} …>), default sizes => "48px"
-  $: effectiveSizes =
-    sizes ??
-    (Number.isFinite(($$props as any).width as number)
-      ? String(($$props as any).width) + 'px'
-      : undefined);
+  const effectiveSizes = $derived(sizes ?? (Number.isFinite(width) ? `${width}px` : undefined));
 
   // Decorative images: hide from AT when alt is empty
-  $: ariaHidden = alt === '' ? 'true' : undefined;
-  $: role = alt === '' ? 'presentation' : undefined;
+  const ariaHidden = $derived(alt === '' ? 'true' : undefined);
+  const role = $derived(alt === '' ? 'presentation' : undefined);
 </script>
 
 {#if data}
@@ -131,18 +137,19 @@ TROUBLESHOOTING 🔧
     <img
       src={data.src}
       {alt}
-      class={klass}
+      class={className}
+      class:image={true}
       loading={priority ? 'eager' : loading}
       {decoding}
       fetchpriority={priority ? 'high' : fetchpriority}
       aria-hidden={ariaHidden === 'true' ? 'true' : undefined}
       {role}
-      {...$$restProps}
+      {...rest}
     />
   {:else}
     <!-- Raster: responsive <picture>. Width/height provide intrinsic size (no CLS);
          CSS/containers still control display size (e.g., img { max-width:100%; height:auto }) -->
-    <picture class={klass}>
+    <picture class="image__picture">
       {#each data.sources ?? [] as s (s.type)}
         <source type={s.type} srcset={s.srcset} sizes={effectiveSizes} />
       {/each}
@@ -151,31 +158,33 @@ TROUBLESHOOTING 🔧
         srcset={data.srcset}
         sizes={effectiveSizes}
         {alt}
-        class={klass}
+        class={className}
+        class:image={true}
         loading={priority ? 'eager' : loading}
         {decoding}
         fetchpriority={priority ? 'high' : fetchpriority}
-        width={(($$props as any).width as number | undefined) ?? data.width}
-        height={(($$props as any).height as number | undefined) ?? data.height}
+        width={width ?? data.width}
+        height={height ?? data.height}
         aria-hidden={ariaHidden === 'true' ? 'true' : undefined}
         {role}
-        {...$$restProps}
+        {...rest}
       />
     </picture>
   {/if}
-{:else}
-  <!-- Fallback: non-catalog or not yet resolved -> plain <img> -->
-  <!-- <img
-    src={src}
-    alt={alt}
-    class={klass}
+{:else if isExternalSrc}
+  <!-- Fallback: external/data URLs render as a normal image while catalog images load. -->
+  <img
+    {src}
+    {alt}
+    class={className}
+    class:image={true}
     loading={priority ? 'eager' : loading}
-    decoding={decoding}
+    {decoding}
     fetchpriority={priority ? 'high' : fetchpriority}
-    aria-hidden={ariaHidden ? 'true' : undefined}
-    role={role}
-    {...$$restProps}
-  /> -->
+    aria-hidden={ariaHidden === 'true' ? 'true' : undefined}
+    {role}
+    {...rest}
+  />
 {/if}
 
 {#if import.meta.env.DEV && err}
@@ -183,12 +192,12 @@ TROUBLESHOOTING 🔧
 {/if}
 
 <style>
-  /* Optional: make it behave like typical responsive images by default.
-     Remove if your design system handles this globally. */
-  :global(img),
-  :global(picture > img) {
+  .image {
     max-width: 100%;
-    height: auto;
     display: block;
+  }
+
+  .image__picture {
+    display: contents;
   }
 </style>

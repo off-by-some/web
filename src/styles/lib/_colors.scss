@@ -166,11 +166,23 @@ $e: 2.718281828459045 !default;
 $pi: 3.141592653589793 !default;
 
 @function constrain($value, $min, $max) {
-  @return if($value < $min, $min, if($value > $max, $max, $value));
+  @if $value < $min {
+    @return $min;
+  }
+  @if $value > $max {
+    @return $max;
+  }
+  @return $value;
 }
 
 @function sign($value) {
-  @return if($value > 0, 1, if($value < 0, -1, 0));
+  @if $value > 0 {
+    @return 1;
+  }
+  @if $value < 0 {
+    @return -1;
+  }
+  @return 0;
 }
 
 @function cbrt($value) {
@@ -187,6 +199,20 @@ $pi: 3.141592653589793 !default;
 
 @function normalize-hue($angle) {
   @return (($angle % 360) + 360) % 360;
+}
+
+@function srgb-channel-to-linear($channel) {
+  @if $channel <= 0.04045 {
+    @return math.div($channel, 12.92);
+  }
+  @return pow(math.div($channel + 0.055, 1.055), 2.4);
+}
+
+@function linear-channel-to-srgb($channel) {
+  @if $channel <= 0.0031308 {
+    @return $channel * 12.92;
+  }
+  @return 1.055 * pow($channel, 1/2.4) - 0.055;
 }
 
 @function get-actual-step($normalized-step) {
@@ -235,9 +261,9 @@ $pi: 3.141592653589793 !default;
   $b: math.div(constrain(color.channel($color, 'blue', $space: rgb), 0, 255), 255);
 
   // Precise sRGB to linear RGB conversion
-  $r-lin: if($r <= 0.04045, math.div($r, 12.92), pow(math.div($r + 0.055, 1.055), 2.4));
-  $g-lin: if($g <= 0.04045, math.div($g, 12.92), pow(math.div($g + 0.055, 1.055), 2.4));
-  $b-lin: if($b <= 0.04045, math.div($b, 12.92), pow(math.div($b + 0.055, 1.055), 2.4));
+  $r-lin: srgb-channel-to-linear($r);
+  $g-lin: srgb-channel-to-linear($g);
+  $b-lin: srgb-channel-to-linear($b);
 
   // Linear RGB to LMS with precise OKLab matrix
   $l: 0.4122214708 * $r-lin + 0.5363325363 * $g-lin + 0.0514459929 * $b-lin;
@@ -277,7 +303,10 @@ $pi: 3.141592653589793 !default;
   $h: map.get($oklch, h);
 
   // Strip unit from hue if present (SCSS may add 'deg' unit)
-  $h-unitless: if(math.unit($h) == 'deg', math.div($h, 1deg), $h);
+  $h-unitless: $h;
+  @if math.unit($h) == 'deg' {
+    $h-unitless: math.div($h, 1deg);
+  }
   $h-rad: deg-to-rad($h-unitless);
   $a: $C * cos($h-rad);
   $b-val: $C * sin($h-rad);
@@ -297,9 +326,9 @@ $pi: 3.141592653589793 !default;
   $b-lin: constrain(-0.0041960863 * $l - 0.7034186147 * $m + 1.707614701 * $s, 0, 1);
 
   // Linear RGB to sRGB gamma correction
-  $r: if($r-lin <= 0.0031308, $r-lin * 12.92, 1.055 * pow($r-lin, 1/2.4) - 0.055);
-  $g: if($g-lin <= 0.0031308, $g-lin * 12.92, 1.055 * pow($g-lin, 1/2.4) - 0.055);
-  $b: if($b-lin <= 0.0031308, $b-lin * 12.92, 1.055 * pow($b-lin, 1/2.4) - 0.055);
+  $r: linear-channel-to-srgb($r-lin);
+  $g: linear-channel-to-srgb($g-lin);
+  $b: linear-channel-to-srgb($b-lin);
 
   @return rgb(
     round(constrain($r * 255, 0, 255)),
@@ -312,7 +341,7 @@ $pi: 3.141592653589793 !default;
 // sRGB → Linear
 // ----------------------------------------------------------------------------
 @function sRGB-to-linear($v) {
-  @return if($v <= 0.04045, math.div($v, 12.92), math.pow(math.div($v + 0.055, 1.055), 2.4));
+  @return srgb-channel-to-linear($v);
 }
 
 // ----------------------------------------------------------------------------
@@ -368,7 +397,10 @@ $pi: 3.141592653589793 !default;
   @if not unitless($h) {
     $h: math.div($h, 1deg);
   }
-  @return if($h < 0, $h + 360, $h);
+  @if $h < 0 {
+    @return $h + 360;
+  }
+  @return $h;
 }
 
 // ----------------------------------------------------------------------------
@@ -533,7 +565,10 @@ $pi: 3.141592653589793 !default;
     $reversed-index: ($num-steps - $i);
     $t: math.div($reversed-index, $num-steps - 1);
 
-    $curve: if($curve-factor > 1, pow($t, $curve-factor), 1 - pow(1 - $t, 1 / $curve-factor));
+    $curve: 1 - pow(1 - $t, 1 / $curve-factor);
+    @if $curve-factor > 1 {
+      $curve: pow($t, $curve-factor);
+    }
 
     $L: $min-L + ($max-L - $min-L) * $curve;
     $scale: map.merge(
@@ -590,7 +625,10 @@ $pi: 3.141592653589793 !default;
 
   $max-chroma: calculate-max-chroma($target-L, $h);
   $base-max-chroma: calculate-max-chroma(map.get($base-oklch, L), $h);
-  $chroma-ratio: if($base-max-chroma > 0, math.div($base-C, $base-max-chroma), 0);
+  $chroma-ratio: 0;
+  @if $base-max-chroma > 0 {
+    $chroma-ratio: math.div($base-C, $base-max-chroma);
+  }
 
   $base-chroma-scale: $max-chroma * $chroma-ratio * 1;
 
@@ -636,9 +674,9 @@ $pi: 3.141592653589793 !default;
   $g: math.div(color.channel($color, 'green', $space: rgb), 255);
   $b: math.div(color.channel($color, 'blue', $space: rgb), 255);
 
-  $r-lin: if($r <= 0.04045, math.div($r, 12.92), pow(math.div($r + 0.055, 1.055), 2.4));
-  $g-lin: if($g <= 0.04045, math.div($g, 12.92), pow(math.div($g + 0.055, 1.055), 2.4));
-  $b-lin: if($b <= 0.04045, math.div($b, 12.92), pow(math.div($b + 0.055, 1.055), 2.4));
+  $r-lin: srgb-channel-to-linear($r);
+  $g-lin: srgb-channel-to-linear($g);
+  $b-lin: srgb-channel-to-linear($b);
 
   @return 0.2126 * $r-lin + 0.7152 * $g-lin + 0.0722 * $b-lin;
 }
@@ -647,24 +685,24 @@ $pi: 3.141592653589793 !default;
   $Y: constrain($luminance, 0.000001, 0.999999);
 
   // Direct Y → OKLab L* conversion (exact formula)
-  @return if(
-    $Y <= 0.008856,
-    903.3 * $Y,
+  @if $Y <= 0.008856 {
     // Linear portion
-    1.16 * pow($Y, 1/3) - 0.16 // Cube root portion
-  );
+    @return 903.3 * $Y;
+  }
+  // Cube root portion
+  @return 1.16 * pow($Y, 1/3) - 0.16;
 }
 
 @function oklab-l-to-luminance($L) {
   $lightness: constrain($L, 0.000001, 0.999999);
 
   // Inverse of the Y → OKLab L* conversion
-  @return if(
-    $lightness <= (903.3 * 0.008856),
-    math.div($lightness, 903.3),
+  @if $lightness <= (903.3 * 0.008856) {
     // Linear portion: Y = L / 903.3
-    pow(($lightness + 0.16) / 1.16, 3) // Cube root portion: Y = ((L + 0.16) / 1.16)^3
-  );
+    @return math.div($lightness, 903.3);
+  }
+  // Cube root portion: Y = ((L + 0.16) / 1.16)^3
+  @return pow(($lightness + 0.16) / 1.16, 3);
 }
 
 @function calculate-cusp-for-hue($hue) {
@@ -770,11 +808,10 @@ $pi: 3.141592653589793 !default;
   $final-max-lum: min($max-lum, $achievable-max-lum);
 
   // If we can't achieve the target, reduce the ratio slightly
-  $final-ratio: if(
-    $achievable-max-lum > $max-lum,
-    pow($max-lum / $min-lum, 1 / ($num-steps - 1)),
-    $max-required-ratio
-  );
+  $final-ratio: $max-required-ratio;
+  @if $achievable-max-lum > $max-lum {
+    $final-ratio: pow($max-lum / $min-lum, 1 / ($num-steps - 1));
+  }
 
   // Generate the progression (reversed so highest numbers are darkest)
   $progression: ();
@@ -809,7 +846,10 @@ $pi: 3.141592653589793 !default;
   $t: max(0, ($L-mid - $lightness) / ($L-mid - $L-min));
   $t-ease: 3 * $t * $t - 2 * $t * $t * $t; // Cubic ease
 
-  $delta-h: if($hue-family == 'yellow', 20, 10); // Degrees toward red-brown
+  $delta-h: 10; // Degrees toward red-brown
+  @if $hue-family == 'yellow' {
+    $delta-h: 20;
+  }
   @return normalize-hue($hue + $delta-h * $t-ease);
 }
 
@@ -1145,7 +1185,10 @@ $pi: 3.141592653589793 !default;
 
 @function get-text-color($bg-color) {
   $luminance: get-relative-luminance($bg-color);
-  @return if($luminance > 0.5, #000000, #ffffff);
+  @if $luminance > 0.5 {
+    @return #000000;
+  }
+  @return #ffffff;
 }
 
 @function calculate-gamut-efficiency($scale, $chroma-profile) {
@@ -1165,7 +1208,10 @@ $pi: 3.141592653589793 !default;
     }
   }
 
-  @return if($count > 0, ($total-utilization / $count) * 100, 0);
+  @if $count > 0 {
+    @return ($total-utilization / $count) * 100;
+  }
+  @return 0;
 }
 
 @function get-harmony-chroma($L, $hue, $adjusted-base-chroma, $chroma-multiplier: 1) {

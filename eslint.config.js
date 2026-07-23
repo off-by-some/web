@@ -53,7 +53,6 @@ export default tseslint.config(
       parserOptions: {
         projectService: true,
         tsconfigRootDir: import.meta.dirname,
-        project: ['./tsconfig.eslint.json'],
       },
     },
     rules: {
@@ -77,7 +76,6 @@ export default tseslint.config(
         extraFileExtensions: ['.svelte'],
         projectService: true,
         tsconfigRootDir: import.meta.dirname,
-        project: ['./tsconfig.eslint.json'],
       },
     },
     rules: {

@@ -27,6 +27,7 @@
 
 /* Document/root */
 html {
+  font-size: var(--token-scale-root, 90%);
   scroll-behavior: smooth;
   text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;

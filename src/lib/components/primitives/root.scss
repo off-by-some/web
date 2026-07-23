@@ -1,0 +1,18 @@
+@mixin component-root {
+  box-sizing: border-box;
+  font-family: inherit;
+  min-width: 0;
+
+  &::before,
+  &::after {
+    box-sizing: border-box;
+  }
+}
+
+@mixin interactive-root {
+  @include component-root;
+
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+}

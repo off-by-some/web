@@ -1,0 +1,35 @@
+@use 'sass:map';
+
+$tones: (
+  expert: (
+    color: var(--token-state-mastery-expert),
+    glow: var(--token-state-mastery-glow),
+  ),
+  advanced: (
+    color: var(--token-status-advanced),
+    glow: rgba(99, 102, 241, 0.3),
+  ),
+  proficient: (
+    color: var(--token-status-proficient),
+    glow: rgba(245, 158, 11, 0.3),
+  ),
+  learning: (
+    color: var(--token-status-learning),
+    glow: rgba(6, 182, 212, 0.3),
+  ),
+  available: (
+    color: var(--token-attention-color),
+    glow: var(--token-attention-glow),
+  ),
+  interactive: (
+    color: var(--token-interactive-color),
+    glow: var(--token-interactive-glow),
+  ),
+);
+
+@mixin vars($tone) {
+  $config: map.get($tones, $tone);
+
+  --tone-color: #{map.get($config, color)};
+  --tone-glow: #{map.get($config, glow)};
+}

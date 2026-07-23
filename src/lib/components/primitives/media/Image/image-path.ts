@@ -1,5 +1,5 @@
-// src/lib/image-path.ts
-import { base } from '$app/paths';
+// src/lib/components/primitives/media/Image/image-path.ts
+import { resolve } from '$app/paths';
 
 export interface ImageLoaderResult {
   img: { src: string; w: number; h: number };
@@ -27,11 +27,15 @@ const rasterModules = import.meta.glob('/assets/images/**/*.{jpg,jpeg,png,webp,a
 });
 
 // Include SVGs in the rasterModules
-const svgModules = import.meta.glob('/assets/images/**/*.svg', { import: 'default' });
+const svgModules = import.meta.glob('/assets/images/**/*.svg', {
+  import: 'default',
+  query: '?url',
+});
 
 // Configuration constants
 const PRIMARY_FORMAT = 'jpeg';
 const VECTOR_EXTENSIONS = ['.svg'];
+const resolvePath = resolve as (path: string) => string;
 
 // Image cache for better performance with priority loading
 const imageCache = new Map<string, Promise<PictureSourceSet | undefined>>();
@@ -40,9 +44,14 @@ const imageCache = new Map<string, Promise<PictureSourceSet | undefined>>();
 const isExternalOrDataUrl = (url: string): boolean =>
   !url || /^https?:\/\//i.test(url) || url.startsWith('data:');
 
+const isFilesystemPath = (url: string): boolean =>
+  /^[A-Za-z]:[\\/]/.test(url) || url.startsWith('/Users/') || url.startsWith('/private/');
+
+const publicImageUrl = (name: string): string => prefix(`/assets/images/${name}`);
+
 function prefix(url: string): string {
   if (isExternalOrDataUrl(url)) return url;
-  if (url.startsWith('/')) return base + url;
+  if (url.startsWith('/')) return resolvePath(url);
   return url;
 }
 
@@ -91,30 +100,57 @@ const isVectorImage = (name: string): boolean => {
   return VECTOR_EXTENSIONS.some((ext) => lowered.endsWith(ext));
 };
 
-// Core image loader with caching and priority support
-async function loadImageUncached(name: string): Promise<PictureSourceSet | undefined> {
-  if (!name) return undefined;
+function warnInDev(message: string, error: unknown): void {
+  if (import.meta.env.DEV) {
+    console.warn(message, error);
+  }
+}
 
+async function loadVectorImage(name: string): Promise<PictureSourceSet> {
   const key = `/assets/images/${name}`;
 
+  if (!Object.prototype.hasOwnProperty.call(svgModules, key)) {
+    return { src: publicImageUrl(name), isVector: true };
+  }
+
+  const loader = svgModules[key] as () => Promise<string>;
+
   try {
-    if (isVectorImage(name)) {
-      const svgKey = `/assets/images/${name}`;
-      if (!Object.prototype.hasOwnProperty.call(svgModules, svgKey)) return undefined;
-      const loader = svgModules[svgKey] as () => Promise<string>;
-      const url = await loader();
-      return { src: prefix(url), isVector: true };
-    }
+    const url = await loader();
+    return {
+      src: isFilesystemPath(url) ? publicImageUrl(name) : prefix(url),
+      isVector: true,
+    };
+  } catch (error) {
+    warnInDev(`Falling back to public SVG path: ${name}`, error);
+    return { src: publicImageUrl(name), isVector: true };
+  }
+}
 
-    if (!Object.prototype.hasOwnProperty.call(rasterModules, key)) return undefined;
-    const loader = rasterModules[key] as () => Promise<ImageLoaderResult>;
+async function loadRasterImage(name: string): Promise<PictureSourceSet | undefined> {
+  const key = `/assets/images/${name}`;
 
+  if (!Object.prototype.hasOwnProperty.call(rasterModules, key)) return undefined;
+
+  const loader = rasterModules[key] as () => Promise<ImageLoaderResult>;
+
+  try {
     const enhanced = await loader();
     return toPictureSourceSet(enhanced);
   } catch (error) {
-    if (import.meta.env.DEV) {
-      console.warn(`Failed to load image: ${name}`, error);
-    }
+    warnInDev(`Falling back to public image path: ${name}`, error);
+    if (import.meta.env.DEV) return { src: publicImageUrl(name) };
+    throw error;
+  }
+}
+
+// Core image loader with caching and priority support
+async function loadImageUncached(name: string): Promise<PictureSourceSet | undefined> {
+  try {
+    if (!name) return undefined;
+    return isVectorImage(name) ? await loadVectorImage(name) : await loadRasterImage(name);
+  } catch (error) {
+    warnInDev(`Failed to load image: ${name}`, error);
     return undefined;
   }
 }
