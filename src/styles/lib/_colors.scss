@@ -10,7 +10,7 @@
  * This SCSS library provides perceptually uniform color palette generation using OKLCH color space.
  */
 
-// Scale steps constant - EXACT MATCH with JavaScript (13 steps) - LOCKED
+// Scale steps constant - EXACT MATCH with JavaScript (21 steps) - LOCKED
 $scale-steps: (
   30,
   129,
@@ -34,6 +34,38 @@ $scale-steps: (
   960,
   1000
 ) !default;
+
+@function get-scale-steps($step-count: list.length($scale-steps)) {
+  $available-count: list.length($scale-steps);
+
+  @if meta.type-of($step-count) != 'number' or not math.is-unitless($step-count) {
+    @error '$step-count must be a unitless number, got #{$step-count}';
+  }
+
+  @if round($step-count) != $step-count {
+    @error '$step-count must be an integer, got #{$step-count}';
+  }
+
+  @if $step-count < 2 {
+    @error 'Need at least 2 steps to generate a scale';
+  }
+
+  @if $step-count > $available-count {
+    @error '$step-count (#{$step-count}) cannot exceed the locked scale length (#{$available-count})';
+  }
+
+  @if $step-count == $available-count {
+    @return $scale-steps;
+  }
+
+  $steps: ();
+  @for $i from 1 through $step-count {
+    $index: round(1 + math.div(($i - 1) * ($available-count - 1), $step-count - 1));
+    $steps: list.append($steps, list.nth($scale-steps, $index), $separator: comma);
+  }
+
+  @return $steps;
+}
 
 // Normalized design color names (standard design system names)
 $normalized-steps: (
@@ -297,7 +329,7 @@ $pi: 3.141592653589793 !default;
   );
 }
 
-@function oklch-to-rgb($oklch) {
+@function oklch-to-linear-rgb($oklch) {
   $L: map.get($oklch, L);
   $C: map.get($oklch, C);
   $h: map.get($oklch, h);
@@ -320,10 +352,20 @@ $pi: 3.141592653589793 !default;
   $m: sign($m-root) * pow(abs($m-root), 3);
   $s: sign($s-root) * pow(abs($s-root), 3);
 
-  // LMS to linear RGB
-  $r-lin: constrain(4.0767416621 * $l - 3.3077115913 * $m + 0.2309699292 * $s, 0, 1);
-  $g-lin: constrain(-1.2684380046 * $l + 2.6097574011 * $m - 0.3413193965 * $s, 0, 1);
-  $b-lin: constrain(-0.0041960863 * $l - 0.7034186147 * $m + 1.707614701 * $s, 0, 1);
+  // LMS to unclamped linear RGB. Keep these raw for gamut tests.
+  @return (
+    red: 4.0767416621 * $l - 3.3077115913 * $m + 0.2309699292 * $s,
+    green: -1.2684380046 * $l + 2.6097574011 * $m - 0.3413193965 * $s,
+    blue: -0.0041960863 * $l - 0.7034186147 * $m + 1.707614701 * $s
+  );
+}
+
+@function oklch-to-rgb($oklch) {
+  $linear-rgb: oklch-to-linear-rgb($oklch);
+
+  $r-lin: constrain(map.get($linear-rgb, red), 0, 1);
+  $g-lin: constrain(map.get($linear-rgb, green), 0, 1);
+  $b-lin: constrain(map.get($linear-rgb, blue), 0, 1);
 
   // Linear RGB to sRGB gamma correction
   $r: linear-channel-to-srgb($r-lin);
@@ -513,27 +555,20 @@ $pi: 3.141592653589793 !default;
     }
 
     $mid: math.div($low + $high, 2);
-    $test-color: oklch-to-rgb(
+    $test-linear-rgb: oklch-to-linear-rgb(
       (
         L: $lightness,
         C: $mid,
         h: $hue,
       )
     );
+    $test-red: linear-channel-to-srgb(map.get($test-linear-rgb, red)) * 255;
+    $test-green: linear-channel-to-srgb(map.get($test-linear-rgb, green)) * 255;
+    $test-blue: linear-channel-to-srgb(map.get($test-linear-rgb, blue)) * 255;
 
     // Check if color is in sRGB gamut and has reasonable dynamic range
-    $in-gamut: is-in-gamut($test-color) and
-      (
-        max(
-            color.channel($test-color, 'red'),
-            color.channel($test-color, 'green'),
-            color.channel($test-color, 'blue')
-          ) - min(
-            color.channel($test-color, 'red'),
-            color.channel($test-color, 'green'),
-            color.channel($test-color, 'blue')
-          )
-      ) >
+    $in-gamut: is-in-gamut($test-linear-rgb) and
+      (max($test-red, $test-green, $test-blue) - min($test-red, $test-green, $test-blue)) >
       2;
 
     @if $in-gamut {
@@ -548,6 +583,11 @@ $pi: 3.141592653589793 !default;
 }
 
 @function is-in-gamut($color) {
+  @if meta.type-of($color) == 'map' {
+    @return map.get($color, red) >= 0 and map.get($color, red) <= 1 and map.get($color, green) >= 0
+      and map.get($color, green) <= 1 and map.get($color, blue) >= 0 and map.get($color, blue) <= 1;
+  }
+
   @return color.channel($color, 'red') >= 0 and color.channel($color, 'red') <= 255 and
     color.channel($color, 'green') >= 0 and color.channel($color, 'green') <= 255 and
     color.channel($color, 'blue') >= 0 and color.channel($color, 'blue') <= 255;
@@ -911,8 +951,7 @@ $pi: 3.141592653589793 !default;
 }
 
 @function generate-color-scale($base-color, $step-count: list.length($scale-steps)) {
-  // Use the predefined steps directly - DO NOT generate new ones
-  $steps: $scale-steps;
+  $steps: get-scale-steps($step-count);
 
   // Validate steps
   @if list.length($steps) < 2 {
@@ -1017,9 +1056,8 @@ $pi: 3.141592653589793 !default;
   @return $scale;
 }
 
-@function generate-perceptual-grayscale($step-count: 13) {
-  // Use the predefined steps directly - DO NOT generate new ones
-  $steps: $scale-steps;
+@function generate-perceptual-grayscale($step-count: list.length($scale-steps)) {
+  $steps: get-scale-steps($step-count);
   $lightness-scale: generate-perceptual-lightness-scale(1, $steps);
   $scale: ();
 

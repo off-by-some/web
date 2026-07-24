@@ -23,6 +23,7 @@
     title?: string;
     subtitle?: string;
     testimonials: Testimonial[];
+    linkedinUrl?: string;
     onTestimonialView?: (testimonial: Testimonial) => void;
     onTestimonialInteraction?: (payload: {
       testimonial: Testimonial;
@@ -35,6 +36,7 @@
     title = 'Lorem Ipsum Dolor',
     subtitle = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     testimonials,
+    linkedinUrl,
     onTestimonialView,
     onTestimonialInteraction,
   }: Props = $props();
@@ -222,6 +224,19 @@
                 <span>{activeTestimonial.relationship}</span>
                 <span>•</span>
                 <time datetime={activeTestimonial.date}>{activeTestimonial.date}</time>
+                {#if linkedinUrl}
+                  <span>•</span>
+                  <!-- eslint-disable svelte/no-navigation-without-resolve -->
+                  <a
+                    href={linkedinUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="attribution__linkedin"
+                  >
+                    View on LinkedIn
+                  </a>
+                  <!-- eslint-enable svelte/no-navigation-without-resolve -->
+                {/if}
               </div>
             </div>
 
@@ -417,8 +432,6 @@
     background: var(--token-gradients-contact);
     padding: var(--token-space-fluid-4xl) 0;
     overflow: hidden;
-    min-height: 100vh;
-    min-height: 100dvh;
     font-family: var(--token-font-family-sans);
     font-feature-settings:
       'kern' 1,
@@ -897,6 +910,25 @@
     }
   }
 
+  // Same visual weight as its sibling spans in .attribution__meta — just
+  // one more dot-separated fact about this recommendation, not its own CTA.
+  .attribution__linkedin {
+    color: var(--token-text-tertiary);
+    text-decoration: none;
+    transition: color 0.3s var(--token-motion-ease-out);
+
+    &:hover {
+      color: var(--token-text-brand);
+      text-decoration: underline;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--token-interactive-color);
+      outline-offset: 2px;
+      border-radius: var(--token-radius-sm);
+    }
+  }
+
   .attribution__logo {
     width: 2.5rem;
     height: 2.5rem;
@@ -927,7 +959,9 @@
     }
   }
 
-  // Context panel (unchanged - works well)
+  // Context panel — only visible from $breakpoint-lg up (hidden on mobile
+  // below), so only the lg/xlg heights matter; both trimmed closer to what
+  // the card's content actually needs instead of padding out to fill 100vh.
   .context-panel {
     position: relative;
     height: 34rem;
@@ -938,11 +972,11 @@
     }
 
     @media (min-width: $breakpoint-lg) {
-      height: 42rem;
+      height: 39rem;
     }
 
     @media (min-width: $breakpoint-xlg) {
-      height: 46rem;
+      height: 43rem;
     }
   }
 

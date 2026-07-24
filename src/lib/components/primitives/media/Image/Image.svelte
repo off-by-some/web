@@ -37,6 +37,10 @@ OPTIONS
   • priority: true → eager load + fetchpriority="high".
   • showFallback: true → renders <img> placeholder if missing.
   • skeletonAspectRatio: string → custom aspect ratio for skeleton (default: "16/9")
+  • width: number → also picks the generated source-width tier, not just the
+      <img width> hint. Omit it (icons/logos/avatars) for a max-150px source;
+      pass the real render width for anything bigger (banners, hero art) to
+      get a max-1200px source instead of an upscaled 150px one.
 
 ACCESSIBILITY ♿
   • alt=""  → decorative (component adds aria-hidden/role).
@@ -63,7 +67,7 @@ TROUBLESHOOTING 🔧
     fetchpriority?: HTMLImgAttributes['fetchpriority'];
     priority?: boolean; // set to true for LCP images
     className?: string;
-    width?: number;
+    width?: number; // also picks the generated source-width tier — see loadImage
     height?: number;
     [key: string]: unknown;
   };
@@ -87,7 +91,7 @@ TROUBLESHOOTING 🔧
   let err = $state<string | null>(null);
   let requestSequence = 0;
 
-  async function startLoadFor(currentSrc: string | undefined) {
+  async function startLoadFor(currentSrc: string | undefined, currentWidth: number | undefined) {
     const myId = ++requestSequence;
     const name = toName(currentSrc ?? '');
     if (!name) {
@@ -96,7 +100,7 @@ TROUBLESHOOTING 🔧
       return;
     }
     try {
-      const result = await loadImage(name);
+      const result = await loadImage(name, currentWidth);
       if (myId !== requestSequence) return; // stale
       data = result ?? undefined;
       err = result ? null : `Image not found: ${name}`;
@@ -118,7 +122,7 @@ TROUBLESHOOTING 🔧
   // Reruns on mount and whenever `src` changes — replaces the old
   // onMount + afterUpdate + "did src change" bookkeeping.
   $effect(() => {
-    void startLoadFor(src);
+    void startLoadFor(src, width);
   });
 
   const isExternalSrc = $derived(/^https?:\/\//i.test(src) || src?.startsWith('data:'));

@@ -28,6 +28,23 @@ $resolve-end: '):' !default;
 $reference-pattern: 'reference(' !default;
 $reference-end: ')' !default;
 
+@function empty-list-like($source) {
+  @return list.join(
+    (),
+    (),
+    $separator: list.separator($source),
+    $bracketed: list.is-bracketed($source)
+  );
+}
+
+@function append-like($list-value, $item, $source) {
+  @return list.append($list-value, $item, $separator: list.separator($source));
+}
+
+@function token-var($token-name) {
+  @return string.unquote('var(--#{$token-name})');
+}
+
 @function is-valid-type($value, $expected-type) {
   @return $value != null and meta.type-of($value) == $expected-type;
 }
@@ -508,6 +525,137 @@ $reference-end: ')' !default;
   @return "Circular reference detected while resolving '#{$path}': Reference path chain: #{$chain-string}";
 }
 
+@function extract-reference-paths-from-string($value) {
+  $paths: ();
+  $search: $value;
+
+  @while string.index($search, $reference-pattern) != null {
+    $start: string.index($search, $reference-pattern);
+    $end: string-index-after($search, $reference-end, $start + string.length($reference-pattern));
+
+    @if $end == null or $end <= $start {
+      @error "Malformed reference expression in '#{$value}'. Expected a closing '#{$reference-end}'.";
+    }
+
+    $content: string.slice($search, $start + string.length($reference-pattern), $end - 1);
+    $params: parse-reference-params($content);
+
+    @if $params == null or $params == '' {
+      @error "Malformed reference expression 'reference(#{$content})' in '#{$value}'.";
+    }
+
+    $path: $params;
+    @if meta.type-of($params) == 'map' {
+      $path: map.get($params, 'path');
+    }
+
+    @if $path == null or trim($path) == '' {
+      @error "Reference expression 'reference(#{$content})' is missing a token path.";
+    }
+
+    $paths: list.append($paths, $path);
+    $search: string.slice($search, $end + string.length($reference-end));
+  }
+
+  @return $paths;
+}
+
+@function extract-reference-paths($value) {
+  $paths: ();
+
+  @if meta.type-of($value) == 'string' and string.index($value, $reference-pattern) {
+    @each $path in extract-reference-paths-from-string($value) {
+      $paths: list.append($paths, $path);
+    }
+  } @else if meta.type-of($value) == 'list' {
+    @each $item in $value {
+      @each $path in extract-reference-paths($item) {
+        $paths: list.append($paths, $path);
+      }
+    }
+  } @else if is-valid-type($value, 'map') {
+    @each $key, $item in $value {
+      @each $path in extract-reference-paths($item) {
+        $paths: list.append($paths, $path);
+      }
+    }
+  }
+
+  @return $paths;
+}
+
+@function build-reference-graph($tokens, $prefix) {
+  $graph: ();
+
+  @each $token-name, $value in $tokens {
+    $dependencies: ();
+
+    @each $path in extract-reference-paths($value) {
+      $dependency: path-to-token-name($path, $prefix);
+
+      @if not map.has-key($tokens, $dependency) {
+        @error "Invalid reference in '#{$token-name}': Token path '#{$path}' does not exist (looked for '#{$dependency}').";
+      }
+
+      $dependencies: list.append($dependencies, $dependency);
+    }
+
+    $graph: map.merge(
+      $graph,
+      (
+        $token-name: $dependencies,
+      )
+    );
+  }
+
+  @return $graph;
+}
+
+@function build-reference-cycle-error($token-name, $stack) {
+  $cycle-start: list.index($stack, $token-name);
+  $chain: '';
+
+  @if $cycle-start != null {
+    @for $i from $cycle-start through list.length($stack) {
+      @if $chain != '' {
+        $chain: $chain + ' → ';
+      }
+      $chain: $chain + list.nth($stack, $i);
+    }
+  }
+
+  @if $chain != '' {
+    $chain: $chain + ' → ';
+  }
+  $chain: $chain + $token-name;
+
+  @return 'Runtime token reference cycle detected: #{$chain}';
+}
+
+@function validate-reference-node($token-name, $graph, $stack: ()) {
+  @if list.index($stack, $token-name) != null {
+    @error build-reference-cycle-error($token-name, $stack);
+  }
+
+  $next-stack: list.append($stack, $token-name);
+
+  @each $dependency in map.get($graph, $token-name) {
+    $valid: validate-reference-node($dependency, $graph, $next-stack);
+  }
+
+  @return true;
+}
+
+@function validate-reference-graph($tokens, $prefix) {
+  $graph: build-reference-graph($tokens, $prefix);
+
+  @each $token-name, $dependencies in $graph {
+    $valid: validate-reference-node($token-name, $graph);
+  }
+
+  @return true;
+}
+
 @function get-primitive($primitives, $color-name, $step) {
   $debug: debug-log('get-primitive: #{$color-name}, #{$step}');
 
@@ -586,7 +734,8 @@ $reference-end: ')' !default;
   $step-override: null,
   $original-schema: null,
   $primitives: null,
-  $prefix: 'semantic'
+  $prefix: 'semantic',
+  $emit-runtime-reference: true
 ) {
   $debug: debug-log('resolve-reference: #{$path}');
 
@@ -603,6 +752,10 @@ $reference-end: ')' !default;
 
   @if $referenced-value == null {
     @error "Invalid reference at '#{$path}': Token path '#{$path}' does not exist (looked for '#{$token-name}').";
+  }
+
+  @if $emit-runtime-reference and $alpha-override == null and $step-override == null {
+    @return token-var($token-name);
   }
 
   @if $step-override != null {
@@ -674,7 +827,8 @@ $reference-end: ')' !default;
           $step-override,
           $original-schema,
           $primitives,
-          $prefix
+          $prefix,
+          false
         );
         $referenced-value: $resolved-reference;
       } @else {
@@ -696,7 +850,8 @@ $reference-end: ')' !default;
         $resolution-stack,
         $original-schema,
         $primitives,
-        $prefix
+        $prefix,
+        false
       );
       $referenced-value: $resolved-reference;
     }
@@ -740,7 +895,8 @@ $reference-end: ')' !default;
       $new-stack,
       $original-schema,
       $primitives,
-      $prefix
+      $prefix,
+      $emit-runtime-reference
     );
     @return $resolved-reference;
   }
@@ -754,7 +910,8 @@ $reference-end: ')' !default;
   $resolution-stack: (),
   $original-schema: null,
   $primitives: null,
-  $prefix: 'semantic'
+  $prefix: 'semantic',
+  $emit-runtime-references: true
 ) {
   $result: $string;
   $iteration-count: 0;
@@ -767,16 +924,14 @@ $reference-end: ')' !default;
     $end: string-index-after($result, $reference-end, $start + string.length($reference-pattern));
 
     @if $start == null or $end == null or $end <= $start {
-      @return string.unquote($result);
+      @error "Malformed reference expression in '#{$result}'. Expected a closing '#{$reference-end}'.";
     }
 
     $content: string.slice($result, $start + string.length($reference-pattern), $end - 1);
     $params: parse-reference-params($content);
 
     @if $params == null or $params == '' {
-      $before: string.slice($result, 1, $start - 1);
-      $after: string.slice($result, $end + string.length($reference-end));
-      $result: '#{$before}#{$after}';
+      @error "Malformed reference expression 'reference(#{$content})' in '#{$result}'.";
     } @else {
       $alpha-override: null;
       $step-override: null;
@@ -810,7 +965,8 @@ $reference-end: ')' !default;
         $step-override,
         $original-schema,
         $primitives,
-        $prefix
+        $prefix,
+        $emit-runtime-references
       );
 
       $before: string.slice($result, 1, $start - 1);
@@ -819,11 +975,55 @@ $reference-end: ')' !default;
     }
   }
 
-  @if $iteration-count >= $max-iterations {
-    @warn "Reference processing exceeded maximum iterations. Possible circular reference or deeply nested references.";
+  @if string.index($result, $reference-pattern) != null {
+    @error "Unresolved reference expression in '#{$result}' after #{$iteration-count} iterations.";
   }
 
   @return string.unquote($result);
+}
+
+@function process-reference-value(
+  $value,
+  $resolved-schema,
+  $resolution-stack: (),
+  $original-schema: null,
+  $primitives: null,
+  $prefix: 'semantic'
+) {
+  @if meta.type-of($value) == 'string' and string.index($value, $reference-pattern) {
+    @return process-reference-calls(
+      $value,
+      $resolved-schema,
+      $resolution-stack,
+      $original-schema,
+      $primitives,
+      $prefix
+    );
+  }
+
+  @if is-valid-type($value, 'map') {
+    @return process-references($value, $original-schema, $primitives, $prefix);
+  }
+
+  @if meta.type-of($value) == 'list' {
+    $processed-list: empty-list-like($value);
+
+    @each $item in $value {
+      $processed-item: process-reference-value(
+        $item,
+        $resolved-schema,
+        $resolution-stack,
+        $original-schema,
+        $primitives,
+        $prefix
+      );
+      $processed-list: append-like($processed-list, $processed-item, $value);
+    }
+
+    @return $processed-list;
+  }
+
+  @return $value;
 }
 
 @function process-references(
@@ -839,60 +1039,20 @@ $reference-end: ')' !default;
   $processed: ();
 
   @each $key, $value in $resolved-schema {
-    @if meta.type-of($value) == 'string' and string.index($value, $reference-pattern) {
-      $processed-value: process-reference-calls(
-        $value,
-        $resolved-schema,
-        (),
-        $original-schema,
-        $primitives,
-        $prefix
-      );
-      $processed: map.merge(
-        $processed,
-        (
-          $key: $processed-value,
-        )
-      );
-    } @else if is-valid-type($value, 'map') {
-      $nested-processed: process-references($value, $original-schema, $primitives, $prefix);
-      $processed: map.merge(
-        $processed,
-        (
-          $key: $nested-processed,
-        )
-      );
-    } @else if meta.type-of($value) == 'list' {
-      $processed-list: ();
-      @each $item in $value {
-        @if meta.type-of($item) == 'string' and string.index($item, $reference-pattern) {
-          $processed-item: process-reference-calls(
-            $item,
-            $resolved-schema,
-            (),
-            $original-schema,
-            $primitives,
-            $prefix
-          );
-          $processed-list: list.append($processed-list, $processed-item);
-        } @else {
-          $processed-list: list.append($processed-list, $item);
-        }
-      }
-      $processed: map.merge(
-        $processed,
-        (
-          $key: $processed-list,
-        )
-      );
-    } @else {
-      $processed: map.merge(
-        $processed,
-        (
-          $key: $value,
-        )
-      );
-    }
+    $processed-value: process-reference-value(
+      $value,
+      $resolved-schema,
+      (),
+      $original-schema,
+      $primitives,
+      $prefix
+    );
+    $processed: map.merge(
+      $processed,
+      (
+        $key: $processed-value,
+      )
+    );
   }
 
   @return $processed;
@@ -1016,10 +1176,19 @@ $reference-end: ')' !default;
   }
 
   @if meta.type-of($value) == 'list' {
-    $resolved-list: ();
+    $resolved-list: list.join(
+      (),
+      (),
+      $separator: list.separator($value),
+      $bracketed: list.is-bracketed($value)
+    );
     @each $item in $value {
       $resolved-item: resolve-value($item, $primitives);
-      $resolved-list: list.append($resolved-list, $resolved-item);
+      $resolved-list: list.append(
+        $resolved-list,
+        $resolved-item,
+        $separator: list.separator($value)
+      );
     }
     @return $resolved-list;
   }
@@ -1118,10 +1287,19 @@ $reference-end: ')' !default;
         );
       }
     } @else if meta.type-of($value) == 'list' {
-      $resolved-list: ();
+      $resolved-list: list.join(
+        (),
+        (),
+        $separator: list.separator($value),
+        $bracketed: list.is-bracketed($value)
+      );
       @each $item in $value {
         $resolved-item: resolve-value($item, $primitives);
-        $resolved-list: list.append($resolved-list, $resolved-item);
+        $resolved-list: list.append(
+          $resolved-list,
+          $resolved-item,
+          $separator: list.separator($value)
+        );
       }
       $resolved: map.merge(
         $resolved,
@@ -1153,17 +1331,10 @@ $reference-end: ')' !default;
       $nested: flatten-tokens($value, $token-name);
       $tokens: map.merge($tokens, $nested);
     } @else if meta.type-of($value) == 'list' {
-      $list-string: '';
-      @each $item in $value {
-        @if $list-string != '' {
-          $list-string: $list-string + ', ';
-        }
-        $list-string: $list-string + #{$item};
-      }
       $tokens: map.merge(
         $tokens,
         (
-          $token-name: $list-string,
+          $token-name: $value,
         )
       );
     } @else {
@@ -1306,6 +1477,7 @@ $reference-end: ')' !default;
     }
   }
 
+  $valid-reference-graph: validate-reference-graph($tokens, $prefix);
   $tokens-with-references: process-references($tokens, $schema, $primitives, $prefix);
 
   @return $tokens-with-references;

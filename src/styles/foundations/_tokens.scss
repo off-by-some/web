@@ -1,8 +1,92 @@
 @use 'sass:map';
+@use 'sass:list';
+@use 'sass:meta';
 @use '../lib/colors' as colors;
 @use '../lib/themes' as themes;
 
-$dark-mode-tokens: (
+@function theme-color-names($theme-config) {
+  $names: ();
+
+  @if meta.type-of($theme-config) != 'map' or not map.has-key($theme-config, brand) {
+    @return $names;
+  }
+
+  @each $name, $color in map.get($theme-config, brand) {
+    $names: list.append($names, $name);
+  }
+
+  @return $names;
+}
+
+@function append-theme-color-names($names, $theme-config) {
+  @each $name in theme-color-names($theme-config) {
+    @if list.index($names, $name) == null {
+      $names: list.append($names, $name);
+    }
+  }
+
+  @return $names;
+}
+
+@function is-semantic-color-leaf($value, $color-names) {
+  @if meta.type-of($value) != 'map' {
+    @return false;
+  }
+
+  $length: list.length($value);
+
+  @if $length == 1 {
+    $key: list.nth(map.keys($value), 1);
+    @return list.index($color-names, $key) != null and meta.type-of(map.get($value, $key)) ==
+      'number';
+  }
+
+  @if $length == 2 and map.has-key($value, 'alpha') {
+    @each $key, $entry in $value {
+      @if $key != 'alpha' {
+        @return list.index($color-names, $key) != null and meta.type-of($entry) == 'number';
+      }
+    }
+  }
+
+  @return false;
+}
+
+@function merge-theme($defaults, $overrides, $color-names: ()) {
+  @if $overrides == () {
+    @return $defaults;
+  }
+
+  @if meta.type-of($defaults) != 'map' or meta.type-of($overrides) != 'map' {
+    @return $overrides;
+  }
+
+  @if is-semantic-color-leaf($defaults, $color-names) {
+    @return $overrides;
+  }
+
+  $merged: $defaults;
+
+  @each $key, $override-value in $overrides {
+    $default-value: map.get($defaults, $key);
+    $merged-value: $override-value;
+
+    @if map.has-key($defaults, $key) {
+      $merged-value: merge-theme($default-value, $override-value, $color-names);
+    }
+
+    $merged: map.merge(
+      $merged,
+      (
+        $key: $merged-value,
+      )
+    );
+  }
+
+  @return $merged;
+}
+
+$theme-defaults: (
   brand: (
     teal: #1de9b6,
     magenta: #ff3cac,
@@ -290,7 +374,7 @@ $dark-mode-tokens: (
     ),
 
     magnetic: (
-      '#{themes.reference("shadow.interactive")}',
+      '0 0 0 1px #{themes.reference("shadow.interactive")}',
       '#{themes.reference("shadow.elevated")}',
       '0 0 30px #{themes.reference("interactive.color", $alpha: 40%)}',
     ),
@@ -372,15 +456,21 @@ $dark-mode-tokens: (
       'linear-gradient(180deg, rgba(3, 4, 24, 0.98) 0%, rgba(9, 13, 37, 0.98) 52%, rgba(22, 26, 50, 0.98) 100%)',
     ),
 
+    projects: (
+      'radial-gradient(ellipse at 18% 24%, rgba(9, 228, 177, 0.045) 0%, transparent 50%)',
+      'radial-gradient(ellipse at 84% 78%, rgba(252, 60, 170, 0.035) 0%, transparent 54%)',
+      'linear-gradient(180deg, rgba(3, 4, 24, 0.98) 0%, rgba(9, 13, 37, 0.98) 52%, rgba(22, 26, 50, 0.98) 100%)',
+    ),
+
     stat: (
       default:
         'linear-gradient(135deg, #{themes.interpolate(neutral, 0, 6%)} 0%, #{themes.reference("surface.glass.medium")} 50%, #{themes.reference("surface.glass.subtle")} 100%)',
       hover:
-        'linear-gradient(135deg, #{themes.reference("surface.glass.hover")} 0%, #{themes.interpolate(neutral, 0, 6%)} 50%, #{themes.reference("surface.glass.light")} 100%)',
+        'linear-gradient(135deg, #{themes.reference("surface.glass.light")} 0%, #{themes.interpolate(neutral, 0, 6%)} 50%, #{themes.reference("interactive.color", $alpha: 3%)} 100%)',
       alt:
         'linear-gradient(225deg, #{themes.interpolate(neutral, 0, 6%)} 0%, #{themes.reference("surface.glass.medium")} 50%, #{themes.reference("surface.glass.subtle")} 100%)',
       alt_hover:
-        'linear-gradient(225deg, #{themes.reference("surface.glass.hover")} 0%, #{themes.interpolate(neutral, 0, 6%)} 50%, #{themes.reference("surface.glass.light")} 100%)',
+        'linear-gradient(225deg, #{themes.reference("surface.glass.light")} 0%, #{themes.interpolate(neutral, 0, 6%)} 50%, #{themes.reference("interactive.color", $alpha: 3%)} 100%)',
     ),
   ),
 
@@ -550,6 +640,26 @@ $dark-mode-tokens: (
   ),
 );
 
+$theme-overrides: () !default;
+$dark-mode-tokens: null !default;
+$theme: null !default;
+$theme-color-names: append-theme-color-names(
+  append-theme-color-names(theme-color-names($theme-defaults), $theme-overrides),
+  $dark-mode-tokens
+) !default;
+
+@if $theme == null {
+  @if $dark-mode-tokens == null {
+    $theme: merge-theme($theme-defaults, $theme-overrides, $theme-color-names);
+  } @else {
+    $theme: merge-theme(
+      $theme-defaults,
+      merge-theme($theme-overrides, $dark-mode-tokens, $theme-color-names),
+      $theme-color-names
+    );
+  }
+}
+
 :root {
-  @include themes.export-semantic-theme($dark-mode-tokens, $prefix: 'token');
+  @include themes.export-semantic-theme($theme, $prefix: 'token');
 }

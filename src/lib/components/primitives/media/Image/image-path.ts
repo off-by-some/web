@@ -16,8 +16,15 @@ export interface PictureSourceSet {
   isVector?: boolean;
 }
 
-// Import all current image formats but enhanced image will output only webp
-const rasterModules = import.meta.glob('/assets/images/**/*.{jpg,jpeg,png,webp,avif}', {
+// Vite's import.meta.glob requires its query (including imagetools' `w`) to
+// be static, so arbitrary per-call widths aren't possible — instead we
+// predeclare a couple of source-width tiers and pick between them based on
+// the `width` the caller already passes to <Image> (the width it intends to
+// render at), rather than a separate prop describing what the image "is".
+const SMALL_TIER_MAX_WIDTH = 150;
+
+// Default tier: icons, logos, avatars — small, so a 150px max source is plenty.
+const smallRasterModules = import.meta.glob('/assets/images/**/*.{jpg,jpeg,png,webp,avif}', {
   import: 'default',
   query: {
     enhanced: true,
@@ -25,6 +32,23 @@ const rasterModules = import.meta.glob('/assets/images/**/*.{jpg,jpeg,png,webp,a
     format: 'webp',
   },
 });
+
+// Large tier: anything requested wider than SMALL_TIER_MAX_WIDTH — needs real
+// source widths instead of being upscaled from a 150px-wide small-tier file.
+const largeRasterModules = import.meta.glob('/assets/images/**/*.{jpg,jpeg,png,webp,avif}', {
+  import: 'default',
+  query: {
+    enhanced: true,
+    w: '400;800;1200',
+    format: 'webp',
+  },
+});
+
+function rasterModulesFor(targetWidth: number | undefined) {
+  return targetWidth && targetWidth > SMALL_TIER_MAX_WIDTH
+    ? largeRasterModules
+    : smallRasterModules;
+}
 
 // Include SVGs in the rasterModules
 const svgModules = import.meta.glob('/assets/images/**/*.svg', {
@@ -127,12 +151,16 @@ async function loadVectorImage(name: string): Promise<PictureSourceSet> {
   }
 }
 
-async function loadRasterImage(name: string): Promise<PictureSourceSet | undefined> {
+async function loadRasterImage(
+  name: string,
+  targetWidth: number | undefined,
+): Promise<PictureSourceSet | undefined> {
   const key = `/assets/images/${name}`;
+  const modules = rasterModulesFor(targetWidth);
 
-  if (!Object.prototype.hasOwnProperty.call(rasterModules, key)) return undefined;
+  if (!Object.prototype.hasOwnProperty.call(modules, key)) return undefined;
 
-  const loader = rasterModules[key] as () => Promise<ImageLoaderResult>;
+  const loader = modules[key] as () => Promise<ImageLoaderResult>;
 
   try {
     const enhanced = await loader();
@@ -145,63 +173,82 @@ async function loadRasterImage(name: string): Promise<PictureSourceSet | undefin
 }
 
 // Core image loader with caching and priority support
-async function loadImageUncached(name: string): Promise<PictureSourceSet | undefined> {
+async function loadImageUncached(
+  name: string,
+  targetWidth: number | undefined,
+): Promise<PictureSourceSet | undefined> {
   try {
     if (!name) return undefined;
-    return isVectorImage(name) ? await loadVectorImage(name) : await loadRasterImage(name);
+    return isVectorImage(name)
+      ? await loadVectorImage(name)
+      : await loadRasterImage(name, targetWidth);
   } catch (error) {
     warnInDev(`Failed to load image: ${name}`, error);
     return undefined;
   }
 }
 
-// Main loader with intelligent caching
-export async function loadImage(name: string): Promise<PictureSourceSet | undefined> {
+// Main loader with intelligent caching. `targetWidth` — the width the caller
+// intends to render at (same value <Image> already accepts as `width`) —
+// picks which predeclared source-width tier to generate from; see
+// rasterModulesFor above. Omit it and you get the small/icon-sized tier.
+export async function loadImage(
+  name: string,
+  targetWidth?: number,
+): Promise<PictureSourceSet | undefined> {
   if (!name) return undefined;
 
+  const cacheKey = targetWidth ? `${String(targetWidth)}:${name}` : `default:${name}`;
+
   // Check cache first
-  if (imageCache.has(name)) {
-    const cached = imageCache.get(name);
+  if (imageCache.has(cacheKey)) {
+    const cached = imageCache.get(cacheKey);
     if (cached) return await cached;
   }
 
   // Load and cache the promise (not just the result)
-  const loadPromise = loadImageUncached(name);
-  imageCache.set(name, loadPromise);
+  const loadPromise = loadImageUncached(name, targetWidth);
+  imageCache.set(cacheKey, loadPromise);
 
   try {
     const result = await loadPromise;
     // Keep successful results cached, remove failures to allow retries
     if (!result) {
-      imageCache.delete(name);
+      imageCache.delete(cacheKey);
     }
     return result;
   } catch (error) {
     // Remove failed loads from cache to allow retries
-    imageCache.delete(name);
+    imageCache.delete(cacheKey);
     throw error;
   }
 }
 
 // Priority loading for above-the-fold images
-export async function loadImageWithPriority(name: string): Promise<PictureSourceSet | undefined> {
+export async function loadImageWithPriority(
+  name: string,
+  targetWidth?: number,
+): Promise<PictureSourceSet | undefined> {
   // For priority images, we can add additional optimizations here
   // Currently uses the same loader but could be enhanced with:
   // - Preconnect hints
   // - Higher priority fetch
   // - Immediate loading without skeleton delay
-  return loadImage(name);
+  return loadImage(name, targetWidth);
 }
 
 // Preload utility for critical images
-export function preloadImage(name: string): Promise<PictureSourceSet | undefined> {
+export function preloadImage(
+  name: string,
+  targetWidth?: number,
+): Promise<PictureSourceSet | undefined> {
   // Immediately start loading without waiting for component mount
-  return loadImage(name);
+  return loadImage(name, targetWidth);
 }
 
 // Batch preload for multiple images
 export function preloadImages(names: string[]): Promise<(PictureSourceSet | undefined)[]> {
-  return Promise.all(names.map(preloadImage));
+  return Promise.all(names.map((name) => preloadImage(name)));
 }
 
 // Type guards and utilities

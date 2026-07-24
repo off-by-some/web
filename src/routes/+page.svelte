@@ -2,6 +2,7 @@
   import AboutMe from '$lib/AboutMe.svelte';
   import TimelineSection from '$lib/TimelineSection.svelte';
   import SkillsSection from '$lib/SkillsSection.svelte';
+  import Projects from '$lib/Projects.svelte';
   import Testimonials from '$lib/Testimonials.svelte';
   import ContactMe from '$lib/ContactMe.svelte';
   import { base } from '$app/paths';
@@ -47,6 +48,35 @@
     summary: string;
     highlights: string[];
     skills: string[];
+  }
+
+  interface ProjectHighlight {
+    label: string;
+    detail: string;
+  }
+
+  interface ProjectBadge {
+    label: string;
+    imageSrc: string;
+    href?: string;
+  }
+
+  interface ProjectSecondaryLink {
+    label: string;
+    href: string;
+    icon: 'docs' | 'dockerhub' | 'storybook';
+  }
+
+  interface Project {
+    name: string;
+    tagline: string;
+    description: string[];
+    bannerSrc: string;
+    href: string;
+    tags: string[];
+    highlights?: ProjectHighlight[];
+    badges?: ProjectBadge[];
+    secondaryLink?: ProjectSecondaryLink;
   }
 
   // Types for ContactMe
@@ -114,7 +144,9 @@
   const contactMethods = t.contactMe.methods as ContactMethod[];
   const skillCategories = t.skillsSection.categories as SkillCategory[];
   const experiences: Experience[] = t.timelineSection.experiences;
+  const projects = t.projectsSection.projects as Project[];
   const testimonials: Testimonial[] = t.testimonials.entries;
+  const linkedinUrl = contactMethods.find((method) => method.type === 'linkedin')?.href;
 
   // Dynamically generate tech stack from skill categories
   const aboutMeTechStack: TechStack[] = skillCategories.map((category) => ({
@@ -161,6 +193,14 @@
     onTechCategoryClick={handleTechCategoryClick}
   />
 
+  <!-- Timeline Section -->
+  <TimelineSection
+    {experiences}
+    title={t.timelineSection.title}
+    subtitle={timelineSubtitle}
+    onExperienceSelect={(experience) => console.log('Experience selected:', experience)}
+  />
+
   <!-- Skills Section -->
   <SkillsSection
     title={t.skillsSection.title}
@@ -171,16 +211,16 @@
     onCategorySelect={(payload) => console.log('Category selected:', payload)}
   />
 
-  <!-- Timeline Section -->
-  <TimelineSection
-    {experiences}
-    title={t.timelineSection.title}
-    subtitle={timelineSubtitle}
-    onExperienceSelect={(experience) => console.log('Experience selected:', experience)}
-  />
+  <!-- Projects Section -->
+  <Projects {projects} title={t.projectsSection.title} subtitle={t.projectsSection.subtitle} />
 
   <!-- Testimonials Section -->
-  <Testimonials {testimonials} title={t.testimonials.title} subtitle={t.testimonials.subtitle} />
+  <Testimonials
+    {testimonials}
+    {linkedinUrl}
+    title={t.testimonials.title}
+    subtitle={t.testimonials.subtitle}
+  />
 
   <!-- Contact Me Section -->
   <ContactMe
