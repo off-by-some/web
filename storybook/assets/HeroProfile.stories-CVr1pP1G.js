@@ -1,0 +1,9 @@
+import{p as n,a as l,d,f as p,c as m}from"./iframe-BVUC6E54.js";import{c as f,i as v,d as c}from"./create-runtime-stories-Cp6wAVFG.js";import{H as a}from"./HeroProfile-DnKJ9vsV.js";import"./preload-helper-k3ZeA0S-.js";import"./attributes-DLolGNh2.js";import"./Image-CXZy-Tes.js";import"./each-X1efffkY.js";import"./client-B6PdzdAm.js";import"./AvailabilityStatus-DqRkqDwV.js";import"./StatusPill-DF1qK1-k.js";import"./Button-LyRkgwPd.js";import"./svelte-element-BvrxZeby.js";import"./pressable-D8AtzM9Q.js";import"./ToneDot-B0OHSga2.js";const u={title:"Library/Site/Hero/Profile",component:a,tags:["autodocs"],args:{name:"Cassidy Bridges",role:"Engineering Leader",statusText:"Available for new opportunities",avatarSrc:"headshot.png",avatarAlt:"Portrait of Cassidy Bridges"},parameters:{docs:{description:{component:"Pairs the avatar Image with name, role, and availability status in the one layout the hero (and any future profile block) can reuse — resolving avatar formats and responsive sources is handled entirely by Image underneath."}}}},{Story:g}=c();var h=p('<div class="story-shell svelte-17y35yv"><!></div>');function t(r,s){n(s,!1),v(),g(r,{name:"Default",asChild:!0,children:(o,_)=>{var e=h(),i=m(e);a(i,{name:"Cassidy Bridges",role:"Engineering Leader",statusText:"Available for new opportunities",avatarSrc:"headshot.png",avatarAlt:"Portrait of Cassidy Bridges"}),l(o,e)},$$slots:{default:!0},parameters:{__svelteCsf:{rawCode:`<div class="story-shell">
+  <HeroProfile
+    name="Cassidy Bridges"
+    role="Engineering Leader"
+    statusText="Available for new opportunities"
+    avatarSrc="headshot.png"
+    avatarAlt="Portrait of Cassidy Bridges"
+  />
+</div>`}}}),d()}t.__docgen={data:[],name:"HeroProfile.stories.svelte"};const y=f(t,u),I=["Default"],k={...y.Default,tags:["svelte-csf-v5"]};export{k as Default,I as __namedExportsOrder,u as default};

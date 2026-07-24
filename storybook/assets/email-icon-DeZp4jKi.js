@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/storybook/assets/email-icon-oJC0iFnM.webp 400w, /web/storybook/assets/email-icon-pvsEHtUU.webp 800w, /web/storybook/assets/email-icon-ByeGvKBv.webp 1024w"},img:{src:"/web/storybook/assets/email-icon-ByeGvKBv.webp",w:1024,h:1024}};export{e as default};

@@ -1,0 +1,1 @@
+const t={sources:{webp:"/web/storybook/assets/Product%20Strategy-CYRcFFwv.webp 400w, /web/storybook/assets/Product%20Strategy-BZGlcp4Y.webp 800w, /web/storybook/assets/Product%20Strategy-yex4ik2T.webp 1024w"},img:{src:"/web/storybook/assets/Product%20Strategy-yex4ik2T.webp",w:1024,h:1024}};export{t as default};

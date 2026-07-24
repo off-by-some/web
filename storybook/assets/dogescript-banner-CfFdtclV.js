@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/storybook/assets/dogescript-banner-nTOlTlIO.webp 50w, /web/storybook/assets/dogescript-banner-BVkRnJkI.webp 150w"},img:{src:"/web/storybook/assets/dogescript-banner-BVkRnJkI.webp",w:150,h:60}};export{e as default};

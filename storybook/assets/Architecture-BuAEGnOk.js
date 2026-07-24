@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/storybook/assets/Architecture-orCz4uu3.webp 400w, /web/storybook/assets/Architecture-Crlw0UZm.webp 800w, /web/storybook/assets/Architecture-BqgRFFFj.webp 1024w"},img:{src:"/web/storybook/assets/Architecture-BqgRFFFj.webp",w:1024,h:1024}};export{e as default};

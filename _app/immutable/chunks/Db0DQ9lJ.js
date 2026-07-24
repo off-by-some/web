@@ -1,0 +1,1 @@
+const e={sources:{webp:new URL("../assets/agile.CGXSBPc0.webp",import.meta.url).href+" 400w, "+new URL("../assets/agile.BvQWE923.webp",import.meta.url).href+" 500w"},img:{src:""+new URL("../assets/agile.BvQWE923.webp",import.meta.url).href,w:500,h:500}};export{e as default};

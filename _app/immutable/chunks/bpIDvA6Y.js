@@ -1,0 +1,1 @@
+const e={sources:{webp:new URL("../assets/aws-white.Dy9EYTom.webp",import.meta.url).href+" 400w, "+new URL("../assets/aws-white.B-tQJCoq.webp",import.meta.url).href+" 800w, "+new URL("../assets/aws-white.9gXK_P9M.webp",import.meta.url).href+" 1200w"},img:{src:""+new URL("../assets/aws-white.9gXK_P9M.webp",import.meta.url).href,w:1200,h:960}};export{e as default};

@@ -1,0 +1,1 @@
+const s={sources:{webp:"/web/storybook/assets/headshot-D-MHhcF1.webp 400w, /web/storybook/assets/headshot-al67jT3k.webp 800w, /web/storybook/assets/headshot-yhmsdk-Q.webp 1200w"},img:{src:"/web/storybook/assets/headshot-yhmsdk-Q.webp",w:1200,h:1200}};export{s as default};

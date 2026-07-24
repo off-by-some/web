@@ -1,0 +1,1 @@
+const e={sources:{webp:new URL("../assets/nodejs.BmltCpa-.webp",import.meta.url).href+" 400w, "+new URL("../assets/nodejs.BH8vUVZv.webp",import.meta.url).href+" 600w"},img:{src:""+new URL("../assets/nodejs.BH8vUVZv.webp",import.meta.url).href,w:600,h:599}};export{e as default};

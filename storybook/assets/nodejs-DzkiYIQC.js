@@ -1,0 +1,1 @@
+const s={sources:{webp:"/web/storybook/assets/nodejs-BmltCpa-.webp 400w, /web/storybook/assets/nodejs-BH8vUVZv.webp 600w"},img:{src:"/web/storybook/assets/nodejs-BH8vUVZv.webp",w:600,h:599}};export{s as default};
