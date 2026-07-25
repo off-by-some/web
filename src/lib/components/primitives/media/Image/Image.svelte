@@ -97,6 +97,8 @@ TROUBLESHOOTING 🔧
   let loadedData = $state<PictureSourceSet | undefined>(undefined);
   const data = $derived(loadedData ?? imageDataFor(src));
   let err = $state<string | null>(null);
+  let lazyElement: HTMLElement | undefined = $state();
+  let shouldLoad = $state(false);
   let requestSequence = 0;
 
   async function startLoadFor(currentSrc: string | undefined, currentWidth: number | undefined) {
@@ -128,13 +130,53 @@ TROUBLESHOOTING 🔧
     return s.replace(/^\/?assets\/images\//, '').replace(/^\/+/, '');
   }
 
-  // Reruns on mount and whenever `src` changes — replaces the old
-  // onMount + afterUpdate + "did src change" bookkeeping.
+  const isExternalSrc = $derived(/^https?:\/\//i.test(src) || src?.startsWith('data:'));
+
+  // Keep the headshot/LCP path synchronous, but defer below-the-fold catalog
+  // resolution until the component is close enough for the browser to need it.
   $effect(() => {
-    void startLoadFor(src, width);
+    if (priority || loading === 'eager' || isExternalSrc) {
+      shouldLoad = true;
+      return;
+    }
+
+    const eagerData = imageDataFor(src);
+    if (eagerData) {
+      shouldLoad = true;
+      return;
+    }
+
+    shouldLoad = false;
+    loadedData = undefined;
+    err = null;
   });
 
-  const isExternalSrc = $derived(/^https?:\/\//i.test(src) || src?.startsWith('data:'));
+  $effect(() => {
+    if (shouldLoad || priority || loading === 'eager' || isExternalSrc) return;
+
+    if (!lazyElement || typeof window.IntersectionObserver !== 'function') {
+      shouldLoad = true;
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        shouldLoad = true;
+        observer.disconnect();
+      },
+      { rootMargin: '800px 0px' },
+    );
+
+    observer.observe(lazyElement);
+    return () => observer.disconnect();
+  });
+
+  // Reruns after the lazy gate opens and whenever `src` changes thereafter.
+  $effect(() => {
+    if (!shouldLoad) return;
+    void startLoadFor(src, width);
+  });
 
   // If user passes a numeric width (like <Image width={48} …>), default sizes => "48px"
   const effectiveSizes = $derived(sizes ?? (Number.isFinite(width) ? `${width}px` : undefined));
@@ -215,6 +257,15 @@ TROUBLESHOOTING 🔧
     {role}
     {...rest}
   />
+{:else}
+  <span
+    bind:this={lazyElement}
+    class={className}
+    class:image__placeholder={true}
+    aria-hidden="true"
+    style:width={width ? `${width}px` : undefined}
+    style:height={height ? `${height}px` : undefined}
+  ></span>
 {/if}
 
 {#if import.meta.env.DEV && err}
@@ -229,5 +280,13 @@ TROUBLESHOOTING 🔧
 
   .image__picture {
     display: contents;
+  }
+
+  .image__placeholder {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-width: 1px;
+    min-height: 1px;
   }
 </style>

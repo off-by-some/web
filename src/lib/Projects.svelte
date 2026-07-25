@@ -322,6 +322,7 @@
                       target="_blank"
                       rel="noopener noreferrer"
                       class="project-badge-link"
+                      aria-label={badge.label}
                     >
                       {#if mediaReady}
                         <img
