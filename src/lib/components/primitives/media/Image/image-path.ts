@@ -17,25 +17,24 @@ export interface PictureSourceSet {
 }
 
 type RasterModuleMap = Partial<Record<string, ImageLoaderResult>>;
-type VectorModuleMap = Partial<Record<string, string>>;
+type RasterModuleLoaderMap = Partial<Record<string, () => Promise<ImageLoaderResult>>>;
+type VectorModuleLoaderMap = Partial<Record<string, () => Promise<string>>>;
 
 // Vite's import.meta.glob requires imagetools options to be static. Instead of
 // one giant all-purpose registry, paths choose their natural source tier:
 // icons/logos stay compact, avatars keep retina room, banners get wide sources.
 const iconRasterModules = import.meta.glob('/assets/images/icons/**/*.{jpg,jpeg,png,webp,avif}', {
-  eager: true,
   import: 'default',
   query: {
     enhanced: true,
     w: '64;128;192',
     format: 'webp',
   },
-}) as RasterModuleMap;
+}) as RasterModuleLoaderMap;
 
 const companyLogoRasterModules = import.meta.glob(
   '/assets/images/company_logos/**/*.{jpg,jpeg,png,webp,avif}',
   {
-    eager: true,
     import: 'default',
     query: {
       enhanced: true,
@@ -43,12 +42,11 @@ const companyLogoRasterModules = import.meta.glob(
       format: 'webp',
     },
   },
-) as RasterModuleMap;
+) as RasterModuleLoaderMap;
 
 const employeeRasterModules = import.meta.glob(
   '/assets/images/employees/**/*.{jpg,jpeg,png,webp,avif}',
   {
-    eager: true,
     import: 'default',
     query: {
       enhanced: true,
@@ -56,7 +54,7 @@ const employeeRasterModules = import.meta.glob(
       format: 'webp',
     },
   },
-) as RasterModuleMap;
+) as RasterModuleLoaderMap;
 
 const headshotRasterModules = import.meta.glob('/assets/images/*.{jpg,jpeg,png,webp,avif}', {
   eager: true,
@@ -71,7 +69,6 @@ const headshotRasterModules = import.meta.glob('/assets/images/*.{jpg,jpeg,png,w
 const bannerRasterModules = import.meta.glob(
   '/assets/images/banners/**/*.{jpg,jpeg,png,webp,avif}',
   {
-    eager: true,
     import: 'default',
     query: {
       enhanced: true,
@@ -79,22 +76,25 @@ const bannerRasterModules = import.meta.glob(
       format: 'webp',
     },
   },
-) as RasterModuleMap;
+) as RasterModuleLoaderMap;
 
-const rasterModules = {
+const eagerRasterModules = {
+  ...headshotRasterModules,
+};
+
+const lazyRasterModules = {
   ...iconRasterModules,
   ...companyLogoRasterModules,
   ...employeeRasterModules,
-  ...headshotRasterModules,
   ...bannerRasterModules,
 };
 
-// Include SVGs in the rasterModules
+// SVGs are below-the-fold site assets, so keep their URL modules out of the
+// first page chunk and resolve them only when the Image instance needs them.
 const svgModules = import.meta.glob('/assets/images/**/*.svg', {
-  eager: true,
   import: 'default',
   query: '?url',
-}) as VectorModuleMap;
+}) as VectorModuleLoaderMap;
 
 // Configuration constants
 const PRIMARY_FORMAT = 'jpeg';
@@ -110,8 +110,6 @@ const isExternalOrDataUrl = (url: string): boolean =>
 
 const isFilesystemPath = (url: string): boolean =>
   /^[A-Za-z]:[\\/]/.test(url) || url.startsWith('/Users/') || url.startsWith('/private/');
-
-const publicImageUrl = (name: string): string => prefix(`/assets/images/${name}`);
 
 function prefix(url: string): string {
   if (isExternalOrDataUrl(url)) return url;
@@ -170,31 +168,33 @@ function warnInDev(message: string, error: unknown): void {
   }
 }
 
-function loadVectorImage(name: string): PictureSourceSet {
+async function loadVectorImage(name: string): Promise<PictureSourceSet | undefined> {
   const key = `/assets/images/${name}`;
+  const load = svgModules[key];
 
-  if (!Object.prototype.hasOwnProperty.call(svgModules, key)) {
-    return { src: publicImageUrl(name), isVector: true };
-  }
+  if (!load) return undefined;
 
-  const url = svgModules[key];
-
-  if (!url) {
-    return { src: publicImageUrl(name), isVector: true };
-  }
-
+  const url = await load();
   return {
-    src: isFilesystemPath(url) ? publicImageUrl(name) : prefix(url),
+    src: isFilesystemPath(url) ? prefix(`/assets/images/${name}`) : prefix(url),
     isVector: true,
   };
 }
 
 function loadRasterImage(name: string): PictureSourceSet | undefined {
   const key = `/assets/images/${name}`;
-  const enhanced = rasterModules[key];
+  const enhanced = eagerRasterModules[key];
 
   if (!enhanced) return undefined;
   return toPictureSourceSet(enhanced);
+}
+
+async function loadLazyRasterImage(name: string): Promise<PictureSourceSet | undefined> {
+  const key = `/assets/images/${name}`;
+  const load = lazyRasterModules[key];
+
+  if (!load) return undefined;
+  return toPictureSourceSet(await load());
 }
 
 function imageNameFromSource(source: string): string | undefined {
@@ -232,7 +232,10 @@ function preloadExternalImage(source: string): Promise<void> {
 // Core image loader with caching and priority support
 function loadImageUncached(name: string): Promise<PictureSourceSet | undefined> {
   try {
-    return Promise.resolve(getImage(name));
+    const eagerImage = getImage(name);
+    if (eagerImage) return Promise.resolve(eagerImage);
+
+    return isVectorImage(name) ? loadVectorImage(name) : loadLazyRasterImage(name);
   } catch (error) {
     warnInDev(`Failed to load image: ${name}`, error);
     return Promise.resolve(undefined);
@@ -241,7 +244,7 @@ function loadImageUncached(name: string): Promise<PictureSourceSet | undefined> 
 
 export function getImage(name: string): PictureSourceSet | undefined {
   if (!name) return undefined;
-  return isVectorImage(name) ? loadVectorImage(name) : loadRasterImage(name);
+  return isVectorImage(name) ? undefined : loadRasterImage(name);
 }
 
 // Main loader with intelligent caching. `targetWidth` is retained for API
