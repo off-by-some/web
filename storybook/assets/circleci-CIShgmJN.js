@@ -1,0 +1,1 @@
+const s={sources:{webp:"/web/storybook/assets/circleci-BBcWOac2.webp 150w, /web/storybook/assets/circleci-y7r74WRs.webp 200w, /web/storybook/assets/circleci-Bb8k2Gm0.webp 300w"},img:{src:"/web/storybook/assets/circleci-Bb8k2Gm0.webp",w:300,h:300}};export{s as default};

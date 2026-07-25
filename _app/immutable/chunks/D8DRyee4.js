@@ -1,0 +1,1 @@
+const e={sources:{webp:new URL("../assets/Jira.CQ66tyuh.webp",import.meta.url).href+" 150w, "+new URL("../assets/Jira.BM8-4H1h.webp",import.meta.url).href+" 200w, "+new URL("../assets/Jira.D4pwHpAG.webp",import.meta.url).href+" 300w"},img:{src:""+new URL("../assets/Jira.D4pwHpAG.webp",import.meta.url).href,w:300,h:300}};export{e as default};

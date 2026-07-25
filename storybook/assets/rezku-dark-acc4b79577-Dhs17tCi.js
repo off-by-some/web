@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/storybook/assets/rezku-dark-acc4b79577-Uc8PjL7b.webp 150w, /web/storybook/assets/rezku-dark-acc4b79577-W3YzSHbA.webp 200w, /web/storybook/assets/rezku-dark-acc4b79577-C-kq2ar8.webp 300w"},img:{src:"/web/storybook/assets/rezku-dark-acc4b79577-C-kq2ar8.webp",w:300,h:87}};export{e as default};

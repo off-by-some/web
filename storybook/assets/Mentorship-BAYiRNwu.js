@@ -1,0 +1,1 @@
+const s={sources:{webp:"/web/storybook/assets/Mentorship-CVjDhs7U.webp 150w, /web/storybook/assets/Mentorship-QBg1gPlS.webp 200w, /web/storybook/assets/Mentorship-DlUAEAfV.webp 300w"},img:{src:"/web/storybook/assets/Mentorship-DlUAEAfV.webp",w:300,h:300}};export{s as default};

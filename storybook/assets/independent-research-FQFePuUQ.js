@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/storybook/assets/independent-research-BAfrww1P.webp 150w, /web/storybook/assets/independent-research-DbRtIxMa.webp 200w, /web/storybook/assets/independent-research-CHrx37CR.webp 300w"},img:{src:"/web/storybook/assets/independent-research-CHrx37CR.webp",w:300,h:300}};export{e as default};

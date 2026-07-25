@@ -1,0 +1,1 @@
+const a={sources:{webp:"/web/storybook/assets/apachekafka-BFSEm5yW.webp 150w, /web/storybook/assets/apachekafka-DWwDOpFk.webp 200w, /web/storybook/assets/apachekafka-DVQ1G0ae.webp 300w"},img:{src:"/web/storybook/assets/apachekafka-DVQ1G0ae.webp",w:300,h:300}};export{a as default};

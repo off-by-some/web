@@ -1,0 +1,1 @@
+const r={sources:{webp:"/web/storybook/assets/terraform-D5NUD7rc.webp 150w, /web/storybook/assets/terraform-CA3hExsx.webp 200w, /web/storybook/assets/terraform-BNhmTNwo.webp 300w"},img:{src:"/web/storybook/assets/terraform-BNhmTNwo.webp",w:300,h:300}};export{r as default};

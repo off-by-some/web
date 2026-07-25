@@ -1,0 +1,1 @@
+const o={sources:{webp:"/web/storybook/assets/jourdan-oODNj70_.webp 150w, /web/storybook/assets/jourdan-Wy8SVTL9.webp 200w"},img:{src:"/web/storybook/assets/jourdan-Wy8SVTL9.webp",w:200,h:200}};export{o as default};

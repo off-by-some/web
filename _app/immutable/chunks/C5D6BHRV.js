@@ -1,0 +1,1 @@
+const e={sources:{webp:new URL("../assets/greenbitslogo.Bhexo1hL.webp",import.meta.url).href+" 150w, "+new URL("../assets/greenbitslogo.DYNToSLZ.webp",import.meta.url).href+" 200w"},img:{src:""+new URL("../assets/greenbitslogo.DYNToSLZ.webp",import.meta.url).href,w:200,h:200}};export{e as default};

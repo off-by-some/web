@@ -1,0 +1,1 @@
+const o={sources:{webp:"/web/storybook/assets/Redis-logo-DXE_E6op.webp 150w, /web/storybook/assets/Redis-logo-CWPKNr6Q.webp 200w, /web/storybook/assets/Redis-logo-C0LNw002.webp 300w"},img:{src:"/web/storybook/assets/Redis-logo-C0LNw002.webp",w:300,h:258}};export{o as default};

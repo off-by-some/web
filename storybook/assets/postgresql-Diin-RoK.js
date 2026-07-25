@@ -1,0 +1,1 @@
+const s={sources:{webp:"/web/storybook/assets/postgresql-DJn3TW0a.webp 150w, /web/storybook/assets/postgresql-Ctxz3bvr.webp 200w, /web/storybook/assets/postgresql-ClrQ_VuQ.webp 300w"},img:{src:"/web/storybook/assets/postgresql-ClrQ_VuQ.webp",w:300,h:309}};export{s as default};

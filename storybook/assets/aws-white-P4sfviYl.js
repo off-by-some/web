@@ -1,0 +1,1 @@
+const s={sources:{webp:"/web/storybook/assets/aws-white-BTHY4ubD.webp 150w, /web/storybook/assets/aws-white-B7T7TjKO.webp 200w, /web/storybook/assets/aws-white-DQGKATRr.webp 300w"},img:{src:"/web/storybook/assets/aws-white-DQGKATRr.webp",w:300,h:240}};export{s as default};
