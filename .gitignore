@@ -100,5 +100,5 @@ scripts/_tmp-*.mjs
 build/
 # Lighthouse CI output
 .lighthouseci/
-metrics/
+/metrics/
 .bundle-stats/
