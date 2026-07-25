@@ -2,13 +2,22 @@
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import FilterButton from '$lib/components/site/skills/FilterButton';
 
+  type Args = {
+    label: string;
+    count: number;
+    icon: string;
+    active: boolean;
+  };
+
   const { Story } = defineMeta({
     title: 'Library/Site/Skills/Filter Button',
     component: FilterButton,
+    render: template,
     tags: ['autodocs'],
     args: {
       label: 'All Skills',
       count: 41,
+      icon: '',
       active: true,
     },
     parameters: {
@@ -22,13 +31,19 @@
   });
 </script>
 
-<Story name="Skill Filters" asChild>
+{#snippet template(args: Args)}
   <div class="story-row">
-    <FilterButton label="All Skills" count={41} active />
-    <FilterButton label="Frontend Architecture" count={13} />
-    <FilterButton label="Cloud & DevOps" count={10} />
+    <FilterButton
+      label={args.label}
+      count={args.count}
+      icon={args.icon}
+      active={args.active}
+      onclick={() => console.log('Filter selected')}
+    />
   </div>
-</Story>
+{/snippet}
+
+<Story name="Default" />
 
 <style lang="scss">
   .story-row {

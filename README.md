@@ -176,18 +176,46 @@ npm run storybook
 Validate the project:
 
 ```bash
-npm run check
+npm run verify
 npm run build
 ```
 
 ## Useful Commands
 
+The top-level commands are meant to be self-contained. Prefer these for day-to-day work:
+
 ```bash
-npm run dev                   # local development server
-npm run storybook             # local component library
-npm run check                 # Svelte + TypeScript validation
-npm run build                 # production static build
-npm run build-storybook:pages # build Storybook into build/storybook
-npm run screenshot:all        # Lighthouse + report screenshots
-npm run deploy                # publish site and Storybook to GitHub Pages
+npm run dev            # prepares static assets, then starts the local site
+npm run storybook      # starts the local component library
+npm run verify         # runs Svelte, TypeScript, ESLint, and Prettier checks
+npm run build          # cleans, prepares assets, builds the site, builds Storybook, finalizes Pages output
+npm run lighthouse     # runs a fresh production build, then audits it with Lighthouse CI
+npm run screenshot:all # runs a fresh production build, then captures Lighthouse, report, and site screenshots
+
+# Pass --url=<value> (or set TARGET_URL) to audit/screenshot a remote deployment instead,
+# e.g. the live GitHub Pages site, skipping the local build and preview server:
+npm run lighthouse -- --url=https://off-by-some.github.io/web/
+npm run screenshot:all -- --url=https://off-by-some.github.io/web/
+npm run deploy         # runs a fresh production build, then publishes build/ to GitHub Pages
 ```
+
+The lower-level commands are useful when you already know the prerequisite step has happened:
+
+```bash
+npm run check                 # runs Svelte + TypeScript validation only
+npm run check:watch           # runs Svelte + TypeScript validation in watch mode
+npm run lint                  # runs ESLint and Prettier in check mode
+npm run lint:fix              # applies ESLint auto-fixes only
+npm run format                # applies Prettier formatting across the repository
+npm run fix                   # applies ESLint auto-fixes, then Prettier formatting
+npm run precommit             # runs staged auto-fixes through lint-staged, then type checks the project
+npm run setup:static          # copies public assets and regenerates OG, favicon, and critical CSS files
+npm run build:app             # builds only the SvelteKit app; expects static assets to already exist
+npm run build:storybook:pages # builds Storybook into build/storybook for GitHub Pages
+npm run build:finalize        # writes 404.html, inlines critical CSS, and adds .nojekyll; expects build/index.html
+npm run lighthouse:run        # audits the existing build; run npm run build first (or set TARGET_URL to audit a remote URL)
+npm run screenshot:website    # screenshots the existing build through npm run preview; run npm run build first (or pass --url=<value> to screenshot a remote URL)
+npm run screenshot:reports    # screenshots existing .bundle-stats and metrics/lhci reports
+```
+
+The Git pre-commit hook runs `npm run precommit`. It intentionally avoids `npm run build` so commits stay quick; use `npm run verify` or `npm run build` when you want the full repository checks before pushing or deploying.

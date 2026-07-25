@@ -1,11 +1,14 @@
 <script module lang="ts">
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import IconTile from '$lib/components/primitives/surfaces/IconTile';
+  import { hideControls } from './helpers/controls';
 
   type Args = {
     src: string;
     alt: string;
     sizes: string;
+    tileSize: string;
+    imageSize: string;
   };
 
   const { Story } = defineMeta({
@@ -17,6 +20,14 @@
       src: 'svg/Svelte_Logo.svg',
       alt: 'Svelte logo',
       sizes: '56px',
+      tileSize: '4rem',
+      imageSize: '2.75rem',
+    },
+    argTypes: {
+      ...hideControls(['alt', 'sizes', 'loading', 'style']),
+      src: { control: 'text' },
+      tileSize: { control: 'text' },
+      imageSize: { control: 'text' },
     },
     parameters: {
       docs: {
@@ -31,19 +42,16 @@
 
 {#snippet template(args: Args)}
   <div class="story-row">
-    <IconTile src={args.src} alt={args.alt} sizes={args.sizes} />
+    <IconTile
+      src={args.src}
+      alt={args.alt}
+      sizes={args.sizes}
+      style="--icon-tile-size: {args.tileSize}; --icon-tile-image-size: {args.imageSize};"
+    />
   </div>
 {/snippet}
 
 <Story name="Default" />
-
-<Story name="Sizes" asChild>
-  <div class="story-row">
-    <IconTile src="svg/Svelte_Logo.svg" alt="Svelte logo small" sizes="40px" className="tile-sm" />
-    <IconTile src="svg/github_brand_icon.svg" alt="GitHub logo" sizes="56px" className="tile-md" />
-    <IconTile src="icons/Graphql.webp" alt="GraphQL logo" sizes="72px" className="tile-lg" />
-  </div>
-</Story>
 
 <style lang="scss">
   .story-row {
@@ -51,22 +59,5 @@
     display: flex;
     flex-wrap: wrap;
     gap: var(--token-space-fluid-lg);
-  }
-
-  :global(.tile-sm) {
-    --icon-tile-size: 3rem;
-    --icon-tile-image-size: 2rem;
-  }
-
-  :global(.tile-md) {
-    --icon-tile-size: 4rem;
-    --icon-tile-image-size: 2.75rem;
-  }
-
-  :global(.tile-lg) {
-    --icon-tile-size: 5rem;
-    --icon-tile-image-size: 3.25rem;
-    --icon-tile-background: var(--token-surface-glass-medium);
-    --icon-tile-radius: var(--token-radius-xl);
   }
 </style>

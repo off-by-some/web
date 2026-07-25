@@ -2,6 +2,7 @@
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import Card from '$lib/components/primitives/surfaces/Card';
   import { designReferences } from './docs/design-notes';
+  import { hideControls } from './helpers/controls';
 
   type Args = {
     headline: string;
@@ -14,6 +15,7 @@
     render: template,
     tags: ['autodocs'],
     argTypes: {
+      ...hideControls(['as', 'type']),
       headline: { control: 'text' },
       body: { control: 'text' },
     },
@@ -41,15 +43,6 @@
 {/snippet}
 
 <Story name="Default" />
-
-<Story name="Hover Interaction" asChild>
-  <div class="story-surface">
-    <Card>
-      <h3>Hover Me!</h3>
-      <p>Move across the card to preview the shared iridescent hover state.</p>
-    </Card>
-  </div>
-</Story>
 
 <style lang="scss">
   .story-surface {

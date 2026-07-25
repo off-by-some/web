@@ -6,14 +6,7 @@
   import Input from '$lib/components/primitives/forms/Input';
   import { format } from '$lib/content';
   import type { ContactFormContent } from '$lib/content';
-  import type { ContactFormData } from './types';
-
-  interface FormErrors {
-    name?: string;
-    email?: string;
-    subject?: string;
-    message?: string;
-  }
+  import type { ContactFormData, FormErrors } from './types';
 
   const DEFAULT_CONTENT: ContactFormContent = {
     title: 'Lorem Ipsum Dolor',
@@ -82,12 +75,20 @@
   type Props = {
     emailAddress?: string;
     content?: ContactFormContent;
+    initialFormData?: Partial<ContactFormData>;
+    initialErrors?: FormErrors;
+    initialSubmitting?: boolean;
+    initialSubmitSuccess?: boolean;
     onFormSubmit?: (formData: ContactFormData) => void;
   };
 
   let {
     emailAddress = 'you@example.com',
     content = DEFAULT_CONTENT,
+    initialFormData = {},
+    initialErrors = {},
+    initialSubmitting = false,
+    initialSubmitSuccess = false,
     onFormSubmit,
   }: Props = $props();
 
@@ -99,6 +100,7 @@
     company: '',
     budget: '',
     timeline: '',
+    ...initialFormData,
   });
 
   const validationRules = $derived({
@@ -117,11 +119,16 @@
   });
 
   let formData = $state(createInitialFormData());
-  let errors = $state<FormErrors>({});
-  let isSubmitting = $state(false);
-  let submitSuccess = $state(false);
+  const createInitialErrors = () => initialErrors;
+  const createInitialSubmitting = () => initialSubmitting;
+  const createInitialSubmitSuccess = () => initialSubmitSuccess;
+  const createHasAttemptedSubmit = () => Object.keys(initialErrors).length > 0;
+
+  let errors = $state<FormErrors>(createInitialErrors());
+  let isSubmitting = $state(createInitialSubmitting());
+  let submitSuccess = $state(createInitialSubmitSuccess());
   let formElement: HTMLFormElement | undefined = $state();
-  let hasAttemptedSubmit = false;
+  let hasAttemptedSubmit = createHasAttemptedSubmit();
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};

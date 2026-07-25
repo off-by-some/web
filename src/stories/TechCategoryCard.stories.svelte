@@ -1,17 +1,26 @@
 <script module lang="ts">
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import TechCategoryCard from '$lib/components/site/skills/TechCategoryCard';
+  import { hideControls } from './helpers/controls';
 
   const technologies = ['React', 'TypeScript', 'Svelte', 'SCSS', 'Accessibility', 'Storybook'];
+
+  type Args = {
+    title: string;
+    technologies: string[];
+  };
 
   const { Story } = defineMeta({
     title: 'Library/Site/Skills/Technology Category Card',
     component: TechCategoryCard,
+    render: template,
     tags: ['autodocs'],
     args: {
       title: 'Frontend Architecture',
-      level: 'expert',
       technologies,
+    },
+    argTypes: {
+      ...hideControls(['level']),
     },
     parameters: {
       docs: {
@@ -24,11 +33,18 @@
   });
 </script>
 
-<Story name="Default" asChild>
+{#snippet template(args: Args)}
   <div class="story-width">
-    <TechCategoryCard title="Frontend Architecture" level="expert" {technologies} />
+    <TechCategoryCard
+      title={args.title}
+      level="expert"
+      technologies={args.technologies}
+      onclick={() => console.log('Technology category clicked')}
+    />
   </div>
-</Story>
+{/snippet}
+
+<Story name="Default" />
 
 <style lang="scss">
   .story-width {

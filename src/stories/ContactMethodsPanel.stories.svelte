@@ -22,11 +22,20 @@
     },
   ];
 
+  type Args = {
+    title: string;
+    subtitle: string;
+    methods: ContactMethod[];
+  };
+
   const { Story } = defineMeta({
     title: 'Library/Site/Contact/Contact Methods Panel',
     component: ContactMethodsPanel,
+    render: template,
     tags: ['autodocs'],
     args: {
+      title: 'Other Ways to Connect',
+      subtitle: 'Prefer a different communication method? Choose what works best for you.',
       methods,
     },
     parameters: {
@@ -40,11 +49,18 @@
   });
 </script>
 
-<Story name="Default" asChild>
+{#snippet template(args: Args)}
   <div class="story-shell">
-    <ContactMethodsPanel {methods} />
+    <ContactMethodsPanel
+      title={args.title}
+      subtitle={args.subtitle}
+      methods={args.methods}
+      onMethodClick={(method) => console.log('Contact method clicked:', method)}
+    />
   </div>
-</Story>
+{/snippet}
+
+<Story name="Default" />
 
 <style lang="scss">
   .story-shell {

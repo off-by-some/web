@@ -17,29 +17,38 @@
   }
 
   type Props = {
-    experiences: Experience[];
+    experiences?: Experience[];
     title?: string;
     subtitle?: string;
+    initialActiveIndex?: number;
+    initialExpandedItems?: number[];
     onExperienceSelect?: (experience: Experience) => void;
   };
 
   let {
-    experiences,
+    experiences = [],
     title = 'Lorem Ipsum Dolor',
     subtitle = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    initialActiveIndex = 0,
+    initialExpandedItems = [],
     onExperienceSelect,
   }: Props = $props();
 
   // State
   let timelineElement: HTMLElement | undefined = $state();
   let progressElement: HTMLElement | undefined = $state();
-  let activeIndex = $state(0);
-  let expandedItems = $state(new Set<number>());
+  const createInitialActiveIndex = () => initialActiveIndex;
+  const createInitialExpandedItems = () => new Set(initialExpandedItems);
+
+  let activeIndex = $state(createInitialActiveIndex());
+  let expandedItems = $state(createInitialExpandedItems());
   let announcementText = $state('');
   let showFloatingNav = $state(false);
   let isDesktop = $state(false);
 
-  const progressValue = $derived(((activeIndex + 1) / experiences.length) * 100);
+  const progressValue = $derived(
+    experiences.length > 0 ? ((activeIndex + 1) / experiences.length) * 100 : 0,
+  );
 
   // Check if we're on desktop
   const checkDesktop = () => {
@@ -69,6 +78,8 @@
 
   const toggleExpanded = (index: number) => {
     const experience = experiences[index];
+    if (!experience) return;
+
     const nextExpandedItems = new Set(expandedItems);
     const wasExpanded = nextExpandedItems.has(index);
 

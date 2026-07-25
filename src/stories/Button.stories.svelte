@@ -2,6 +2,7 @@
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import Button from '$lib/components/primitives/actions/Button';
   import { designReferences } from './docs/design-notes';
+  import { hideControls } from './helpers/controls';
 
   type Args = {
     text: string;
@@ -14,6 +15,7 @@
     render: template,
     tags: ['autodocs'],
     argTypes: {
+      ...hideControls(['as', 'type', 'disabled']),
       text: { control: 'text' },
       variant: { control: 'select', options: ['primary', 'secondary'] },
     },
@@ -35,20 +37,6 @@
   <Button variant={args.variant}>{args.text}</Button>
 {/snippet}
 
-<Story name="Primary and Secondary" asChild>
-  <div class="story-row">
-    <Button variant="primary">Button</Button>
-    <Button variant="secondary">Button</Button>
-  </div>
-</Story>
+<Story name="Default" />
 
-<style lang="scss">
-  .story-row {
-    align-items: center;
-    color: var(--token-text-primary);
-    display: flex;
-    flex-wrap: wrap;
-    font-family: var(--token-font-family-sans);
-    gap: var(--token-space-fluid-lg);
-  }
-</style>
+<Story name="Secondary" args={{ text: 'Secondary Button', variant: 'secondary' }} />

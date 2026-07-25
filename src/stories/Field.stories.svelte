@@ -3,6 +3,7 @@
   import Field from '$lib/components/primitives/forms/Field';
   import Input from '$lib/components/primitives/forms/Input';
   import { designReferences } from './docs/design-notes';
+  import { hideControls } from './helpers/controls';
 
   type Args = {
     id: string;
@@ -10,6 +11,10 @@
     required: boolean;
     error: string;
     value: string;
+    placeholder: string;
+    counter: string;
+    as: 'input' | 'textarea';
+    rows: number;
   };
 
   const { Story } = defineMeta({
@@ -23,14 +28,26 @@
       required: true,
       error: '',
       value: 'Cassidy Bridges',
+      placeholder: 'Your full name',
+      counter: '',
+      as: 'input',
+      rows: 4,
     },
     argTypes: {
+      ...hideControls(['id', 'errorId', 'counterId', 'counterAriaLabel']),
+      as: { control: 'select', options: ['input', 'textarea'] },
+      label: { control: 'text' },
+      required: { control: 'boolean' },
+      error: { control: 'text' },
       value: { control: 'text' },
+      placeholder: { control: 'text' },
+      counter: { control: 'text' },
+      rows: { control: { type: 'number', min: 1, max: 12 } },
     },
     parameters: {
       docs: {
         description: {
-          component: `Keeps label, required marker, help text, error text, and character counter attached to one control, so a validation error always has an obvious anchor instead of floating text somewhere else on the page. The "Default" story below stacks a clean, a counted, and an errored field so you can compare all three states at once. Reference: [W3C cognitive accessibility guidance](${designReferences.cognitive}).`,
+          component: `Keeps label, required marker, error text, and character counter attached to one control, so a validation error always has an obvious anchor instead of floating text somewhere else on the page. Reference: [W3C cognitive accessibility guidance](${designReferences.cognitive}).`,
         },
       },
     },
@@ -39,27 +56,51 @@
 
 {#snippet template(args: Args)}
   <div class="story-stack">
-    <Field id={args.id} label={args.label} required={args.required} error={args.error}>
-      <Input id={args.id} value={args.value} placeholder="Your full name" />
+    <Field
+      id={args.id}
+      label={args.label}
+      required={args.required}
+      error={args.error}
+      counter={args.counter}
+    >
+      <Input
+        as={args.as}
+        id={args.id}
+        value={args.value}
+        placeholder={args.placeholder}
+        error={Boolean(args.error)}
+        rows={args.as === 'textarea' ? args.rows : undefined}
+      />
     </Field>
   </div>
 {/snippet}
 
-<Story name="Default" asChild>
-  <div class="story-stack">
-    <Field id="story-name" label="Name" required>
-      <Input id="story-name" value="Cassidy Bridges" placeholder="Your full name" />
-    </Field>
+<Story name="Default" />
 
-    <Field id="story-message" label="Message" counter="21 characters">
-      <Input as="textarea" id="story-message" value="A short project note." rows="4" />
-    </Field>
+<Story
+  name="With Counter"
+  args={{
+    id: 'story-message',
+    label: 'Message',
+    required: false,
+    value: 'A short project note.',
+    placeholder: 'Project details',
+    counter: '21 characters',
+    as: 'textarea',
+  }}
+/>
 
-    <Field id="story-error" label="Email" required error="Please enter a valid email address">
-      <Input id="story-error" value="cassidy" error />
-    </Field>
-  </div>
-</Story>
+<Story
+  name="Error"
+  args={{
+    id: 'story-error',
+    label: 'Email',
+    required: true,
+    value: 'cassidy',
+    placeholder: 'you@example.com',
+    error: 'Please enter a valid email address',
+  }}
+/>
 
 <style lang="scss">
   .story-stack {

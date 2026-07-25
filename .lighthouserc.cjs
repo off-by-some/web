@@ -1,13 +1,20 @@
 // .lighthouserc.js
+// Set TARGET_URL (or pass --url=<value> to `npm run lighthouse`) to audit a
+// remote deployment instead of building and starting a local preview server.
+const targetUrl = process.env.TARGET_URL;
+
 module.exports = {
   ci: {
     collect: {
-      startServerCommand: 'npm run preview',
-      startServerReadyPattern: 'Server ready and listening',
-      startServerReadyTimeout: 120000,
-
-      url: ['http://localhost:4173/web/'],
-      numberOfRuns: 1,
+      ...(targetUrl
+        ? { url: [targetUrl] }
+        : {
+            startServerCommand: 'npm run preview',
+            startServerReadyPattern: 'Server ready and listening',
+            startServerReadyTimeout: 120000,
+            url: ['http://localhost:4173/web/'],
+          }),
+      numberOfRuns: 3,
       settings: {
         chromeFlags: '--no-sandbox --disable-dev-shm-usage',
         preset: 'desktop',
@@ -16,10 +23,10 @@ module.exports = {
     assert: {
       preset: 'lighthouse:recommended',
       assertions: {
-        'categories:performance': ['warn', { minScore: 0.7 }],
+        'categories:performance': ['warn', { minScore: 0.9 }],
         'categories:accessibility': ['error', { minScore: 1 }],
-        'categories:best-practices': ['warn', { minScore: 0.8 }],
-        'categories:seo': ['warn', { minScore: 0.8 }],
+        'categories:best-practices': ['warn', { minScore: 0.9 }],
+        'categories:seo': ['warn', { minScore: 0.9 }],
         'first-contentful-paint': ['warn', { maxNumericValue: 3000 }],
         'largest-contentful-paint': ['warn', { maxNumericValue: 4000 }],
         'cumulative-layout-shift': ['warn', { maxNumericValue: 0.2 }],

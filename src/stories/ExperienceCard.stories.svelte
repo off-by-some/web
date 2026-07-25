@@ -1,6 +1,7 @@
 <script module lang="ts">
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import ExperienceCard from '$lib/components/site/timeline/ExperienceCard';
+  import { hideControls } from './helpers/controls';
 
   const experience = {
     title: 'Principal Engineer',
@@ -17,16 +18,24 @@
     skills: ['Svelte', 'SCSS', 'Design Systems'],
   };
 
+  type Args = {
+    experience: typeof experience;
+    active: boolean;
+    expanded: boolean;
+  };
+
   const { Story } = defineMeta({
     title: 'Library/Site/Timeline/Experience Card',
     component: ExperienceCard,
+    render: template,
     tags: ['autodocs'],
     args: {
       experience,
-      index: 0,
       active: true,
       expanded: true,
-      clickable: true,
+    },
+    argTypes: {
+      ...hideControls(['index', 'clickable']),
     },
     parameters: {
       docs: {
@@ -39,6 +48,26 @@
   });
 </script>
 
-<Story name="Expanded" asChild>
-  <ExperienceCard {experience} index={0} active expanded clickable />
-</Story>
+{#snippet template(args: Args)}
+  <div class="story-width">
+    <ExperienceCard
+      experience={args.experience}
+      index={0}
+      active={args.active}
+      expanded={args.expanded}
+      clickable={false}
+      onSelect={() => console.log('Experience selected')}
+      onToggle={() => console.log('Experience toggled')}
+    />
+  </div>
+{/snippet}
+
+<Story name="Default" />
+
+<style lang="scss">
+  .story-width {
+    color: var(--token-text-primary);
+    font-family: var(--token-font-family-sans);
+    max-width: 48rem;
+  }
+</style>

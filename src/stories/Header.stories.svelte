@@ -2,6 +2,7 @@
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import Header from '$lib/components/primitives/typography/Header';
   import { designReferences } from './docs/design-notes';
+  import { hideControls } from './helpers/controls';
 
   type Args = {
     title: string;
@@ -13,6 +14,9 @@
     component: Header,
     render: template,
     tags: ['autodocs'],
+    argTypes: {
+      ...hideControls(['as']),
+    },
     args: {
       title: 'Header',
       subtitle: 'Semantic wrapper for composed headings.',

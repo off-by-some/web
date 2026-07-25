@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { resolve } from '$app/paths';
   import Button from '$lib/components/primitives/actions/Button';
+  import { withBasePath } from '$lib/utils/paths';
 
   type Icon = 'github' | 'linkedin' | 'download' | 'arrow' | 'star';
   type Shape = 'circle' | 'label' | 'corner';
@@ -29,7 +29,6 @@
     onclick,
   }: Props = $props();
 
-  const resolvePath = resolve as (path: string) => string;
   const classes = $derived(
     ['hero-action-link', `hero-action-link--${shape}`, className].filter(Boolean).join(' '),
   );
@@ -39,7 +38,7 @@
 <Button
   as="a"
   variant={shape === 'label' ? 'primary' : 'secondary'}
-  href={href.startsWith('/') ? resolvePath(href) : href}
+  href={withBasePath(href)}
   className={classes}
   aria-label={label}
   {download}

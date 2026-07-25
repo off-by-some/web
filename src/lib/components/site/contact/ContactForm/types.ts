@@ -7,3 +7,10 @@ export interface ContactFormData {
   budget?: string;
   timeline?: string;
 }
+
+export interface FormErrors {
+  name?: string;
+  email?: string;
+  subject?: string;
+  message?: string;
+}

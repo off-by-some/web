@@ -1,7 +1,7 @@
 <script lang="ts">
   import Section from './components/primitives/layout/Section';
   import ContactForm from './components/site/contact/ContactForm';
-  import type { ContactFormData } from './components/site/contact/ContactForm';
+  import type { ContactFormData, FormErrors } from './components/site/contact/ContactForm';
   import ContactMethodsPanel from './components/site/contact/ContactMethodsPanel';
   import type { ContactMethod } from './components/site/contact/ContactMethodsPanel';
   import AvailabilityStatus from './components/site/status/AvailabilityStatus';
@@ -14,6 +14,10 @@
     contactMethods?: ContactMethod[];
     availabilityText?: string;
     formContent?: ContactFormContent;
+    formInitialData?: Partial<ContactFormData>;
+    formInitialErrors?: FormErrors;
+    formInitialSubmitting?: boolean;
+    formInitialSubmitSuccess?: boolean;
     methodsTitle?: string;
     methodsSubtitle?: string;
     onFormSubmit?: (formData: ContactFormData) => void;
@@ -27,6 +31,10 @@
     contactMethods = [],
     availabilityText,
     formContent,
+    formInitialData,
+    formInitialErrors,
+    formInitialSubmitting,
+    formInitialSubmitSuccess,
     methodsTitle,
     methodsSubtitle,
     onFormSubmit,
@@ -45,7 +53,15 @@
       </header>
 
       <div class="contact__main">
-        <ContactForm {emailAddress} content={formContent} {onFormSubmit} />
+        <ContactForm
+          {emailAddress}
+          content={formContent}
+          initialFormData={formInitialData}
+          initialErrors={formInitialErrors}
+          initialSubmitting={formInitialSubmitting}
+          initialSubmitSuccess={formInitialSubmitSuccess}
+          {onFormSubmit}
+        />
         <ContactMethodsPanel
           title={methodsTitle}
           subtitle={methodsSubtitle}

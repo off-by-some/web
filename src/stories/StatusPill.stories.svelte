@@ -2,9 +2,14 @@
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import StatusPill from '$lib/components/site/status/StatusPill';
 
+  type Args = {
+    text: string;
+  };
+
   const { Story } = defineMeta({
     title: 'Library/Site/Status/Status Pill',
     component: StatusPill,
+    render: template,
     tags: ['autodocs'],
     args: {
       text: 'Building polished systems',
@@ -20,12 +25,13 @@
   });
 </script>
 
-<Story name="Availability" asChild>
+{#snippet template(args: Args)}
   <div class="story-row">
-    <StatusPill text="Building polished systems" />
-    <StatusPill text="Ready for careful handoff" />
+    <StatusPill text={args.text} />
   </div>
-</Story>
+{/snippet}
+
+<Story name="Default" />
 
 <style lang="scss">
   .story-row {

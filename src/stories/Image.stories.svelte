@@ -2,12 +2,10 @@
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import Image from '$lib/components/primitives/media/Image';
   import { designNotes } from './docs/design-notes';
+  import { hideControls } from './helpers/controls';
 
   type Args = {
     src: string;
-    alt: string;
-    sizes: string;
-    priority: boolean;
   };
 
   const { Story } = defineMeta({
@@ -17,9 +15,19 @@
     tags: ['autodocs'],
     args: {
       src: 'headshot.png',
-      alt: 'Portrait example',
-      sizes: '12rem',
-      priority: true,
+    },
+    argTypes: {
+      ...hideControls([
+        'alt',
+        'sizes',
+        'loading',
+        'decoding',
+        'fetchpriority',
+        'priority',
+        'width',
+        'height',
+      ]),
+      src: { control: 'text' },
     },
     parameters: {
       docs: {
@@ -33,15 +41,11 @@
 
 {#snippet template(args: Args)}
   <div class="story-image story-image--portrait">
-    <Image src={args.src} alt={args.alt} sizes={args.sizes} priority={args.priority} />
+    <Image src={args.src} alt="Portrait example" sizes="12rem" priority />
   </div>
 {/snippet}
 
-<Story name="Portrait" asChild>
-  <div class="story-image story-image--portrait">
-    <Image src="headshot.png" alt="Portrait example" sizes="12rem" priority />
-  </div>
-</Story>
+<Story name="Default" />
 
 <Story name="Image Formats" asChild>
   <div class="story-grid">

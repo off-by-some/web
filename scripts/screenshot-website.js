@@ -2,6 +2,7 @@
 
 import { spawn } from 'child_process';
 import { screenshotURL } from './screenshot.js';
+import { getTargetUrl } from './target-url.js';
 
 function getNpmCommand() {
   const npmExecPath = process.env.npm_execpath;
@@ -25,52 +26,59 @@ function getNpmCommand() {
 async function screenshotWebsite() {
   console.log('🌐 Starting website screenshot process...\n');
 
+  const targetUrl = getTargetUrl();
   let serverProcess;
+  let url = targetUrl;
 
   try {
-    // Start the preview server
-    console.log('🚀 Starting preview server...');
-    const npmCommand = getNpmCommand();
-    serverProcess = spawn(npmCommand.command, npmCommand.args, {
-      stdio: ['pipe', 'pipe', 'pipe'],
-    });
+    if (targetUrl) {
+      console.log(`🔗 Using remote URL: ${targetUrl}`);
+    } else {
+      // Start the preview server
+      console.log('🚀 Starting preview server...');
+      const npmCommand = getNpmCommand();
+      serverProcess = spawn(npmCommand.command, npmCommand.args, {
+        stdio: ['pipe', 'pipe', 'pipe'],
+      });
 
-    // Wait for server to be ready
-    await new Promise((resolve, reject) => {
-      const timeout = setTimeout(() => {
-        reject(new Error('Server startup timeout'));
-      }, 30000); // 30 second timeout
+      // Wait for server to be ready
+      await new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          reject(new Error('Server startup timeout'));
+        }, 30000); // 30 second timeout
 
-      serverProcess.stdout.on('data', (data) => {
-        const output = data.toString();
-        console.log(`📡 Server: ${output.trim()}`);
+        serverProcess.stdout.on('data', (data) => {
+          const output = data.toString();
+          console.log(`📡 Server: ${output.trim()}`);
 
-        if (output.includes('Server ready and listening on port')) {
+          if (output.includes('Server ready and listening on port')) {
+            clearTimeout(timeout);
+            resolve();
+          }
+        });
+
+        serverProcess.stderr.on('data', (data) => {
+          console.error(`❌ Server error: ${data.toString().trim()}`);
+        });
+
+        serverProcess.on('error', (error) => {
           clearTimeout(timeout);
-          resolve();
-        }
+          reject(error);
+        });
       });
 
-      serverProcess.stderr.on('data', (data) => {
-        console.error(`❌ Server error: ${data.toString().trim()}`);
-      });
+      // Give the server a moment to fully stabilize
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      serverProcess.on('error', (error) => {
-        clearTimeout(timeout);
-        reject(error);
-      });
-    });
-
-    // Give the server a moment to fully stabilize
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    console.log('✅ Server is ready, taking screenshot...');
+      console.log('✅ Server is ready, taking screenshot...');
+      url = 'http://localhost:4173';
+    }
 
     // Use the existing screenshotURL function with custom beforeScreenshot logic
     const outputPath = 'docs/website-preview.png';
 
     await screenshotURL({
-      url: 'http://localhost:4173',
+      url,
       outputPath,
       viewport: { width: 1920, height: 1080, deviceScaleFactor: 1 },
       beforeScreenshot: async (page) => {

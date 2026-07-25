@@ -1,13 +1,22 @@
 <script module lang="ts">
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import ScrollIndicator from '$lib/components/site/hero/ScrollIndicator';
+  import { hideControls } from './helpers/controls';
+
+  type Args = {
+    text: string;
+  };
 
   const { Story } = defineMeta({
     title: 'Library/Site/Hero/Scroll Indicator',
     component: ScrollIndicator,
+    render: template,
     tags: ['autodocs'],
     args: {
       text: 'Explore',
+    },
+    argTypes: {
+      ...hideControls(['ariaLabel']),
     },
     parameters: {
       docs: {
@@ -20,11 +29,13 @@
   });
 </script>
 
-<Story name="Default" asChild>
+{#snippet template(args: Args)}
   <div class="story-shell">
-    <ScrollIndicator text="Explore" />
+    <ScrollIndicator text={args.text} />
   </div>
-</Story>
+{/snippet}
+
+<Story name="Default" />
 
 <style lang="scss">
   .story-shell {

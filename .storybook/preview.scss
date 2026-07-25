@@ -13,7 +13,8 @@ body,
 }
 
 .sbdocs-content {
-  max-width: 1200px;
+  width: 90%;
+  max-width: 90%;
 }
 
 .sbdocs h1,
@@ -81,6 +82,44 @@ body,
 
 .docs-story {
   border-radius: var(--token-radius-lg, 1rem);
+}
+
+.section-docs-canvas {
+  --section-docs-width: 1920px;
+  --section-docs-height: 1080px;
+
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+  max-width: 100% !important;
+  scrollbar-gutter: stable;
+}
+
+.section-docs-canvas--mobile {
+  --section-docs-width: 390px;
+  --section-docs-height: 844px;
+}
+
+.section-docs-canvas--ipad {
+  --section-docs-width: 820px;
+  --section-docs-height: 1180px;
+}
+
+.section-docs-canvas--desktop {
+  --section-docs-width: 1920px;
+  --section-docs-height: 1080px;
+}
+
+.section-docs-canvas iframe,
+.section-docs-canvas .docs-story,
+.section-docs-canvas .sb-bar {
+  width: var(--section-docs-width) !important;
+  min-width: var(--section-docs-width) !important;
+  max-width: none !important;
+  margin-inline: auto !important;
+}
+
+.section-docs-canvas iframe {
+  height: var(--section-docs-height) !important;
 }
 
 #storybook-root {

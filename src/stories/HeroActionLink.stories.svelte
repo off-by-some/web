@@ -1,10 +1,19 @@
 <script module lang="ts">
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import HeroActionLink from '$lib/components/site/hero/HeroActionLink';
+  import { hideControls } from './helpers/controls';
+
+  type Args = {
+    href: string;
+    label: string;
+    icon: 'github' | 'linkedin' | 'download' | 'arrow' | 'star';
+    shape: 'circle' | 'label' | 'corner';
+  };
 
   const { Story } = defineMeta({
     title: 'Library/Site/Hero/Action Link',
     component: HeroActionLink,
+    render: template,
     tags: ['autodocs'],
     args: {
       href: 'https://github.com/off-by-some',
@@ -13,12 +22,10 @@
       shape: 'circle',
     },
     argTypes: {
-      href: { control: { type: 'text' } },
+      ...hideControls(['href', 'download', 'target', 'rel']),
       label: { control: { type: 'text' } },
       icon: { control: { type: 'select' }, options: ['github', 'linkedin', 'download', 'arrow'] },
       shape: { control: { type: 'select' }, options: ['circle', 'label', 'corner'] },
-      download: { control: { type: 'text' } },
-      target: { control: { type: 'select' }, options: ['_self', '_blank'] },
     },
     parameters: {
       docs: {
@@ -31,58 +38,38 @@
   });
 </script>
 
-<Story name="Action Row" asChild>
-  <div class="story-row">
+{#snippet template(args: Args)}
+  <div class:story-corner={args.shape === 'corner'} class="story-shell">
     <HeroActionLink
-      href="https://linkedin.com/in/cassidy-bridges-tech"
-      label="Open LinkedIn profile"
-      icon="linkedin"
+      href={args.href}
+      label={args.label}
+      icon={args.icon}
+      shape={args.shape}
       target="_blank"
       rel="noopener noreferrer"
+      onclick={() => console.log('Hero action clicked')}
     />
-    <HeroActionLink
-      href="https://github.com/off-by-some"
-      label="Open GitHub profile"
-      icon="github"
-      target="_blank"
-      rel="noopener noreferrer"
-    />
-    <HeroActionLink
-      href="/resume/Cassidy-Bridges-Software-Engineering.pdf"
-      label="Download resume"
-      icon="download"
-      download="Cassidy-Bridges-Software-Engineering.pdf"
-    />
-    <span class="story-divider" aria-hidden="true"></span>
-    <HeroActionLink href="#contact" label="Contact Me" icon="arrow" shape="label" />
   </div>
-</Story>
+{/snippet}
 
-<Story name="Corner" asChild>
-  <div class="story-corner">
-    <HeroActionLink
-      href="https://github.com/off-by-some/web"
-      label="Check out this project on GitHub"
-      icon="github"
-      shape="corner"
-      target="_blank"
-      rel="noopener noreferrer"
-    />
-  </div>
-</Story>
+<Story name="Default" />
+
+<Story
+  name="Corner"
+  args={{
+    href: 'https://github.com/off-by-some/web',
+    label: 'Check out this project on GitHub',
+    icon: 'github',
+    shape: 'corner',
+  }}
+/>
 
 <style lang="scss">
-  .story-row {
+  .story-shell {
     display: flex;
     align-items: center;
     gap: var(--token-space-fluid-lg);
     min-height: 7rem;
-  }
-
-  .story-divider {
-    width: 1px;
-    height: var(--token-size-12);
-    background: var(--token-border-color-neutral);
   }
 
   .story-corner {

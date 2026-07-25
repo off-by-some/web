@@ -1,6 +1,10 @@
 <script module lang="ts">
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import SkillsSection from '$lib/SkillsSection.svelte';
+  import content from '$lib/content/en.json';
+  import ViewportFrame from './helpers/ViewportFrame.svelte';
+  import { sectionViewportGlobals, sectionViewportParameters } from './helpers/section-viewports';
+  import type { SectionViewport } from './helpers/section-viewports';
 
   interface Skill {
     name: string;
@@ -19,92 +23,92 @@
     mastery: 'expert' | 'advanced' | 'proficient';
   }
 
-  const skillCategories: SkillCategory[] = [
-    {
-      name: 'Frontend Architecture',
-      icon: '',
-      color: 'primary',
-      mastery: 'expert',
-      skills: [
-        {
-          name: 'React',
-          level: 'expert',
-          years: 11,
-          category: 'framework',
-          description: 'Advanced patterns and performance optimization',
-          image: 'icons/react-logo.png',
-        },
-        {
-          name: 'TypeScript',
-          level: 'expert',
-          years: 9,
-          category: 'language',
-          description: 'Complex type systems and scalable frontend architecture',
-          image: 'svg/Typescript_logo.svg',
-        },
-        {
-          name: 'Svelte',
-          years: 1,
-          category: 'framework',
-          description: 'Modern reactive patterns',
-          image: 'svg/Svelte_Logo.svg',
-        },
-      ],
-    },
-    {
-      name: 'Backend Systems',
-      icon: '',
-      color: 'secondary',
-      mastery: 'expert',
-      skills: [
-        {
-          name: 'Node.js',
-          level: 'expert',
-          years: 11,
-          category: 'runtime',
-          description: 'Microservices and event-driven architecture',
-          image: 'icons/nodejs.png',
-        },
-        {
-          name: 'PostgreSQL',
-          years: 15,
-          category: 'database',
-          description: 'Complex queries and optimization',
-          image: 'icons/postgresql.png',
-        },
-      ],
-    },
-  ];
+  type Args = {
+    title: string;
+    subtitle: string;
+    skillCategories: SkillCategory[];
+    initialSelectedCategory?: string | null;
+    previewViewport: SectionViewport;
+  };
+
+  const skills = content.skillsSection;
+  const skillCategories = skills.categories as SkillCategory[];
+  const defaultArgs: Args = {
+    title: skills.title,
+    subtitle: skills.subtitle,
+    skillCategories,
+    initialSelectedCategory: skillCategories[0]?.name,
+    previewViewport: 'desktop',
+  };
 
   const { Story } = defineMeta({
     title: 'Page Sections/Skills',
     component: SkillsSection,
+    render: template,
     tags: ['autodocs'],
+    args: defaultArgs,
+    argTypes: {
+      title: { control: 'text' },
+      subtitle: { control: 'text' },
+      skillCategories: {
+        control: { type: 'object' },
+        description:
+          'Skill categories and cards. Missing skill levels are derived from years of experience.',
+      },
+      initialSelectedCategory: {
+        control: 'select',
+        options: skillCategories.map((category) => category.name),
+        description:
+          'Category name to select on first render. Change this control to preview another category.',
+      },
+      previewViewport: {
+        control: 'select',
+        options: ['mobile', 'ipad', 'desktop'],
+        table: { disable: true },
+      },
+    },
     parameters: {
+      layout: 'fullscreen',
       docs: {
         description: {
           component:
-            "When a skill omits `level`, it's derived from `years` instead (>7y expert, >4y advanced, >2y proficient, else learning) — try removing `level` from a skill with `years` set to see it reclassified. Categories are purely a filter over this computed list, not a separate source of level data. Swiping left/right on mobile cycles through categories the same as clicking a filter button.",
+            'Skills is the searchable competency section. It demonstrates how the shared card, tone, image, and filter-button primitives work together across a dense grid.',
         },
       },
     },
   });
 </script>
 
-<Story name="Default">
-  <SkillsSection
-    title="Technical Expertise"
-    subtitle="Skills shaped by curiosity, tested through years of real-world impact."
-    {skillCategories}
-    initialSelectedCategory="Frontend Architecture"
-  />
-</Story>
+{#snippet template(args: Args)}
+  <ViewportFrame mode={args.previewViewport}>
+    <SkillsSection
+      title={args.title}
+      subtitle={args.subtitle}
+      skillCategories={args.skillCategories}
+      initialSelectedCategory={args.initialSelectedCategory}
+      onSkillSelect={(payload) => console.log('Skill selected:', payload)}
+      onCategorySelect={(payload) => console.log('Category selected:', payload)}
+    />
+  </ViewportFrame>
+{/snippet}
 
-<Story name="Filtered to Backend">
-  <SkillsSection
-    title="Core Skills"
-    subtitle="A smaller cross-section of the component-driven skills grid."
-    {skillCategories}
-    initialSelectedCategory="Backend Systems"
-  />
-</Story>
+<Story
+  name="Desktop"
+  args={{ ...defaultArgs, previewViewport: 'desktop' }}
+  globals={sectionViewportGlobals.desktop}
+  parameters={sectionViewportParameters('desktop')}
+/>
+
+<Story
+  name="Mobile"
+  args={{ ...defaultArgs, previewViewport: 'mobile' }}
+  globals={sectionViewportGlobals.mobile}
+  parameters={sectionViewportParameters('mobile')}
+/>
+
+<Story
+  name="iPad"
+  args={{ ...defaultArgs, previewViewport: 'ipad' }}
+  globals={sectionViewportGlobals.ipad}
+  parameters={sectionViewportParameters('ipad')}
+/>

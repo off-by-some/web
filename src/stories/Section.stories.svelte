@@ -1,6 +1,7 @@
 <script module lang="ts">
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import Section from '$lib/components/primitives/layout/Section';
+  import { hideControls } from './helpers/controls';
 
   type Args = {
     text: string;
@@ -11,6 +12,9 @@
     component: Section,
     render: template,
     tags: ['autodocs'],
+    argTypes: {
+      ...hideControls(['id']),
+    },
     args: {
       text: 'Section constrains page content and keeps wrappers consistent.',
     },

@@ -1,5 +1,5 @@
 // src/lib/components/primitives/media/Image/image-path.ts
-import { resolve } from '$app/paths';
+import { withBasePath } from '$lib/utils/paths';
 
 export interface ImageLoaderResult {
   img: { src: string; w: number; h: number };
@@ -71,7 +71,6 @@ const svgModules = import.meta.glob('/assets/images/**/*.svg', {
 // Configuration constants
 const PRIMARY_FORMAT = 'jpeg';
 const VECTOR_EXTENSIONS = ['.svg'];
-const resolvePath = resolve as (path: string) => string;
 
 // Image cache for better performance with priority loading
 const imageCache = new Map<string, Promise<PictureSourceSet | undefined>>();
@@ -87,7 +86,7 @@ const publicImageUrl = (name: string): string => prefix(`/assets/images/${name}`
 
 function prefix(url: string): string {
   if (isExternalOrDataUrl(url)) return url;
-  if (url.startsWith('/')) return resolvePath(url);
+  if (url.startsWith('/')) return withBasePath(url);
   return url;
 }
 

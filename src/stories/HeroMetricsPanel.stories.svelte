@@ -13,29 +13,38 @@
     { count: '40+', label: 'Systems Shipped', type: 'performance' },
   ];
 
+  type Args = {
+    title: string;
+    stats: typeof stats;
+  };
+
   const { Story } = defineMeta({
     title: 'Library/Site/Hero/Metrics Panel',
     component: HeroMetricsPanel,
+    render: template,
     tags: ['autodocs'],
     args: {
+      title: 'Key Metrics',
       stats,
     },
     parameters: {
       docs: {
         description: {
           component:
-            'Thin wrapper around HeroPanel that hardcodes its own title ("Key Metrics"), heading id, `area="stats"`, and a 0.5s entrance delay — none of that is configurable from outside. It exists so the hero section only has to pass a `stats` array, not know about HeroPanel\'s title/area contract.',
+            'Thin wrapper around HeroPanel that owns the stats-panel layout, heading id, `area="stats"`, and a 0.5s entrance delay. The story exposes the visible title and stats content while keeping layout wiring out of the controls.',
         },
       },
     },
   });
 </script>
 
-<Story name="Default" asChild>
+{#snippet template(args: Args)}
   <div class="story-shell">
-    <HeroMetricsPanel {stats} />
+    <HeroMetricsPanel title={args.title} stats={args.stats} />
   </div>
-</Story>
+{/snippet}
+
+<Story name="Default" />
 
 <style lang="scss">
   .story-shell {

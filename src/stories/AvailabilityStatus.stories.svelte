@@ -2,15 +2,22 @@
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import AvailabilityStatus from '$lib/components/site/status/AvailabilityStatus';
   import { designNotes, designReferences } from './docs/design-notes';
+  import { hideControls } from './helpers/controls';
+
+  type Args = {
+    text: string;
+  };
 
   const { Story } = defineMeta({
     title: 'Library/Site/Status/Availability Status',
     component: AvailabilityStatus,
+    render: template,
     tags: ['autodocs'],
     args: {
       text: 'Available for new opportunities',
-      entrance: false,
-      delay: '0s',
+    },
+    argTypes: {
+      ...hideControls(['entrance', 'delay']),
     },
     parameters: {
       docs: {
@@ -22,12 +29,13 @@
   });
 </script>
 
-<Story name="Default" asChild>
+{#snippet template(args: Args)}
   <div class="story-row">
-    <AvailabilityStatus text="Available for new opportunities" />
-    <AvailabilityStatus text="Open to new opportunities" />
+    <AvailabilityStatus text={args.text} />
   </div>
-</Story>
+{/snippet}
+
+<Story name="Default" />
 
 <style lang="scss">
   .story-row {

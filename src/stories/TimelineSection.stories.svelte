@@ -1,104 +1,125 @@
-<script module>
+<script module lang="ts">
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import TimelineSection from '$lib/TimelineSection.svelte';
+  import content from '$lib/content/en.json';
+  import { format } from '$lib/content';
+  import ViewportFrame from './helpers/ViewportFrame.svelte';
+  import { sectionViewportGlobals, sectionViewportParameters } from './helpers/section-viewports';
+  import type { SectionViewport } from './helpers/section-viewports';
 
-  const experiences = [
-    {
-      title: 'Senior Software Engineer',
-      company: 'Scribe',
-      logo: 'company_logos/scribehow_logo.webp',
-      date: 'Apr 2023 - Dec 2024',
-      dateValue: '2023',
-      location: 'Remote',
-      summary:
-        'Drove major performance optimizations, led critical refactoring efforts, and built AI-powered developer tools to boost stability and velocity.',
-      highlights: [
-        'Reduced constant CPU spikes and memory usage through a focused performance overhaul.',
-        'Led a large-scale refactor that removed legacy code and improved product delivery.',
-      ],
-      skills: ['React', 'Node.js', 'TypeScript', 'Performance Optimization'],
-    },
-    {
-      title: 'Senior Software Engineer II',
-      company: 'Green Bits Inc & Dutchie',
-      logo: 'company_logos/getdutchie_logo.webp',
-      date: 'Apr 2017 - Dec 2022',
-      dateValue: '2017',
-      location: 'Remote',
-      summary:
-        'Architected distributed systems, built foundational React products, and pioneered Kubernetes environments that accelerated testing.',
-      highlights: [
-        'Improved uptime during large traffic surges through chaos engineering and performance tuning.',
-        'Built foundational frontend products that saved operators meaningful weekly effort.',
-      ],
-      skills: ['Kubernetes', 'AWS', 'Distributed Systems', 'React'],
-    },
-    {
-      title: 'Senior Frontend Engineer',
-      company: 'UpGuard',
-      logo: 'company_logos/upguard_logo.webp',
-      date: 'Jan 2016 - Mar 2017',
-      dateValue: '2016',
-      location: 'Portland, OR',
-      summary:
-        'Built security-focused product interfaces and helped establish a durable frontend architecture for fast-moving product teams.',
-      highlights: [
-        'Created reusable interface patterns that improved product consistency.',
-        'Partnered across design and backend teams to ship complex workflows cleanly.',
-      ],
-      skills: ['React', 'Security UX', 'Design Systems', 'API Integration'],
-    },
-    {
-      title: 'Full Stack Developer',
-      company: 'Import.io',
-      logo: 'company_logos/import_io_logo.webp',
-      date: 'Feb 2014 - Dec 2015',
-      dateValue: '2014',
-      location: 'Remote',
-      summary:
-        'Built data extraction tools, customer-facing interfaces, and backend services for high-volume web data workflows.',
-      highlights: [
-        'Improved reliability for complex extraction flows used by enterprise customers.',
-        'Delivered UI and API improvements that made data workflows easier to operate.',
-      ],
-      skills: ['JavaScript', 'Ruby', 'APIs', 'Data Products'],
-    },
-    {
-      title: 'Software Engineer',
-      company: 'Concordus Applications',
-      logo: 'company_logos/concordus-applications.jpg',
-      date: 'Jun 2011 - Jan 2014',
-      dateValue: '2011',
-      location: 'Denver, CO',
-      summary:
-        'Shipped web applications across frontend, backend, and deployment workflows while building the foundations of a full-stack practice.',
-      highlights: [
-        'Delivered custom applications from planning through production support.',
-        'Developed pragmatic engineering habits across testing, deployment, and maintainability.',
-      ],
-      skills: ['JavaScript', 'Ruby on Rails', 'PostgreSQL', 'Product Engineering'],
-    },
-  ];
+  interface Experience {
+    title: string;
+    company: string;
+    logo: string;
+    date: string;
+    dateValue: string;
+    location: string;
+    summary: string;
+    highlights: string[];
+    skills: string[];
+  }
+
+  type Args = {
+    experiences: Experience[];
+    title: string;
+    subtitle: string;
+    initialActiveIndex?: number;
+    initialExpandedItems?: number[];
+    previewViewport: SectionViewport;
+  };
+
+  const timeline = content.timelineSection;
+  const experiences = timeline.experiences as Experience[];
+  const defaultArgs: Args = {
+    experiences,
+    title: timeline.title,
+    subtitle: format(timeline.subtitle, { count: experiences.length }),
+    previewViewport: 'desktop',
+  };
+
+  const expandedArgs: Args = {
+    ...defaultArgs,
+    initialActiveIndex: 0,
+    initialExpandedItems: [0],
+  };
 
   const { Story } = defineMeta({
     title: 'Page Sections/Timeline',
     component: TimelineSection,
+    render: template,
     tags: ['autodocs'],
+    args: defaultArgs,
+    argTypes: {
+      experiences: {
+        control: { type: 'object' },
+        description:
+          'Experience entries rendered in chronological story order, including logo, summary, highlights, and skills.',
+      },
+      title: { control: 'text' },
+      subtitle: { control: 'text' },
+      initialActiveIndex: {
+        control: { type: 'number', min: 0 },
+        description: 'Initial focused timeline item for demos and tests.',
+      },
+      initialExpandedItems: {
+        control: { type: 'object' },
+        description: 'Timeline item indexes that start expanded.',
+      },
+      previewViewport: {
+        control: 'select',
+        options: ['mobile', 'ipad', 'desktop'],
+        table: { disable: true },
+      },
+    },
     parameters: {
+      layout: 'fullscreen',
       docs: {
         description: {
           component:
-            'Which experience is "active" can be set three different ways that all write to the same state: scrolling (closest item to viewport center wins), Arrow Up/Down/Home/End while focus is inside the timeline, and the floating mobile nav\'s prev/next buttons — so a scroll-driven change can override a keyboard one a moment later. Each ExperienceCard only becomes clickable at a hardcoded 1376px desktop breakpoint, not a prop you can override from here.',
+            'Timeline is the professional experience section. The desktop layout alternates cards around the progress line; tablet and mobile collapse into a single readable column with floating navigation.',
         },
       },
     },
   });
 </script>
 
-<Story name="Default">
-  <TimelineSection {experiences} title="Professional Experience" />
-</Story>
+{#snippet template(args: Args)}
+  <ViewportFrame mode={args.previewViewport}>
+    <TimelineSection
+      experiences={args.experiences}
+      title={args.title}
+      subtitle={args.subtitle}
+      initialActiveIndex={args.initialActiveIndex}
+      initialExpandedItems={args.initialExpandedItems}
+      onExperienceSelect={(experience) => console.log('Experience selected:', experience)}
+    />
+  </ViewportFrame>
+{/snippet}
 
-<Story name="Single Experience">
-  <TimelineSection experiences={[experiences[0]]} title="Work Experience" />
-</Story>
+<Story
+  name="Desktop"
+  args={{ ...defaultArgs, previewViewport: 'desktop' }}
+  globals={sectionViewportGlobals.desktop}
+  parameters={sectionViewportParameters('desktop')}
+/>
+
+<Story
+  name="Mobile"
+  args={{ ...defaultArgs, previewViewport: 'mobile' }}
+  globals={sectionViewportGlobals.mobile}
+  parameters={sectionViewportParameters('mobile')}
+/>
+
+<Story
+  name="iPad"
+  args={{ ...defaultArgs, previewViewport: 'ipad' }}
+  globals={sectionViewportGlobals.ipad}
+  parameters={sectionViewportParameters('ipad')}
+/>
+
+<Story
+  name="Expanded Card"
+  args={{ ...expandedArgs, previewViewport: 'desktop' }}
+  globals={sectionViewportGlobals.desktop}
+  parameters={sectionViewportParameters('desktop')}
+/>

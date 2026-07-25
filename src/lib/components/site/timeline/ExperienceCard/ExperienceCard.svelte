@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { resolve } from '$app/paths';
   import Card from '$lib/components/primitives/surfaces/Card';
   import IconTile from '$lib/components/primitives/surfaces/IconTile';
+  import { withBasePath } from '$lib/utils/paths';
 
   interface Experience {
     title: string;
@@ -34,8 +34,6 @@
     onSelect,
     onToggle,
   }: Props = $props();
-
-  const resolvePath = resolve as (path: string) => string;
 
   function parseMarkdownToSegments(
     text: string,
@@ -75,7 +73,7 @@
     event.stopPropagation();
     onToggle?.();
   };
-  const resolveHref = (href = ''): string => (href.startsWith('/') ? resolvePath(href) : href);
+  const resolveHref = (href = ''): string => withBasePath(href);
 </script>
 
 <article

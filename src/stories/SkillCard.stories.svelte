@@ -1,6 +1,7 @@
 <script module lang="ts">
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import SkillCard from '$lib/components/site/skills/SkillCard';
+  import { hideControls } from './helpers/controls';
 
   const skill = {
     name: 'TypeScript',
@@ -10,14 +11,24 @@
     image: 'svg/Typescript_logo.svg',
   } as const;
 
+  type Skill = typeof skill;
+
+  type Args = {
+    skill: Skill;
+    hovered: boolean;
+  };
+
   const { Story } = defineMeta({
     title: 'Library/Site/Skills/Skill Card',
     component: SkillCard,
+    render: template,
     tags: ['autodocs'],
     args: {
       skill,
-      index: 0,
       hovered: false,
+    },
+    argTypes: {
+      ...hideControls(['index']),
     },
     parameters: {
       docs: {
@@ -30,11 +41,18 @@
   });
 </script>
 
-<Story name="Default" asChild>
+{#snippet template(args: Args)}
   <div class="story-width">
-    <SkillCard {skill} />
+    <SkillCard
+      skill={args.skill}
+      index={0}
+      hovered={args.hovered}
+      onInteract={(active) => console.log('Skill interaction:', active)}
+    />
   </div>
-</Story>
+{/snippet}
+
+<Story name="Default" />
 
 <style lang="scss">
   .story-width {

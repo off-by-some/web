@@ -2,12 +2,11 @@
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import HeroPanel from '$lib/components/site/hero/HeroPanel';
   import StatCard from '$lib/components/site/metrics/StatCard';
+  import { hideControls } from './helpers/controls';
 
   type Args = {
     title: string;
     titleId: string;
-    area: 'stats' | 'tech';
-    delay: string;
   };
 
   const { Story } = defineMeta({
@@ -18,8 +17,9 @@
     args: {
       title: 'Key Metrics',
       titleId: 'story-hero-panel-title',
-      area: 'stats',
-      delay: '0s',
+    },
+    argTypes: {
+      ...hideControls(['titleId', 'area', 'delay']),
     },
     parameters: {
       docs: {
@@ -34,7 +34,7 @@
 
 {#snippet template(args: Args)}
   <div class="story-shell">
-    <HeroPanel title={args.title} titleId={args.titleId} area={args.area} delay={args.delay}>
+    <HeroPanel title={args.title} titleId={args.titleId} area="stats" delay="0s">
       <div class="story-grid">
         <StatCard count="12" label="Years Experience" type="years" />
         <StatCard count="99.99%" label="System Uptime" type="reliability" />
@@ -43,16 +43,7 @@
   </div>
 {/snippet}
 
-<Story name="Default" asChild>
-  <div class="story-shell">
-    <HeroPanel title="Key Metrics" titleId="story-hero-panel-title" area="stats" delay="0s">
-      <div class="story-grid">
-        <StatCard count="12" label="Years Experience" type="years" />
-        <StatCard count="99.99%" label="System Uptime" type="reliability" />
-      </div>
-    </HeroPanel>
-  </div>
-</Story>
+<Story name="Default" />
 
 <style lang="scss">
   .story-shell {

@@ -19,29 +19,42 @@
     },
   ];
 
+  type Args = {
+    title: string;
+    techStack: typeof techStack;
+  };
+
   const { Story } = defineMeta({
     title: 'Library/Site/Hero/Technology Panel',
     component: HeroTechPanel,
+    render: template,
     tags: ['autodocs'],
     args: {
+      title: 'Core Technologies & Skills',
       techStack,
     },
     parameters: {
       docs: {
         description: {
           component:
-            'Same pattern as HeroMetricsPanel — hardcodes its title ("Core Technologies & Skills") and `area="tech"` — but its entrance delay (0.7s) is deliberately later than the stats panel\'s (0.5s) so the two panels visibly stagger in rather than arriving together. Clicking a TechCategoryCard bubbles up through this component as a `categoryClick` event carrying just the category title.',
+            'Same pattern as HeroMetricsPanel, but for the technology category cards. It owns `area="tech"` and a later entrance delay so the two hero panels visibly stagger in rather than arriving together; the story exposes only the visible heading and stack content.',
         },
       },
     },
   });
 </script>
 
-<Story name="Default" asChild>
+{#snippet template(args: Args)}
   <div class="story-shell">
-    <HeroTechPanel {techStack} />
+    <HeroTechPanel
+      title={args.title}
+      techStack={args.techStack}
+      onCategoryClick={(category) => console.log('Category clicked:', category)}
+    />
   </div>
-</Story>
+{/snippet}
+
+<Story name="Default" />
 
 <style lang="scss">
   .story-shell {

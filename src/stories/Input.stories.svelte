@@ -2,10 +2,16 @@
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import Input from '$lib/components/primitives/forms/Input';
   import { designReferences } from './docs/design-notes';
+  import { hideControls } from './helpers/controls';
 
   type Args = {
+    as: 'input' | 'textarea';
     value: string;
     placeholder: string;
+    error: boolean;
+    success: boolean;
+    warning: boolean;
+    rows: number;
   };
 
   const { Story } = defineMeta({
@@ -14,8 +20,23 @@
     render: template,
     tags: ['autodocs'],
     args: {
+      as: 'input',
       value: 'Filled value',
       placeholder: 'Type here',
+      error: false,
+      success: false,
+      warning: false,
+      rows: 4,
+    },
+    argTypes: {
+      ...hideControls(['type', 'filled']),
+      as: { control: 'select', options: ['input', 'textarea'] },
+      value: { control: 'text' },
+      placeholder: { control: 'text' },
+      error: { control: 'boolean' },
+      success: { control: 'boolean' },
+      warning: { control: 'boolean' },
+      rows: { control: { type: 'number', min: 1, max: 12 } },
     },
     parameters: {
       docs: {
@@ -29,18 +50,31 @@
 
 {#snippet template(args: Args)}
   <div class="story-stack">
-    <Input value={args.value} placeholder={args.placeholder} />
+    <Input
+      as={args.as}
+      value={args.value}
+      placeholder={args.placeholder}
+      error={args.error}
+      success={args.success}
+      warning={args.warning}
+      rows={args.as === 'textarea' ? args.rows : undefined}
+    />
   </div>
 {/snippet}
 
-<Story name="Input States" asChild>
-  <div class="story-stack">
-    <Input placeholder="Default input" />
-    <Input value="Filled value" placeholder="Filled input" />
-    <Input value="Needs attention" error placeholder="Error input" />
-    <Input as="textarea" value="Tell me about your project." placeholder="Textarea" rows="4" />
-  </div>
-</Story>
+<Story name="Default" />
+
+<Story name="Error" args={{ error: true, value: 'Needs attention', placeholder: 'Error input' }} />
+
+<Story
+  name="Textarea"
+  args={{
+    as: 'textarea',
+    value: 'Tell me about your project.',
+    placeholder: 'Textarea',
+    rows: 4,
+  }}
+/>
 
 <style lang="scss">
   .story-stack {

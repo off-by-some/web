@@ -1,6 +1,7 @@
 <script module lang="ts">
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import Dropdown from '$lib/components/primitives/forms/Dropdown';
+  import { hideControls } from './helpers/controls';
 
   const options = [
     { value: 'discuss', label: "Let's discuss", description: 'Custom pricing for unique work' },
@@ -8,9 +9,20 @@
     { value: '25k-50k', label: '$25K - $50K', description: 'Complex web applications' },
   ];
 
+  type Args = {
+    id: string;
+    options: typeof options;
+    value: string;
+    placeholder: string;
+    ariaLabel: string;
+    disabled: boolean;
+    error: boolean;
+  };
+
   const { Story } = defineMeta({
     title: 'Library/Primitives/Forms/Dropdown',
     component: Dropdown,
+    render: template,
     tags: ['autodocs'],
     args: {
       id: 'storybook-budget',
@@ -18,6 +30,11 @@
       value: 'discuss',
       placeholder: 'Select budget range',
       ariaLabel: 'Select your project budget range',
+      disabled: false,
+      error: false,
+    },
+    argTypes: {
+      ...hideControls(['id', 'ariaLabel']),
     },
     parameters: {
       docs: {
@@ -30,21 +47,21 @@
   });
 </script>
 
-<script lang="ts">
-  let value = 'discuss';
-</script>
-
-<Story name="Default" asChild>
+{#snippet template(args: Args)}
   <div class="story-width">
     <Dropdown
-      id="storybook-budget"
-      {options}
-      bind:value
-      placeholder="Select budget range"
-      ariaLabel="Select your project budget range"
+      id={args.id}
+      options={args.options}
+      value={args.value}
+      placeholder={args.placeholder}
+      ariaLabel={args.ariaLabel}
+      disabled={args.disabled}
+      error={args.error}
     />
   </div>
-</Story>
+{/snippet}
+
+<Story name="Default" />
 
 <style lang="scss">
   .story-width {

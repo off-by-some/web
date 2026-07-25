@@ -1,13 +1,25 @@
 <script module lang="ts">
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import GitHubProjectLink from '$lib/components/site/hero/GitHubProjectLink';
+  import { hideControls } from './helpers/controls';
+
+  type Args = {
+    href: string;
+    label: string;
+  };
 
   const { Story } = defineMeta({
     title: 'Library/Site/Hero/GitHub Project Link',
     component: GitHubProjectLink,
+    render: template,
     tags: ['autodocs'],
     args: {
       href: 'https://github.com/off-by-some/web',
+      label: 'Check out this project on GitHub',
+    },
+    argTypes: {
+      ...hideControls(['href']),
+      label: { control: 'text' },
     },
     parameters: {
       docs: {
@@ -20,11 +32,13 @@
   });
 </script>
 
-<Story name="Default" asChild>
+{#snippet template(args: Args)}
   <div class="story-shell">
-    <GitHubProjectLink href="https://github.com/off-by-some/web" />
+    <GitHubProjectLink href={args.href} label={args.label} />
   </div>
-</Story>
+{/snippet}
+
+<Story name="Default" />
 
 <style lang="scss">
   .story-shell {
