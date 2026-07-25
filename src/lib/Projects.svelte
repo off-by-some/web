@@ -41,58 +41,86 @@
     projects: Project[];
     title?: string;
     subtitle?: string;
+    mediaPrefetchDistance?: number;
   };
 
-  let { projects, title = 'Projects', subtitle = '' }: Props = $props();
+  let {
+    projects,
+    title = 'Projects',
+    subtitle = '',
+    mediaPrefetchDistance = 1000,
+  }: Props = $props();
 
   let activeIndex = $state(0);
   let tablistElement: HTMLElement | undefined = $state();
   let topDotsElement: HTMLElement | undefined = $state();
   let bottomDotsElement: HTMLElement | undefined = $state();
+  let projectsElement: HTMLElement | undefined = $state();
   let topDotsVisible = $state(true);
   let bottomDotsVisible = $state(false);
+  let mediaReady = $state(false);
   let announcementText = $state('');
 
   const activeProject = $derived(projects[activeIndex]);
 
   function shouldPrefetchBanners(): boolean {
-    const userAgent = window.navigator.userAgent;
     const connection = window.navigator as Navigator & {
       connection?: { saveData?: boolean };
     };
 
-    return (
-      !window.navigator.webdriver &&
-      !userAgent.includes('Chrome-Lighthouse') &&
-      connection.connection?.saveData !== true
-    );
+    return connection.connection?.saveData !== true;
   }
 
   function scheduleBannerPrefetch(): () => void {
-    if (!shouldPrefetchBanners()) return () => {};
+    if (!projectsElement) return () => {};
+
+    if (typeof window.IntersectionObserver !== 'function') {
+      mediaReady = true;
+      return () => {};
+    }
 
     const bannerSources = projects.map((project) => project.bannerSrc).filter(Boolean);
-    if (bannerSources.length === 0) return () => {};
 
     let cancelled = false;
+    let idleHandle: number | undefined;
+    let timeoutHandle: number | undefined;
 
     const run = () => {
       if (cancelled) return;
       void preloadImageSources(bannerSources, 800);
     };
 
-    if (typeof window.requestIdleCallback === 'function') {
-      const handle = window.requestIdleCallback(run, { timeout: 2000 });
-      return () => {
-        cancelled = true;
-        window.cancelIdleCallback(handle);
-      };
-    }
+    const schedule = () => {
+      mediaReady = true;
 
-    const handle = window.setTimeout(run, 900);
+      if (!shouldPrefetchBanners() || bannerSources.length === 0) return;
+
+      if (typeof window.requestIdleCallback === 'function') {
+        idleHandle = window.requestIdleCallback(run, { timeout: 2000 });
+        return;
+      }
+
+      timeoutHandle = window.setTimeout(run, 900);
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        observer.disconnect();
+        schedule();
+      },
+      {
+        rootMargin: `${Math.max(0, Math.round(mediaPrefetchDistance))}px 0px ${Math.max(0, Math.round(mediaPrefetchDistance))}px 0px`,
+      },
+    );
+
+    observer.observe(projectsElement);
+
     return () => {
       cancelled = true;
-      window.clearTimeout(handle);
+      observer.disconnect();
+      if (idleHandle !== undefined) window.cancelIdleCallback(idleHandle);
+      if (timeoutHandle !== undefined) window.clearTimeout(timeoutHandle);
     };
   }
 
@@ -177,13 +205,27 @@
       disabled={!visible}
     >
       <span class="project-dots__dot-avatar">
-        <Image src={project.bannerSrc} alt="" sizes="48px" width={48} height={48} loading="lazy" />
+        {#if mediaReady}
+          <Image
+            src={project.bannerSrc}
+            alt=""
+            sizes="48px"
+            width={48}
+            height={48}
+            loading="lazy"
+          />
+        {/if}
       </span>
     </button>
   {/each}
 {/snippet}
 
-<section class="projects" id="projects" aria-labelledby="projects-heading">
+<section
+  class="projects"
+  id="projects"
+  aria-labelledby="projects-heading"
+  bind:this={projectsElement}
+>
   <div class="sr-only" role="status" aria-live="polite" aria-atomic="true">
     {announcementText}
   </div>
@@ -257,15 +299,17 @@
               rel="noopener noreferrer"
               aria-label="Open {activeProject.name} on GitHub"
             >
-              <Image
-                src={activeProject.bannerSrc}
-                alt=""
-                width={800}
-                height={450}
-                className="project-banner__image"
-                loading="lazy"
-                sizes="(max-width: 1376px) 100vw, 640px"
-              />
+              {#if mediaReady}
+                <Image
+                  src={activeProject.bannerSrc}
+                  alt=""
+                  width={800}
+                  height={450}
+                  className="project-banner__image"
+                  loading="lazy"
+                  sizes="(max-width: 1376px) 100vw, 640px"
+                />
+              {/if}
             </Card>
 
             {#if activeProject.badges?.length}
@@ -279,17 +323,19 @@
                       rel="noopener noreferrer"
                       class="project-badge-link"
                     >
-                      <img
-                        src={badge.imageSrc}
-                        alt={badge.label}
-                        class="project-badge"
-                        loading="lazy"
-                        width="110"
-                        height="20"
-                      />
+                      {#if mediaReady}
+                        <img
+                          src={badge.imageSrc}
+                          alt={badge.label}
+                          class="project-badge"
+                          loading="lazy"
+                          width="110"
+                          height="20"
+                        />
+                      {/if}
                     </a>
                     <!-- eslint-enable svelte/no-navigation-without-resolve -->
-                  {:else}
+                  {:else if mediaReady}
                     <img
                       src={badge.imageSrc}
                       alt={badge.label}
