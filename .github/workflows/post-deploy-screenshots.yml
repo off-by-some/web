@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: post-pages-screenshots-${{ github.event.workflow_run.head_sha }}
+  group: post-pages-screenshots-${{ github.event.workflow_run.id }}
   cancel-in-progress: true
 
 env:
@@ -23,9 +23,39 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Verify deployed source commit identity
+        id: deployment
+        run: |
+          ROOT_SHA_URL="${SITE_URL%/}/sha"
+          STORYBOOK_SHA_URL="${SITE_URL%/}/storybook/sha"
+
+          for i in $(seq 1 30); do
+            root_sha="$(curl -fsSL -H "Cache-Control: no-cache" "$ROOT_SHA_URL" 2>/dev/null | tr -d "[:space:]" || true)"
+            storybook_sha="$(curl -fsSL -H "Cache-Control: no-cache" "$STORYBOOK_SHA_URL" 2>/dev/null | tr -d "[:space:]" || true)"
+
+            if [ -n "$root_sha" ] && [ "$root_sha" = "$storybook_sha" ]; then
+              if ! printf '%s' "$root_sha" | grep -Eq '^[0-9a-f]{40}$'; then
+                echo "Deployed SHA is not a full git commit hash: $root_sha"
+                exit 1
+              fi
+
+              echo "source_sha=$root_sha" >> "$GITHUB_OUTPUT"
+              echo "Deployment identity verified: $root_sha"
+              exit 0
+            fi
+
+            echo "Waiting for matching deployed source SHA ($i/30)..."
+            echo "  $ROOT_SHA_URL -> ${root_sha:-not ready}"
+            echo "  $STORYBOOK_SHA_URL -> ${storybook_sha:-not ready}"
+            sleep 10
+          done
+
+          echo "Timed out waiting for matching deployed source SHA"
+          exit 1
+
       - uses: actions/checkout@v6
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
+          ref: ${{ steps.deployment.outputs.source_sha }}
 
       - uses: actions/setup-node@v5
         with:
@@ -41,30 +71,6 @@ jobs:
         run: |
           npm run setup:static
           npm run build:app
-
-      - name: Verify deployed commit identity
-        run: |
-          EXPECTED_SHA="${{ github.event.workflow_run.head_sha }}"
-          ROOT_SHA_URL="${SITE_URL%/}/sha"
-          STORYBOOK_SHA_URL="${SITE_URL%/}/storybook/sha"
-
-          for i in $(seq 1 30); do
-            root_sha="$(curl -fsSL -H "Cache-Control: no-cache" "$ROOT_SHA_URL" 2>/dev/null | tr -d "[:space:]" || true)"
-            storybook_sha="$(curl -fsSL -H "Cache-Control: no-cache" "$STORYBOOK_SHA_URL" 2>/dev/null | tr -d "[:space:]" || true)"
-
-            if [ "$root_sha" = "$EXPECTED_SHA" ] && [ "$storybook_sha" = "$EXPECTED_SHA" ]; then
-              echo "Deployment identity verified: $EXPECTED_SHA"
-              exit 0
-            fi
-
-            echo "Waiting for deployed SHA $EXPECTED_SHA ($i/30)..."
-            echo "  $ROOT_SHA_URL -> ${root_sha:-not ready}"
-            echo "  $STORYBOOK_SHA_URL -> ${storybook_sha:-not ready}"
-            sleep 10
-          done
-
-          echo "Timed out waiting for deployment identity $EXPECTED_SHA"
-          exit 1
 
       - name: Take screenshots
         run: npm run screenshot:all -- --url="$SITE_URL"
@@ -82,4 +88,4 @@ jobs:
           fi
 
           git commit -m "github-actions[bot]: Update screenshots from latest deployment"
-          git push
+          git push origin HEAD:main
