@@ -22,6 +22,7 @@ export interface PictureSourceSet {
 // the `width` the caller already passes to <Image> (the width it intends to
 // render at), rather than a separate prop describing what the image "is".
 const SMALL_TIER_MAX_WIDTH = 150;
+const MEDIUM_TIER_MAX_WIDTH = 300;
 
 // Default tier: icons, logos, avatars — small, so a 150px max source is plenty.
 const smallRasterModules = import.meta.glob('/assets/images/**/*.{jpg,jpeg,png,webp,avif}', {
@@ -33,7 +34,18 @@ const smallRasterModules = import.meta.glob('/assets/images/**/*.{jpg,jpeg,png,w
   },
 });
 
-// Large tier: anything requested wider than SMALL_TIER_MAX_WIDTH — needs real
+// Medium tier: avatars and inline media that can render above the small icon
+// range but should still avoid jumping straight to banner-sized sources.
+const mediumRasterModules = import.meta.glob('/assets/images/**/*.{jpg,jpeg,png,webp,avif}', {
+  import: 'default',
+  query: {
+    enhanced: true,
+    w: '150;200;300',
+    format: 'webp',
+  },
+});
+
+// Large tier: anything requested wider than MEDIUM_TIER_MAX_WIDTH — needs real
 // source widths instead of being upscaled from a 150px-wide small-tier file.
 const largeRasterModules = import.meta.glob('/assets/images/**/*.{jpg,jpeg,png,webp,avif}', {
   import: 'default',
@@ -45,9 +57,9 @@ const largeRasterModules = import.meta.glob('/assets/images/**/*.{jpg,jpeg,png,w
 });
 
 function rasterModulesFor(targetWidth: number | undefined) {
-  return targetWidth && targetWidth > SMALL_TIER_MAX_WIDTH
-    ? largeRasterModules
-    : smallRasterModules;
+  if (!targetWidth || targetWidth <= SMALL_TIER_MAX_WIDTH) return smallRasterModules;
+  if (targetWidth <= MEDIUM_TIER_MAX_WIDTH) return mediumRasterModules;
+  return largeRasterModules;
 }
 
 // Include SVGs in the rasterModules

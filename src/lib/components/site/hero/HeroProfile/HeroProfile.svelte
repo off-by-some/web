@@ -1,5 +1,7 @@
 <script lang="ts">
   import Image from '$lib/components/primitives/media/Image';
+  import ToneDot from '$lib/components/primitives/status/ToneDot';
+  import StatusPill from '$lib/components/site/status/StatusPill';
   import AvailabilityStatus from '$lib/components/site/status/AvailabilityStatus';
 
   type Props = {
@@ -30,8 +32,10 @@
         src={avatarSrc}
         alt={avatarAlt}
         className="avatar__image"
-        sizes="(max-width: 768px) 120px, (max-width: 1376px) 150px, 180px"
-        loading="lazy"
+        sizes="(max-width: 768px) 112px, (max-width: 1376px) 130px, 240px"
+        width={240}
+        height={240}
+        priority
       />
       <div class="avatar__glow" aria-hidden="true"></div>
     </div>
@@ -40,6 +44,11 @@
       <div class="ring ring--2"></div>
       <div class="ring ring--3"></div>
     </div>
+    <ToneDot tone="available" pulse className="avatar__status-dot" />
+
+    <span class="avatar__tooltip">
+      <StatusPill text={statusText} className="avatar__tooltip-pill" />
+    </span>
   </button>
 
   <div class="profile-content">
@@ -50,7 +59,12 @@
 
     <p class="profile-role">{role}</p>
 
-    <AvailabilityStatus text={statusText} entrance delay="1.4s" />
+    <!-- Static fallback for touch/coarse-pointer devices, which have no
+         hover state to reveal the tooltip above — hidden on fine-pointer
+         devices via CSS, where the avatar hover reveal takes over. -->
+    <div class="profile-availability">
+      <AvailabilityStatus text={statusText} entrance delay="1s" />
+    </div>
   </div>
 </div>
 
@@ -58,7 +72,6 @@
   @use 'styles/breakpoints' as *;
 
   .profile-section {
-    grid-area: profile;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -213,7 +226,7 @@
 
   .profile-header {
     position: relative;
-    margin-bottom: var(--token-space-fluid-sm);
+    margin-bottom: var(--token-space-fluid-xs);
   }
 
   .profile-name {
@@ -260,11 +273,11 @@
     font-size: var(--token-font-size-lg);
     font-weight: var(--token-font-weight-medium);
     color: var(--token-text-secondary);
-    letter-spacing: var(--token-letter-spacing-wide);
-    line-height: var(--token-line-height-relaxed);
+    letter-spacing: var(--token-letter-spacing-normal);
+    line-height: 1.08;
     opacity: 0;
-    animation: fadeInUp 0.6s var(--token-motion-ease-out) 1s both;
-    margin-bottom: var(--token-space-fluid-2xl);
+    animation: fadeInUp 0.6s var(--token-motion-ease-out) 0.9s both;
+    margin-bottom: 0;
 
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-font-size-xl);
@@ -273,8 +286,64 @@
     @media (min-width: $breakpoint-lg) {
       font-size: var(--token-font-size-2xl);
       font-weight: var(--token-font-weight-normal);
-      letter-spacing: var(--token-letter-spacing-normal);
     }
+  }
+
+  // Touch/coarse-pointer devices have no hover state, so they get this
+  // always-visible pill instead of the avatar's hover-revealed tooltip
+  // below — the two are mutually exclusive per device via media queries,
+  // so exactly one accessible copy of the status text exists at a time.
+  .profile-availability {
+    margin-top: var(--token-space-fluid-sm);
+
+    @media (hover: hover) and (pointer: fine) {
+      display: none;
+    }
+  }
+
+  :global(.avatar__status-dot) {
+    position: absolute;
+    bottom: 6%;
+    right: 6%;
+    transform: translate(15%, 15%);
+    z-index: 2;
+    --tone-dot-size: clamp(0.85rem, 0.7rem + 1vw, 1.25rem);
+    --tone-dot-border: 3px solid var(--token-background-color);
+  }
+
+  :global(.avatar__tooltip) {
+    position: absolute;
+    bottom: 8%;
+    left: 100%;
+    margin-left: var(--token-space-fluid-md);
+    z-index: 5;
+
+    @media (hover: hover) and (pointer: fine) {
+      opacity: 0;
+      transform: translate(-6px, 0) scale(0.95);
+      transform-origin: left center;
+      pointer-events: none;
+      transition:
+        opacity 0.25s var(--token-motion-ease-out),
+        transform 0.25s var(--token-motion-ease-out);
+    }
+
+    @media (hover: none), (pointer: coarse) {
+      display: none;
+    }
+  }
+
+  .avatar:hover :global(.avatar__tooltip),
+  .avatar:focus-visible :global(.avatar__tooltip) {
+    @media (hover: hover) and (pointer: fine) {
+      opacity: 1;
+      transform: translate(0, 0) scale(1);
+    }
+  }
+
+  :global(.avatar__tooltip-pill) {
+    cursor: default;
+    white-space: nowrap;
   }
 
   @keyframes fadeInUp {
@@ -357,6 +426,10 @@
 
     .avatar__rings {
       display: none;
+    }
+
+    :global(.avatar__tooltip) {
+      transition: none;
     }
 
     .avatar:hover {

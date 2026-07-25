@@ -38,6 +38,7 @@
   const selectedOption = $derived(options.find((opt) => opt.value === value));
   const displayText = $derived(selectedOption?.label || placeholder);
   const hasValue = $derived(Boolean(value?.trim()));
+  const triggerAriaLabel = $derived(ariaLabel ? `${displayText} - ${ariaLabel}` : displayText);
 
   const triggerClasses = $derived(
     [
@@ -243,7 +244,7 @@
     {disabled}
     aria-haspopup="listbox"
     aria-expanded={isOpen}
-    aria-label={ariaLabel}
+    aria-label={triggerAriaLabel}
   >
     <span class="dropdown-trigger__text" class:dropdown-trigger__text--placeholder={!hasValue}>
       {displayText}

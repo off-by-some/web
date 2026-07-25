@@ -6,9 +6,13 @@
   };
 
   let { text, ariaLabel = 'Lorem ipsum dolor sit amet', onclick }: Props = $props();
+
+  const resolvedAriaLabel = $derived(
+    ariaLabel.toLowerCase().includes(text.toLowerCase()) ? ariaLabel : `${text}, ${ariaLabel}`,
+  );
 </script>
 
-<button class="scroll-indicator" {onclick} type="button" aria-label={ariaLabel}>
+<button class="scroll-indicator" {onclick} type="button" aria-label={resolvedAriaLabel}>
   <div class="scroll-mouse">
     <div class="scroll-wheel"></div>
   </div>

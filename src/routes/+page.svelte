@@ -5,7 +5,6 @@
   import Projects from '$lib/Projects.svelte';
   import Testimonials from '$lib/Testimonials.svelte';
   import ContactMe from '$lib/ContactMe.svelte';
-  import { base } from '$app/paths';
   import { t, format } from '$lib/content';
 
   interface Skill {
@@ -121,10 +120,6 @@
   let selectedSkillsCategory: string | null = null;
 
   function handlePrimaryAction() {
-    smoothScrollTo('experience');
-  }
-
-  function handleSecondaryAction() {
     smoothScrollTo('contact');
   }
 
@@ -147,6 +142,8 @@
   const projects = t.projectsSection.projects as Project[];
   const testimonials: Testimonial[] = t.testimonials.entries;
   const linkedinUrl = contactMethods.find((method) => method.type === 'linkedin')?.href;
+  const githubUrl = contactMethods.find((method) => method.type === 'github')?.href;
+  const resumeHref = '/resume/Cassidy-Bridges-Software-Engineering.pdf';
 
   // Dynamically generate tech stack from skill categories
   const aboutMeTechStack: TechStack[] = skillCategories.map((category) => ({
@@ -178,9 +175,10 @@
     avatarSrc={t.aboutMe.avatarSrc}
     avatarAlt={t.aboutMe.avatarAlt}
     primaryButtonText={t.aboutMe.primaryButtonText}
-    secondaryButtonText={t.aboutMe.secondaryButtonText}
+    {linkedinUrl}
+    {githubUrl}
+    {resumeHref}
     scrollText={t.aboutMe.scrollText}
-    githubLabel={t.github.projectLinkLabel}
     metricsTitle={t.aboutMe.metricsTitle}
     techTitle={t.aboutMe.techTitle}
     scrollAriaLabel={t.aboutMe.scrollIndicatorAriaLabel}
@@ -188,7 +186,6 @@
     stats={aboutMeStats}
     techStack={aboutMeTechStack}
     onPrimaryAction={handlePrimaryAction}
-    onSecondaryAction={handleSecondaryAction}
     onScrollIndicator={handleScrollIndicator}
     onTechCategoryClick={handleTechCategoryClick}
   />

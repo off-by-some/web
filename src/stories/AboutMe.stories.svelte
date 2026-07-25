@@ -42,15 +42,17 @@
   const aboutMeArgs = {
     name: 'Cassidy Bridges',
     role: 'Software Engineering Leader',
-    statusText: 'Available for new opportunities',
+    statusText: 'Open to Staff / Lead roles',
     valueHeadline:
       'I architect systems that scale, lead teams that thrive, and build products that last.',
     valueDescription:
       'With over a decade of experience turning complex challenges into elegant solutions, I specialize in building high-performance engineering teams and resilient distributed systems. From React frontends to cloud infrastructure, I create technology that just works.',
     avatarSrc: 'headshot.png',
     avatarAlt: 'Cassidy Bridges',
-    primaryButtonText: 'View Experience',
-    secondaryButtonText: 'Get in Touch',
+    primaryButtonText: 'Get in Touch',
+    linkedinUrl: 'https://linkedin.com/in/cassidy-bridges-tech',
+    githubUrl: 'https://github.com/off-by-some',
+    resumeHref: '/resume/Cassidy-Bridges-Software-Engineering.pdf',
     scrollText: 'Explore my work',
     showCanvasBackground: true,
     stats: aboutMeStats,
@@ -70,7 +72,9 @@
       avatarSrc: { control: { type: 'text' } },
       avatarAlt: { control: { type: 'text' } },
       primaryButtonText: { control: { type: 'text' } },
-      secondaryButtonText: { control: { type: 'text' } },
+      linkedinUrl: { control: { type: 'text' } },
+      githubUrl: { control: { type: 'text' } },
+      resumeHref: { control: { type: 'text' } },
       scrollText: { control: { type: 'text' } },
       showCanvasBackground: {
         control: { type: 'boolean' },
@@ -104,7 +108,6 @@
   <AboutMe
     {...aboutMeArgs}
     onPrimaryAction={() => console.log('Primary action')}
-    onSecondaryAction={() => console.log('Secondary action')}
     onScrollIndicator={() => console.log('Scroll indicator clicked')}
   />
 </Story>

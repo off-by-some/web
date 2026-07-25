@@ -114,7 +114,9 @@
         onclick={handleExpandClick}
         aria-expanded={expanded}
         aria-controls="experience-{index}-details"
-        aria-label="{expanded ? 'Hide' : 'Show'} details for {experience.title}"
+        aria-label="{expanded ? 'Less' : 'More'} - {expanded
+          ? 'hide'
+          : 'show'} details for {experience.title}"
       >
         <span class="expand-button__text">{expanded ? 'Less' : 'More'}</span>
         <svg class="expand-button__icon" width="20" height="20" viewBox="0 0 24 24" fill="none">

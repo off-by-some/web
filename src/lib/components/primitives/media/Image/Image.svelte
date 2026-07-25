@@ -38,9 +38,8 @@ OPTIONS
   • showFallback: true → renders <img> placeholder if missing.
   • skeletonAspectRatio: string → custom aspect ratio for skeleton (default: "16/9")
   • width: number → also picks the generated source-width tier, not just the
-      <img width> hint. Omit it (icons/logos/avatars) for a max-150px source;
-      pass the real render width for anything bigger (banners, hero art) to
-      get a max-1200px source instead of an upscaled 150px one.
+      <img width> hint. Omit it or pass <=150 for the icon tier; pass <=300 for
+      avatar/inline media; pass larger values for banners and hero art.
 
 ACCESSIBILITY ♿
   • alt=""  → decorative (component adds aria-hidden/role).

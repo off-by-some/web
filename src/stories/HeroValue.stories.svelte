@@ -10,14 +10,17 @@
       headline: 'I build resilient systems and focused engineering teams.',
       description:
         'From architecture to delivery, I turn messy product ideas into reliable software with clear operational guardrails.',
-      primaryButtonText: 'Start a Conversation',
-      secondaryButtonText: 'View Experience',
+      primaryButtonText: 'Get in Touch',
+      linkedinUrl: 'https://linkedin.com/in/cassidy-bridges-tech',
+      githubUrl: 'https://github.com/off-by-some',
+      repoUrl: 'https://github.com/off-by-some/web',
+      resumeHref: '/resume/Cassidy-Bridges-Software-Engineering.pdf',
     },
     parameters: {
       docs: {
         description: {
           component:
-            "Headline, supporting line, and two buttons in one fixed rhythm — the pitch and its two calls to action can't be reformatted independently of each other, which keeps the hero from ever shipping a headline without a matching action.",
+            'Headline, supporting line, and a fixed action row for profile links, resume download, starring the project repo, and contact intent. All the circular controls share the same glass icon language.',
         },
       },
     },
@@ -29,8 +32,11 @@
     <HeroValue
       headline="I build resilient systems and focused engineering teams."
       description="From architecture to delivery, I turn messy product ideas into reliable software with clear operational guardrails."
-      primaryButtonText="Start a Conversation"
-      secondaryButtonText="View Experience"
+      primaryButtonText="Get in Touch"
+      linkedinUrl="https://linkedin.com/in/cassidy-bridges-tech"
+      githubUrl="https://github.com/off-by-some"
+      repoUrl="https://github.com/off-by-some/web"
+      resumeHref="/resume/Cassidy-Bridges-Software-Engineering.pdf"
     />
   </div>
 </Story>

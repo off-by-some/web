@@ -21,13 +21,12 @@
   "aboutMe": {
     "name": "Cassidy Bridges",
     "role": "Software Engineering Leader",
-    "statusText": "Available for new opportunities",
+    "statusText": "Open to Staff / Lead roles",
     "valueHeadline": "I architect systems that scale, lead teams that thrive, and build products that last.",
     "valueDescription": "With over a decade of experience turning complex challenges into elegant solutions, I specialize in helping high-performance engineering teams thrive while designing resilient distributed systems. From React frontends to cloud infrastructure, I create technology that just works.",
     "avatarSrc": "headshot.png",
     "avatarAlt": "Cassidy Bridges",
-    "primaryButtonText": "View Experience",
-    "secondaryButtonText": "Get in Touch",
+    "primaryButtonText": "Get in Touch",
     "scrollText": "Explore my work",
     "profileAriaLabel": "View profile details for {name}",
     "metricsTitle": "Key Metrics",
@@ -48,7 +47,7 @@
   },
 
   "skillsSection": {
-    "title": "Technical Expertise",
+    "title": "Core Competencies",
     "subtitle": "Skills shaped by curiosity, tested through years of real-world impact.",
     "filterAllLabel": "All Skills",
     "filtersAriaLabel": "Filter skills by category",
@@ -407,6 +406,41 @@
     },
 
     "experiences": [
+      {
+        "title": "Senior Engineering Consultant",
+        "company": "Stealth Startup",
+        "logo": "company_logos/stealth_startup_logo.png",
+        "date": "Feb 2026 – Present",
+        "dateValue": "Feb 2026",
+        "location": "Remote",
+        "summary": "At a stealth startup, I led the modernization of a complex AWS integration platform supporting mission-critical field and enterprise workflows, combining hands-on cloud engineering with technical change management, stakeholder alignment, release strategy, and production reliability work.",
+        "highlights": [
+          "Led technical discovery and migration planning for a large portfolio of AWS Lambda services, defining runtime strategy, dependency risk, rollout sequencing, and acceptance criteria.",
+          "Designed a safer serverless release model using versioned deployments, stable aliases, staged environment promotion, health monitoring, and rollback paths.",
+          "Drove technical change management across engineering, QA, and delivery leadership, translating infrastructure risks into concrete decisions, milestones, validation plans, and release criteria.",
+          "Built a system inventory and dependency map spanning serverless services, shared libraries, source repositories, architectures, and invocation paths to expose hidden blast radius before migration.",
+          "Diagnosed production failures across distributed, event-driven workflows by tracing data through APIs, serverless functions, application logs, databases, and upstream and downstream systems.",
+          "Converted an ambiguous runtime-upgrade mandate into an executable modernization program with structured backlog items, risk tiers, implementation options, executive briefs, and operational requirements.",
+          "Aligned modernization work with regression and release windows, defining QA scope, environment promotion paths, rollback thresholds, and production-readiness requirements.",
+          "Identified gaps in deployment provenance, monitoring, source-of-truth management, and recovery procedures, then proposed standardized controls to reduce operational risk.",
+          "Implemented and maintained Python-based cloud integrations and configuration changes supporting critical business workflows.",
+          "Presented architecture, delivery, and risk tradeoffs to technical and non-technical stakeholders while coordinating decisions across teams with competing priorities."
+        ],
+        "skills": [
+          "AWS Lambda",
+          "Python",
+          "Serverless Architecture",
+          "Cloud Integrations",
+          "Distributed Systems",
+          "Technical Change Management",
+          "Stakeholder Alignment",
+          "Release Strategy",
+          "Risk Management",
+          "Incident Response",
+          "System Modernization",
+          "Technical Program Leadership"
+        ]
+      },
       {
         "title": "Senior Software Engineer",
         "company": "Scribe",

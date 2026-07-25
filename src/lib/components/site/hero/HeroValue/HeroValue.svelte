@@ -1,23 +1,36 @@
 <script lang="ts">
-  import Button from '$lib/components/primitives/actions/Button';
+  import HeroActionLink from '$lib/components/site/hero/HeroActionLink';
 
   type Props = {
     headline: string;
     description: string;
     primaryButtonText: string;
-    secondaryButtonText: string;
+    linkedinUrl?: string;
+    githubUrl?: string;
+    repoUrl?: string;
+    resumeHref?: string;
+    resumeFilename?: string;
     onPrimaryAction?: () => void;
-    onSecondaryAction?: () => void;
   };
 
   let {
     headline,
     description,
     primaryButtonText,
-    secondaryButtonText,
+    linkedinUrl,
+    githubUrl,
+    repoUrl,
+    resumeHref,
+    resumeFilename = 'Cassidy-Bridges-Software-Engineering.pdf',
     onPrimaryAction,
-    onSecondaryAction,
   }: Props = $props();
+
+  function handleContactClick(event: MouseEvent) {
+    if (onPrimaryAction) {
+      event.preventDefault();
+      onPrimaryAction();
+    }
+  }
 </script>
 
 <div class="value-section">
@@ -25,12 +38,56 @@
   <p class="value-description">{description}</p>
 
   <div class="actions">
-    <Button variant="primary" onclick={() => onPrimaryAction?.()}>
-      {primaryButtonText}
-    </Button>
-    <Button variant="secondary" onclick={() => onSecondaryAction?.()}>
-      {secondaryButtonText}
-    </Button>
+    <div class="action-icons" role="group" aria-label="Profile links">
+      {#if linkedinUrl}
+        <HeroActionLink
+          href={linkedinUrl}
+          label="Open LinkedIn profile"
+          icon="linkedin"
+          target="_blank"
+          rel="noopener noreferrer"
+        />
+      {/if}
+
+      {#if githubUrl}
+        <HeroActionLink
+          href={githubUrl}
+          label="Open GitHub profile"
+          icon="github"
+          target="_blank"
+          rel="noopener noreferrer"
+        />
+      {/if}
+
+      {#if resumeHref}
+        <HeroActionLink
+          href={resumeHref}
+          label="Download resume"
+          icon="download"
+          download={resumeFilename}
+        />
+      {/if}
+
+      {#if repoUrl}
+        <HeroActionLink
+          href={repoUrl}
+          label="Star this project on GitHub"
+          icon="star"
+          target="_blank"
+          rel="noopener noreferrer"
+        />
+      {/if}
+    </div>
+
+    <div class="actions__divider" aria-hidden="true"></div>
+
+    <HeroActionLink
+      href="#contact"
+      label={primaryButtonText}
+      icon="arrow"
+      shape="label"
+      onclick={handleContactClick}
+    />
   </div>
 </div>
 
@@ -39,7 +96,6 @@
   @use 'lib/components/primitives/motion' as motion;
 
   .value-section {
-    grid-area: value;
     display: flex;
     flex-direction: column;
     gap: var(--token-space-fluid-lg);
@@ -54,9 +110,9 @@
 
   .value-headline {
     font-size: var(--token-font-size-2xl);
-    font-weight: var(--token-font-weight-semibold);
+    font-weight: var(--token-font-weight-medium);
     line-height: var(--token-line-height-tight);
-    color: var(--token-text-primary);
+    color: var(--token-text-secondary);
     letter-spacing: var(--token-letter-spacing-tight);
     transition: color 0.3s var(--token-motion-ease-out);
 
@@ -67,7 +123,6 @@
 
     @media (min-width: $breakpoint-lg) {
       font-size: var(--token-font-size-35xl);
-      font-weight: var(--token-font-weight-medium);
       letter-spacing: var(--token-letter-spacing-normal);
     }
 
@@ -76,7 +131,7 @@
     }
 
     &:hover {
-      color: var(--token-text-hovered);
+      color: var(--token-text-primary);
     }
   }
 
@@ -103,7 +158,9 @@
 
   .actions {
     display: flex;
-    gap: var(--token-space-fluid-md);
+    align-items: center;
+    justify-content: center;
+    gap: var(--token-space-fluid-lg);
     flex-direction: column;
     margin-top: var(--token-space-fluid-md);
 
@@ -111,7 +168,27 @@
 
     @media (min-width: $breakpoint-md) {
       flex-direction: row;
-      gap: var(--token-space-fluid-lg);
+      justify-content: flex-start;
+      gap: var(--token-space-fluid-xl);
+    }
+  }
+
+  .action-icons {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--token-space-fluid-md);
+  }
+
+  .actions__divider {
+    width: min(12rem, 60%);
+    height: 1px;
+    background: var(--token-border-color-neutral);
+    opacity: 0.4;
+
+    @media (min-width: $breakpoint-md) {
+      width: 1px;
+      height: calc(var(--token-size-12) + var(--token-space-fluid-sm));
     }
   }
 

@@ -532,7 +532,7 @@ $theme-defaults: (
   ),
 
   scale: (
-    root: 90%,
+    root: 85%,
   ),
 
   space: (
@@ -589,7 +589,7 @@ $theme-defaults: (
     '40': 10rem,
     'avatar': (
       'sm': clamp(6.5rem, 20vw, 11rem),
-      'lg': clamp(8.5rem, 14vw, 11.25rem),
+      'lg': clamp(8.5rem, 14vw, 15.25rem),
     ),
   ),
 

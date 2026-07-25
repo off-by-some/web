@@ -118,7 +118,7 @@
   };
 </script>
 
-{#snippet projectDots()}
+{#snippet projectDots(visible: boolean)}
   {#each projects as project, index (project.name)}
     <button
       type="button"
@@ -127,6 +127,8 @@
       onclick={() => selectProject(index)}
       aria-label="View {project.name}"
       aria-current={index === activeIndex ? 'true' : undefined}
+      tabindex={visible ? 0 : -1}
+      disabled={!visible}
     >
       <span class="project-dots__dot-avatar">
         <Image src={project.bannerSrc} alt="" sizes="48px" loading="lazy" />
@@ -151,7 +153,7 @@
       aria-label="Quick project navigation"
       aria-hidden={!topDotsVisible}
     >
-      {@render projectDots()}
+      {@render projectDots(topDotsVisible)}
     </div>
 
     <div class="projects-layout">
@@ -235,6 +237,8 @@
                         alt={badge.label}
                         class="project-badge"
                         loading="lazy"
+                        width="110"
+                        height="20"
                       />
                     </a>
                     <!-- eslint-enable svelte/no-navigation-without-resolve -->
@@ -244,6 +248,8 @@
                       alt={badge.label}
                       class="project-badge"
                       loading="lazy"
+                      width="110"
+                      height="20"
                     />
                   {/if}
                 {/each}
@@ -435,7 +441,7 @@
       aria-label="Quick project navigation"
       aria-hidden={!bottomDotsVisible}
     >
-      {@render projectDots()}
+      {@render projectDots(bottomDotsVisible)}
     </div>
   </Section>
 </section>

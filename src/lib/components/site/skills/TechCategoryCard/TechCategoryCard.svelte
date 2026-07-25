@@ -98,13 +98,7 @@
   onDestroy(() => resizeObserver?.disconnect());
 </script>
 
-<Card
-  as="button"
-  className="tech-category"
-  aria-label="Explore {title} technologies at {level} level"
-  type="button"
-  {onclick}
->
+<Card as="button" className="tech-category" type="button" {onclick}>
   <div class="category-header">
     <span class="category-title">{title}</span>
     <ToneDot tone="interactive" className="mastery-indicator" />
@@ -200,7 +194,9 @@
 
   .category-tags {
     display: flex;
+    flex: 1;
     flex-wrap: wrap;
+    align-content: center;
     gap: var(--token-space-2);
   }
 

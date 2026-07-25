@@ -9,7 +9,7 @@
     args: {
       name: 'Cassidy Bridges',
       role: 'Engineering Leader',
-      statusText: 'Available for new opportunities',
+      statusText: 'Open to Staff / Lead roles',
       avatarSrc: 'headshot.png',
       avatarAlt: 'Portrait of Cassidy Bridges',
     },
@@ -29,7 +29,7 @@
     <HeroProfile
       name="Cassidy Bridges"
       role="Engineering Leader"
-      statusText="Available for new opportunities"
+      statusText="Open to Staff / Lead roles"
       avatarSrc="headshot.png"
       avatarAlt="Portrait of Cassidy Bridges"
     />

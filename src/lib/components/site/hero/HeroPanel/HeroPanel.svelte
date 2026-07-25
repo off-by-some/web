@@ -19,7 +19,7 @@
     as="section"
     className="hero-panel hero-panel--{area}"
     aria-labelledby={titleId}
-    style="--hero-panel-area: {area}; --hero-panel-delay: {delay};"
+    style="--hero-panel-delay: {delay};"
   >
     <SectionAccentHeader {title} {titleId} />
     {@render children?.()}
@@ -42,11 +42,9 @@
     --card-hover-transform: none;
     --card-hover-iridescent-opacity: 0.6;
 
-    grid-area: var(--hero-panel-area);
     animation: fadeInUp 1s var(--token-motion-ease-out) var(--hero-panel-delay) both;
     transform: scale(0.8);
     transform-origin: top left;
-    margin-top: auto;
 
     @media (min-width: $breakpoint-md) {
       --card-padding: var(--token-space-fluid-md);

@@ -22,12 +22,6 @@
 
   const toTitleCase = (str: string): string =>
     str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-
-  const ariaLabel = $derived(
-    `${skill.name}. ${toTitleCase(skill.level)} level skill${
-      skill.years ? ` with ${skill.years} years experience` : ''
-    }${skill.description ? `. ${skill.description}` : ''}`,
-  );
 </script>
 
 <article
@@ -42,7 +36,6 @@
     onclick={() => onInteract?.(true)}
     onmouseenter={() => onInteract?.(true)}
     onmouseleave={() => onInteract?.(false)}
-    aria-label={ariaLabel}
   >
     <IconTile src={skill.image} alt="" sizes="48px" className="skill-image">
       <ToneDot tone={skill.level} className="skill-level-indicator" />

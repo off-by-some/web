@@ -93,6 +93,7 @@ lerna-debug.log
 Thumbs.db
 *storybook.log
 storybook-static
+scripts/_tmp-*.mjs
 
 .svelte-kit
 

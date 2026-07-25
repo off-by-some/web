@@ -22,7 +22,7 @@
   <h3 id="methods-title">{title}</h3>
   <p>{subtitle}</p>
 
-  <div class="methods__grid" role="list" aria-label="Contact methods">
+  <div class="methods__grid">
     {#each methods as method, mIdx (mIdx)}
       <ContactMethodCard
         href={method.href}
