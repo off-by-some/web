@@ -13,7 +13,7 @@
   "scripts": {
     "dev": "npm run setup:static && vite dev",
     "build": "npm run clean && npm run setup:static && npm run build:app && npm run build:storybook:pages && npm run build:finalize",
-    "build:app": "vite build",
+    "build:app": "svelte-kit sync && vite build",
     "build:finalize": "node scripts/inline-critical-css.js && node scripts/write-build-sha.js && touch build/.nojekyll",
     "deploy": "npm run deploy:guard && npm run build && gh-pages -d build --dotfiles",
     "deploy:guard": "node scripts/assert-clean-worktree.js",

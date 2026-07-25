@@ -168,6 +168,8 @@ TROUBLESHOOTING 🔧
       loading={priority ? 'eager' : loading}
       {decoding}
       fetchpriority={priority ? 'high' : fetchpriority}
+      {width}
+      {height}
       aria-hidden={ariaHidden === 'true' ? 'true' : undefined}
       {role}
       {...rest}
@@ -207,6 +209,8 @@ TROUBLESHOOTING 🔧
     loading={priority ? 'eager' : loading}
     {decoding}
     fetchpriority={priority ? 'high' : fetchpriority}
+    {width}
+    {height}
     aria-hidden={ariaHidden === 'true' ? 'true' : undefined}
     {role}
     {...rest}

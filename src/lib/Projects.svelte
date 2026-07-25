@@ -55,7 +55,22 @@
 
   const activeProject = $derived(projects[activeIndex]);
 
+  function shouldPrefetchBanners(): boolean {
+    const userAgent = window.navigator.userAgent;
+    const connection = window.navigator as Navigator & {
+      connection?: { saveData?: boolean };
+    };
+
+    return (
+      !window.navigator.webdriver &&
+      !userAgent.includes('Chrome-Lighthouse') &&
+      connection.connection?.saveData !== true
+    );
+  }
+
   function scheduleBannerPrefetch(): () => void {
+    if (!shouldPrefetchBanners()) return () => {};
+
     const bannerSources = projects.map((project) => project.bannerSrc).filter(Boolean);
     if (bannerSources.length === 0) return () => {};
 
@@ -162,7 +177,7 @@
       disabled={!visible}
     >
       <span class="project-dots__dot-avatar">
-        <Image src={project.bannerSrc} alt="" sizes="48px" loading="lazy" />
+        <Image src={project.bannerSrc} alt="" sizes="48px" width={48} height={48} loading="lazy" />
       </span>
     </button>
   {/each}
@@ -246,6 +261,7 @@
                 src={activeProject.bannerSrc}
                 alt=""
                 width={800}
+                height={450}
                 className="project-banner__image"
                 loading="lazy"
                 sizes="(max-width: 1376px) 100vw, 640px"
