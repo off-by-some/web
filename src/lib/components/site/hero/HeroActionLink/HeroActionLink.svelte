@@ -3,7 +3,7 @@
   import { withBasePath } from '$lib/utils/paths';
 
   type Icon = 'github' | 'linkedin' | 'download' | 'arrow' | 'star';
-  type Shape = 'circle' | 'label' | 'corner';
+  type Shape = 'circle' | 'label';
 
   type Props = {
     href: string;
@@ -103,11 +103,9 @@
 <!-- eslint-enable svelte/no-navigation-without-resolve -->
 
 <style lang="scss">
-  @use 'styles/breakpoints' as *;
-
   // Base look (glass background, border, blur, hover lift, focus ring) comes
   // from Button's `secondary` variant — these overrides only reshape it into
-  // the three hero-specific silhouettes (circle / pill / expanding corner).
+  // the two hero-specific silhouettes (circle / label).
   :global(.hero-action-link) {
     --hero-action-size: clamp(3.25rem, 3rem + 1vw, 4rem);
     --button-focus-outline-offset: 4px;
@@ -136,65 +134,6 @@
 
   :global(.hero-action-link--circle:hover) .hero-action-link__icon {
     transform: translateY(-2px) scale(1.04);
-  }
-
-  :global(.hero-action-link--corner) {
-    --button-secondary-hover-transform: none;
-    --button-gap: 0;
-
-    position: absolute;
-    top: var(--token-space-fluid-lg);
-    right: var(--token-space-fluid-lg);
-    z-index: 10;
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
-    min-height: 40px;
-    padding: 7px;
-    opacity: 0.85;
-    animation: heroActionNotice 15s ease-in-out infinite;
-    transition:
-      width 0.4s var(--token-motion-ease-out),
-      gap 0.4s var(--token-motion-ease-out);
-
-    .hero-action-link__text {
-      opacity: 0;
-      padding-left: 10px;
-      white-space: nowrap;
-      transition: opacity 0.3s var(--token-motion-ease-out);
-    }
-
-    &:hover {
-      width: 310px;
-      height: auto;
-      gap: var(--token-space-fluid-xs);
-      animation: none;
-
-      .hero-action-link__icon {
-        transform: rotate(360deg);
-      }
-
-      .hero-action-link__text {
-        opacity: 1;
-        transition-delay: 0.15s;
-      }
-    }
-
-    @media (max-width: $breakpoint-sm) {
-      top: var(--token-space-fluid-md);
-      right: var(--token-space-fluid-md);
-
-      &:hover {
-        width: 270px;
-      }
-    }
-
-    @media (max-width: $breakpoint-sm) and (max-width: 400px) {
-      &:hover {
-        width: 230px;
-        font-size: var(--token-font-size-xs);
-      }
-    }
   }
 
   :global(.hero-action-link--label) {
@@ -231,70 +170,6 @@
   .hero-action-link__text {
     position: relative;
     z-index: 1;
-  }
-
-  @keyframes heroActionNotice {
-    0%,
-    85% {
-      transform: rotate(0deg);
-      border-color: rgba(255, 255, 255, 0.2);
-      opacity: 0.85;
-    }
-
-    86% {
-      border-color: var(--token-attention-color);
-      box-shadow: 0 0 0 2px var(--token-attention-glow);
-      opacity: 1;
-    }
-
-    87% {
-      transform: rotate(-8deg);
-    }
-
-    88% {
-      transform: rotate(8deg);
-    }
-
-    89% {
-      transform: rotate(-8deg);
-    }
-
-    90% {
-      transform: rotate(8deg);
-    }
-
-    91% {
-      transform: rotate(-6deg);
-    }
-
-    92% {
-      transform: rotate(6deg);
-    }
-
-    93% {
-      transform: rotate(-4deg);
-    }
-
-    94% {
-      transform: rotate(4deg);
-    }
-
-    95% {
-      transform: rotate(0deg);
-      border-color: var(--token-attention-color);
-      box-shadow: 0 0 0 2px var(--token-attention-glow);
-    }
-
-    96% {
-      border-color: rgba(255, 255, 255, 0.2);
-      box-shadow: none;
-    }
-
-    100% {
-      transform: rotate(0deg);
-      border-color: rgba(255, 255, 255, 0.2);
-      opacity: 0.85;
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {

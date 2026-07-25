@@ -4,6 +4,8 @@
 
   type Args = {
     text: string;
+    entrance: boolean;
+    delay: string;
   };
 
   const { Story } = defineMeta({
@@ -12,13 +14,20 @@
     render: template,
     tags: ['autodocs'],
     args: {
-      text: 'Building polished systems',
+      text: 'Open to Staff / Lead roles',
+      entrance: false,
+      delay: '0s',
+    },
+    argTypes: {
+      text: { control: { type: 'text' } },
+      entrance: { control: { type: 'boolean' } },
+      delay: { control: { type: 'text' } },
     },
     parameters: {
       docs: {
         description: {
           component:
-            'StatusPill is the low-level pill surface for short state labels. Availability-specific copy and gold-accent rationale live in AvailabilityStatus.',
+            'StatusPill is the shared surface for concise availability and state labels. The gold dot is reserved for timely role/status information so it stays noticeable without becoming decoration.',
         },
       },
     },
@@ -27,7 +36,7 @@
 
 {#snippet template(args: Args)}
   <div class="story-row">
-    <StatusPill text={args.text} />
+    <StatusPill text={args.text} entrance={args.entrance} delay={args.delay} />
   </div>
 {/snippet}
 

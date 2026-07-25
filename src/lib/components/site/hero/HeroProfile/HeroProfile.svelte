@@ -2,7 +2,6 @@
   import Image from '$lib/components/primitives/media/Image';
   import ToneDot from '$lib/components/primitives/status/ToneDot';
   import StatusPill from '$lib/components/site/status/StatusPill';
-  import AvailabilityStatus from '$lib/components/site/status/AvailabilityStatus';
 
   type Props = {
     name: string;
@@ -59,11 +58,10 @@
 
     <p class="profile-role">{role}</p>
 
-    <!-- Static fallback for touch/coarse-pointer devices, which have no
-         hover state to reveal the tooltip above — hidden on fine-pointer
-         devices via CSS, where the avatar hover reveal takes over. -->
+    <!-- Mobile layouts do not expose hover-only information, so the status is
+         rendered as regular content below the role at that breakpoint. -->
     <div class="profile-availability">
-      <AvailabilityStatus text={statusText} entrance delay="1s" />
+      <StatusPill text={statusText} className="profile-availability__pill" entrance delay="1s" />
     </div>
   </div>
 </div>
@@ -289,15 +287,13 @@
     }
   }
 
-  // Touch/coarse-pointer devices have no hover state, so they get this
-  // always-visible pill instead of the avatar's hover-revealed tooltip
-  // below — the two are mutually exclusive per device via media queries,
-  // so exactly one accessible copy of the status text exists at a time.
   .profile-availability {
+    display: none;
     margin-top: var(--token-space-fluid-sm);
 
-    @media (hover: hover) and (pointer: fine) {
-      display: none;
+    @media (max-width: calc($breakpoint-md - 1px)) {
+      display: inline-flex;
+      justify-content: center;
     }
   }
 
@@ -312,13 +308,15 @@
   }
 
   :global(.avatar__tooltip) {
+    display: none;
     position: absolute;
     bottom: 8%;
     left: 100%;
     margin-left: var(--token-space-fluid-md);
     z-index: 5;
 
-    @media (hover: hover) and (pointer: fine) {
+    @media (min-width: $breakpoint-md) and (hover: hover) and (pointer: fine) {
+      display: block;
       opacity: 0;
       transform: translate(-6px, 0) scale(0.95);
       transform-origin: left center;
@@ -327,15 +325,11 @@
         opacity 0.25s var(--token-motion-ease-out),
         transform 0.25s var(--token-motion-ease-out);
     }
-
-    @media (hover: none), (pointer: coarse) {
-      display: none;
-    }
   }
 
   .avatar:hover :global(.avatar__tooltip),
   .avatar:focus-visible :global(.avatar__tooltip) {
-    @media (hover: hover) and (pointer: fine) {
+    @media (min-width: $breakpoint-md) and (hover: hover) and (pointer: fine) {
       opacity: 1;
       transform: translate(0, 0) scale(1);
     }

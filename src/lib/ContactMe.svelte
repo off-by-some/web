@@ -4,7 +4,7 @@
   import type { ContactFormData, FormErrors } from './components/site/contact/ContactForm';
   import ContactMethodsPanel from './components/site/contact/ContactMethodsPanel';
   import type { ContactMethod } from './components/site/contact/ContactMethodsPanel';
-  import AvailabilityStatus from './components/site/status/AvailabilityStatus';
+  import StatusPill from './components/site/status/StatusPill';
   import type { ContactFormContent } from '$lib/content';
 
   type Props = {
@@ -49,7 +49,7 @@
         <h2 class="contact__title" id="contact-title">{title}</h2>
         <p class="contact__subtitle">{subtitle}</p>
 
-        <AvailabilityStatus text={availabilityText} />
+        <StatusPill text={availabilityText} />
       </header>
 
       <div class="contact__main">

@@ -25,9 +25,9 @@
 
 Web engineers sometimes joke that beautiful websites are large and ugly websites are small. Once you start caring about accessibility, responsive imagery, design systems, performance budgets, and polished interactions, bytes have a way of accumulating. This repository is my answer to that bit of engineering folklore.
 
-It contains my personal website and the component system that power it. While intentionally small enough to inspect in an afternoon, it's built with the same standards I bring to a production product surface: semantic design tokens, isolated components, accessible interactions, responsive image handling, critical CSS, Storybook documentation, and reproducible performance checks.
+It contains my personal website and the component system that powers it. While intentionally small enough to inspect in an afternoon, it's built with the same standards I bring to a production product surface: semantic design tokens, isolated components, accessible interactions, responsive image handling, critical CSS, Storybook documentation, and reproducible performance checks.
 
-The end result is a static production build with a near-perfect Lighthouse score, deployed to GitHub Pages and accompanied by a [pre-built Storybook](https://off-by-some.github.io/web/storybook/), making the entire component library inspectable without cloning the repository. The site visually behaves like an elaborate application, but loads like a small static document.
+The end result is a static production build with a **perfect Lighthouse score** (github's servers permitting), deployed to GitHub Pages and accompanied by a [pre-built Storybook](https://off-by-some.github.io/web/storybook/), making the entire component library inspectable without cloning the repository. **This site behaves like an elaborate application, yet loads like a small static document.**
 
 ## Links
 

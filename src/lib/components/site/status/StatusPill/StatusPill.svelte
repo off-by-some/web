@@ -3,26 +3,38 @@
   import ToneDot from '$lib/components/primitives/status/ToneDot';
 
   type Props = {
-    text: string;
+    text?: string;
     className?: string;
+    entrance?: boolean;
+    delay?: string;
   };
 
-  let { text, className = '' }: Props = $props();
+  let {
+    text = 'Available for new opportunities',
+    className = '',
+    entrance = false,
+    delay = '0s',
+  }: Props = $props();
+
+  const classes = $derived(
+    ['status-pill', entrance && 'status-pill--entrance', className].filter(Boolean).join(' '),
+  );
 </script>
 
 <Button
   as="div"
   variant="secondary"
-  className="status-pill {className}"
+  className={classes}
   role="status"
   aria-live="polite"
+  style="--status-pill-delay: {delay};"
 >
   <ToneDot tone="available" pulse className="status-pill__indicator" />
   <span class="status-pill__text">{text}</span>
 </Button>
 
 <style lang="scss">
-  @use 'styles/breakpoints' as *;
+  @use 'lib/components/primitives/motion' as motion;
 
   :global(.status-pill) {
     --button-padding: var(--token-space-fluid-md) var(--token-space-fluid-lg);
@@ -32,6 +44,10 @@
     --button-secondary-hover-transform: translateY(-2px) scale(1.02);
 
     cursor: pointer;
+  }
+
+  :global(.status-pill--entrance) {
+    @include motion.fade-in-up(statusPillIn, 30px, 0.6s, var(--status-pill-delay));
   }
 
   :global(.status-pill__indicator) {
@@ -47,4 +63,6 @@
   .status-pill__text {
     min-width: 0;
   }
+
+  @include motion.reduced-motion-reset(':global(.status-pill--entrance)');
 </style>

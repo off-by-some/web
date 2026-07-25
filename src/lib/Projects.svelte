@@ -4,6 +4,7 @@
   import Card from './components/primitives/surfaces/Card';
   import Button from './components/primitives/actions/Button';
   import Image from './components/primitives/media/Image';
+  import { preloadImageSources } from './components/primitives/media/Image/image-path';
   import ToneDot from './components/primitives/status/ToneDot';
   import SectionHeader from './components/site/section-headings/SectionHeader';
 
@@ -54,9 +55,36 @@
 
   const activeProject = $derived(projects[activeIndex]);
 
+  function scheduleBannerPrefetch(): () => void {
+    const bannerSources = projects.map((project) => project.bannerSrc).filter(Boolean);
+    if (bannerSources.length === 0) return () => {};
+
+    let cancelled = false;
+
+    const run = () => {
+      if (cancelled) return;
+      void preloadImageSources(bannerSources, 800);
+    };
+
+    if (typeof window.requestIdleCallback === 'function') {
+      const handle = window.requestIdleCallback(run, { timeout: 2000 });
+      return () => {
+        cancelled = true;
+        window.cancelIdleCallback(handle);
+      };
+    }
+
+    const handle = window.setTimeout(run, 900);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(handle);
+    };
+  }
+
   onMount(() => {
     const observers: IntersectionObserver[] = [];
     const earlyTriggerPx = 50;
+    const cancelBannerPrefetch = scheduleBannerPrefetch();
 
     if (topDotsElement) {
       // Shrinks the root's top edge inward, so this flips to "not
@@ -86,7 +114,10 @@
       observers.push(bottomObserver);
     }
 
-    return () => observers.forEach((observer) => observer.disconnect());
+    return () => {
+      cancelBannerPrefetch();
+      observers.forEach((observer) => observer.disconnect());
+    };
   });
 
   const focusTab = async (index: number) => {

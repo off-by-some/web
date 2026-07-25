@@ -102,6 +102,7 @@ const VECTOR_EXTENSIONS = ['.svg'];
 
 // Image cache for better performance with priority loading
 const imageCache = new Map<string, Promise<PictureSourceSet | undefined>>();
+const externalImageCache = new Map<string, Promise<void>>();
 
 // URL utilities - optimized for performance
 const isExternalOrDataUrl = (url: string): boolean =>
@@ -196,6 +197,38 @@ function loadRasterImage(name: string): PictureSourceSet | undefined {
   return toPictureSourceSet(enhanced);
 }
 
+function imageNameFromSource(source: string): string | undefined {
+  if (!source || isExternalOrDataUrl(source)) return undefined;
+  return source.replace(/^\/?assets\/images\//, '').replace(/^\/+/, '');
+}
+
+function preloadExternalImage(source: string): Promise<void> {
+  if (!source || source.startsWith('data:') || typeof window === 'undefined') {
+    return Promise.resolve();
+  }
+
+  const cached = externalImageCache.get(source);
+  if (cached) return cached;
+
+  const loadPromise = new Promise<void>((resolve) => {
+    const img = new window.Image();
+
+    img.decoding = 'async';
+    img.onload = () => {
+      resolve();
+    };
+    img.onerror = (error) => {
+      externalImageCache.delete(source);
+      warnInDev(`Failed to preload external image: ${source}`, error);
+      resolve();
+    };
+    img.src = source;
+  });
+
+  externalImageCache.set(source, loadPromise);
+  return loadPromise;
+}
+
 // Core image loader with caching and priority support
 function loadImageUncached(name: string): Promise<PictureSourceSet | undefined> {
   try {
@@ -271,6 +304,26 @@ export function preloadImage(
 // Batch preload for multiple images
 export function preloadImages(names: string[]): Promise<(PictureSourceSet | undefined)[]> {
   return Promise.all(names.map((name) => preloadImage(name)));
+}
+
+export async function preloadImageSource(source: string, targetWidth?: number): Promise<void> {
+  if (!source) return;
+
+  if (/^https?:\/\//i.test(source)) {
+    await preloadExternalImage(source);
+    return;
+  }
+
+  const name = imageNameFromSource(source);
+  if (name) {
+    await preloadImage(name, targetWidth);
+  }
+}
+
+export async function preloadImageSources(sources: string[], targetWidth?: number): Promise<void> {
+  await Promise.all(
+    Array.from(new Set(sources)).map((source) => preloadImageSource(source, targetWidth)),
+  );
 }
 
 // Type guards and utilities

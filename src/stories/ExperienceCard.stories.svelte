@@ -68,6 +68,7 @@
   .story-width {
     color: var(--token-text-primary);
     font-family: var(--token-font-family-sans);
-    max-width: 48rem;
+    width: min(72rem, calc(100vw - 4rem));
+    max-width: 100%;
   }
 </style>

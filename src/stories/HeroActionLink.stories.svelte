@@ -7,7 +7,7 @@
     href: string;
     label: string;
     icon: 'github' | 'linkedin' | 'download' | 'arrow' | 'star';
-    shape: 'circle' | 'label' | 'corner';
+    shape: 'circle' | 'label';
   };
 
   const { Story } = defineMeta({
@@ -25,13 +25,13 @@
       ...hideControls(['href', 'download', 'target', 'rel']),
       label: { control: { type: 'text' } },
       icon: { control: { type: 'select' }, options: ['github', 'linkedin', 'download', 'arrow'] },
-      shape: { control: { type: 'select' }, options: ['circle', 'label', 'corner'] },
+      shape: { control: { type: 'select' }, options: ['circle', 'label'] },
     },
     parameters: {
       docs: {
         description: {
           component:
-            'Reusable hero action link for the circular social controls, resume download button, text-arrow contact CTA, and the expanding project link in the corner. This keeps the hero action language centralized instead of restyling each link separately.',
+            'Reusable hero action link for circular social controls, resume download buttons, and text-arrow contact CTAs. This keeps the hero action language centralized instead of restyling each link separately.',
         },
       },
     },
@@ -39,7 +39,7 @@
 </script>
 
 {#snippet template(args: Args)}
-  <div class:story-corner={args.shape === 'corner'} class="story-shell">
+  <div class="story-shell">
     <HeroActionLink
       href={args.href}
       label={args.label}
@@ -54,26 +54,11 @@
 
 <Story name="Default" />
 
-<Story
-  name="Corner"
-  args={{
-    href: 'https://github.com/off-by-some/web',
-    label: 'Check out this project on GitHub',
-    icon: 'github',
-    shape: 'corner',
-  }}
-/>
-
 <style lang="scss">
   .story-shell {
     display: flex;
     align-items: center;
     gap: var(--token-space-fluid-lg);
     min-height: 7rem;
-  }
-
-  .story-corner {
-    min-height: 8rem;
-    position: relative;
   }
 </style>
