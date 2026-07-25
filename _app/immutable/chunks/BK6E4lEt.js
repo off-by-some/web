@@ -1,1 +1,0 @@
-const e={sources:{webp:new URL("../assets/dd_icon_white.H_oECbRk.webp",import.meta.url).href+" 400w, "+new URL("../assets/dd_icon_white.DqLRzzSe.webp",import.meta.url).href+" 800w, "+new URL("../assets/dd_icon_white.DnTwXFhM.webp",import.meta.url).href+" 1200w"},img:{src:""+new URL("../assets/dd_icon_white.DnTwXFhM.webp",import.meta.url).href,w:1200,h:1362}};export{e as default};

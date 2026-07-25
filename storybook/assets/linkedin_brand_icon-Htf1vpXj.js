@@ -1,1 +1,0 @@
-const n={sources:{webp:"/web/storybook/assets/linkedin_brand_icon-DaF6-gR0.webp 150w, /web/storybook/assets/linkedin_brand_icon-BwOq-Otn.webp 200w, /web/storybook/assets/linkedin_brand_icon-D0c3wMjg.webp 300w"},img:{src:"/web/storybook/assets/linkedin_brand_icon-D0c3wMjg.webp",w:300,h:300}};export{n as default};

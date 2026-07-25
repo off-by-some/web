@@ -1,1 +1,0 @@
-const e={sources:{webp:new URL("../assets/upguard_logo.p4ZLIxBP.webp",import.meta.url).href+" 150w, "+new URL("../assets/upguard_logo.BWf2QsjT.webp",import.meta.url).href+" 200w"},img:{src:""+new URL("../assets/upguard_logo.BWf2QsjT.webp",import.meta.url).href,w:200,h:200}};export{e as default};

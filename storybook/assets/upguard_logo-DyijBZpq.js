@@ -1,1 +1,0 @@
-const o={sources:{webp:"/web/storybook/assets/upguard_logo-p4ZLIxBP.webp 150w, /web/storybook/assets/upguard_logo-BWf2QsjT.webp 200w"},img:{src:"/web/storybook/assets/upguard_logo-BWf2QsjT.webp",w:200,h:200}};export{o as default};

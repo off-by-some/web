@@ -1,1 +1,0 @@
-const e={sources:{webp:new URL("../assets/Graphql.BXE4PnXI.webp",import.meta.url).href+" 400w, "+new URL("../assets/Graphql.7GR1mw0U.webp",import.meta.url).href+" 800w, "+new URL("../assets/Graphql.OW247LqU.webp",import.meta.url).href+" 900w"},img:{src:""+new URL("../assets/Graphql.OW247LqU.webp",import.meta.url).href,w:900,h:900}};export{e as default};

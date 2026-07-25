@@ -1,1 +1,0 @@
-const e={sources:{webp:new URL("../assets/email-icon.DSskIVfL.webp",import.meta.url).href+" 150w, "+new URL("../assets/email-icon.DUnlzsRi.webp",import.meta.url).href+" 200w, "+new URL("../assets/email-icon.C1rqduIg.webp",import.meta.url).href+" 300w"},img:{src:""+new URL("../assets/email-icon.C1rqduIg.webp",import.meta.url).href,w:300,h:300}};export{e as default};

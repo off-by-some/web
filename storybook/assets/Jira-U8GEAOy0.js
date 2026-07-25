@@ -1,1 +1,0 @@
-const s={sources:{webp:"/web/storybook/assets/Jira-CQ66tyuh.webp 150w, /web/storybook/assets/Jira-BM8-4H1h.webp 200w, /web/storybook/assets/Jira-D4pwHpAG.webp 300w"},img:{src:"/web/storybook/assets/Jira-D4pwHpAG.webp",w:300,h:300}};export{s as default};

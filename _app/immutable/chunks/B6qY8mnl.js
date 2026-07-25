@@ -1,1 +1,0 @@
-const e={sources:{webp:new URL("../assets/jourdan.oODNj70_.webp",import.meta.url).href+" 150w, "+new URL("../assets/jourdan.Wy8SVTL9.webp",import.meta.url).href+" 200w"},img:{src:""+new URL("../assets/jourdan.Wy8SVTL9.webp",import.meta.url).href,w:200,h:200}};export{e as default};

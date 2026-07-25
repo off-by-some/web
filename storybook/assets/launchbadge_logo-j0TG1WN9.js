@@ -1,1 +1,0 @@
-const o={sources:{webp:"/web/storybook/assets/launchbadge_logo-CYteyzQO.webp 150w, /web/storybook/assets/launchbadge_logo-BJVQ5K33.webp 200w"},img:{src:"/web/storybook/assets/launchbadge_logo-BJVQ5K33.webp",w:200,h:200}};export{o as default};

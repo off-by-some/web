@@ -1,1 +1,0 @@
-const s={sources:{webp:"/web/storybook/assets/postgresql-HIVgeF6S.webp 400w, /web/storybook/assets/postgresql-CJAOHr1e.webp 540w"},img:{src:"/web/storybook/assets/postgresql-CJAOHr1e.webp",w:540,h:557}};export{s as default};

@@ -1,1 +1,0 @@
-const e={sources:{webp:new URL("../assets/AWS-logo.CPG--uDC.webp",import.meta.url).href+" 150w, "+new URL("../assets/AWS-logo.BE8vwPZs.webp",import.meta.url).href+" 200w, "+new URL("../assets/AWS-logo.B7d8C061.webp",import.meta.url).href+" 300w"},img:{src:""+new URL("../assets/AWS-logo.B7d8C061.webp",import.meta.url).href,w:300,h:164}};export{e as default};

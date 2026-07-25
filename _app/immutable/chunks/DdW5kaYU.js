@@ -1,1 +1,0 @@
-const e={sources:{webp:new URL("../assets/starry-bg.B5E36nhR.webp",import.meta.url).href+" 150w, "+new URL("../assets/starry-bg.Cj7xoRlq.webp",import.meta.url).href+" 200w, "+new URL("../assets/starry-bg.Do9zt3W4.webp",import.meta.url).href+" 300w"},img:{src:""+new URL("../assets/starry-bg.Do9zt3W4.webp",import.meta.url).href,w:300,h:200}};export{e as default};

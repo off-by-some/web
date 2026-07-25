@@ -1,1 +1,0 @@
-const o={sources:{webp:"/web/storybook/assets/greenbitslogo-Bhexo1hL.webp 150w, /web/storybook/assets/greenbitslogo-DYNToSLZ.webp 200w"},img:{src:"/web/storybook/assets/greenbitslogo-DYNToSLZ.webp",w:200,h:200}};export{o as default};

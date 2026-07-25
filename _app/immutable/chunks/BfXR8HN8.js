@@ -1,1 +1,0 @@
-const t={sources:{webp:new URL("../assets/stealth_startup_logo.Cdcg8CLe.webp",import.meta.url).href+" 150w, "+new URL("../assets/stealth_startup_logo.B2G_ZG1l.webp",import.meta.url).href+" 200w"},img:{src:""+new URL("../assets/stealth_startup_logo.B2G_ZG1l.webp",import.meta.url).href,w:200,h:200}};export{t as default};

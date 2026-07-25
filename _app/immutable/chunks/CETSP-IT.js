@@ -1,1 +1,0 @@
-const e={sources:{webp:new URL("../assets/dogescript-banner.nTOlTlIO.webp",import.meta.url).href+" 50w, "+new URL("../assets/dogescript-banner.BVkRnJkI.webp",import.meta.url).href+" 150w"},img:{src:""+new URL("../assets/dogescript-banner.BVkRnJkI.webp",import.meta.url).href,w:150,h:60}};export{e as default};

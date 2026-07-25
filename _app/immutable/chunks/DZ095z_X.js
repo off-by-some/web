@@ -1,1 +1,0 @@
-const e={sources:{webp:new URL("../assets/postgresql.DJn3TW0a.webp",import.meta.url).href+" 150w, "+new URL("../assets/postgresql.Ctxz3bvr.webp",import.meta.url).href+" 200w, "+new URL("../assets/postgresql.ClrQ_VuQ.webp",import.meta.url).href+" 300w"},img:{src:""+new URL("../assets/postgresql.ClrQ_VuQ.webp",import.meta.url).href,w:300,h:309}};export{e as default};

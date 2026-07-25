@@ -1,1 +1,0 @@
-const o={sources:{webp:"/web/storybook/assets/python%20logo-CcY-fuM5.webp 150w, /web/storybook/assets/python%20logo-C-w_vdy8.webp 200w, /web/storybook/assets/python%20logo-BYWVvijO.webp 300w"},img:{src:"/web/storybook/assets/python%20logo-BYWVvijO.webp",w:300,h:300}};export{o as default};

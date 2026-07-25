@@ -1,1 +1,0 @@
-const e={sources:{webp:new URL("../assets/launchbadge_logo.CYteyzQO.webp",import.meta.url).href+" 150w, "+new URL("../assets/launchbadge_logo.BJVQ5K33.webp",import.meta.url).href+" 200w"},img:{src:""+new URL("../assets/launchbadge_logo.BJVQ5K33.webp",import.meta.url).href,w:200,h:200}};export{e as default};

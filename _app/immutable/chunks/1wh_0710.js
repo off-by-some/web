@@ -1,1 +1,0 @@
-const e={sources:{webp:new URL("../assets/django.QzqUmZ3w.webp",import.meta.url).href+" 400w, "+new URL("../assets/django.BSqLsR5Q.webp",import.meta.url).href+" 650w"},img:{src:""+new URL("../assets/django.BSqLsR5Q.webp",import.meta.url).href,w:650,h:650}};export{e as default};

@@ -1,1 +1,0 @@
-const s={sources:{webp:"/web/storybook/assets/Graphql-Cl3X9kFi.webp 150w, /web/storybook/assets/Graphql-BBV-IwPa.webp 200w, /web/storybook/assets/Graphql-myNuIkAN.webp 300w"},img:{src:"/web/storybook/assets/Graphql-myNuIkAN.webp",w:300,h:300}};export{s as default};

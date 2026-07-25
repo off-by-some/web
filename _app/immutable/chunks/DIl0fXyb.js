@@ -1,1 +1,0 @@
-const e={sources:{webp:new URL("../assets/ruby logo.Dk5xmmHQ.webp",import.meta.url).href+" 150w, "+new URL("../assets/ruby logo.ciWjjNQa.webp",import.meta.url).href+" 200w, "+new URL("../assets/ruby logo.kopmCxoP.webp",import.meta.url).href+" 225w"},img:{src:""+new URL("../assets/ruby logo.kopmCxoP.webp",import.meta.url).href,w:225,h:225}};export{e as default};

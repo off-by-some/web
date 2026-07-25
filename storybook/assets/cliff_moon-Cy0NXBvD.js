@@ -1,1 +1,0 @@
-const o={sources:{webp:"/web/storybook/assets/cliff_moon-BFCkmaPf.webp 150w, /web/storybook/assets/cliff_moon-B59eDpRs.webp 200w"},img:{src:"/web/storybook/assets/cliff_moon-B59eDpRs.webp",w:200,h:200}};export{o as default};

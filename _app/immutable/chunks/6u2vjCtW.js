@@ -1,1 +1,0 @@
-const e={sources:{webp:new URL("../assets/kubernetes.XVda25Wy.webp",import.meta.url).href+" 400w, "+new URL("../assets/kubernetes.DdESS5G3.webp",import.meta.url).href+" 800w, "+new URL("../assets/kubernetes.DOV9_wKf.webp",import.meta.url).href+" 1200w"},img:{src:""+new URL("../assets/kubernetes.DOV9_wKf.webp",import.meta.url).href,w:1200,h:1200}};export{e as default};

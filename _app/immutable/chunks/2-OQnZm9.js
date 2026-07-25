@@ -1,1 +1,0 @@
-const e={sources:{webp:new URL("../assets/bash-logo.DgnwaTLv.webp",import.meta.url).href+" 50w, "+new URL("../assets/bash-logo.D6RVFEGx.webp",import.meta.url).href+" 150w"},img:{src:""+new URL("../assets/bash-logo.D6RVFEGx.webp",import.meta.url).href,w:150,h:63}};export{e as default};

@@ -1,1 +1,0 @@
-const e={sources:{webp:new URL("../assets/docker.CI6qeCqd.webp",import.meta.url).href+" 400w, "+new URL("../assets/docker.BS7aKdXs.webp",import.meta.url).href+" 677w"},img:{src:""+new URL("../assets/docker.BS7aKdXs.webp",import.meta.url).href,w:677,h:580}};export{e as default};

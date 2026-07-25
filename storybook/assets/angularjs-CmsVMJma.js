@@ -1,1 +1,0 @@
-const s={sources:{webp:"/web/storybook/assets/angularjs-4FrvHl62.webp 150w, /web/storybook/assets/angularjs-Ifmy32Mx.webp 200w, /web/storybook/assets/angularjs-l1ZuSr8_.webp 300w"},img:{src:"/web/storybook/assets/angularjs-l1ZuSr8_.webp",w:300,h:245}};export{s as default};

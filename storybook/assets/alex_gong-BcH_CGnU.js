@@ -1,1 +1,0 @@
-const o={sources:{webp:"/web/storybook/assets/alex_gong-DUGhFtzi.webp 400w, /web/storybook/assets/alex_gong-LKStLo0X.webp 800w"},img:{src:"/web/storybook/assets/alex_gong-LKStLo0X.webp",w:800,h:800}};export{o as default};

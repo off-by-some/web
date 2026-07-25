@@ -1,1 +1,0 @@
-const e={sources:{webp:"/web/storybook/assets/dd_icon_white-gpY80gRb.webp 50w, /web/storybook/assets/dd_icon_white-MjFQZpQC.webp 150w"},img:{src:"/web/storybook/assets/dd_icon_white-MjFQZpQC.webp",w:150,h:170}};export{e as default};

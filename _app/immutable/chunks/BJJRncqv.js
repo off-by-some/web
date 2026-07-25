@@ -1,1 +1,0 @@
-const e={sources:{webp:new URL("../assets/Redis-logo.CBguyudm.webp",import.meta.url).href+" 400w, "+new URL("../assets/Redis-logo.B7UkcfiI.webp",import.meta.url).href+" 596w"},img:{src:""+new URL("../assets/Redis-logo.B7UkcfiI.webp",import.meta.url).href,w:596,h:512}};export{e as default};

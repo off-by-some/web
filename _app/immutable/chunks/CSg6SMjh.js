@@ -1,1 +1,0 @@
-const e={sources:{webp:new URL("../assets/apachekafka.s5dPfxus.webp",import.meta.url).href+" 50w, "+new URL("../assets/apachekafka.BFSEm5yW.webp",import.meta.url).href+" 150w"},img:{src:""+new URL("../assets/apachekafka.BFSEm5yW.webp",import.meta.url).href,w:150,h:150}};export{e as default};

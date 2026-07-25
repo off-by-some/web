@@ -1,1 +1,0 @@
-const s={sources:{webp:"/web/storybook/assets/agile-BOC9-WRn.webp 150w, /web/storybook/assets/agile-5K2TEksb.webp 200w, /web/storybook/assets/agile-D1UujzP9.webp 300w"},img:{src:"/web/storybook/assets/agile-D1UujzP9.webp",w:300,h:300}};export{s as default};
