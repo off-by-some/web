@@ -1,6 +1,16 @@
 #!/usr/bin/env node
 
-import { readFileSync, writeFileSync, mkdirSync, existsSync, statSync } from 'fs';
+import {
+  existsSync,
+  mkdtempSync,
+  mkdirSync,
+  readFileSync,
+  rmSync,
+  statSync,
+  unlinkSync,
+  writeFileSync,
+} from 'fs';
+import { tmpdir } from 'os';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import puppeteer from 'puppeteer';
@@ -12,12 +22,21 @@ async function generateOGImage() {
   console.log('Generating OG image...');
 
   let browser;
+  let userDataDir;
   try {
     // Paths used for cache validation
     const templatePath = join(__dirname, '../assets/templates/og-template.html');
     const imagePath = join(__dirname, '../assets/images/headshot.png');
     const outputDir = join(__dirname, '../static/og');
-    const outputPath = join(outputDir, 'og-about.png');
+    const outputPath = join(outputDir, 'og-about.jpg');
+    const stalePngPath = join(outputDir, 'og-about.png');
+    const docsOutputPath = join(__dirname, '../docs/og-about.jpg');
+
+    const copyToDocs = () => {
+      mkdirSync(dirname(docsOutputPath), { recursive: true });
+      writeFileSync(docsOutputPath, readFileSync(outputPath));
+      console.log(`✅ Copied: ${docsOutputPath}`);
+    };
 
     // If output exists and is newer than its inputs, skip regeneration
     if (existsSync(outputPath)) {
@@ -28,6 +47,7 @@ async function generateOGImage() {
         const isUpToDate = outStat.mtimeMs >= tplStat.mtimeMs && outStat.mtimeMs >= imgStat.mtimeMs;
         if (isUpToDate) {
           console.log(`✓ OG image up-to-date, skipping: ${outputPath}`);
+          copyToDocs();
           return outputPath;
         }
       } catch {
@@ -35,11 +55,16 @@ async function generateOGImage() {
       }
     }
 
+    userDataDir = mkdtempSync(join(tmpdir(), 'web-og-chrome-'));
+
     browser = await puppeteer.launch({
       headless: true,
+      userDataDir,
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
+        '--disable-crash-reporter',
+        '--disable-breakpad',
         '--disable-dev-shm-usage',
         '--disable-accelerated-2d-canvas',
         '--no-first-run',
@@ -129,9 +154,11 @@ async function generateOGImage() {
       document.body.style.transformOrigin = 'center center';
     });
 
-    // Take screenshot
+    // Take screenshot. JPEG keeps the 2x OG dimensions but avoids shipping a
+    // multi-megabyte PNG for social crawlers.
     const screenshot = await page.screenshot({
-      type: 'png',
+      type: 'jpeg',
+      quality: 92,
       clip: {
         x: 0,
         y: 0,
@@ -144,10 +171,15 @@ async function generateOGImage() {
     // Ensure output directory exists
     mkdirSync(outputDir, { recursive: true });
 
-    // Write PNG file
+    if (existsSync(stalePngPath)) {
+      unlinkSync(stalePngPath);
+    }
+
+    // Write JPEG file
     writeFileSync(outputPath, screenshot);
 
     console.log(`✅ Generated: ${outputPath}`);
+    copyToDocs();
     return outputPath;
   } catch (error) {
     console.error('❌ Failed to generate OG image:', error);
@@ -155,6 +187,9 @@ async function generateOGImage() {
   } finally {
     if (browser) {
       await browser.close();
+    }
+    if (userDataDir) {
+      rmSync(userDataDir, { recursive: true, force: true });
     }
   }
 }

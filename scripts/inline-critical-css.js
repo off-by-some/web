@@ -1,9 +1,10 @@
-import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
 const rootDir = process.cwd();
 const buildDir = path.join(rootDir, 'build');
 const criticalCssPath = path.join(rootDir, 'static', 'index.css');
+const copiedCriticalCssPath = path.join(buildDir, 'index.css');
 const marker = '<!-- CRITICAL_CSS -->';
 
 function escapeStyle(css) {
@@ -51,4 +52,9 @@ for (const file of htmlFiles) {
     writeFileSync(file, nextHtml);
     console.log(`✅ Inlined critical CSS in ${path.relative(rootDir, file)}`);
   }
+}
+
+if (existsSync(copiedCriticalCssPath)) {
+  rmSync(copiedCriticalCssPath);
+  console.log(`✅ Removed unreferenced ${path.relative(rootDir, copiedCriticalCssPath)}`);
 }

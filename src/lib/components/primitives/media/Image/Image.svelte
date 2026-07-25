@@ -55,7 +55,7 @@ TROUBLESHOOTING 🔧
 <script lang="ts">
   import type { HTMLImgAttributes } from 'svelte/elements';
   import type { PictureSourceSet } from '$lib/components/primitives/media/Image/image-path';
-  import { loadImage } from '$lib/components/primitives/media/Image/image-path';
+  import { getImage, loadImage } from '$lib/components/primitives/media/Image/image-path';
 
   type Props = {
     src: string; // acts like <img src="">
@@ -65,6 +65,7 @@ TROUBLESHOOTING 🔧
     decoding?: HTMLImgAttributes['decoding'];
     fetchpriority?: HTMLImgAttributes['fetchpriority'];
     priority?: boolean; // set to true for LCP images
+    preload?: boolean; // emits <link rel="preload" as="image"> when metadata is available
     className?: string;
     width?: number; // also picks the generated source-width tier — see loadImage
     height?: number;
@@ -79,6 +80,7 @@ TROUBLESHOOTING 🔧
     decoding = 'async',
     fetchpriority,
     priority = false,
+    preload = priority,
     className = '',
     width,
     height,
@@ -86,7 +88,14 @@ TROUBLESHOOTING 🔧
   }: Props = $props();
 
   // Internal state
-  let data = $state<PictureSourceSet | undefined>(undefined);
+  function imageDataFor(currentSrc: string | undefined): PictureSourceSet | undefined {
+    const name = toName(currentSrc ?? '');
+    if (!name) return;
+    return getImage(name);
+  }
+
+  let loadedData = $state<PictureSourceSet | undefined>(undefined);
+  const data = $derived(loadedData ?? imageDataFor(src));
   let err = $state<string | null>(null);
   let requestSequence = 0;
 
@@ -94,18 +103,19 @@ TROUBLESHOOTING 🔧
     const myId = ++requestSequence;
     const name = toName(currentSrc ?? '');
     if (!name) {
-      data = undefined;
+      loadedData = undefined;
       err = null;
       return;
     }
+    loadedData = imageDataFor(currentSrc);
     try {
       const result = await loadImage(name, currentWidth);
       if (myId !== requestSequence) return; // stale
-      data = result ?? undefined;
+      loadedData = result ?? undefined;
       err = result ? null : `Image not found: ${name}`;
     } catch {
       if (myId !== requestSequence) return; // stale
-      data = undefined;
+      loadedData = undefined;
       err = 'Failed to load image';
     }
   }
@@ -133,6 +143,19 @@ TROUBLESHOOTING 🔧
   const ariaHidden = $derived(alt === '' ? 'true' : undefined);
   const role = $derived(alt === '' ? 'presentation' : undefined);
 </script>
+
+<svelte:head>
+  {#if data && preload}
+    <link
+      rel="preload"
+      as="image"
+      href={data.src}
+      imagesrcset={data.srcset}
+      imagesizes={effectiveSizes}
+      fetchpriority={priority ? 'high' : fetchpriority}
+    />
+  {/if}
+</svelte:head>
 
 {#if data}
   {#if data.isVector}

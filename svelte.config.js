@@ -11,12 +11,12 @@ const config = {
     adapter: adapter({
       pages: 'build',
       assets: 'build',
-      fallback: 'index.html',
+      fallback: '404.html',
       strict: false,
     }),
+    inlineStyleThreshold: 150000,
     paths: {
       base: process.env.NODE_ENV === 'production' ? '/web' : '',
-      assets: process.env.NODE_ENV === 'production' ? 'https://off-by-some.github.io/web' : '',
     },
     prerender: {
       entries: ['*'],

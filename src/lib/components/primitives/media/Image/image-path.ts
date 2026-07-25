@@ -16,57 +16,85 @@ export interface PictureSourceSet {
   isVector?: boolean;
 }
 
-// Vite's import.meta.glob requires its query (including imagetools' `w`) to
-// be static, so arbitrary per-call widths aren't possible — instead we
-// predeclare a couple of source-width tiers and pick between them based on
-// the `width` the caller already passes to <Image> (the width it intends to
-// render at), rather than a separate prop describing what the image "is".
-const SMALL_TIER_MAX_WIDTH = 150;
-const MEDIUM_TIER_MAX_WIDTH = 300;
+type RasterModuleMap = Partial<Record<string, ImageLoaderResult>>;
+type VectorModuleMap = Partial<Record<string, string>>;
 
-// Default tier: icons, logos, avatars — small, so a 150px max source is plenty.
-const smallRasterModules = import.meta.glob('/assets/images/**/*.{jpg,jpeg,png,webp,avif}', {
+// Vite's import.meta.glob requires imagetools options to be static. Instead of
+// one giant all-purpose registry, paths choose their natural source tier:
+// icons/logos stay compact, avatars keep retina room, banners get wide sources.
+const iconRasterModules = import.meta.glob('/assets/images/icons/**/*.{jpg,jpeg,png,webp,avif}', {
+  eager: true,
   import: 'default',
   query: {
     enhanced: true,
-    w: '50;150',
+    w: '64;128;192',
     format: 'webp',
   },
-});
+}) as RasterModuleMap;
 
-// Medium tier: avatars and inline media that can render above the small icon
-// range but should still avoid jumping straight to banner-sized sources.
-const mediumRasterModules = import.meta.glob('/assets/images/**/*.{jpg,jpeg,png,webp,avif}', {
+const companyLogoRasterModules = import.meta.glob(
+  '/assets/images/company_logos/**/*.{jpg,jpeg,png,webp,avif}',
+  {
+    eager: true,
+    import: 'default',
+    query: {
+      enhanced: true,
+      w: '64;128;192',
+      format: 'webp',
+    },
+  },
+) as RasterModuleMap;
+
+const employeeRasterModules = import.meta.glob(
+  '/assets/images/employees/**/*.{jpg,jpeg,png,webp,avif}',
+  {
+    eager: true,
+    import: 'default',
+    query: {
+      enhanced: true,
+      w: '96;160;240',
+      format: 'webp',
+    },
+  },
+) as RasterModuleMap;
+
+const headshotRasterModules = import.meta.glob('/assets/images/*.{jpg,jpeg,png,webp,avif}', {
+  eager: true,
   import: 'default',
   query: {
     enhanced: true,
-    w: '150;200;300',
+    w: '160;240;360;480',
     format: 'webp',
   },
-});
+}) as RasterModuleMap;
 
-// Large tier: anything requested wider than MEDIUM_TIER_MAX_WIDTH — needs real
-// source widths instead of being upscaled from a 150px-wide small-tier file.
-const largeRasterModules = import.meta.glob('/assets/images/**/*.{jpg,jpeg,png,webp,avif}', {
-  import: 'default',
-  query: {
-    enhanced: true,
-    w: '400;800;1200',
-    format: 'webp',
+const bannerRasterModules = import.meta.glob(
+  '/assets/images/banners/**/*.{jpg,jpeg,png,webp,avif}',
+  {
+    eager: true,
+    import: 'default',
+    query: {
+      enhanced: true,
+      w: '480;800;1200',
+      format: 'webp',
+    },
   },
-});
+) as RasterModuleMap;
 
-function rasterModulesFor(targetWidth: number | undefined) {
-  if (!targetWidth || targetWidth <= SMALL_TIER_MAX_WIDTH) return smallRasterModules;
-  if (targetWidth <= MEDIUM_TIER_MAX_WIDTH) return mediumRasterModules;
-  return largeRasterModules;
-}
+const rasterModules = {
+  ...iconRasterModules,
+  ...companyLogoRasterModules,
+  ...employeeRasterModules,
+  ...headshotRasterModules,
+  ...bannerRasterModules,
+};
 
 // Include SVGs in the rasterModules
 const svgModules = import.meta.glob('/assets/images/**/*.svg', {
+  eager: true,
   import: 'default',
   query: '?url',
-});
+}) as VectorModuleMap;
 
 // Configuration constants
 const PRIMARY_FORMAT = 'jpeg';
@@ -141,68 +169,51 @@ function warnInDev(message: string, error: unknown): void {
   }
 }
 
-async function loadVectorImage(name: string): Promise<PictureSourceSet> {
+function loadVectorImage(name: string): PictureSourceSet {
   const key = `/assets/images/${name}`;
 
   if (!Object.prototype.hasOwnProperty.call(svgModules, key)) {
     return { src: publicImageUrl(name), isVector: true };
   }
 
-  const loader = svgModules[key] as () => Promise<string>;
+  const url = svgModules[key];
 
-  try {
-    const url = await loader();
-    return {
-      src: isFilesystemPath(url) ? publicImageUrl(name) : prefix(url),
-      isVector: true,
-    };
-  } catch (error) {
-    warnInDev(`Falling back to public SVG path: ${name}`, error);
+  if (!url) {
     return { src: publicImageUrl(name), isVector: true };
   }
+
+  return {
+    src: isFilesystemPath(url) ? publicImageUrl(name) : prefix(url),
+    isVector: true,
+  };
 }
 
-async function loadRasterImage(
-  name: string,
-  targetWidth: number | undefined,
-): Promise<PictureSourceSet | undefined> {
+function loadRasterImage(name: string): PictureSourceSet | undefined {
   const key = `/assets/images/${name}`;
-  const modules = rasterModulesFor(targetWidth);
+  const enhanced = rasterModules[key];
 
-  if (!Object.prototype.hasOwnProperty.call(modules, key)) return undefined;
-
-  const loader = modules[key] as () => Promise<ImageLoaderResult>;
-
-  try {
-    const enhanced = await loader();
-    return toPictureSourceSet(enhanced);
-  } catch (error) {
-    warnInDev(`Falling back to public image path: ${name}`, error);
-    if (import.meta.env.DEV) return { src: publicImageUrl(name) };
-    throw error;
-  }
+  if (!enhanced) return undefined;
+  return toPictureSourceSet(enhanced);
 }
 
 // Core image loader with caching and priority support
-async function loadImageUncached(
-  name: string,
-  targetWidth: number | undefined,
-): Promise<PictureSourceSet | undefined> {
+function loadImageUncached(name: string): Promise<PictureSourceSet | undefined> {
   try {
-    if (!name) return undefined;
-    return isVectorImage(name)
-      ? await loadVectorImage(name)
-      : await loadRasterImage(name, targetWidth);
+    return Promise.resolve(getImage(name));
   } catch (error) {
     warnInDev(`Failed to load image: ${name}`, error);
-    return undefined;
+    return Promise.resolve(undefined);
   }
 }
 
-// Main loader with intelligent caching. `targetWidth` — the width the caller
-// intends to render at (same value <Image> already accepts as `width`) —
-// picks which predeclared source-width tier to generate from; see
-// rasterModulesFor above. Omit it and you get the small/icon-sized tier.
+export function getImage(name: string): PictureSourceSet | undefined {
+  if (!name) return undefined;
+  return isVectorImage(name) ? loadVectorImage(name) : loadRasterImage(name);
+}
+
+// Main loader with intelligent caching. `targetWidth` is retained for API
+// compatibility; source tiers are now selected by image folder so SSR can render
+// final URLs without waiting for browser-only effects.
 export async function loadImage(
   name: string,
   targetWidth?: number,
@@ -218,7 +229,7 @@ export async function loadImage(
   }
 
   // Load and cache the promise (not just the result)
-  const loadPromise = loadImageUncached(name, targetWidth);
+  const loadPromise = loadImageUncached(name);
   imageCache.set(cacheKey, loadPromise);
 
   try {
