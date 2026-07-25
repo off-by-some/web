@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/storybook/assets/kubernetes-BZt4tvZC.webp 64w, /web/storybook/assets/kubernetes-C3vsNQ0A.webp 128w, /web/storybook/assets/kubernetes-Dx-g_6ps.webp 192w"},img:{src:"/web/storybook/assets/kubernetes-Dx-g_6ps.webp",w:192,h:192}};export{e as default};

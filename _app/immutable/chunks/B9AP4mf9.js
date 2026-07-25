@@ -1,0 +1,1 @@
+const e={sources:{webp:new URL("../assets/Mentorship.CAtDqFyE.webp",import.meta.url).href+" 64w, "+new URL("../assets/Mentorship.CeYsPkIc.webp",import.meta.url).href+" 128w, "+new URL("../assets/Mentorship.CC4nuFfG.webp",import.meta.url).href+" 192w"},img:{src:""+new URL("../assets/Mentorship.CC4nuFfG.webp",import.meta.url).href,w:192,h:192}};export{e as default};

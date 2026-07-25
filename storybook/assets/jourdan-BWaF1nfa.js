@@ -1,0 +1,1 @@
+const s={sources:{webp:"/web/storybook/assets/jourdan-CW_bh3yH.webp 96w, /web/storybook/assets/jourdan-CpnbJWJR.webp 160w, /web/storybook/assets/jourdan-Wy8SVTL9.webp 200w"},img:{src:"/web/storybook/assets/jourdan-Wy8SVTL9.webp",w:200,h:200}};export{s as default};

@@ -1,0 +1,1 @@
+const e={sources:{webp:new URL("../assets/cliff_moon.LOlGOXVo.webp",import.meta.url).href+" 96w, "+new URL("../assets/cliff_moon.BHjAgN7y.webp",import.meta.url).href+" 160w, "+new URL("../assets/cliff_moon.B59eDpRs.webp",import.meta.url).href+" 200w"},img:{src:""+new URL("../assets/cliff_moon.B59eDpRs.webp",import.meta.url).href,w:200,h:200}};export{e as default};

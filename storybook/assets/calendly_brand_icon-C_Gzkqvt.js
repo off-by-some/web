@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/storybook/assets/calendly_brand_icon-C7i-OrhE.webp 64w, /web/storybook/assets/calendly_brand_icon-JUb2EwPH.webp 128w, /web/storybook/assets/calendly_brand_icon-Cc46fS8P.webp 192w"},img:{src:"/web/storybook/assets/calendly_brand_icon-Cc46fS8P.webp",w:192,h:192}};export{e as default};

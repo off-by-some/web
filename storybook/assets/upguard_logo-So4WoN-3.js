@@ -1,0 +1,1 @@
+const o={sources:{webp:"/web/storybook/assets/upguard_logo-p2Tw1Fyp.webp 64w, /web/storybook/assets/upguard_logo-nul9XUCc.webp 128w, /web/storybook/assets/upguard_logo-IQkOoWh3.webp 192w"},img:{src:"/web/storybook/assets/upguard_logo-IQkOoWh3.webp",w:192,h:192}};export{o as default};

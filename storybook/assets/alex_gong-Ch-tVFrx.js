@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/storybook/assets/alex_gong-D-P_q-uq.webp 96w, /web/storybook/assets/alex_gong-ZODcYJ2X.webp 160w, /web/storybook/assets/alex_gong-wLy6wz4I.webp 240w"},img:{src:"/web/storybook/assets/alex_gong-wLy6wz4I.webp",w:240,h:240}};export{e as default};

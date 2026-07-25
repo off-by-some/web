@@ -1,0 +1,1 @@
+const e={sources:{webp:new URL("../assets/scribehow_logo.CmnsTlM6.webp",import.meta.url).href+" 64w, "+new URL("../assets/scribehow_logo.Z-M6TxEl.webp",import.meta.url).href+" 128w, "+new URL("../assets/scribehow_logo.D4iZmteQ.webp",import.meta.url).href+" 192w"},img:{src:""+new URL("../assets/scribehow_logo.D4iZmteQ.webp",import.meta.url).href,w:192,h:192}};export{e as default};

@@ -1,0 +1,1 @@
+const o={sources:{webp:"/web/storybook/assets/AWS-logo-B--aPXWi.webp 64w, /web/storybook/assets/AWS-logo-D8a206Ji.webp 128w, /web/storybook/assets/AWS-logo-CjnXBt_I.webp 192w"},img:{src:"/web/storybook/assets/AWS-logo-CjnXBt_I.webp",w:192,h:105}};export{o as default};

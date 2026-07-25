@@ -1,0 +1,1 @@
+const e={sources:{webp:new URL("../assets/react-logo.B8qz8Qqz.webp",import.meta.url).href+" 64w, "+new URL("../assets/react-logo.DmB7KQ7k.webp",import.meta.url).href+" 128w, "+new URL("../assets/react-logo.BMvQFwVA.webp",import.meta.url).href+" 192w"},img:{src:""+new URL("../assets/react-logo.BMvQFwVA.webp",import.meta.url).href,w:192,h:192}};export{e as default};

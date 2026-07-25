@@ -1,0 +1,1 @@
+const o={sources:{webp:"/web/storybook/assets/react-logo-B8qz8Qqz.webp 64w, /web/storybook/assets/react-logo-DmB7KQ7k.webp 128w, /web/storybook/assets/react-logo-BMvQFwVA.webp 192w"},img:{src:"/web/storybook/assets/react-logo-BMvQFwVA.webp",w:192,h:192}};export{o as default};

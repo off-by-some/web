@@ -1,0 +1,1 @@
+const e={sources:{webp:new URL("../assets/greenbitslogo.Bwy-9Ptp.webp",import.meta.url).href+" 64w, "+new URL("../assets/greenbitslogo.BH3Ql9eq.webp",import.meta.url).href+" 128w, "+new URL("../assets/greenbitslogo.D1GmMLM0.webp",import.meta.url).href+" 192w"},img:{src:""+new URL("../assets/greenbitslogo.D1GmMLM0.webp",import.meta.url).href,w:192,h:192}};export{e as default};

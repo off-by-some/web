@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/storybook/assets/greenbitslogo-Bwy-9Ptp.webp 64w, /web/storybook/assets/greenbitslogo-BH3Ql9eq.webp 128w, /web/storybook/assets/greenbitslogo-D1GmMLM0.webp 192w"},img:{src:"/web/storybook/assets/greenbitslogo-D1GmMLM0.webp",w:192,h:192}};export{e as default};

@@ -1,0 +1,1 @@
+const n={sources:{webp:"/web/storybook/assets/linkedin_brand_icon-hWAbaaJU.webp 64w, /web/storybook/assets/linkedin_brand_icon-_cYoFKEI.webp 128w, /web/storybook/assets/linkedin_brand_icon-Ct5snTLI.webp 192w"},img:{src:"/web/storybook/assets/linkedin_brand_icon-Ct5snTLI.webp",w:192,h:192}};export{n as default};

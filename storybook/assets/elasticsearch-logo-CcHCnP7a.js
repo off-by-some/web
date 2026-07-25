@@ -1,0 +1,1 @@
+const s={sources:{webp:"/web/storybook/assets/elasticsearch-logo-DFi9MTx0.webp 64w, /web/storybook/assets/elasticsearch-logo-7n9D7VlB.webp 128w, /web/storybook/assets/elasticsearch-logo-i-DlDjgE.webp 192w"},img:{src:"/web/storybook/assets/elasticsearch-logo-i-DlDjgE.webp",w:192,h:192}};export{s as default};

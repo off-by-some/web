@@ -1,0 +1,1 @@
+const o={sources:{webp:"/web/storybook/assets/scribehow_logo-CmnsTlM6.webp 64w, /web/storybook/assets/scribehow_logo-Z-M6TxEl.webp 128w, /web/storybook/assets/scribehow_logo-D4iZmteQ.webp 192w"},img:{src:"/web/storybook/assets/scribehow_logo-D4iZmteQ.webp",w:192,h:192}};export{o as default};
