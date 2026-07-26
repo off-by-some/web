@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  verify:
+    name: Lint & type-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/install
+      - run: npm run verify
+
+  build:
+    name: Build site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/install
+      - run: npm run build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site-build
+          path: build/
+          retention-days: 1
+
+  lighthouse:
+    name: Lighthouse CI
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/install
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: site-build
+          path: build
+
+      - run: npm run lighthouse:run
+
+  deploy:
+    name: Deploy to GitHub Pages
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs:
+      - verify
+      - lighthouse
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/install
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: site-build
+          path: build
+
+      - name: Configure git identity
+        run: |
+          git config user.email "cassidybridges+automation@gmail.com"
+          git config user.name "[Github Actions]"
+
+      - run: npx gh-pages -d build --dotfiles

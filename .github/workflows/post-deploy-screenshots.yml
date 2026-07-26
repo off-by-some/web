@@ -57,13 +57,7 @@ jobs:
         with:
           ref: ${{ steps.deployment.outputs.source_sha }}
 
-      - uses: actions/setup-node@v5
-        with:
-          node-version: '24'
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
+      - uses: ./.github/actions/install
 
       # .bundle-stats is produced by the vite build itself (rollup-plugin-bundle-stats),
       # so it has to come from a local build rather than the deployed site.

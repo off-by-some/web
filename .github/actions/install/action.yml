@@ -1,0 +1,31 @@
+name: Install dependencies
+description: Set up Node.js and install npm dependencies, restoring npm and Vite/SvelteKit build caches where possible.
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v5
+      with:
+        node-version: '24'
+
+    - name: Cache node_modules
+      id: npm-cache
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+    - name: Cache Vite/SvelteKit build cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          .svelte-kit
+          node_modules/.vite
+        key: build-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+        restore-keys: |
+          build-cache-${{ runner.os }}-
+
+    - name: Install dependencies
+      if: steps.npm-cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: npm ci

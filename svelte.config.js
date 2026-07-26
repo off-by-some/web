@@ -14,7 +14,7 @@ const config = {
       fallback: '404.html',
       strict: false,
     }),
-    inlineStyleThreshold: 150000,
+    inlineStyleThreshold: 0,
     paths: {
       base: process.env.NODE_ENV === 'production' ? '/web' : '',
     },
