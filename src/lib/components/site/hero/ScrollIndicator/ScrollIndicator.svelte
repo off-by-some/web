@@ -42,12 +42,13 @@
     color: var(--token-attention-color);
     opacity: 0.74;
     cursor: pointer;
-    animation: scrollFloat 2s ease-in-out infinite;
+    animation: scrollFloat var(--scroll-indicator-duration, var(--token-motion-duration-pulse))
+      var(--token-motion-ease-out) infinite;
     z-index: 10;
     transition:
-      color 0.3s var(--token-motion-ease-out),
-      opacity 0.3s var(--token-motion-ease-out),
-      transform 0.3s var(--token-motion-ease-out);
+      color var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      opacity var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
 
     &:focus {
       outline: 2px solid var(--token-interactive-color);
@@ -61,7 +62,10 @@
 
       .scroll-mouse {
         border-color: var(--token-attention-color);
-        box-shadow: 0 0 15px var(--token-attention-glow);
+        box-shadow: var(
+          --scroll-indicator-hover-shadow,
+          0 0 var(--token-blur-md) var(--token-attention-glow)
+        );
       }
 
       .scroll-wheel {
@@ -81,29 +85,30 @@
   .scroll-mouse {
     inline-size: var(--token-size-6);
     block-size: 1.75rem;
-    border: 1px solid
+    border: var(--scroll-indicator-border-width, var(--token-border-size-small)) solid
       color-mix(in srgb, var(--token-interactive-color) 44%, var(--token-border-color));
-    border-radius: 0.625rem;
+    border-radius: var(--scroll-indicator-radius, var(--token-radius-md));
     position: relative;
     background: var(--token-surface-glass-medium);
     backdrop-filter: blur(var(--token-blur-sm));
     transition:
-      background-color 0.3s var(--token-motion-ease-out),
-      border-color 0.3s var(--token-motion-ease-out),
-      box-shadow 0.3s var(--token-motion-ease-out);
+      background-color var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      border-color var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      box-shadow var(--token-motion-duration-normal) var(--token-motion-ease-out);
   }
 
   .scroll-wheel {
     position: absolute;
     inline-size: 1.5px;
     block-size: var(--token-size-1);
-    background: color-mix(in srgb, var(--token-interactive-color) 82%, white);
+    background: color-mix(in srgb, var(--token-interactive-color) 82%, var(--token-text-primary));
     inset-inline-start: 50%;
     top: 0.375rem;
     transform: translateX(-50%);
     border-radius: var(--token-radius-full);
-    animation: wheelScroll 2s ease-in-out infinite;
-    transition: background 0.3s var(--token-motion-ease-out);
+    animation: wheelScroll var(--scroll-indicator-duration, var(--token-motion-duration-pulse))
+      var(--token-motion-ease-out) infinite;
+    transition: background var(--token-motion-duration-normal) var(--token-motion-ease-out);
   }
 
   .scroll-arrow {
@@ -111,9 +116,13 @@
     block-size: 0;
     border-inline-start: 0.25rem solid transparent;
     border-inline-end: 0.25rem solid transparent;
-    border-block-start: 0.375rem solid color-mix(in srgb, var(--token-interactive-color) 78%, white);
-    animation: arrowBounce 2s ease-in-out infinite 0.5s;
-    transition: border-block-start-color 0.3s var(--token-motion-ease-out);
+    border-block-start: 0.375rem solid
+      color-mix(in srgb, var(--token-interactive-color) 78%, var(--token-text-primary));
+    animation: arrowBounce var(--scroll-indicator-duration, var(--token-motion-duration-pulse))
+      var(--token-motion-ease-out) infinite
+      var(--scroll-indicator-arrow-delay, calc(var(--token-motion-duration-pulse) / 4));
+    transition: border-block-start-color var(--token-motion-duration-normal)
+      var(--token-motion-ease-out);
   }
 
   .scroll-text {

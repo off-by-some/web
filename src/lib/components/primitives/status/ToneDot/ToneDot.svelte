@@ -42,7 +42,8 @@
   }
 
   .tone-dot--pulse {
-    animation: toneDotPulse 2s ease-in-out infinite;
+    animation: toneDotPulse var(--tone-dot-pulse-duration, var(--token-motion-duration-pulse))
+      var(--token-motion-ease-out) infinite;
   }
 
   @keyframes toneDotPulse {

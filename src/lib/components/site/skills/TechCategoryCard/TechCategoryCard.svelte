@@ -172,7 +172,7 @@
     color: var(--token-text-overlay);
     letter-spacing: var(--token-letter-spacing-wide);
     line-height: var(--token-line-height-snug);
-    transition: color 0.3s var(--token-motion-ease-out);
+    transition: color var(--token-motion-duration-normal) var(--token-motion-ease-out);
     flex: 1;
     min-inline-size: 0;
 

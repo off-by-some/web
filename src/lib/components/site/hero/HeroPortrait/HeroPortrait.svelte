@@ -113,14 +113,14 @@
     background: conic-gradient(
       from 310deg,
       var(--token-interactive-color) 0deg,
-      #60a5fa 70deg,
-      #8b5cf6 170deg,
+      var(--token-hero-portrait-halo-blue) 70deg,
+      var(--token-hero-portrait-halo-violet) 170deg,
       var(--token-emphasis-color) 255deg,
       var(--token-interactive-color) 360deg
     );
     box-shadow:
-      0 0 2.75rem rgb(29 233 182 / 0.22),
-      0 0 4.75rem rgb(139 92 246 / 0.2);
+      0 0 2.75rem var(--token-hero-portrait-halo-shadow-primary),
+      0 0 4.75rem var(--token-hero-portrait-halo-shadow-secondary);
     opacity: 0.84;
     mask-image:
       radial-gradient(farthest-side, transparent calc(100% - 0.32rem), black calc(100% - 0.24rem)),
@@ -182,10 +182,10 @@
       pointer-events: none;
       background: linear-gradient(
         to bottom,
-        rgb(13 20 39 / 0) 0%,
-        rgb(13 20 39 / 0.26) 40%,
-        rgb(13 20 39 / 0.7) 76%,
-        rgb(13 20 39 / 0.95) 100%
+        transparent 0%,
+        var(--token-hero-portrait-veil-light) 40%,
+        var(--token-hero-portrait-veil-medium) 76%,
+        var(--token-hero-portrait-veil-strong) 100%
       );
       filter: blur(0.9rem);
     }
@@ -266,8 +266,8 @@
     letter-spacing: var(--token-letter-spacing-normal);
     white-space: nowrap;
     text-shadow:
-      0 1px 0 rgb(5 7 24 / 0.35),
-      0 0 1.35rem rgb(5 7 24 / 0.8);
+      0 1px 0 var(--token-hero-portrait-annotation-shadow-rest),
+      0 0 1.35rem var(--token-hero-portrait-annotation-shadow-glow);
 
     transform: rotate(-1deg);
   }

@@ -138,7 +138,10 @@
 
   .project-tab-list__item[data-state='selected'] {
     --project-tab-accent-color: var(--token-interactive-color);
-    --project-tab-shadow: 0 0 20px var(--token-interactive-glow);
+    --project-tab-shadow: var(
+      --project-tab-selected-shadow,
+      0 0 var(--token-blur-md) var(--token-interactive-glow)
+    );
 
     border-color: var(--token-interactive-color);
     background: var(--token-surface-glass-medium);
@@ -182,7 +185,7 @@
     color: var(--token-text-primary);
     font-size: var(--token-font-size-base);
     font-weight: var(--token-font-weight-semibold);
-    transition: color 0.3s var(--token-motion-ease-out);
+    transition: color var(--token-motion-duration-normal) var(--token-motion-ease-out);
   }
 
   .project-tab-list__tagline {

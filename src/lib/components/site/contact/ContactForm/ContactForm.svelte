@@ -534,7 +534,7 @@
 
   .submit__check {
     font-size: var(--token-font-size-lg);
-    animation: bounceIn 0.6s var(--token-motion-ease-bounce);
+    animation: bounceIn var(--token-motion-duration-slow) var(--token-motion-ease-bounce);
   }
 
   @keyframes spin {

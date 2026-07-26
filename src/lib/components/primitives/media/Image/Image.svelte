@@ -293,10 +293,11 @@ TROUBLESHOOTING 🔧
   }
 
   .image__error {
-    color: crimson;
+    color: var(--image-error-color, var(--token-status-danger-fg));
     font:
-      12px/1.3 ui-monospace,
-      monospace;
-    margin-block-start: 0.5rem;
+      var(--image-error-font-size, var(--token-font-size-xs)) / var(--token-line-height-snug)
+        var(--token-font-family-mono, ui-monospace),
+      ui-monospace;
+    margin-block-start: var(--token-space-3);
   }
 </style>

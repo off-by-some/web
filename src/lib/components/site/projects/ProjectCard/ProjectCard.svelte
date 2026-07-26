@@ -248,7 +248,7 @@
 
   .project-card__badge-link {
     display: flex;
-    transition: transform 0.3s var(--token-motion-ease-out);
+    transition: transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
 
     &:hover {
       transform: translateY(-2px);

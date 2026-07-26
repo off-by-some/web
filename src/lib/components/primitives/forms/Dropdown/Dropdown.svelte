@@ -397,7 +397,9 @@
 
     box-shadow: var(--token-shadow-elevated);
 
-    animation: slideDown 0.15s ease-out;
+    animation: slideDown
+      var(--dropdown-menu-enter-duration, var(--token-motion-duration-menu-enter))
+      var(--token-motion-ease-out);
 
     &:focus {
       outline: none;

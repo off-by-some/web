@@ -48,7 +48,9 @@
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: textShimmer 8s ease-in-out infinite;
+    animation: textShimmer
+      var(--section-header-shimmer-duration, var(--token-motion-duration-ambient))
+      var(--token-motion-ease-out) infinite;
 
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-font-size-5xl);
@@ -107,8 +109,8 @@
 
   @media print {
     .header__title {
-      color: black;
-      -webkit-text-fill-color: black;
+      color: CanvasText;
+      -webkit-text-fill-color: CanvasText;
     }
   }
 </style>

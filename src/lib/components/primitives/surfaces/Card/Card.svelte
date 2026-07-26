@@ -53,11 +53,16 @@
     position: relative;
     overflow: var(--card-overflow, hidden);
     transition:
-      transform var(--card-transition-duration, 0.4s) var(--token-motion-ease-out),
-      border-color var(--card-transition-duration, 0.4s) var(--token-motion-ease-out),
-      box-shadow var(--card-transition-duration, 0.4s) var(--token-motion-ease-out),
-      color var(--card-transition-duration, 0.4s) var(--token-motion-ease-out),
-      background var(--card-transition-duration, 0.4s) var(--token-motion-ease-out);
+      transform var(--card-transition-duration, var(--token-motion-duration-emphasis))
+        var(--token-motion-ease-out),
+      border-color var(--card-transition-duration, var(--token-motion-duration-emphasis))
+        var(--token-motion-ease-out),
+      box-shadow var(--card-transition-duration, var(--token-motion-duration-emphasis))
+        var(--token-motion-ease-out),
+      color var(--card-transition-duration, var(--token-motion-duration-emphasis))
+        var(--token-motion-ease-out),
+      background var(--card-transition-duration, var(--token-motion-duration-emphasis))
+        var(--token-motion-ease-out);
 
     &::before {
       box-sizing: border-box;
@@ -66,7 +71,8 @@
       inset: 0;
       background: var(--card-iridescent-background, var(--token-surface-glass-iridescent));
       opacity: var(--card-iridescent-opacity, 0);
-      transition: opacity var(--card-transition-duration, 0.4s) var(--token-motion-ease-out);
+      transition: opacity var(--card-transition-duration, var(--token-motion-duration-emphasis))
+        var(--token-motion-ease-out);
       border-radius: inherit;
       pointer-events: none;
     }
@@ -83,7 +89,7 @@
 
     &:active {
       transform: var(--card-active-transform, translateY(-2px) scale(1));
-      transition-duration: 0.1s;
+      transition-duration: var(--card-active-duration, var(--token-motion-duration-press));
     }
 
     &:focus,

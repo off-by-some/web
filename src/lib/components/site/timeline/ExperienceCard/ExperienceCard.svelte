@@ -476,7 +476,7 @@
   }
 
   .expand-button__icon {
-    transition: transform 0.3s var(--token-motion-ease-out);
+    transition: transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
     flex-shrink: 0;
   }
 
@@ -499,8 +499,8 @@
     text-decoration-color: transparent;
     text-underline-offset: 2px;
     transition:
-      color 0.2s var(--token-motion-ease-out),
-      text-decoration-color 0.2s var(--token-motion-ease-out);
+      color var(--token-motion-duration-fast) var(--token-motion-ease-out),
+      text-decoration-color var(--token-motion-duration-fast) var(--token-motion-ease-out);
     font-weight: var(--token-font-weight-medium);
 
     &:hover {
@@ -518,7 +518,7 @@
   .card-details {
     max-block-size: 0;
     overflow: hidden;
-    transition: max-height 0.4s var(--token-motion-ease-out);
+    transition: max-block-size var(--token-motion-duration-emphasis) var(--token-motion-ease-out);
     position: relative;
     z-index: 1;
 

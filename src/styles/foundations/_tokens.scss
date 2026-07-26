@@ -141,6 +141,27 @@ $theme-defaults: (
     magnetic: themes.reference('interactive.color', $alpha: 10%),
   ),
 
+  hero: (
+    portrait: (
+      halo: (
+        blue: #60a5fa,
+        violet: #8b5cf6,
+        shadow-primary: themes.reference('interactive.color', $alpha: 22%),
+        shadow-secondary: #8b5cf633,
+      ),
+      veil: (
+        surface: #0d1427,
+        light: rgba(13, 20, 39, 0.26),
+        medium: rgba(13, 20, 39, 0.7),
+        strong: rgba(13, 20, 39, 0.95),
+      ),
+      annotation: (
+        shadow-rest: rgba(5, 7, 24, 0.35),
+        shadow-glow: rgba(5, 7, 24, 0.8),
+      ),
+    ),
+  ),
+
   text: (
     color: (
       neutral: 0,
@@ -628,10 +649,16 @@ $theme-defaults: (
 
   motion: (
     'duration': (
+      'press': 100ms,
+      'menu-enter': 150ms,
       'fast': 200ms,
       'normal': 300ms,
+      'emphasis': 400ms,
       'slow': 600ms,
+      'ornament': 1800ms,
       'pulse': 2s,
+      'gesture': 2500ms,
+      'ambient': 8s,
     ),
     'ease': (
       'out': cubic-bezier(0.4, 0, 0.2, 1),

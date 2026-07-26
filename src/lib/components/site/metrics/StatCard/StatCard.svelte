@@ -150,7 +150,7 @@
     letter-spacing: var(--token-letter-spacing-widest);
     line-height: var(--token-line-height-relaxed);
     white-space: pre-line;
-    transition: color 0.3s var(--token-motion-ease-out);
+    transition: color var(--token-motion-duration-normal) var(--token-motion-ease-out);
 
     @media (min-width: $breakpoint-lg) {
       font-size: var(--token-font-size-base);

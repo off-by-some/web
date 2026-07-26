@@ -54,7 +54,9 @@
   .profile-greeting__wave {
     font-size: var(--token-font-size-lg);
     line-height: 1;
-    animation: wave 2.5s ease-in-out 1.2s infinite;
+    animation: wave var(--hero-profile-wave-duration, var(--token-motion-duration-gesture))
+      var(--token-motion-ease-out) var(--hero-profile-wave-delay, var(--token-motion-duration-slow))
+      infinite;
     transform-origin: 70% 70%;
   }
 
@@ -72,7 +74,9 @@
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: textShimmer 8s ease-in-out infinite;
+    animation: textShimmer
+      var(--hero-profile-shimmer-duration, var(--token-motion-duration-ambient))
+      var(--token-motion-ease-out) infinite;
 
     @media (min-width: $breakpoint-md) {
       font-size: clamp(5.25rem, 9vw, 8rem);
@@ -120,7 +124,10 @@
     margin-block-start: var(--token-space-fluid-md);
     margin-inline: auto;
     transform-origin: left center;
-    animation: accentExpand 1.8s var(--token-motion-ease-out) 0.8s both;
+    animation: accentExpand
+      var(--hero-profile-accent-duration, var(--token-motion-duration-ornament))
+      var(--token-motion-ease-out)
+      var(--hero-profile-accent-delay, var(--token-motion-duration-normal)) both;
 
     @media (min-width: $breakpoint-lg) {
       margin-inline: 0;
@@ -195,8 +202,8 @@
 
   @media print {
     .profile-name {
-      color: black;
-      -webkit-text-fill-color: black;
+      color: CanvasText;
+      -webkit-text-fill-color: CanvasText;
     }
   }
 </style>

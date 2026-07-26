@@ -117,7 +117,10 @@
 
     &:hover:not(:disabled) {
       border-color: var(--token-interactive-color);
-      box-shadow: 0 0 15px var(--token-interactive-glow);
+      box-shadow: var(
+        --project-dot-nav-hover-shadow,
+        0 0 var(--token-blur-md) var(--token-interactive-glow)
+      );
       transform: scale(1.1);
     }
 
@@ -138,7 +141,10 @@
 
   .project-dot-nav__item[data-state='selected'] {
     border-color: var(--token-interactive-color);
-    box-shadow: 0 0 25px var(--token-interactive-glow);
+    box-shadow: var(
+      --project-dot-nav-selected-shadow,
+      0 0 var(--token-blur-lg) var(--token-interactive-glow)
+    );
     transform: scale(1.2);
   }
 
