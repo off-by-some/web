@@ -11,7 +11,13 @@
     onSelectRequested?: () => void;
   };
 
-  let { title, level, technologies = [], delay = '0s', onSelectRequested }: Props = $props();
+  let {
+    title,
+    level,
+    technologies = [],
+    delay = 'var(--token-motion-delay-none)',
+    onSelectRequested,
+  }: Props = $props();
 
   let tagsContainer: HTMLElement | undefined = $state();
   let resizeObserver: ResizeObserver | undefined;
@@ -138,7 +144,12 @@
     gap: var(--token-space-fluid-md);
     text-align: left;
 
-    @include motion.fade-in-up(fadeInUp, 30px, 0.6s, var(--tech-category-delay));
+    @include motion.fade-in-up(
+      fadeInUp,
+      30px,
+      var(--token-motion-duration-slow),
+      var(--tech-category-delay)
+    );
 
     @media (min-width: $breakpoint-md) {
       --card-padding: var(--token-space-fluid-xl);
@@ -204,10 +215,10 @@
     font-weight: var(--token-font-weight-medium);
     color: var(--token-text-secondary);
     transition:
-      background-color 0.3s var(--token-motion-ease-out),
-      border-color 0.3s var(--token-motion-ease-out),
-      color 0.3s var(--token-motion-ease-out),
-      transform 0.3s var(--token-motion-ease-out);
+      background-color var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      border-color var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      color var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
     white-space: nowrap;
     flex-shrink: 0;
 

@@ -189,7 +189,7 @@
     text-align: start;
     container-type: inline-size;
 
-    @include motion.fade-in-up(projectCardEnter, 14px, 0.45s);
+    @include motion.fade-in-up(projectCardEnter, 14px, var(--token-motion-duration-emphasis));
 
     @media (min-width: $breakpoint-md) {
       --card-padding: var(--token-space-fluid-2xl);
@@ -255,8 +255,8 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--token-interactive-color);
-      outline-offset: 2px;
+      outline: var(--token-focus-outline);
+      outline-offset: var(--token-focus-offset-sm);
       border-radius: var(--token-radius-xs);
     }
   }
@@ -392,7 +392,7 @@
     :global(.project-card__banner),
     :global(.project-card__highlights) {
       border-color: CanvasText;
-      border-width: 2px;
+      border-width: var(--token-border-size-large);
     }
   }
 </style>

@@ -309,6 +309,7 @@
 </div>
 
 <style lang="scss">
+  @use 'styles/breakpoints' as *;
   @use 'lib/components/primitives/root' as root;
 
   .dropdown {
@@ -374,7 +375,7 @@
       color: var(--token-interactive-color);
     }
 
-    @media (min-width: 768px) {
+    @media (min-width: $breakpoint-md) {
       inline-size: var(--token-size-6);
       block-size: var(--token-size-6);
     }
@@ -384,7 +385,7 @@
     position: absolute;
     inset-block-start: 100%;
     inset-inline: 0;
-    z-index: 1001;
+    z-index: var(--dropdown-menu-z-index, var(--token-z-popover));
 
     background: var(--token-surface-glass-stronger);
     border: var(--token-border-default-small);
@@ -392,7 +393,7 @@
     border-end-start-radius: var(--token-radius-lg);
     border-end-end-radius: var(--token-radius-lg);
 
-    max-block-size: 20rem;
+    max-block-size: var(--dropdown-menu-max-block-size, var(--token-space-20));
     overflow-block: auto;
 
     box-shadow: var(--token-shadow-elevated);
@@ -407,7 +408,7 @@
 
     // Custom scrollbar
     &::-webkit-scrollbar {
-      inline-size: 8px;
+      inline-size: var(--dropdown-scrollbar-size, var(--token-space-2));
     }
 
     &::-webkit-scrollbar-track {
@@ -448,7 +449,7 @@
       background-color var(--token-motion-duration-fast) var(--token-motion-ease-out),
       color var(--token-motion-duration-fast) var(--token-motion-ease-out);
 
-    @media (min-width: 768px) {
+    @media (min-width: $breakpoint-md) {
       padding: var(--token-space-fluid-lg) var(--token-space-fluid-xl);
       font-size: var(--token-font-size-base);
     }
@@ -497,7 +498,7 @@
     color: var(--token-text-tertiary);
     line-height: var(--token-line-height-relaxed);
 
-    @media (min-width: 768px) {
+    @media (min-width: $breakpoint-md) {
       font-size: var(--token-font-size-sm);
     }
   }
@@ -530,13 +531,13 @@
   @media (prefers-contrast: high) {
     .dropdown :global(.dropdown-trigger),
     .dropdown-menu {
-      border-width: 2px;
+      border-width: var(--token-border-size-large);
     }
 
     .dropdown-option--focused,
     .dropdown-option--selected {
-      outline: 2px solid currentColor;
-      outline-offset: -2px;
+      outline: var(--token-border-size-large) solid currentColor;
+      outline-offset: calc(var(--token-focus-offset-sm) * -1);
     }
   }
 </style>

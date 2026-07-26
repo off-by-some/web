@@ -77,8 +77,8 @@
     pointer-events: none;
     backdrop-filter: blur(var(--token-blur-md));
     transition:
-      opacity 0.4s var(--token-motion-ease-out),
-      transform 0.4s var(--token-motion-ease-out);
+      opacity var(--token-motion-delay-emphasis) var(--token-motion-ease-out),
+      transform var(--token-motion-delay-emphasis) var(--token-motion-ease-out);
 
     @media (min-width: $breakpoint-md) {
       gap: var(--token-space-fluid-lg);
@@ -105,15 +105,15 @@
     inline-size: 2.75rem;
     block-size: 2.75rem;
     padding: 2px;
-    border: 2px solid var(--token-border-color-neutral);
+    border: var(--token-border-size-large) solid var(--token-border-color-neutral);
     border-radius: var(--token-radius-full);
     background: var(--token-surface-color);
     cursor: pointer;
     box-shadow: var(--token-shadow-default);
     transition:
-      border-color 0.3s var(--token-motion-ease-out),
-      box-shadow 0.3s var(--token-motion-ease-out),
-      transform 0.3s var(--token-motion-ease-out);
+      border-color var(--token-motion-delay-normal) var(--token-motion-ease-out),
+      box-shadow var(--token-motion-delay-normal) var(--token-motion-ease-out),
+      transform var(--token-motion-delay-normal) var(--token-motion-ease-out);
 
     &:hover:not(:disabled) {
       border-color: var(--token-interactive-color);
@@ -125,8 +125,8 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--token-interactive-color);
-      outline-offset: 3px;
+      outline: var(--token-focus-outline);
+      outline-offset: var(--token-focus-offset-md);
     }
 
     &:disabled {
@@ -173,7 +173,7 @@
     .project-dot-nav,
     .project-dot-nav__item {
       border-color: CanvasText;
-      border-width: 2px;
+      border-width: var(--token-border-size-large);
     }
   }
 </style>

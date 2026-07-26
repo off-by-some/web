@@ -45,7 +45,8 @@
   :global(.filter-button--active) {
     --button-secondary-background: var(--token-surface-glass-medium);
     --button-secondary-color: var(--token-text-primary);
-    --button-secondary-shadow: var(--token-shadow-focus), 0 0 20px var(--token-interactive-glow);
+    --button-secondary-shadow:
+      var(--token-shadow-focus), 0 0 var(--token-blur-md) var(--token-interactive-glow);
     --button-secondary-hover-iridescent-opacity: 0.3;
     --button-iridescent-background: linear-gradient(
       135deg,

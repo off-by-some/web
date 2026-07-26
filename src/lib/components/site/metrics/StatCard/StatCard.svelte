@@ -10,7 +10,7 @@
     delay?: string;
   };
 
-  let { count, label, type, delay = '0s' }: Props = $props();
+  let { count, label, type, delay = 'var(--token-motion-delay-none)' }: Props = $props();
 
   let numberElement: HTMLElement | undefined = $state();
   let hasAnimated = false;
@@ -51,7 +51,10 @@
     const [, numStr, suffix] = match;
     const num = parseFloat(numStr);
     const decimalPlaces = numStr.includes('.') && !isNaN(num) ? 2 : 0;
-    const duration = 2000;
+    const counterDuration = Number.parseFloat(
+      getComputedStyle(numberElement).getPropertyValue('--stat-counter-duration'),
+    );
+    const duration = Number.isFinite(counterDuration) ? counterDuration : 2000;
     const startTime = performance.now();
 
     hasAnimated = true;
@@ -99,6 +102,7 @@
     --card-radius: var(--token-radius-lg);
     --card-padding: var(--token-space-fluid-md);
     --card-hover-transform: translateY(-4px) scale(1.02);
+    --stat-counter-duration: var(--token-motion-duration-counter);
 
     cursor: pointer;
     display: flex;
@@ -106,7 +110,14 @@
     justify-content: center;
     text-align: center;
 
-    @include motion.fade-in-up(statReveal, 20px, 0.8s, var(--stat-card-delay), both, 0.95);
+    @include motion.fade-in-up(
+      statReveal,
+      20px,
+      var(--token-motion-duration-narrative),
+      var(--stat-card-delay),
+      both,
+      0.95
+    );
 
     @media (min-width: $breakpoint-md) {
       --card-padding: var(--token-space-fluid-xl);
@@ -130,8 +141,8 @@
     color: var(--token-text-emphasis-heading);
     letter-spacing: var(--token-letter-spacing-tight);
     transition:
-      color 0.3s var(--token-motion-ease-out),
-      transform 0.3s var(--token-motion-ease-out);
+      color var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
 
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-font-size-3xl);

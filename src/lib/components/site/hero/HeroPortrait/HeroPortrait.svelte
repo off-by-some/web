@@ -60,7 +60,12 @@
     justify-content: center;
     inline-size: 100%;
 
-    @include motion.fade-in-up(heroPortraitIn, 1.5rem, 1s, 0.3s);
+    @include motion.fade-in-up(
+      heroPortraitIn,
+      1.5rem,
+      var(--token-motion-duration-entrance),
+      var(--token-motion-delay-normal)
+    );
   }
 
   .hero-portrait__composition {

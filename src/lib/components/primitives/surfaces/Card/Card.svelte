@@ -94,8 +94,8 @@
 
     &:focus,
     &:focus-visible {
-      outline: var(--card-focus-outline, 2px solid var(--token-interactive-color));
-      outline-offset: var(--card-focus-outline-offset, 2px);
+      outline: var(--card-focus-outline, var(--token-focus-outline));
+      outline-offset: var(--card-focus-outline-offset, var(--token-focus-offset-sm));
     }
   }
 

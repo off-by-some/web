@@ -39,9 +39,9 @@
     --icon-tile-resolved-size: var(
       --icon-tile-size,
       clamp(
-        var(--icon-tile-min-size, 2.75rem),
-        var(--icon-tile-fluid-size, 6vw),
-        var(--icon-tile-max-size, 3.75rem)
+        var(--icon-tile-min-size, var(--token-size-icon-tile-min)),
+        var(--icon-tile-fluid-size, var(--token-size-icon-tile-fluid)),
+        var(--icon-tile-max-size, var(--token-size-icon-tile-max))
       )
     );
     --icon-tile-resolved-padding: var(--icon-tile-padding, var(--token-space-2));
@@ -69,7 +69,7 @@
       box-shadow var(--token-motion-duration-normal) var(--token-motion-ease-out),
       transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
     inline-size: var(--icon-tile-resolved-size);
-    z-index: var(--icon-tile-z-index, 1);
+    z-index: var(--icon-tile-z-index, var(--token-z-base));
   }
 
   :global(.icon-tile__image) {

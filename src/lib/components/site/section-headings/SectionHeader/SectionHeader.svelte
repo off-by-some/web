@@ -28,7 +28,7 @@
 
   :global(.section-header) {
     text-align: center;
-    @include motion.fade-in-up(sectionHeaderIn, 30px, 1s);
+    @include motion.fade-in-up(sectionHeaderIn, 30px, var(--token-motion-duration-entrance));
   }
 
   .section-header__content {

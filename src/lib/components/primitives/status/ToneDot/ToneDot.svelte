@@ -20,7 +20,7 @@
 
     --tone-dot-size: var(--token-size-4);
     --tone-dot-border: none;
-    --tone-dot-glow-size: 8px;
+    --tone-dot-glow-size: var(--token-space-2);
 
     display: inline-block;
     inline-size: var(--tone-dot-size);

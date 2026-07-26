@@ -112,7 +112,12 @@
     gap: clamp(1.35rem, 2.7vh, 2.15rem);
     text-align: center;
 
-    @include motion.fade-in-up(heroValueIn, 1.5rem, 1s, 0.6s);
+    @include motion.fade-in-up(
+      heroValueIn,
+      1.5rem,
+      var(--token-motion-duration-entrance),
+      var(--token-motion-delay-slow)
+    );
 
     @media (min-width: $breakpoint-lg) {
       text-align: left;

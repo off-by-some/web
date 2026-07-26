@@ -16,7 +16,7 @@
   const getStatDelay = (index: number) => `${1 + index * 0.1}s`;
 </script>
 
-<HeroPanel {title} titleId="stats-title" area="stats" delay="0.5s">
+<HeroPanel {title} titleId="stats-title" area="stats" delay="var(--token-motion-delay-panel)">
   <div class="stats-grid">
     {#each stats as stat, index (`${stat.type}-${stat.label}`)}
       <StatCard

@@ -28,7 +28,7 @@
   let {
     experience,
     index,
-    delay = '0s',
+    delay = 'var(--token-motion-delay-none)',
     active = false,
     expanded = false,
     detailsClickable = false,
@@ -207,7 +207,7 @@
     @include motion.fade-in-up(
       timelineItemFadeIn,
       40px,
-      0.8s,
+      var(--token-motion-duration-narrative),
       var(--timeline-item-delay),
       forwards
     );
@@ -263,13 +263,13 @@
     block-size: 1rem;
     border-radius: var(--token-radius-full);
     background: var(--token-surface-glass-strong);
-    border: 2px solid var(--token-border-color-default);
+    border: var(--token-border-size-large) solid var(--token-border-color-default);
     transition:
-      background-color 0.4s var(--token-motion-ease-out),
-      border-color 0.4s var(--token-motion-ease-out),
-      box-shadow 0.4s var(--token-motion-ease-out),
-      opacity 0.4s var(--token-motion-ease-out),
-      transform 0.4s var(--token-motion-ease-out);
+      background-color var(--token-motion-duration-emphasis) var(--token-motion-ease-out),
+      border-color var(--token-motion-duration-emphasis) var(--token-motion-ease-out),
+      box-shadow var(--token-motion-duration-emphasis) var(--token-motion-ease-out),
+      opacity var(--token-motion-duration-emphasis) var(--token-motion-ease-out),
+      transform var(--token-motion-duration-emphasis) var(--token-motion-ease-out);
     opacity: 0.6;
     backdrop-filter: blur(var(--token-blur-sm));
 
@@ -288,7 +288,7 @@
       border-color: var(--token-interactive-color);
       opacity: 1;
       transform: scale(1.2);
-      box-shadow: 0 0 20px var(--token-interactive-glow);
+      box-shadow: 0 0 var(--token-blur-md) var(--token-interactive-glow);
     }
   }
 
@@ -432,11 +432,11 @@
     color: var(--token-text-secondary);
     cursor: pointer;
     transition:
-      background-color 0.3s var(--token-motion-ease-out),
-      border-color 0.3s var(--token-motion-ease-out),
-      box-shadow 0.3s var(--token-motion-ease-out),
-      color 0.3s var(--token-motion-ease-out),
-      transform 0.3s var(--token-motion-ease-out);
+      background-color var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      border-color var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      box-shadow var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      color var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
     backdrop-filter: blur(var(--token-blur-lg));
     display: flex;
     align-items: center;
@@ -448,12 +448,12 @@
       color: var(--token-text-dark);
       transform: translateY(-2px) scale(1.05);
       border-color: var(--token-interactive-color);
-      box-shadow: 0 0 15px var(--token-interactive-glow);
+      box-shadow: 0 0 var(--token-blur-sm) var(--token-interactive-glow);
     }
 
     &:focus {
-      outline: 2px solid var(--token-interactive-color);
-      outline-offset: 2px;
+      outline: var(--token-focus-outline);
+      outline-offset: var(--token-focus-offset-sm);
     }
 
     .timeline-item--expanded & {
@@ -509,8 +509,8 @@
     }
 
     &:focus {
-      outline: 2px solid var(--token-interactive-color);
-      outline-offset: 2px;
+      outline: var(--token-focus-outline);
+      outline-offset: var(--token-focus-offset-sm);
       border-radius: var(--token-radius-xs);
     }
   }
@@ -600,9 +600,9 @@
     color: var(--token-text-primary);
     white-space: nowrap;
     transition:
-      background-color 0.3s var(--token-motion-ease-out),
-      color 0.3s var(--token-motion-ease-out),
-      transform 0.3s var(--token-motion-ease-out);
+      background-color var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      color var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
 
     &:hover {
       background: var(--token-interactive-color);
@@ -631,7 +631,7 @@
       --card-radius: var(--token-radius-lg) var(--token-radius-lg) var(--token-radius-lg)
         var(--token-radius-sm);
 
-      border-inline-start: 3px solid transparent;
+      border-inline-start: var(--token-border-size-accent) solid transparent;
     }
 
     .timeline-item--active :global(.experience-card) {
@@ -705,14 +705,14 @@
   @media (prefers-contrast: high) {
     :global(.experience-card),
     :global(.highlights) {
-      border-width: 2px;
+      border-width: var(--token-border-size-large);
       border-color: currentColor;
     }
   }
 
   @media print {
     :global(.experience-card) {
-      --card-background: white;
+      --card-background: Canvas;
 
       border: var(--token-border-default-small);
       break-inside: avoid;

@@ -114,7 +114,8 @@
   .contact__header {
     text-align: center;
     margin-bottom: var(--token-space-fluid-5xl);
-    animation: fadeInUp var(--token-motion-duration-slow) var(--token-motion-ease-out) 0.2s both;
+    animation: fadeInUp var(--token-motion-duration-slow) var(--token-motion-ease-out)
+      var(--token-motion-delay-short) both;
   }
 
   :global(.contact__heading) {
@@ -182,8 +183,8 @@
 
   @media print {
     .contact {
-      background: white;
-      color: black;
+      background: Canvas;
+      color: CanvasText;
       padding: var(--token-space-fluid-lg);
     }
 

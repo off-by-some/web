@@ -114,7 +114,7 @@
   // the two hero-specific silhouettes (circle / label).
   :global(.hero-action-link) {
     --hero-action-size: clamp(3.25rem, 3rem + 1vw, 4rem);
-    --button-focus-outline-offset: 4px;
+    --button-focus-outline-offset: var(--token-focus-offset-lg);
 
     position: relative;
   }
@@ -169,8 +169,8 @@
     block-size: 1.5rem;
     opacity: 0.9;
     transition:
-      transform 0.4s var(--token-motion-ease-out),
-      opacity 0.3s var(--token-motion-ease-out);
+      transform var(--token-motion-duration-emphasis) var(--token-motion-ease-out),
+      opacity var(--token-motion-duration-normal) var(--token-motion-ease-out);
   }
 
   .hero-action-link__text {

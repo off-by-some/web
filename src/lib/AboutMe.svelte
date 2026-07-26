@@ -107,7 +107,8 @@
       inset: 0;
       background: var(--token-gradients-hero-glow);
       opacity: 0;
-      animation: backgroundGlow 4s ease-in-out 1s both;
+      animation: backgroundGlow var(--token-motion-duration-background) var(--token-motion-ease-out)
+        var(--token-motion-delay-background) both;
       pointer-events: none;
     }
 
@@ -148,7 +149,14 @@
     width: 100%;
     overflow: visible;
 
-    @include motion.fade-in-up(heroEntrance, 2rem, 1.2s, 0s, both, 0.98);
+    @include motion.fade-in-up(
+      heroEntrance,
+      2rem,
+      var(--token-motion-duration-hero),
+      var(--token-motion-delay-none),
+      both,
+      0.98
+    );
 
     @media (min-width: $breakpoint-md) {
       gap: clamp(2rem, 4.25vh, 3.75rem);
@@ -220,8 +228,8 @@
     .hero {
       min-height: auto;
       max-height: none;
-      background: white;
-      color: black;
+      background: Canvas;
+      color: CanvasText;
       padding: var(--token-space-fluid-lg);
     }
 

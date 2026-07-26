@@ -58,7 +58,7 @@
       contactMethodsSlideInUp,
       var(--token-space-fluid-2xl),
       var(--token-motion-duration-slow),
-      0.6s,
+      var(--token-motion-delay-slow),
       both,
       0.95
     );
@@ -152,7 +152,7 @@
   @media print {
     :global(.contact-methods-panel) {
       border: var(--token-border-default-small);
-      background: white;
+      background: Canvas;
       break-inside: avoid;
       box-shadow: none;
     }

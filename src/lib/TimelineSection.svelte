@@ -355,7 +355,8 @@
 
   .timeline-content {
     position: relative;
-    animation: fadeInUp 1s var(--token-motion-ease-out) 0.3s both;
+    animation: fadeInUp var(--token-motion-duration-entrance) var(--token-motion-ease-out)
+      var(--token-motion-delay-normal) both;
   }
 
   .timeline-line {
@@ -393,8 +394,8 @@
     border-radius: inherit;
     transform: scaleY(0);
     transform-origin: top;
-    transition: transform 0.6s var(--token-motion-ease-out);
-    box-shadow: 0 0 12px var(--token-interactive-glow);
+    transition: transform var(--token-motion-duration-slow) var(--token-motion-ease-out);
+    box-shadow: 0 0 var(--token-blur-sm) var(--token-interactive-glow);
   }
 
   .timeline-items {
@@ -410,8 +411,8 @@
     opacity: 0;
     pointer-events: none;
     transition:
-      opacity 0.4s var(--token-motion-ease-out),
-      transform 0.4s var(--token-motion-ease-out);
+      opacity var(--token-motion-duration-emphasis) var(--token-motion-ease-out),
+      transform var(--token-motion-duration-emphasis) var(--token-motion-ease-out);
     z-index: 50;
 
     &--visible {
@@ -502,7 +503,7 @@
       var(--token-interactive-hover)
     );
     border-radius: inherit;
-    transition: block-size 0.6s var(--token-motion-ease-out);
+    transition: block-size var(--token-motion-duration-slow) var(--token-motion-ease-out);
     transform-origin: bottom;
   }
 
@@ -554,8 +555,8 @@
 
   @media print {
     .timeline {
-      background: white;
-      color: black;
+      background: Canvas;
+      color: CanvasText;
       padding: var(--token-space-fluid-lg);
     }
 

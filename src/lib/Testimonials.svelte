@@ -482,7 +482,8 @@
     justify-content: center;
     flex-wrap: wrap;
     margin-block-end: var(--token-space-fluid-2xl);
-    animation: fadeInUp 1s var(--token-motion-ease-out) 0.2s both;
+    animation: fadeInUp var(--token-motion-duration-entrance) var(--token-motion-ease-out)
+      var(--token-motion-delay-short) both;
 
     @media (min-width: $breakpoint-md) {
       gap: var(--token-space-fluid-md);
@@ -509,11 +510,11 @@
     padding: var(--token-space-fluid-md) var(--token-space-fluid-lg);
     cursor: pointer;
     transition:
-      background-color 0.4s var(--token-motion-ease-out),
-      border-color 0.4s var(--token-motion-ease-out),
-      box-shadow 0.4s var(--token-motion-ease-out),
-      opacity 0.4s var(--token-motion-ease-out),
-      transform 0.4s var(--token-motion-ease-out);
+      background-color var(--token-motion-duration-emphasis) var(--token-motion-ease-out),
+      border-color var(--token-motion-duration-emphasis) var(--token-motion-ease-out),
+      box-shadow var(--token-motion-duration-emphasis) var(--token-motion-ease-out),
+      opacity var(--token-motion-duration-emphasis) var(--token-motion-ease-out),
+      transform var(--token-motion-duration-emphasis) var(--token-motion-ease-out);
     backdrop-filter: blur(var(--token-blur-lg));
     position: relative;
     overflow: hidden;
@@ -524,7 +525,7 @@
       inset: 0;
       background: var(--token-surface-glass-iridescent);
       opacity: 0;
-      transition: opacity 0.4s var(--token-motion-ease-out);
+      transition: opacity var(--token-motion-duration-emphasis) var(--token-motion-ease-out);
     }
 
     &:hover {
@@ -556,7 +557,7 @@
 
       .nav-item__avatar {
         border-color: var(--token-interactive-color);
-        box-shadow: 0 0 20px var(--token-interactive-glow);
+        box-shadow: 0 0 var(--token-blur-md) var(--token-interactive-glow);
       }
 
       .nav-item__name {
@@ -580,12 +581,12 @@
     block-size: 2.5rem;
     border-radius: var(--token-radius-full);
     overflow: hidden;
-    border: 2px solid var(--token-border-color-default);
+    border: var(--token-border-size-large) solid var(--token-border-color-default);
     flex-shrink: 0;
     transition:
-      border-color 0.4s var(--token-motion-ease-out),
-      box-shadow 0.4s var(--token-motion-ease-out),
-      transform 0.4s var(--token-motion-ease-out);
+      border-color var(--token-motion-duration-emphasis) var(--token-motion-ease-out),
+      box-shadow var(--token-motion-duration-emphasis) var(--token-motion-ease-out),
+      transform var(--token-motion-duration-emphasis) var(--token-motion-ease-out);
     position: relative;
 
     :global(img) {
@@ -615,7 +616,7 @@
     color: var(--token-text-overlay);
     line-height: var(--token-line-height-snug);
     white-space: nowrap;
-    transition: color 0.4s var(--token-motion-ease-out);
+    transition: color var(--token-motion-duration-emphasis) var(--token-motion-ease-out);
 
     @media (min-width: $breakpoint-lg) {
       font-size: var(--token-font-size-base);
@@ -640,7 +641,8 @@
     justify-content: center;
     gap: var(--token-space-fluid-lg);
     margin-block-end: var(--token-space-fluid-3xl);
-    animation: fadeInUp 1s var(--token-motion-ease-out) 0.4s both;
+    animation: fadeInUp var(--token-motion-duration-entrance) var(--token-motion-ease-out)
+      var(--token-motion-delay-emphasis) both;
 
     @media (min-width: $breakpoint-lg) {
       gap: var(--token-space-fluid-xl);
@@ -681,7 +683,7 @@
       var(--token-interactive-hover)
     );
     border-radius: inherit;
-    transition: inline-size 0.6s var(--token-motion-ease-out);
+    transition: inline-size var(--token-motion-duration-slow) var(--token-motion-ease-out);
     position: relative;
 
     &::after {
@@ -694,7 +696,7 @@
       block-size: 8px;
       background: var(--token-interactive-color);
       border-radius: var(--token-radius-full);
-      box-shadow: 0 0 12px var(--token-interactive-glow);
+      box-shadow: 0 0 var(--token-blur-sm) var(--token-interactive-glow);
 
       @media (min-width: $breakpoint-lg) {
         inset-inline-end: -5px;
@@ -714,7 +716,8 @@
   .content {
     display: grid;
     gap: var(--token-space-fluid-3xl);
-    animation: fadeInUp 1s var(--token-motion-ease-out) 0.6s both;
+    animation: fadeInUp var(--token-motion-duration-entrance) var(--token-motion-ease-out)
+      var(--token-motion-delay-slow) both;
 
     @media (min-width: $breakpoint-lg) {
       grid-template-columns: 1.5fr 1fr;
@@ -743,8 +746,8 @@
     position: relative;
     overflow: hidden;
     transition:
-      box-shadow 0.4s var(--token-motion-ease-out),
-      transform 0.4s var(--token-motion-ease-out);
+      box-shadow var(--token-motion-duration-emphasis) var(--token-motion-ease-out),
+      transform var(--token-motion-duration-emphasis) var(--token-motion-ease-out);
 
     &::before {
       content: '';
@@ -754,7 +757,7 @@
       opacity: 0.4;
       border-radius: inherit;
       pointer-events: none;
-      transition: opacity 0.4s var(--token-motion-ease-out);
+      transition: opacity var(--token-motion-duration-emphasis) var(--token-motion-ease-out);
     }
 
     &:hover {
@@ -817,7 +820,7 @@
     block-size: 4rem;
     border-radius: var(--token-radius-full);
     overflow: hidden;
-    border: 3px solid var(--token-interactive-color);
+    border: var(--token-border-size-accent) solid var(--token-interactive-color);
     flex-shrink: 0;
 
     :global(img) {
@@ -884,9 +887,9 @@
     font-weight: var(--token-font-weight-semibold);
     cursor: pointer;
     transition:
-      background-color 0.3s var(--token-motion-ease-out),
-      color 0.3s var(--token-motion-ease-out),
-      transform 0.3s var(--token-motion-ease-out);
+      background-color var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      color var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
     margin-block-end: var(--token-space-fluid-md);
     min-block-size: 2.75rem;
     display: flex;
@@ -899,8 +902,8 @@
     }
 
     &:focus {
-      outline: 2px solid var(--token-interactive-color);
-      outline-offset: 2px;
+      outline: var(--token-focus-outline);
+      outline-offset: var(--token-focus-offset-sm);
       background: var(--token-surface-glass-subtle);
     }
 
@@ -933,7 +936,7 @@
   .attribution__linkedin {
     color: var(--token-text-tertiary);
     text-decoration: none;
-    transition: color 0.3s var(--token-motion-ease-out);
+    transition: color var(--token-motion-duration-normal) var(--token-motion-ease-out);
 
     &:hover {
       color: var(--token-text-brand);
@@ -941,8 +944,8 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--token-interactive-color);
-      outline-offset: 2px;
+      outline: var(--token-focus-outline);
+      outline-offset: var(--token-focus-offset-sm);
       border-radius: var(--token-radius-sm);
     }
   }
@@ -992,9 +995,9 @@
     backdrop-filter: blur(var(--token-blur-lg));
     box-shadow: var(--token-shadow-default);
     transition:
-      box-shadow 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-      opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-      transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow var(--token-motion-duration-narrative) var(--token-motion-ease-out),
+      opacity var(--token-motion-duration-narrative) var(--token-motion-ease-out),
+      transform var(--token-motion-duration-narrative) var(--token-motion-ease-out);
     opacity: 0;
     transform: translateX(100px) translateZ(-200px) rotateY(15deg) scale(0.8);
     overflow: hidden;
@@ -1005,7 +1008,7 @@
       inset: 0;
       background: var(--token-surface-glass-iridescent);
       opacity: 0;
-      transition: opacity 0.6s var(--token-motion-ease-out);
+      transition: opacity var(--token-motion-duration-slow) var(--token-motion-ease-out);
       border-radius: inherit;
       pointer-events: none;
     }
@@ -1016,7 +1019,7 @@
       inset: 0;
       background: var(--token-background-color);
       opacity: 0;
-      transition: opacity 0.6s var(--token-motion-ease-out);
+      transition: opacity var(--token-motion-duration-slow) var(--token-motion-ease-out);
       border-radius: inherit;
       pointer-events: none;
       z-index: -1;
@@ -1102,8 +1105,8 @@
     opacity: 0.7;
     transform: translateY(20px);
     transition:
-      opacity 0.8s var(--token-motion-ease-out),
-      transform 0.8s var(--token-motion-ease-out);
+      opacity var(--token-motion-duration-narrative) var(--token-motion-ease-out),
+      transform var(--token-motion-duration-narrative) var(--token-motion-ease-out);
 
     @media (min-width: $breakpoint-lg) {
       gap: var(--token-space-fluid-xl);
@@ -1117,7 +1120,7 @@
     block-size: 4rem;
     border-radius: var(--token-radius-full);
     overflow: hidden;
-    border: 3px solid var(--token-interactive-color);
+    border: var(--token-border-size-accent) solid var(--token-interactive-color);
     flex-shrink: 0;
 
     :global(img) {
@@ -1217,15 +1220,15 @@
     color: var(--token-text-brand);
     font-weight: var(--token-font-weight-semibold);
     cursor: pointer;
-    transition: color 0.3s var(--token-motion-ease-out);
+    transition: color var(--token-motion-duration-normal) var(--token-motion-ease-out);
 
     &:hover {
       color: var(--token-interactive-hover);
     }
 
     &:focus {
-      outline: 2px solid var(--token-interactive-color);
-      outline-offset: 2px;
+      outline: var(--token-focus-outline);
+      outline-offset: var(--token-focus-offset-sm);
       border-radius: var(--token-radius-sm);
     }
 
@@ -1242,8 +1245,10 @@
     opacity: 0.7;
     transform: translateY(20px);
     transition:
-      opacity 0.8s var(--token-motion-ease-out) 0.2s,
-      transform 0.8s var(--token-motion-ease-out) 0.2s;
+      opacity var(--token-motion-duration-narrative) var(--token-motion-ease-out)
+        var(--token-motion-delay-short),
+      transform var(--token-motion-duration-narrative) var(--token-motion-ease-out)
+        var(--token-motion-delay-short);
   }
 
   .context-detail {
@@ -1305,10 +1310,10 @@
     color: var(--token-text-primary);
     white-space: nowrap;
     transition:
-      background-color 0.3s var(--token-motion-ease-out),
-      color 0.3s var(--token-motion-ease-out),
-      opacity 0.3s var(--token-motion-ease-out),
-      transform 0.3s var(--token-motion-ease-out);
+      background-color var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      color var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      opacity var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
     opacity: 0;
     transform: translateY(10px);
 
@@ -1319,7 +1324,7 @@
     }
 
     &--animated {
-      animation: tagFadeIn 0.6s var(--token-motion-ease-out) forwards;
+      animation: tagFadeIn var(--token-motion-duration-slow) var(--token-motion-ease-out) forwards;
       animation-delay: var(--testimonial-tag-delay);
     }
 
@@ -1338,8 +1343,8 @@
     opacity: 0;
     pointer-events: none;
     transition:
-      opacity 0.4s var(--token-motion-ease-out),
-      transform 0.4s var(--token-motion-ease-out);
+      opacity var(--token-motion-duration-emphasis) var(--token-motion-ease-out),
+      transform var(--token-motion-duration-emphasis) var(--token-motion-ease-out);
     z-index: 50;
     background: var(--token-surface-glass-stronger);
     backdrop-filter: blur(var(--token-blur-xl));
@@ -1433,13 +1438,13 @@
     inline-size: 2.75rem;
     block-size: 2.75rem;
     border-radius: var(--token-radius-full);
-    border: 2px solid var(--token-border-color-neutral);
+    border: var(--token-border-size-large) solid var(--token-border-color-neutral);
     background: var(--token-surface-color);
     cursor: pointer;
     transition:
-      border-color 0.3s var(--token-motion-ease-out),
-      box-shadow 0.3s var(--token-motion-ease-out),
-      transform 0.3s var(--token-motion-ease-out);
+      border-color var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      box-shadow var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
     padding: 2px;
     position: relative;
     z-index: 1;
@@ -1448,12 +1453,13 @@
     &:hover {
       transform: scale(1.1);
       border-color: var(--token-interactive-color);
-      box-shadow: 0 0 15px var(--token-interactive-glow);
+      box-shadow: 0 0 var(--token-blur-sm) var(--token-interactive-glow);
     }
 
     &--active {
       border-color: var(--token-interactive-color);
-      box-shadow: 0 0 25px var(--token-interactive-glow);
+      box-shadow: 0 0 calc(var(--token-blur-md) + var(--token-space-1))
+        var(--token-interactive-glow);
       transform: scale(1.2);
       background: var(--token-surface-color);
     }
@@ -1464,8 +1470,8 @@
     }
 
     &:focus {
-      outline: 2px solid var(--token-interactive-color);
-      outline-offset: 3px;
+      outline: var(--token-focus-outline);
+      outline-offset: var(--token-focus-offset-md);
     }
 
     @media (min-width: $breakpoint-md) {
@@ -1507,7 +1513,7 @@
     color: var(--token-text-brand);
     white-space: nowrap;
     padding: 0 var(--token-space-fluid-sm);
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    text-shadow: var(--token-shadow-text-subtle);
   }
 
   // Mobile responsive adjustments
@@ -1570,15 +1576,15 @@
     .quote,
     .context-card,
     .nav-item {
-      border-width: 2px;
+      border-width: var(--token-border-size-large);
       border-color: currentColor;
     }
   }
 
   @media print {
     .testimonials {
-      background: white;
-      color: black;
+      background: Canvas;
+      color: CanvasText;
       padding: var(--token-space-fluid-lg);
     }
 
@@ -1598,7 +1604,7 @@
       opacity: 1;
       transform: none;
       border: var(--token-border-default-small);
-      background: white;
+      background: Canvas;
       break-inside: avoid;
     }
   }

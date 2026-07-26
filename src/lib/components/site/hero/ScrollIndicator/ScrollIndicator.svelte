@@ -51,8 +51,8 @@
       transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
 
     &:focus {
-      outline: 2px solid var(--token-interactive-color);
-      outline-offset: 4px;
+      outline: var(--token-focus-outline);
+      outline-offset: var(--token-focus-offset-lg);
       border-radius: var(--token-radius-sm);
     }
 

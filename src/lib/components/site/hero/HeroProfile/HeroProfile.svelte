@@ -29,7 +29,12 @@
     align-items: center;
     text-align: center;
 
-    @include motion.fade-in-up(heroProfileIn, 1.5rem, 1s, 0.3s);
+    @include motion.fade-in-up(
+      heroProfileIn,
+      1.5rem,
+      var(--token-motion-duration-entrance),
+      var(--token-motion-delay-normal)
+    );
 
     @media (min-width: $breakpoint-lg) {
       align-items: flex-start;
@@ -48,7 +53,12 @@
     color: var(--token-text-tertiary);
     margin-block-end: clamp(0.85rem, 2vh, 1.35rem);
 
-    @include motion.fade-in-up(heroGreetingIn, 1.5rem, 0.6s, 0.15s);
+    @include motion.fade-in-up(
+      heroGreetingIn,
+      1.5rem,
+      var(--token-motion-duration-slow),
+      var(--token-motion-delay-tiny)
+    );
   }
 
   .profile-greeting__wave {
@@ -104,7 +114,12 @@
     line-height: var(--token-line-height-snug);
     margin-block-end: 0;
 
-    @include motion.fade-in-up(heroRoleIn, 1.5rem, 0.6s, 0.9s);
+    @include motion.fade-in-up(
+      heroRoleIn,
+      1.5rem,
+      var(--token-motion-duration-slow),
+      var(--token-motion-delay-hero)
+    );
 
     @media (min-width: $breakpoint-md) {
       font-size: clamp(var(--token-font-size-xl), 3vw, var(--token-font-size-2xl));

@@ -120,10 +120,10 @@
     cursor: pointer;
     text-align: start;
     transition:
-      background 0.3s var(--token-motion-ease-out),
-      border-color 0.3s var(--token-motion-ease-out),
-      box-shadow 0.3s var(--token-motion-ease-out),
-      transform 0.3s var(--token-motion-ease-out);
+      background var(--token-motion-delay-normal) var(--token-motion-ease-out),
+      border-color var(--token-motion-delay-normal) var(--token-motion-ease-out),
+      box-shadow var(--token-motion-delay-normal) var(--token-motion-ease-out),
+      transform var(--token-motion-delay-normal) var(--token-motion-ease-out);
 
     &:hover {
       background: var(--token-surface-glass-light);
@@ -131,8 +131,8 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--token-interactive-color);
-      outline-offset: 2px;
+      outline: var(--token-focus-outline);
+      outline-offset: var(--token-focus-offset-sm);
     }
   }
 
@@ -205,7 +205,7 @@
   @media (forced-colors: active) {
     .project-tab-list__item {
       border-color: CanvasText;
-      border-width: 2px;
+      border-width: var(--token-border-size-large);
     }
   }
 </style>

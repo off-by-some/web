@@ -17,7 +17,7 @@
   const getCategoryDelay = (index: number) => `${1.4 + index * 0.1}s`;
 </script>
 
-<HeroPanel {title} titleId="tech-title" area="tech" delay="0.7s">
+<HeroPanel {title} titleId="tech-title" area="tech" delay="var(--token-motion-delay-deferred)">
   <div class="tech-grid">
     {#each techStack as category, index (category.title)}
       <TechCategoryCard

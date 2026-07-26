@@ -432,7 +432,7 @@
       contactFormSlideInUp,
       var(--token-space-fluid-2xl),
       var(--token-motion-duration-slow),
-      0.4s,
+      var(--token-motion-delay-emphasis),
       both,
       0.95
     );
@@ -526,8 +526,8 @@
   .submit__spinner {
     width: var(--token-size-4);
     height: var(--token-size-4);
-    border: 2px solid transparent;
-    border-top: 2px solid var(--token-text-dark);
+    border: var(--token-border-size-large) solid transparent;
+    border-top: var(--token-border-size-large) solid var(--token-text-dark);
     border-radius: var(--token-radius-full);
     animation: spin var(--token-motion-duration-slow) linear infinite;
   }
@@ -618,7 +618,7 @@
   @media print {
     :global(.contact-form-card) {
       border: var(--token-border-default-small);
-      background: white;
+      background: Canvas;
       break-inside: avoid;
       box-shadow: none;
     }

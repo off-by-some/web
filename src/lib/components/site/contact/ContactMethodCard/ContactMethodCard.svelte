@@ -49,10 +49,11 @@
     --card-padding: var(--token-space-fluid-lg);
     --card-radius: var(--token-radius-lg);
     --card-shadow: var(--token-shadow-light);
-    --card-hover-shadow: var(--token-shadow-default), 0 0 20px var(--token-shadow-glow-subtle);
+    --card-hover-shadow:
+      var(--token-shadow-default), 0 0 var(--token-blur-md) var(--token-shadow-glow-subtle);
     --card-hover-transform: translateY(-3px) scale(1.02);
     --card-active-transform: translateY(-1px) scale(1);
-    --card-focus-outline: 3px solid var(--token-interactive-color);
+    --card-focus-outline: var(--token-border-size-accent) solid var(--token-interactive-color);
 
     align-items: center;
     display: flex;
@@ -88,7 +89,7 @@
     --icon-tile-background: var(--token-surface-glass-medium);
     --icon-tile-radius: var(--token-radius-lg);
     --icon-tile-shadow: var(--token-shadow-light);
-    --icon-tile-z-index: 2;
+    --icon-tile-z-index: var(--token-z-raised);
     --icon-tile-image-filter: var(--token-icon-filter, none);
     --icon-tile-overflow: hidden;
 
@@ -102,7 +103,7 @@
     flex: 1;
     min-inline-size: 0;
     position: relative;
-    z-index: 2;
+    z-index: var(--token-z-raised);
   }
 
   .method__label {

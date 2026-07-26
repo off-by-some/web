@@ -128,13 +128,16 @@
       background: var(--input-focus-background, var(--token-surface-glass-medium));
       box-shadow:
         var(--token-shadow-focus),
-        0 0 20px var(--token-shadow-glow-subtle);
+        0 0 var(--token-blur-md) var(--token-shadow-glow-subtle);
       transform: var(--input-focus-transform, translateY(-2px));
     }
 
     &:focus-visible {
-      outline: var(--input-focus-outline, 3px solid var(--token-interactive-color));
-      outline-offset: var(--input-focus-outline-offset, 2px);
+      outline: var(
+        --input-focus-outline,
+        var(--token-border-size-accent) solid var(--token-interactive-color)
+      );
+      outline-offset: var(--input-focus-outline-offset, var(--token-focus-offset-sm));
     }
 
     &:hover:not(:focus):not(:disabled) {
@@ -162,19 +165,22 @@
     &--success {
       border-color: var(--input-success-border-color, var(--token-status-success-border));
       background: var(--input-success-background, var(--token-status-success-bg));
-      box-shadow: 0 0 0 2px var(--input-success-glow, var(--token-status-success-glow));
+      box-shadow: 0 0 0 var(--token-border-size-large)
+        var(--input-success-glow, var(--token-status-success-glow));
     }
 
     &--warning {
       border-color: var(--input-warning-border-color, var(--token-status-warning-border));
       background: var(--input-warning-background, var(--token-status-warning-bg));
-      box-shadow: 0 0 0 2px var(--input-warning-glow, var(--token-status-warning-border));
+      box-shadow: 0 0 0 var(--token-border-size-large)
+        var(--input-warning-glow, var(--token-status-warning-border));
     }
 
     &--error {
       border-color: var(--input-error-border-color, var(--token-status-danger-border));
       background: var(--input-error-background, var(--token-status-danger-bg));
-      box-shadow: 0 0 0 2px var(--input-error-glow, var(--token-status-danger-glow));
+      box-shadow: 0 0 0 var(--token-border-size-large)
+        var(--input-error-glow, var(--token-status-danger-glow));
     }
 
     &--textarea {

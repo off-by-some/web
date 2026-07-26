@@ -20,7 +20,7 @@
   .section-wrapper {
     @include root.component-root;
 
-    max-inline-size: 90vw;
+    max-inline-size: var(--section-max-inline-size, 90vw);
     position: relative;
     inline-size: 100%;
     margin-inline: auto;

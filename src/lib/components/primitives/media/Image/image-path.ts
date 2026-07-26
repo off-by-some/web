@@ -95,6 +95,7 @@ const svgModules = import.meta.glob('../../../../../../assets/images/**/*.svg', 
 const PRIMARY_FORMAT = 'jpeg';
 const VECTOR_EXTENSIONS = ['.svg'];
 const isStorybook = Boolean((import.meta.env as ImportMetaEnvWithStorybook).STORYBOOK);
+const storybookBaseUrl = import.meta.env.BASE_URL || '/';
 
 // Image cache for better performance with priority loading
 const imageCache = new Map<string, Promise<PictureSourceSet | undefined>>();
@@ -111,6 +112,13 @@ function prefix(url: string): string {
   if (isExternalOrDataUrl(url)) return url;
   if (url.startsWith('/')) return withBasePath(url);
   return url;
+}
+
+function prefixStorybookAsset(url: string): string {
+  if (isExternalOrDataUrl(url)) return url;
+
+  const normalizedBase = storybookBaseUrl.endsWith('/') ? storybookBaseUrl : `${storybookBaseUrl}/`;
+  return `${normalizedBase}${url.replace(/^\/+/, '')}`;
 }
 
 function prefixSrcset(srcset: string | undefined): string | undefined {
@@ -162,7 +170,7 @@ function loadStaticCatalogImage(name: string): PictureSourceSet | undefined {
   if (!name) return undefined;
 
   return {
-    src: prefix(`/assets/images/${name}`),
+    src: prefixStorybookAsset(`/assets/images/${name}`),
     isVector: isVectorImage(name),
   };
 }

@@ -255,7 +255,12 @@
     gap: var(--token-space-fluid-xl);
     overflow: visible;
 
-    @include motion.fade-in-up(projectsSectionEnter, 30px, 1s, 0.2s);
+    @include motion.fade-in-up(
+      projectsSectionEnter,
+      30px,
+      var(--token-motion-duration-entrance),
+      var(--token-motion-delay-short)
+    );
 
     @media (min-width: $breakpoint-lg) {
       grid-template-columns: minmax(16rem, 24%) minmax(0, 1fr);
@@ -284,8 +289,8 @@
     min-inline-size: 0;
 
     &:focus-visible {
-      outline: 2px solid var(--token-interactive-color);
-      outline-offset: 4px;
+      outline: var(--token-focus-outline);
+      outline-offset: var(--token-focus-offset-lg);
       border-radius: var(--token-radius-xl);
     }
   }
@@ -322,8 +327,8 @@
   @media print {
     .projects {
       padding: var(--token-space-fluid-lg);
-      background: white;
-      color: black;
+      background: Canvas;
+      color: CanvasText;
     }
 
     .projects__nav,

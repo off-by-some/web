@@ -11,7 +11,13 @@
     children?: Snippet;
   };
 
-  let { title, titleId, area, delay = '0.5s', children }: Props = $props();
+  let {
+    title,
+    titleId,
+    area,
+    delay = 'var(--token-motion-delay-panel)',
+    children,
+  }: Props = $props();
 </script>
 
 <div class="hero-panel-shell">
@@ -47,7 +53,12 @@
 
     transform-origin: top left;
 
-    @include motion.fade-in-up(heroPanelIn, 1.5rem, 1s, var(--hero-panel-delay));
+    @include motion.fade-in-up(
+      heroPanelIn,
+      1.5rem,
+      var(--token-motion-duration-entrance),
+      var(--hero-panel-delay)
+    );
 
     @media (min-width: $breakpoint-md) {
       --card-padding: var(--token-space-fluid-md);
@@ -62,7 +73,7 @@
 
   @media (prefers-contrast: high) {
     :global(.hero-panel) {
-      border-width: 2px;
+      border-width: var(--token-border-size-large);
       border-color: currentColor;
     }
   }

@@ -90,7 +90,12 @@
     gap: clamp(0.95rem, 2vh, 1.55rem);
     flex-direction: column;
 
-    @include motion.fade-in-up(heroActionsIn, 1.5rem, 0.6s, 0.8s);
+    @include motion.fade-in-up(
+      heroActionsIn,
+      1.5rem,
+      var(--token-motion-duration-slow),
+      var(--token-motion-delay-narrative)
+    );
 
     @media (min-width: $breakpoint-lg) {
       align-items: flex-start;
@@ -123,8 +128,8 @@
     font-weight: var(--token-font-weight-semibold);
     text-decoration: none;
     transition:
-      color 0.3s var(--token-motion-ease-out),
-      gap 0.3s var(--token-motion-ease-out);
+      color var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      gap var(--token-motion-duration-normal) var(--token-motion-ease-out);
 
     &:hover,
     &:focus-visible {
@@ -133,8 +138,8 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--explore-link-color);
-      outline-offset: 4px;
+      outline: var(--token-border-size-large) solid var(--explore-link-color);
+      outline-offset: var(--token-focus-offset-lg);
       border-radius: var(--token-radius-xs);
     }
   }

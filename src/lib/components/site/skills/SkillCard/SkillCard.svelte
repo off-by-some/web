@@ -18,7 +18,12 @@
     onEngagementChangeRequested?: (active: boolean) => void;
   };
 
-  let { skill, delay = '0s', hovered = false, onEngagementChangeRequested }: Props = $props();
+  let {
+    skill,
+    delay = 'var(--token-motion-delay-none)',
+    hovered = false,
+    onEngagementChangeRequested,
+  }: Props = $props();
 
   const toTitleCase = (str: string): string =>
     str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
@@ -68,7 +73,13 @@
   @use 'lib/components/primitives/tone' as tone;
 
   .skill-card {
-    @include motion.fade-in-up(skillCardFadeIn, 20px, 0.6s, var(--skill-card-delay), forwards);
+    @include motion.fade-in-up(
+      skillCardFadeIn,
+      20px,
+      var(--token-motion-duration-slow),
+      var(--skill-card-delay),
+      forwards
+    );
   }
 
   :global(.skill-card__button) {
@@ -145,7 +156,7 @@
     inset-block-start: -4px;
     inset-inline-end: -4px;
     --tone-dot-size: 1rem;
-    --tone-dot-border: 2px solid var(--token-surface-color);
+    --tone-dot-border: var(--token-border-size-large) solid var(--token-surface-color);
 
     @media (min-width: $breakpoint-md) {
       --tone-dot-size: 1.25rem;
@@ -197,9 +208,9 @@
     border: var(--token-border-default-small);
     backdrop-filter: blur(var(--token-blur-sm));
     transition:
-      background-color 0.3s var(--token-motion-ease-out),
-      border-color 0.3s var(--token-motion-ease-out),
-      color 0.3s var(--token-motion-ease-out);
+      background-color var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      border-color var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      color var(--token-motion-duration-normal) var(--token-motion-ease-out);
 
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-font-size-sm);
@@ -244,9 +255,9 @@
     opacity: 0;
     transform: translateY(8px);
     transition:
-      color 0.3s var(--token-motion-ease-out),
-      opacity 0.3s var(--token-motion-ease-out),
-      transform 0.3s var(--token-motion-ease-out);
+      color var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      opacity var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
 
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-font-size-sm);

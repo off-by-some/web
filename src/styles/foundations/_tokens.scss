@@ -276,6 +276,7 @@ $theme-defaults: (
       small: 1px,
       medium: 1.5px,
       large: 2px,
+      accent: 3px,
     ),
 
     default: (
@@ -398,6 +399,19 @@ $theme-defaults: (
       '0 0 0 1px #{themes.reference("shadow.interactive")}',
       '#{themes.reference("shadow.elevated")}',
       '0 0 30px #{themes.reference("interactive.color", $alpha: 40%)}',
+    ),
+
+    text: (
+      subtle: '0 1px 2px #{themes.reference("shadow.color", $alpha: 10%)}',
+    ),
+  ),
+
+  focus: (
+    outline: '#{themes.reference("border.size.large")} solid #{themes.reference("interactive.color")}',
+    offset: (
+      sm: 2px,
+      md: 3px,
+      lg: 4px,
     ),
   ),
 
@@ -612,6 +626,11 @@ $theme-defaults: (
       'sm': clamp(6.5rem, 20vw, 11rem),
       'lg': clamp(8.5rem, 14vw, 15.25rem),
     ),
+    'icon-tile': (
+      'min': 2.75rem,
+      'fluid': 6vw,
+      'max': 3.75rem,
+    ),
   ),
 
   blur: (
@@ -639,6 +658,9 @@ $theme-defaults: (
     'behind': -1,
     'base': 0,
     'raised': 10,
+    'active': 20,
+    'overlay': 50,
+    'popover': 1000,
   ),
 
   container: (
@@ -655,14 +677,32 @@ $theme-defaults: (
       'normal': 300ms,
       'emphasis': 400ms,
       'slow': 600ms,
+      'narrative': 800ms,
+      'entrance': 1s,
+      'hero': 1200ms,
       'ornament': 1800ms,
+      'counter': 2000ms,
       'pulse': 2s,
       'gesture': 2500ms,
+      'background': 4s,
       'ambient': 8s,
     ),
     'ease': (
       'out': cubic-bezier(0.4, 0, 0.2, 1),
       'bounce': cubic-bezier(0.68, -0.55, 0.265, 1.55),
+    ),
+    'delay': (
+      'none': 0s,
+      'tiny': 150ms,
+      'short': 200ms,
+      'normal': 300ms,
+      'emphasis': 400ms,
+      'panel': 500ms,
+      'slow': 600ms,
+      'deferred': 700ms,
+      'narrative': 800ms,
+      'hero': 900ms,
+      'background': 1s,
     ),
   ),
 );

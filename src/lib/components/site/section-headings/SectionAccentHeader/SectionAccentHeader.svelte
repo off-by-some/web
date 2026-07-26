@@ -33,7 +33,7 @@
 
   .section-accent {
     inline-size: var(--token-space-fluid-md);
-    block-size: 2px;
+    block-size: var(--section-accent-thickness, var(--token-border-size-large));
     background: var(--token-emphasis-color);
     border-radius: var(--token-radius-full);
   }

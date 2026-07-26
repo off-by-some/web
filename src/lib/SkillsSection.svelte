@@ -307,7 +307,8 @@
     flex-wrap: wrap;
     gap: var(--token-space-fluid-sm);
     margin-block-end: var(--token-space-fluid-5xl);
-    animation: fadeInUp 1s var(--token-motion-ease-out) 0.2s both;
+    animation: fadeInUp var(--token-motion-duration-entrance) var(--token-motion-ease-out)
+      var(--token-motion-delay-short) both;
 
     @media (min-width: $breakpoint-md) {
       gap: var(--token-space-fluid-md);
@@ -324,7 +325,8 @@
     grid-template-columns: repeat(2, 1fr);
     gap: var(--token-space-fluid-lg);
     margin-block-end: var(--token-space-fluid-5xl);
-    animation: fadeInUp 1s var(--token-motion-ease-out) 0.4s both;
+    animation: fadeInUp var(--token-motion-duration-entrance) var(--token-motion-ease-out)
+      var(--token-motion-delay-emphasis) both;
 
     @media (min-width: $breakpoint-sm) {
       grid-template-columns: repeat(3, 1fr);
@@ -345,7 +347,8 @@
   // Legend
   .legend {
     text-align: center;
-    animation: fadeInUp 1s var(--token-motion-ease-out) 0.6s both;
+    animation: fadeInUp var(--token-motion-duration-entrance) var(--token-motion-ease-out)
+      var(--token-motion-delay-slow) both;
   }
 
   .legend-items {
@@ -367,8 +370,8 @@
     font-weight: var(--token-font-weight-medium);
     color: var(--token-text-tertiary);
     transition:
-      color 0.3s var(--token-motion-ease-out),
-      transform 0.3s var(--token-motion-ease-out);
+      color var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
     padding: var(--token-space-fluid-xs) var(--token-space-fluid-sm);
     border-radius: var(--token-radius-sm);
 
@@ -441,8 +444,8 @@
 
   @media print {
     .skills {
-      background: white;
-      color: black;
+      background: Canvas;
+      color: CanvasText;
       padding: var(--token-space-fluid-lg);
     }
 

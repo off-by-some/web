@@ -13,7 +13,7 @@
     text = 'Available for new opportunities',
     className = '',
     entrance = false,
-    delay = '0s',
+    delay = 'var(--token-motion-delay-none)',
   }: Props = $props();
 
   const classes = $derived(
@@ -47,17 +47,22 @@
   }
 
   :global(.status-pill--entrance) {
-    @include motion.fade-in-up(statusPillIn, 30px, 0.6s, var(--status-pill-delay));
+    @include motion.fade-in-up(
+      statusPillIn,
+      30px,
+      var(--token-motion-duration-slow),
+      var(--status-pill-delay)
+    );
   }
 
   :global(.status-pill__indicator) {
     --tone-dot-size: var(--token-size-3);
-    --tone-dot-glow-size: 10px;
+    --tone-dot-glow-size: var(--token-blur-sm);
   }
 
   :global(.status-pill:hover .status-pill__indicator) {
     transform: scale(1.2);
-    box-shadow: 0 0 var(--token-space-4) var(--token-attention-glow);
+    box-shadow: 0 0 var(--token-blur-sm) var(--token-attention-glow);
   }
 
   .status-pill__text {

@@ -100,8 +100,8 @@
 
     &:focus,
     &:focus-visible {
-      outline: 2px solid var(--token-interactive-color);
-      outline-offset: var(--button-focus-outline-offset, 2px);
+      outline: var(--token-focus-outline);
+      outline-offset: var(--button-focus-outline-offset, var(--token-focus-offset-sm));
     }
 
     &:disabled,
@@ -132,7 +132,7 @@
     box-shadow: var(
       --button-primary-shadow,
       var(--token-shadow-elevated),
-      0 0 20px var(--token-interactive-glow)
+      0 0 var(--token-blur-md) var(--token-interactive-glow)
     );
 
     &:hover:not(:disabled):not([aria-disabled='true']) {
@@ -140,7 +140,7 @@
       box-shadow: var(
         --button-primary-hover-shadow,
         var(--token-shadow-elevated),
-        0 0 30px var(--token-interactive-glow)
+        0 0 calc(var(--token-blur-md) + var(--token-blur-sm)) var(--token-interactive-glow)
       );
 
       &::before {
