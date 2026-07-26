@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { readdirSync, statSync } from 'fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'fs';
 import { join, extname } from 'path';
 import { screenshotHTML } from './screenshot.js';
 
@@ -34,6 +34,33 @@ function findFirstHtmlFile(dirPath) {
 }
 
 /**
+ * Find the Lighthouse report that LHCI marked as representative.
+ * Falls back to the first report for directories without an LHCI manifest.
+ * @param {string} dirPath - Directory path to search
+ * @returns {string|null} Path to representative HTML file, or null if none found
+ */
+function findReportHtmlFile(dirPath) {
+  const manifestPath = join(dirPath, 'manifest.json');
+
+  if (existsSync(manifestPath)) {
+    try {
+      const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+      const reports = Array.isArray(manifest) ? manifest : [];
+      const representative = reports.find((entry) => entry?.isRepresentativeRun === true);
+      const htmlPath = representative?.htmlPath;
+
+      if (typeof htmlPath === 'string' && existsSync(htmlPath)) {
+        return htmlPath;
+      }
+    } catch (error) {
+      console.warn(`⚠️  Could not read LHCI manifest in ${dirPath}:`, error.message);
+    }
+  }
+
+  return findFirstHtmlFile(dirPath);
+}
+
+/**
  * Screenshot reports from bundle-stats and lighthouseci directories
  */
 async function screenshotReports() {
@@ -57,7 +84,7 @@ async function screenshotReports() {
   for (const report of reports) {
     console.log(`🔍 Looking for HTML files in ${report.dir}...`);
 
-    const htmlFile = findFirstHtmlFile(report.dir);
+    const htmlFile = findReportHtmlFile(report.dir);
 
     if (!htmlFile) {
       console.log(`⚠️  No HTML files found in ${report.dir}\n`);
