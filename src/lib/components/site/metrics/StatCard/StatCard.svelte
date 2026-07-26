@@ -115,7 +115,6 @@
     flex-direction: column;
     justify-content: center;
     text-align: center;
-    contain: layout paint;
 
     @include motion.fade-in-up(statReveal, 20px, 0.8s, 0s, both, 0.95);
 
