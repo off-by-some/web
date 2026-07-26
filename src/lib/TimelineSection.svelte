@@ -45,6 +45,8 @@
   let announcementText = $state('');
   let showFloatingNav = $state(false);
   let isDesktop = $state(false);
+  let scrollFrame: number | undefined;
+  let progressFrame: number | undefined;
 
   const progressValue = $derived(
     experiences.length > 0 ? ((activeIndex + 1) / experiences.length) * 100 : 0,
@@ -55,7 +57,7 @@
     isDesktop = window.innerWidth >= 1376; // $breakpoint-lg
 
     // Update floating nav visibility when switching views
-    updateFloatingNavVisibility();
+    scheduleScrollLayout();
   };
 
   // Navigation
@@ -99,8 +101,10 @@
   const updateProgress = () => {
     if (!progressElement) return;
 
-    requestAnimationFrame(() => {
+    if (progressFrame) cancelAnimationFrame(progressFrame);
+    progressFrame = requestAnimationFrame(() => {
       if (progressElement) progressElement.style.transform = `scaleY(${progressValue / 100})`;
+      progressFrame = undefined;
     });
   };
 
@@ -118,7 +122,7 @@
   };
 
   // Scroll detection for active item (works on both desktop and mobile)
-  const handleScroll = () => {
+  const updateScrollLayout = () => {
     // Only handle scroll-based active item detection if timeline element exists
     if (!timelineElement) return;
 
@@ -146,6 +150,15 @@
     }
   };
 
+  const scheduleScrollLayout = () => {
+    if (scrollFrame) return;
+
+    scrollFrame = requestAnimationFrame(() => {
+      scrollFrame = undefined;
+      updateScrollLayout();
+    });
+  };
+
   // Keyboard navigation
   const handleKeydown = (event: KeyboardEvent) => {
     if (!timelineElement?.contains(event.target as Node)) return;
@@ -171,10 +184,10 @@
     const scrollOptions = { passive: true };
 
     // Add scroll listener for both desktop and mobile
-    window.addEventListener('scroll', handleScroll, scrollOptions);
+    window.addEventListener('scroll', scheduleScrollLayout, scrollOptions);
 
     // Update floating nav visibility on mount
-    updateFloatingNavVisibility();
+    scheduleScrollLayout();
 
     window.addEventListener('keydown', handleKeydown);
     window.addEventListener('resize', checkDesktop);
@@ -182,12 +195,14 @@
     checkDesktop(); // Set initial desktop state
 
     // Initial scroll check to set active index
-    setTimeout(handleScroll, 100);
+    requestAnimationFrame(scheduleScrollLayout);
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', scheduleScrollLayout);
       window.removeEventListener('keydown', handleKeydown);
       window.removeEventListener('resize', checkDesktop);
+      if (scrollFrame) cancelAnimationFrame(scrollFrame);
+      if (progressFrame) cancelAnimationFrame(progressFrame);
     };
   });
 </script>

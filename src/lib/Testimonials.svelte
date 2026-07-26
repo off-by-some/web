@@ -47,6 +47,7 @@
   let sectionElement: HTMLElement | undefined = $state();
   let announcementText = $state('');
   let showFloatingNav = $state(false);
+  let scrollFrame: number | undefined;
 
   // Reactive values
   const activeTestimonial = $derived(testimonials[activeIndex]);
@@ -109,7 +110,7 @@
   };
 
   // Floating navigation visibility - only show on mobile
-  const handleScroll = () => {
+  const updateScrollLayout = () => {
     if (!sectionElement) return;
 
     const rect = sectionElement.getBoundingClientRect();
@@ -122,16 +123,26 @@
     showFloatingNav = contentStart < viewportHeight && contentEnd > 0;
   };
 
+  const scheduleScrollLayout = () => {
+    if (scrollFrame) return;
+
+    scrollFrame = requestAnimationFrame(() => {
+      scrollFrame = undefined;
+      updateScrollLayout();
+    });
+  };
+
   onMount(() => {
     window.addEventListener('keydown', handleKeydown);
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('scroll', scheduleScrollLayout, { passive: true });
 
     // Initial scroll check
-    setTimeout(handleScroll, 100);
+    requestAnimationFrame(scheduleScrollLayout);
 
     return () => {
       window.removeEventListener('keydown', handleKeydown);
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', scheduleScrollLayout);
+      if (scrollFrame) cancelAnimationFrame(scrollFrame);
     };
   });
 </script>

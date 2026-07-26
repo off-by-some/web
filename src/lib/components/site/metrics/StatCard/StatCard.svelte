@@ -16,6 +16,7 @@
   let displayedCount = $state('0');
   let lastCount = $state<string | undefined>();
   let animationFrame: number | undefined;
+  let lastDisplayUpdate = 0;
 
   const normalizeLabel = (value: string) =>
     value
@@ -49,18 +50,28 @@
 
     const [, numStr, suffix] = match;
     const num = parseFloat(numStr);
-    const decimalPlaces = numStr.includes('.') && !isNaN(num) ? 2 : 0;
-    const duration = 2000;
+    const decimalPlaces = numStr.includes('.') && !Number.isNaN(num) ? 2 : 0;
+    const duration = 900;
+    const updateInterval = 50;
     const startTime = performance.now();
 
     hasAnimated = true;
+    lastDisplayUpdate = 0;
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      displayedCount = count;
+      return;
+    }
 
     const updateCounter = (currentTime: number) => {
       const progress = Math.min((currentTime - startTime) / duration, 1);
       const easedProgress = 1 - Math.pow(1 - progress, 3);
       const currentValue = easedProgress * num;
 
-      displayedCount = currentValue.toFixed(decimalPlaces) + suffix;
+      if (progress === 1 || currentTime - lastDisplayUpdate >= updateInterval) {
+        displayedCount = currentValue.toFixed(decimalPlaces) + suffix;
+        lastDisplayUpdate = currentTime;
+      }
 
       if (progress < 1) {
         animationFrame = requestAnimationFrame(updateCounter);
@@ -104,6 +115,7 @@
     flex-direction: column;
     justify-content: center;
     text-align: center;
+    contain: layout paint;
 
     @include motion.fade-in-up(statReveal, 20px, 0.8s, 0s, both, 0.95);
 
@@ -141,6 +153,8 @@
     margin-bottom: var(--token-space-2);
     color: var(--token-text-emphasis-heading);
     letter-spacing: var(--token-letter-spacing-tight);
+    font-variant-numeric: tabular-nums;
+    min-inline-size: 4ch;
     transition: all 0.3s var(--token-motion-ease-out);
 
     @media (min-width: $breakpoint-md) {
