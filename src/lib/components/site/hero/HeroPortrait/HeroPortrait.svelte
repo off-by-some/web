@@ -14,6 +14,7 @@
   let { avatarSrc, avatarAlt, annotations = [] }: Props = $props();
 
   const annotationArrows = [systemsArrow, teamArrow, productArrow];
+  const annotationSlots = ['systems', 'team', 'product'];
 </script>
 
 <div class="hero-portrait">
@@ -36,7 +37,7 @@
     {#if annotations.length}
       <ul class="hero-portrait__annotations" aria-label="Highlights">
         {#each annotations as annotation, index (annotation.label)}
-          <li class="annotation">
+          <li class="annotation annotation--{annotationSlots[index] ?? 'default'}">
             <span
               class="annotation__connector"
               style:--annotation-arrow={`url("${annotationArrows[index % annotationArrows.length]}")`}
@@ -57,7 +58,7 @@
   .hero-portrait {
     display: flex;
     justify-content: center;
-    width: 100%;
+    inline-size: 100%;
 
     @include motion.fade-in-up(heroPortraitIn, 1.5rem, 1s, 0.3s);
   }
@@ -67,9 +68,9 @@
 
     position: relative;
     isolation: isolate;
-    width: var(--portrait-w);
-    max-width: 100%;
-    min-height: calc(var(--portrait-w) * 1.18);
+    inline-size: var(--portrait-w);
+    max-inline-size: 100%;
+    min-block-size: calc(var(--portrait-w) * 1.18);
     overflow: visible;
 
     @media (min-width: $breakpoint-md) {
@@ -78,7 +79,7 @@
 
     @media (min-width: $breakpoint-lg) {
       --portrait-w: min(100%, clamp(48rem, 47vw, 66rem));
-      min-height: calc(var(--portrait-w) * 1.08);
+      min-block-size: calc(var(--portrait-w) * 1.08);
     }
 
     @media (min-width: $breakpoint-xlg) {
@@ -88,13 +89,13 @@
 
   .hero-portrait__stage {
     position: relative;
-    width: min(100%, calc(var(--portrait-w) * 0.9));
+    inline-size: min(100%, calc(var(--portrait-w) * 0.9));
     aspect-ratio: 645 / 819;
     margin-inline: auto;
     isolation: isolate;
 
     @media (min-width: $breakpoint-lg) {
-      width: calc(var(--portrait-w) * 0.84);
+      inline-size: calc(var(--portrait-w) * 0.84);
       margin-inline: -1.75rem auto;
       transform: translateY(1.35rem);
     }
@@ -103,10 +104,10 @@
   .hero-portrait__halo {
     position: absolute;
     z-index: 0;
-    width: 90%;
+    inline-size: 90%;
     aspect-ratio: 1;
     inset-inline-start: 50%;
-    top: 8%;
+    inset-block-start: 8%;
     transform: translateX(-39%);
     border-radius: var(--token-radius-full);
     background: conic-gradient(
@@ -176,8 +177,8 @@
       position: absolute;
       z-index: 2;
       inset-inline: -6%;
-      bottom: -1%;
-      height: 15%;
+      inset-block-end: -1%;
+      block-size: 15%;
       pointer-events: none;
       background: linear-gradient(
         to bottom,
@@ -194,8 +195,8 @@
     position: absolute;
     z-index: 1;
     inset: 0;
-    width: 100%;
-    height: 100%;
+    inline-size: 100%;
+    block-size: 100%;
     object-fit: contain;
     object-position: bottom center;
     transform: scale(1.2);
@@ -223,28 +224,28 @@
 
     position: absolute;
     inset-inline-start: var(--annotation-x);
-    top: var(--annotation-y);
+    inset-block-start: var(--annotation-y);
     display: grid;
     grid-template-columns: 8.75rem max-content;
     align-items: center;
     gap: clamp(0.35rem, 0.6vw, 0.65rem);
     color: var(--token-text-secondary);
     opacity: 0.9;
+  }
 
-    &:nth-child(2) {
-      --annotation-x: 61.5%;
-      --annotation-y: 38.5%;
-    }
+  .annotation--team {
+    --annotation-x: 61.5%;
+    --annotation-y: 38.5%;
+  }
 
-    &:nth-child(3) {
-      --annotation-x: 59.5%;
-      --annotation-y: 62%;
-    }
+  .annotation--product {
+    --annotation-x: 59.5%;
+    --annotation-y: 62%;
   }
 
   .annotation__connector {
     display: block;
-    width: 8.75rem;
+    inline-size: 8.75rem;
     aspect-ratio: 240 / 128;
     flex-shrink: 0;
     background: currentColor;

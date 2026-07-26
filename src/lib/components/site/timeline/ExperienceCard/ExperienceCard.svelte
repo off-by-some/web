@@ -18,21 +18,21 @@
   type Props = {
     experience: Experience;
     index: number;
+    delay?: string;
     active?: boolean;
     expanded?: boolean;
-    clickable?: boolean;
-    onSelect?: () => void;
-    onToggle?: () => void;
+    detailsClickable?: boolean;
+    onDetailsToggleRequested?: () => void;
   };
 
   let {
     experience,
     index,
+    delay = '0s',
     active = false,
     expanded = false,
-    clickable = false,
-    onSelect,
-    onToggle,
+    detailsClickable = false,
+    onDetailsToggleRequested,
   }: Props = $props();
 
   function parseMarkdownToSegments(
@@ -68,10 +68,17 @@
     return segments;
   }
 
-  const handleCardClick = () => onSelect?.();
+  const experienceDetailsId = $derived(
+    `experience-${experience.company}-${experience.dateValue}-details`
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, ''),
+  );
+
+  const handleDetailsRequest = () => onDetailsToggleRequested?.();
   const handleExpandClick = (event: MouseEvent) => {
     event.stopPropagation();
-    onToggle?.();
+    onDetailsToggleRequested?.();
   };
   const resolveHref = (href = ''): string => withBasePath(href);
 </script>
@@ -84,7 +91,7 @@
   class:timeline-item--right={index % 2 === 1}
   data-timeline-index={index}
   data-company={experience.company}
-  style="animation-delay: {index * 0.1}s"
+  style="--timeline-item-delay: {delay};"
 >
   <div class="timeline-marker" aria-hidden="true">
     <div class="timeline-dot"></div>
@@ -92,9 +99,9 @@
   </div>
 
   <Card
-    className="experience-card {clickable ? 'experience-card--clickable' : ''}"
-    onclick={clickable ? handleCardClick : undefined}
-    aria-label={clickable
+    className="experience-card {detailsClickable ? 'experience-card--clickable' : ''}"
+    onclick={detailsClickable ? handleDetailsRequest : undefined}
+    aria-label={detailsClickable
       ? `View details for ${experience.title} at ${experience.company}`
       : undefined}
   >
@@ -111,7 +118,7 @@
         class="expand-button"
         onclick={handleExpandClick}
         aria-expanded={expanded}
-        aria-controls="experience-{index}-details"
+        aria-controls={experienceDetailsId}
         aria-label="{expanded ? 'Less' : 'More'} - {expanded
           ? 'hide'
           : 'show'} details for {experience.title}"
@@ -151,14 +158,14 @@
     <div
       class="card-details"
       class:card-details--expanded={expanded}
-      id="experience-{index}-details"
+      id={experienceDetailsId}
       aria-hidden={!expanded}
       inert={!expanded || undefined}
     >
       <Card className="highlights">
         <h4 class="highlights__title">Key Achievements</h4>
         <ul class="highlights__list">
-          {#each experience.highlights as highlight, highlightIndex (highlightIndex)}
+          {#each experience.highlights as highlight (highlight)}
             <li class="highlights__item">
               {#each parseMarkdownToSegments(highlight) as segment, j (segment.type + j)}
                 {#if segment.type === 'link'}
@@ -180,7 +187,7 @@
       </Card>
 
       <div class="skills">
-        {#each experience.skills as skill, skillIndex (skillIndex)}
+        {#each experience.skills as skill (skill)}
           <span class="skill">{skill}</span>
         {/each}
       </div>
@@ -194,10 +201,16 @@
 
   .timeline-item {
     position: relative;
-    margin-bottom: var(--token-space-fluid-4xl);
+    margin-block-end: var(--token-space-fluid-4xl);
     padding-inline-start: var(--token-space-fluid-5xl);
 
-    @include motion.fade-in-up(timelineItemFadeIn, 40px, 0.8s, 0s, forwards);
+    @include motion.fade-in-up(
+      timelineItemFadeIn,
+      40px,
+      0.8s,
+      var(--timeline-item-delay),
+      forwards
+    );
 
     @media (min-width: $breakpoint-md) {
       padding-inline-start: var(--token-space-fluid-6xl);
@@ -208,16 +221,16 @@
       grid-template-columns: 1fr auto 1fr;
       gap: var(--token-space-fluid-2xl);
       padding-inline-start: 0;
-      margin-bottom: var(--token-space-fluid-5xl);
+      margin-block-end: var(--token-space-fluid-5xl);
 
       &--left :global(.experience-card) {
         grid-column: 1;
         justify-self: end;
-        margin-top: -5rem;
+        margin-block-start: -5rem;
       }
 
       &--right :global(.experience-card) {
-        margin-top: 2rem;
+        margin-block-start: 2rem;
         grid-column: 3;
         justify-self: start;
       }
@@ -227,7 +240,7 @@
   .timeline-marker {
     position: absolute;
     inset-inline-start: 0;
-    top: var(--token-space-fluid-xl);
+    inset-block-start: var(--token-space-fluid-xl);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -241,13 +254,13 @@
       grid-column: 2;
       position: relative;
       inset-inline-start: auto;
-      top: var(--token-space-fluid-2xl);
+      inset-block-start: var(--token-space-fluid-2xl);
     }
   }
 
   .timeline-dot {
-    width: 1rem;
-    height: 1rem;
+    inline-size: 1rem;
+    block-size: 1rem;
     border-radius: var(--token-radius-full);
     background: var(--token-surface-glass-strong);
     border: 2px solid var(--token-border-color-default);
@@ -261,13 +274,13 @@
     backdrop-filter: blur(var(--token-blur-sm));
 
     @media (min-width: $breakpoint-md) {
-      width: 1.25rem;
-      height: 1.25rem;
+      inline-size: 1.25rem;
+      block-size: 1.25rem;
     }
 
     @media (min-width: $breakpoint-lg) {
-      width: 1.5rem;
-      height: 1.5rem;
+      inline-size: 1.5rem;
+      block-size: 1.5rem;
     }
 
     .timeline-item--active & {
@@ -280,7 +293,7 @@
   }
 
   .timeline-date {
-    margin-top: var(--token-space-fluid-sm);
+    margin-block-start: var(--token-space-fluid-sm);
     font-size: var(--token-font-size-xs);
     font-weight: var(--token-font-weight-semibold);
     color: var(--token-text-tertiary);
@@ -303,7 +316,7 @@
     --card-hover-transform: translateY(-4px) scale(1.01);
     --card-hover-iridescent-opacity: 0.6;
 
-    width: 100%;
+    inline-size: 100%;
     text-align: left;
 
     @media (min-width: $breakpoint-md) {
@@ -340,7 +353,7 @@
     display: flex;
     align-items: flex-start;
     gap: var(--token-space-fluid-lg);
-    margin-bottom: var(--token-space-fluid-lg);
+    margin-block-end: var(--token-space-fluid-lg);
     position: relative;
     z-index: 1;
 
@@ -369,14 +382,14 @@
 
   .card-meta {
     flex: 1;
-    min-width: 0;
+    min-inline-size: 0;
   }
 
   .card-title {
     font-size: var(--token-font-size-lg);
     font-weight: var(--token-font-weight-semibold);
     color: var(--token-text-primary);
-    margin-bottom: var(--token-space-fluid-xs);
+    margin-block-end: var(--token-space-fluid-xs);
     line-height: var(--token-line-height-snug);
 
     @media (min-width: $breakpoint-md) {
@@ -392,7 +405,7 @@
     font-size: var(--token-font-size-base);
     font-weight: var(--token-font-weight-medium);
     color: var(--token-text-emphasis-default);
-    margin-bottom: var(--token-space-fluid-xs);
+    margin-block-end: var(--token-space-fluid-xs);
 
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-font-size-lg);
@@ -452,8 +465,8 @@
     @media (max-width: calc($breakpoint-sm - 1px)) {
       padding: var(--token-space-2);
       border-radius: var(--token-radius-full);
-      min-width: 2.5rem;
-      height: 2.5rem;
+      min-inline-size: 2.5rem;
+      block-size: 2.5rem;
       justify-content: center;
 
       .expand-button__text {
@@ -471,7 +484,7 @@
     font-size: var(--token-font-size-base);
     line-height: var(--token-line-height-relaxed);
     color: var(--token-text-secondary);
-    margin-bottom: var(--token-space-fluid-lg);
+    margin-block-end: var(--token-space-fluid-lg);
     position: relative;
     z-index: 1;
 
@@ -503,14 +516,14 @@
   }
 
   .card-details {
-    max-height: 0;
+    max-block-size: 0;
     overflow: hidden;
     transition: max-height 0.4s var(--token-motion-ease-out);
     position: relative;
     z-index: 1;
 
     &--expanded {
-      max-height: 100rem;
+      max-block-size: 100rem;
     }
   }
 
@@ -521,7 +534,7 @@
     --card-hover-transform: none;
     --card-hover-iridescent-opacity: 0.3;
 
-    margin-bottom: var(--token-space-fluid-lg);
+    margin-block-end: var(--token-space-fluid-lg);
 
     @media (min-width: $breakpoint-md) {
       --card-padding: var(--token-space-fluid-xl);
@@ -532,7 +545,7 @@
     font-size: var(--token-font-size-base);
     font-weight: var(--token-font-weight-semibold);
     color: var(--token-text-primary);
-    margin-bottom: var(--token-space-fluid-md);
+    margin-block-end: var(--token-space-fluid-md);
     line-height: var(--token-line-height-snug);
 
     @media (min-width: $breakpoint-md) {
@@ -549,7 +562,7 @@
   .highlights__item {
     position: relative;
     padding-inline-start: var(--token-space-fluid-lg);
-    margin-bottom: var(--token-space-fluid-sm);
+    margin-block-end: var(--token-space-fluid-sm);
     line-height: var(--token-line-height-relaxed);
     color: var(--token-text-secondary);
     font-size: var(--token-font-size-sm);
@@ -563,7 +576,7 @@
     }
 
     &:last-child {
-      margin-bottom: 0;
+      margin-block-end: 0;
     }
 
     @media (min-width: $breakpoint-md) {
@@ -606,7 +619,7 @@
   @media (max-width: calc($breakpoint-sm - 1px)) {
     .timeline-item {
       padding-inline-start: 0;
-      margin-bottom: var(--token-space-fluid-2xl);
+      margin-block-end: var(--token-space-fluid-2xl);
     }
 
     .timeline-marker {
@@ -630,7 +643,7 @@
 
     .card-header {
       gap: var(--token-space-fluid-md);
-      margin-bottom: var(--token-space-fluid-md);
+      margin-block-end: var(--token-space-fluid-md);
     }
 
     .card-header :global(.card-logo) {
@@ -639,12 +652,12 @@
 
     .card-title {
       font-size: var(--token-font-size-lg);
-      margin-bottom: var(--token-space-1);
+      margin-block-end: var(--token-space-1);
     }
 
     .card-company {
       font-size: var(--token-font-size-base);
-      margin-bottom: var(--token-space-1);
+      margin-block-end: var(--token-space-1);
     }
 
     .card-period {
@@ -653,14 +666,14 @@
 
     .card-summary {
       font-size: var(--token-font-size-base);
-      margin-bottom: var(--token-space-fluid-md);
+      margin-block-end: var(--token-space-fluid-md);
     }
 
     .expand-button {
       padding: var(--token-space-2);
       border-radius: var(--token-radius-full);
-      min-width: 2.5rem;
-      height: 2.5rem;
+      min-inline-size: 2.5rem;
+      block-size: 2.5rem;
       justify-content: center;
 
       .expand-button__text {
@@ -670,7 +683,7 @@
 
     :global(.highlights) {
       --card-padding: var(--token-space-fluid-md);
-      margin-bottom: var(--token-space-fluid-md);
+      margin-block-end: var(--token-space-fluid-md);
     }
   }
 
@@ -710,7 +723,7 @@
     }
 
     .card-details {
-      max-height: none;
+      max-block-size: none;
       overflow: visible;
     }
   }

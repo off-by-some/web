@@ -89,7 +89,6 @@
     justify-content: center;
     gap: clamp(0.95rem, 2vh, 1.55rem);
     flex-direction: column;
-    margin-top: var(--token-space-fluid-md);
 
     @include motion.fade-in-up(heroActionsIn, 1.5rem, 0.6s, 0.8s);
 

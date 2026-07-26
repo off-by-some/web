@@ -2,6 +2,7 @@
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import ContactMethodsPanel from '$lib/components/site/contact/ContactMethodsPanel';
   import type { ContactMethod } from '$lib/components/site/contact/ContactMethodsPanel';
+  import { hideControls } from './helpers/controls';
 
   const methods: ContactMethod[] = [
     {
@@ -26,6 +27,7 @@
     title: string;
     subtitle: string;
     methods: ContactMethod[];
+    narrow: boolean;
   };
 
   const { Story } = defineMeta({
@@ -37,6 +39,15 @@
       title: 'Other Ways to Connect',
       subtitle: 'Prefer a different communication method? Choose what works best for you.',
       methods,
+      narrow: false,
+    },
+    argTypes: {
+      ...hideControls(['onContactRequested']),
+      narrow: {
+        control: 'boolean',
+        description:
+          'Story-only toggle that shrinks the preview to demonstrate the single-column wrap breakpoint.',
+      },
     },
     parameters: {
       docs: {
@@ -50,20 +61,26 @@
 </script>
 
 {#snippet template(args: Args)}
-  <div class="story-shell">
+  <div class="story-shell" class:story-shell--narrow={args.narrow}>
     <ContactMethodsPanel
       title={args.title}
       subtitle={args.subtitle}
       methods={args.methods}
-      onMethodClick={(method) => console.log('Contact method clicked:', method)}
+      onContactRequested={(method) => console.log('Contact requested:', method)}
     />
   </div>
 {/snippet}
 
 <Story name="Default" />
 
+<Story name="Narrow Container" args={{ narrow: true }} />
+
 <style lang="scss">
   .story-shell {
-    max-width: 34rem;
+    max-inline-size: 34rem;
+  }
+
+  .story-shell--narrow {
+    max-inline-size: 18rem;
   }
 </style>

@@ -265,8 +265,8 @@ TROUBLESHOOTING 🔧
     class={className}
     class:image__placeholder={true}
     aria-hidden="true"
-    style:width={width ? `${width}px` : undefined}
-    style:height={height ? `${height}px` : undefined}
+    style:inline-size={width ? `${width}px` : undefined}
+    style:block-size={height ? `${height}px` : undefined}
   ></span>
 {/if}
 
@@ -276,8 +276,8 @@ TROUBLESHOOTING 🔧
 
 <style>
   .image {
-    max-width: 100%;
     display: block;
+    max-inline-size: 100%;
   }
 
   .image__picture {
@@ -285,11 +285,11 @@ TROUBLESHOOTING 🔧
   }
 
   .image__placeholder {
+    block-size: 100%;
     display: block;
-    width: 100%;
-    height: 100%;
-    min-width: 1px;
-    min-height: 1px;
+    inline-size: 100%;
+    min-block-size: 1px;
+    min-inline-size: 1px;
   }
 
   .image__error {

@@ -1,6 +1,7 @@
 <script module lang="ts">
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import Dropdown from '$lib/components/primitives/forms/Dropdown';
+  import Field from '$lib/components/primitives/forms/Field';
   import { hideControls } from './helpers/controls';
 
   const options = [
@@ -63,11 +64,32 @@
 
 <Story name="Default" />
 
+<Story name="Disabled" args={{ disabled: true }} />
+
+<Story name="Error" asChild>
+  <div class="story-width">
+    <Field
+      id="storybook-budget-error"
+      label="Budget range"
+      error="Select a budget range to continue"
+    >
+      <Dropdown
+        id="storybook-budget-error"
+        {options}
+        value=""
+        placeholder="Select budget range"
+        ariaLabel="Select your project budget range"
+        error
+      />
+    </Field>
+  </div>
+</Story>
+
 <style lang="scss">
   .story-width {
     color: var(--token-text-primary);
     font-family: var(--token-font-family-sans);
-    max-width: 34rem;
-    min-height: 16rem;
+    max-inline-size: 34rem;
+    min-block-size: 16rem;
   }
 </style>

@@ -7,6 +7,7 @@
   type Args = {
     text: string;
     variant: 'primary' | 'secondary';
+    disabled: boolean;
   };
 
   const { Story } = defineMeta({
@@ -15,13 +16,15 @@
     render: template,
     tags: ['autodocs'],
     argTypes: {
-      ...hideControls(['as', 'type', 'disabled']),
+      ...hideControls(['as', 'type']),
       text: { control: 'text' },
       variant: { control: 'select', options: ['primary', 'secondary'] },
+      disabled: { control: 'boolean' },
     },
     args: {
       text: 'Button',
       variant: 'primary',
+      disabled: false,
     },
     parameters: {
       docs: {
@@ -34,9 +37,11 @@
 </script>
 
 {#snippet template(args: Args)}
-  <Button variant={args.variant}>{args.text}</Button>
+  <Button variant={args.variant} disabled={args.disabled}>{args.text}</Button>
 {/snippet}
 
 <Story name="Default" />
 
 <Story name="Secondary" args={{ text: 'Secondary Button', variant: 'secondary' }} />
+
+<Story name="Disabled" args={{ text: 'Disabled Button', variant: 'primary', disabled: true }} />

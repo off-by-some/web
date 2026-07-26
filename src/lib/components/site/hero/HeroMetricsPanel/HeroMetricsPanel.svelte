@@ -12,12 +12,19 @@
   };
 
   let { stats = [], title = 'Lorem Ipsum' }: Props = $props();
+
+  const getStatDelay = (index: number) => `${1 + index * 0.1}s`;
 </script>
 
 <HeroPanel {title} titleId="stats-title" area="stats" delay="0.5s">
   <div class="stats-grid">
-    {#each stats as stat, index (index)}
-      <StatCard count={stat.count} label={stat.label} type={stat.type} />
+    {#each stats as stat, index (`${stat.type}-${stat.label}`)}
+      <StatCard
+        count={stat.count}
+        label={stat.label}
+        type={stat.type}
+        delay={getStatDelay(index)}
+      />
     {/each}
   </div>
 </HeroPanel>

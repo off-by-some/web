@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import VisuallyHidden from './components/primitives/accessibility/VisuallyHidden';
   import Section from './components/primitives/layout/Section';
   import { preloadImageSources } from './components/primitives/media/Image/image-path';
   import {
@@ -151,12 +152,14 @@
   aria-labelledby="projects-heading"
   bind:this={projectsElement}
 >
-  <div class="sr-only" role="status" aria-live="polite" aria-atomic="true">
+  <VisuallyHidden as="div" role="status" aria-live="polite" aria-atomic="true">
     {announcementText}
-  </div>
+  </VisuallyHidden>
 
   <Section className="projects__container">
-    <SectionHeader {title} {subtitle} titleId="projects-heading" />
+    <div class="projects__header">
+      <SectionHeader {title} {subtitle} titleId="projects-heading" />
+    </div>
 
     <div class="projects__dot-rail projects__dot-rail--top" bind:this={topDotsElement}>
       <ProjectDotNav
@@ -205,18 +208,6 @@
 <style lang="scss">
   @use 'styles/breakpoints' as *;
   @use 'lib/components/primitives/motion' as motion;
-
-  .sr-only {
-    position: absolute;
-    inline-size: 1px;
-    block-size: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    border: 0;
-    white-space: nowrap;
-  }
 
   .projects {
     position: relative;
@@ -270,6 +261,10 @@
       align-items: start;
       gap: var(--token-space-fluid-3xl);
     }
+  }
+
+  .projects__header {
+    margin-block-end: var(--token-space-fluid-5xl);
   }
 
   .projects__nav {

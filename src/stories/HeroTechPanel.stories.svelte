@@ -1,6 +1,7 @@
 <script module lang="ts">
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import HeroTechPanel from '$lib/components/site/hero/HeroTechPanel';
+  import { hideControls } from './helpers/controls';
 
   const techStack: Array<{
     title: string;
@@ -33,6 +34,9 @@
       title: 'Core Technologies & Skills',
       techStack,
     },
+    argTypes: {
+      ...hideControls(['onCategorySelectRequested']),
+    },
     parameters: {
       docs: {
         description: {
@@ -49,7 +53,7 @@
     <HeroTechPanel
       title={args.title}
       techStack={args.techStack}
-      onCategoryClick={(category) => console.log('Category clicked:', category)}
+      onCategorySelectRequested={(category) => console.log('Category selected:', category)}
     />
   </div>
 {/snippet}
@@ -58,6 +62,6 @@
 
 <style lang="scss">
   .story-shell {
-    max-width: 34rem;
+    max-inline-size: 34rem;
   }
 </style>

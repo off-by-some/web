@@ -1,6 +1,10 @@
 <script lang="ts">
   import Image from '$lib/components/primitives/media/Image';
-  import { getProjectKey, type ProjectModel } from '$lib/components/site/projects/types';
+  import {
+    getProjectKey,
+    type ProjectModel,
+    type ProjectSelectMetadata,
+  } from '$lib/components/site/projects/types';
 
   type Props = {
     projects: ProjectModel[];
@@ -8,7 +12,7 @@
     visible?: boolean;
     position?: 'top' | 'bottom';
     mediaReady?: boolean;
-    onSelectRequested?: (index: number) => void;
+    onSelectRequested?: (index: number, metadata: ProjectSelectMetadata) => void;
   };
 
   let {
@@ -34,7 +38,7 @@
       type="button"
       class="project-dot-nav__item"
       data-state={index === activeIndex ? 'selected' : 'idle'}
-      onclick={() => onSelectRequested?.(index)}
+      onclick={() => onSelectRequested?.(index, { cause: 'pointer' })}
       aria-label="View {project.name}"
       aria-current={index === activeIndex ? 'true' : undefined}
       tabindex={visible ? 0 : -1}

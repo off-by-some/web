@@ -6,10 +6,10 @@
     count: number;
     icon?: string;
     active?: boolean;
-    onclick?: (event: MouseEvent) => void;
+    onSelectRequested?: () => void;
   };
 
-  let { label, count, icon = '', active = false, onclick }: Props = $props();
+  let { label, count, icon = '', active = false, onSelectRequested }: Props = $props();
 </script>
 
 <Button
@@ -18,7 +18,7 @@
   role="tab"
   aria-selected={active}
   aria-controls="skills-grid"
-  {onclick}
+  onclick={() => onSelectRequested?.()}
 >
   {#if icon}
     <span class="filter-button__icon">{icon}</span>
@@ -66,7 +66,7 @@
   }
 
   .filter-button__label {
-    min-width: 0;
+    min-inline-size: 0;
   }
 
   .filter-button__count {

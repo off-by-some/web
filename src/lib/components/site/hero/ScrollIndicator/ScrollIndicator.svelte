@@ -2,17 +2,22 @@
   type Props = {
     text: string;
     ariaLabel?: string;
-    onclick?: (event: MouseEvent) => void;
+    onScrollRequested?: () => void;
   };
 
-  let { text, ariaLabel = 'Lorem ipsum dolor sit amet', onclick }: Props = $props();
+  let { text, ariaLabel = 'Lorem ipsum dolor sit amet', onScrollRequested }: Props = $props();
 
   const resolvedAriaLabel = $derived(
     ariaLabel.toLowerCase().includes(text.toLowerCase()) ? ariaLabel : `${text}, ${ariaLabel}`,
   );
 </script>
 
-<button class="scroll-indicator" {onclick} type="button" aria-label={resolvedAriaLabel}>
+<button
+  class="scroll-indicator"
+  onclick={() => onScrollRequested?.()}
+  type="button"
+  aria-label={resolvedAriaLabel}
+>
   <div class="scroll-mouse">
     <div class="scroll-wheel"></div>
   </div>
@@ -25,7 +30,7 @@
 
   .scroll-indicator {
     position: absolute;
-    bottom: var(--token-space-fluid-2xl);
+    inset-block-end: var(--token-space-fluid-2xl);
     inset-inline-start: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -74,8 +79,8 @@
   }
 
   .scroll-mouse {
-    width: var(--token-size-6);
-    height: 1.75rem;
+    inline-size: var(--token-size-6);
+    block-size: 1.75rem;
     border: 1px solid
       color-mix(in srgb, var(--token-interactive-color) 44%, var(--token-border-color));
     border-radius: 0.625rem;
@@ -90,8 +95,8 @@
 
   .scroll-wheel {
     position: absolute;
-    width: 1.5px;
-    height: var(--token-size-1);
+    inline-size: 1.5px;
+    block-size: var(--token-size-1);
     background: color-mix(in srgb, var(--token-interactive-color) 82%, white);
     inset-inline-start: 50%;
     top: 0.375rem;
@@ -102,8 +107,8 @@
   }
 
   .scroll-arrow {
-    width: 0;
-    height: 0;
+    inline-size: 0;
+    block-size: 0;
     border-inline-start: 0.25rem solid transparent;
     border-inline-end: 0.25rem solid transparent;
     border-block-start: 0.375rem solid color-mix(in srgb, var(--token-interactive-color) 78%, white);

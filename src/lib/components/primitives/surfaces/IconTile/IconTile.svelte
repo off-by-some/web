@@ -58,7 +58,7 @@
     box-shadow: var(--icon-tile-shadow, none);
     display: flex;
     flex-shrink: 0;
-    height: var(--icon-tile-resolved-size);
+    block-size: var(--icon-tile-resolved-size);
     justify-content: center;
     overflow: var(--icon-tile-resolved-overflow);
     padding: var(--icon-tile-resolved-padding);
@@ -68,21 +68,22 @@
       border-color var(--token-motion-duration-normal) var(--token-motion-ease-out),
       box-shadow var(--token-motion-duration-normal) var(--token-motion-ease-out),
       transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
-    width: var(--icon-tile-resolved-size);
+    inline-size: var(--icon-tile-resolved-size);
     z-index: var(--icon-tile-z-index, 1);
   }
 
   :global(.icon-tile__image) {
     display: block;
     filter: var(--icon-tile-image-filter, none);
-    height: var(--icon-tile-resolved-image-size);
-    min-height: var(--icon-tile-resolved-image-size);
-    min-width: var(--icon-tile-resolved-image-size);
+    block-size: var(--icon-tile-resolved-image-size);
+    min-block-size: var(--icon-tile-resolved-image-size);
+    min-inline-size: var(--icon-tile-resolved-image-size);
     object-fit: contain;
+    transform: var(--icon-tile-image-transform, none);
     transition:
       filter var(--token-motion-duration-normal) var(--token-motion-ease-out),
       opacity var(--token-motion-duration-normal) var(--token-motion-ease-out),
       transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
-    width: var(--icon-tile-resolved-image-size);
+    inline-size: var(--icon-tile-resolved-image-size);
   }
 </style>

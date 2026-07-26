@@ -7,10 +7,11 @@
     title: string;
     level: 'expert' | 'advanced';
     technologies?: string[];
-    onclick?: (event: MouseEvent) => void;
+    delay?: string;
+    onSelectRequested?: () => void;
   };
 
-  let { title, level, technologies = [], onclick }: Props = $props();
+  let { title, level, technologies = [], delay = '0s', onSelectRequested }: Props = $props();
 
   let tagsContainer: HTMLElement | undefined = $state();
   let resizeObserver: ResizeObserver | undefined;
@@ -26,8 +27,8 @@
     Object.assign(clone.style, {
       position: 'absolute',
       visibility: 'hidden',
-      top: '-9999px',
-      width: getComputedStyle(tagsContainer).width,
+      insetBlockStart: '-9999px',
+      inlineSize: getComputedStyle(tagsContainer).inlineSize,
     });
     document.body.appendChild(clone);
 
@@ -98,10 +99,17 @@
   onDestroy(() => resizeObserver?.disconnect());
 </script>
 
-<Card as="button" className="tech-category" type="button" {onclick}>
+<Card
+  as="button"
+  className="tech-category"
+  type="button"
+  data-level={level}
+  onclick={() => onSelectRequested?.()}
+  style="--tech-category-delay: {delay};"
+>
   <div class="category-header">
     <span class="category-title">{title}</span>
-    <ToneDot tone="interactive" className="mastery-indicator" />
+    <ToneDot tone={level} className="mastery-indicator" />
   </div>
 
   <div class="category-tags" bind:this={tagsContainer}>
@@ -130,20 +138,7 @@
     gap: var(--token-space-fluid-md);
     text-align: left;
 
-    @include motion.fade-in-up(fadeInUp, 30px, 0.6s);
-
-    &:nth-child(1) {
-      animation-delay: 1.4s;
-    }
-    &:nth-child(2) {
-      animation-delay: 1.5s;
-    }
-    &:nth-child(3) {
-      animation-delay: 1.6s;
-    }
-    &:nth-child(4) {
-      animation-delay: 1.7s;
-    }
+    @include motion.fade-in-up(fadeInUp, 30px, 0.6s, var(--tech-category-delay));
 
     @media (min-width: $breakpoint-md) {
       --card-padding: var(--token-space-fluid-xl);
@@ -179,7 +174,7 @@
     line-height: var(--token-line-height-snug);
     transition: color 0.3s var(--token-motion-ease-out);
     flex: 1;
-    min-width: 0;
+    min-inline-size: 0;
 
     @media (min-width: $breakpoint-lg) {
       font-size: var(--token-font-size-lg);

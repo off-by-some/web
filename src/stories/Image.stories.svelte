@@ -67,15 +67,15 @@
     background: var(--token-surface-glass-medium);
     border-radius: var(--token-radius-xl);
     display: flex;
-    height: 12rem;
+    block-size: 12rem;
     justify-content: center;
     overflow: hidden;
     padding: var(--token-space-fluid-md);
-    width: 12rem;
+    inline-size: 12rem;
 
     :global(img),
     :global(picture) {
-      max-height: 100%;
+      max-block-size: 100%;
       object-fit: contain;
     }
   }
@@ -85,9 +85,9 @@
     padding: 0;
 
     :global(img) {
-      height: 100%;
+      block-size: 100%;
+      inline-size: 100%;
       object-fit: cover;
-      width: 100%;
     }
   }
 

@@ -1,24 +1,20 @@
 <script module lang="ts">
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import FilterButton from '$lib/components/site/skills/FilterButton';
-
-  type Args = {
-    label: string;
-    count: number;
-    icon: string;
-    active: boolean;
-  };
+  import { hideControls } from './helpers/controls';
 
   const { Story } = defineMeta({
     title: 'Library/Site/Skills/Filter Button',
     component: FilterButton,
-    render: template,
     tags: ['autodocs'],
     args: {
       label: 'All Skills',
       count: 41,
       icon: '',
       active: true,
+    },
+    argTypes: {
+      ...hideControls(['onSelectRequested']),
     },
     parameters: {
       docs: {
@@ -29,21 +25,35 @@
       },
     },
   });
+
+  const demoCategories = [
+    { label: 'All Skills', count: 41 },
+    { label: 'Frontend', count: 18 },
+    { label: 'Backend', count: 14 },
+    { label: 'Infrastructure', count: 9 },
+  ];
 </script>
 
-{#snippet template(args: Args)}
-  <div class="story-row">
-    <FilterButton
-      label={args.label}
-      count={args.count}
-      icon={args.icon}
-      active={args.active}
-      onclick={() => console.log('Filter selected')}
-    />
-  </div>
-{/snippet}
+<script lang="ts">
+  let selectedDemoIndex = $state(0);
+</script>
 
 <Story name="Default" />
+
+<Story name="Inactive" args={{ active: false }} />
+
+<Story name="Interactive" asChild>
+  <div class="story-row" role="tablist" aria-label="Filter skills by category">
+    {#each demoCategories as category, index (category.label)}
+      <FilterButton
+        label={category.label}
+        count={category.count}
+        active={selectedDemoIndex === index}
+        onSelectRequested={() => (selectedDemoIndex = index)}
+      />
+    {/each}
+  </div>
+</Story>
 
 <style lang="scss">
   .story-row {

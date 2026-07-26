@@ -7,6 +7,7 @@
   type Args = {
     headline: string;
     body: string;
+    pressable: boolean;
   };
 
   const { Story } = defineMeta({
@@ -18,10 +19,16 @@
       ...hideControls(['as', 'type']),
       headline: { control: 'text' },
       body: { control: 'text' },
+      pressable: {
+        control: 'boolean',
+        description:
+          'Card renders as a plain, non-interactive container unless it receives an `onclick` — passing one is what opts it into a role, tab focus, and the hover/active/focus treatment below. This toggle simulates that by attaching a no-op handler.',
+      },
     },
     args: {
       headline: 'Hover Me!',
       body: 'This is the shared composable card surface.',
+      pressable: false,
     },
     parameters: {
       docs: {
@@ -35,7 +42,7 @@
 
 {#snippet template(args: Args)}
   <div class="story-surface">
-    <Card>
+    <Card onclick={args.pressable ? () => {} : undefined}>
       <h3>{args.headline}</h3>
       <p>{args.body}</p>
     </Card>
@@ -44,15 +51,25 @@
 
 <Story name="Default" />
 
+<Story
+  name="Pressable"
+  args={{
+    headline: 'Hover, Focus, or Press',
+    body: 'An onclick handler opts the card into interactive semantics and this hover/active/focus treatment.',
+    pressable: true,
+  }}
+/>
+
 <style lang="scss">
   .story-surface {
     color: var(--token-text-primary);
     font-family: var(--token-font-family-sans);
-    min-height: 12rem;
-    width: min(100%, 24rem);
+    inline-size: min(100%, 24rem);
+    min-block-size: 12rem;
 
     h3 {
-      margin: 0 0 var(--token-space-fluid-sm);
+      margin: 0;
+      margin-block-end: var(--token-space-fluid-sm);
     }
 
     p {

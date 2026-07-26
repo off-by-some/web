@@ -47,7 +47,7 @@
 
 <style lang="scss">
   .story-shell {
-    max-width: 30rem;
+    max-inline-size: 30rem;
   }
 
   .story-grid {

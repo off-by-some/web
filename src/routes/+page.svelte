@@ -90,6 +90,19 @@
     smoothScrollTo('experience');
   }
 
+  function handleTimelineNavigationRequested(companyName: string) {
+    const companyItems = document.querySelectorAll('[data-company]');
+    const targetItem = Array.from(companyItems).find(
+      (item) => item.getAttribute('data-company')?.toLowerCase() === companyName.toLowerCase(),
+    );
+
+    if (targetItem) {
+      targetItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+      smoothScrollTo('experience');
+    }
+  }
+
   // All page content lives in src/lib/content/en.json — edit that file to change
   // what's on the page. Nothing below this comment is content, only derived data.
   const emailAddress = t.contactMe.emailAddress;
@@ -190,7 +203,8 @@
     {experiences}
     title={t.timelineSection.title}
     subtitle={timelineSubtitle}
-    onExperienceSelect={(experience) => console.log('Experience selected:', experience)}
+    onExperienceDetailsToggleRequested={(experience) =>
+      console.log('Experience details toggled:', experience)}
   />
 
   <!-- Skills Section -->
@@ -199,8 +213,9 @@
     subtitle={t.skillsSection.subtitle}
     {skillCategories}
     initialSelectedCategory={skillCategories[0]?.name}
-    onSkillSelect={(payload) => console.log('Skill selected:', payload)}
-    onCategorySelect={(payload) => console.log('Category selected:', payload)}
+    onSkillSelectionRequested={(payload) => console.log('Skill selection requested:', payload)}
+    onCategorySelectionRequested={(payload) =>
+      console.log('Category selection requested:', payload)}
   />
 
   <!-- Projects Section -->
@@ -212,6 +227,7 @@
     {linkedinUrl}
     title={t.testimonials.title}
     subtitle={t.testimonials.subtitle}
+    onTimelineNavigationRequested={(payload) => handleTimelineNavigationRequested(payload.company)}
   />
 
   <!-- Contact Me Section -->

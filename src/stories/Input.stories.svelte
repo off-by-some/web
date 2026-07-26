@@ -64,7 +64,13 @@
 
 <Story name="Default" />
 
+<Story name="Empty" args={{ value: '' }} />
+
 <Story name="Error" args={{ error: true, value: 'Needs attention', placeholder: 'Error input' }} />
+
+<Story name="Success" args={{ success: true, value: 'Looks good' }} />
+
+<Story name="Warning" args={{ warning: true, value: 'Double-check this' }} />
 
 <Story
   name="Textarea"
@@ -80,6 +86,6 @@
   .story-stack {
     display: grid;
     gap: var(--token-space-fluid-lg);
-    max-width: 34rem;
+    max-inline-size: 34rem;
   }
 </style>

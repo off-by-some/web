@@ -7,9 +7,10 @@
     count: string;
     label: string;
     type: 'years' | 'scale' | 'reliability' | 'performance' | 'languages';
+    delay?: string;
   };
 
-  let { count, label, type }: Props = $props();
+  let { count, label, type, delay = '0s' }: Props = $props();
 
   let numberElement: HTMLElement | undefined = $state();
   let hasAnimated = false;
@@ -77,7 +78,7 @@
   });
 </script>
 
-<Card className="stat-card" data-type={type}>
+<Card className="stat-card" data-type={type} style="--stat-card-delay: {delay};">
   <div
     class="stat-number"
     data-count={count}
@@ -105,20 +106,7 @@
     justify-content: center;
     text-align: center;
 
-    @include motion.fade-in-up(statReveal, 20px, 0.8s, 0s, both, 0.95);
-
-    &:nth-child(1) {
-      animation-delay: 1s;
-    }
-    &:nth-child(2) {
-      animation-delay: 1.1s;
-    }
-    &:nth-child(3) {
-      animation-delay: 1.2s;
-    }
-    &:nth-child(4) {
-      animation-delay: 1.3s;
-    }
+    @include motion.fade-in-up(statReveal, 20px, 0.8s, var(--stat-card-delay), both, 0.95);
 
     @media (min-width: $breakpoint-md) {
       --card-padding: var(--token-space-fluid-xl);
@@ -138,7 +126,7 @@
     font-size: var(--token-font-size-2xl);
     font-weight: var(--token-font-weight-bold);
     line-height: var(--token-line-height-tight);
-    margin-bottom: var(--token-space-2);
+    margin-block-end: var(--token-space-2);
     color: var(--token-text-emphasis-heading);
     letter-spacing: var(--token-letter-spacing-tight);
     transition:

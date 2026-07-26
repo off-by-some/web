@@ -12,6 +12,7 @@
     target?: '_self' | '_blank';
     rel?: string;
     className?: string;
+    onActionRequested?: () => void;
     onclick?: (event: MouseEvent) => void;
   };
 
@@ -24,12 +25,18 @@
     target = '_self',
     rel = '',
     className = '',
+    onActionRequested,
     onclick,
   }: Props = $props();
 
   const classes = $derived(
     ['hero-action-link', `hero-action-link--${shape}`, className].filter(Boolean).join(' '),
   );
+
+  const handleClick = (event: MouseEvent) => {
+    onActionRequested?.();
+    onclick?.(event);
+  };
 </script>
 
 <!-- eslint-disable svelte/no-navigation-without-resolve -->
@@ -43,7 +50,7 @@
   {download}
   {target}
   rel={rel || undefined}
-  {onclick}
+  onclick={handleClick}
 >
   <span class="hero-action-link__icon" aria-hidden="true">
     {#if icon === 'github'}
@@ -118,12 +125,12 @@
     --button-min-height: var(--hero-action-size);
     --button-width: var(--hero-action-size);
 
-    height: var(--hero-action-size);
+    block-size: var(--hero-action-size);
 
     .hero-action-link__text {
       position: absolute;
-      width: 1px;
-      height: 1px;
+      inline-size: 1px;
+      block-size: 1px;
       overflow: hidden;
       clip: rect(0 0 0 0);
       clip-path: inset(50%);
@@ -158,8 +165,8 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    width: 1.5rem;
-    height: 1.5rem;
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
     opacity: 0.9;
     transition:
       transform 0.4s var(--token-motion-ease-out),

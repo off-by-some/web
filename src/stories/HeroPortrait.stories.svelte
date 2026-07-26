@@ -52,8 +52,8 @@
   .story-shell {
     display: grid;
     place-items: center;
-    min-height: 44rem;
-    max-width: 62rem;
+    min-block-size: 44rem;
+    max-inline-size: 62rem;
     overflow: visible;
   }
 </style>

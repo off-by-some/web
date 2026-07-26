@@ -7,14 +7,14 @@
     title?: string;
     subtitle?: string;
     methods?: ContactMethod[];
-    onMethodClick?: (method: ContactMethod) => void;
+    onContactRequested?: (method: ContactMethod) => void;
   };
 
   let {
     title = 'Lorem Ipsum Dolor',
     subtitle = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     methods = [],
-    onMethodClick,
+    onContactRequested,
   }: Props = $props();
 </script>
 
@@ -23,7 +23,7 @@
   <p>{subtitle}</p>
 
   <div class="methods__grid">
-    {#each methods as method, mIdx (mIdx)}
+    {#each methods as method (`${method.type}-${method.href}`)}
       <ContactMethodCard
         href={method.href}
         type={method.type}
@@ -31,7 +31,7 @@
         value={method.value}
         imagePath={method.imagePath}
         description={method.description}
-        onclick={() => onMethodClick?.(method)}
+        onContactRequested={() => onContactRequested?.(method)}
       />
     {/each}
   </div>
@@ -72,7 +72,7 @@
       font-size: var(--token-font-size-lg);
       font-weight: var(--token-font-weight-semibold);
       color: var(--token-text-primary);
-      margin-bottom: var(--token-space-fluid-sm);
+      margin-block-end: var(--token-space-fluid-sm);
       letter-spacing: var(--token-letter-spacing-normal);
       line-height: var(--token-line-height-snug);
       position: relative;
@@ -93,7 +93,7 @@
       font-size: var(--token-font-size-sm);
       color: var(--token-text-overlay);
       line-height: var(--token-line-height-relaxed);
-      margin-bottom: var(--token-space-fluid-xl);
+      margin-block-end: var(--token-space-fluid-xl);
       letter-spacing: var(--token-letter-spacing-normal);
       position: relative;
       z-index: 2;

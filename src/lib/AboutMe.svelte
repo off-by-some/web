@@ -71,7 +71,11 @@
     </div>
   </Section>
 
-  <ScrollIndicator text={scroll.text} ariaLabel={scroll.ariaLabel} onclick={onExploreRequested} />
+  <ScrollIndicator
+    text={scroll.text}
+    ariaLabel={scroll.ariaLabel}
+    onScrollRequested={onExploreRequested}
+  />
 </section>
 
 <style lang="scss">

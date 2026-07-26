@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { HeroHeadlineEmphasis, HeroValueModel } from '$lib/components/site/hero/types';
 
-  type Segment = { text: string; kind: 'plain' | 'primary' | 'accent' };
+  type Segment = { key: string; text: string; kind: 'plain' | 'primary' | 'accent' };
 
   type Props = HeroValueModel;
 
@@ -39,7 +39,7 @@
       .sort((a, b) => a.start - b.start);
 
     if (!matches.length) {
-      return [{ text, kind: 'plain' }];
+      return [{ key: `plain-0-${text.length}`, text, kind: 'plain' }];
     }
 
     const segments: Segment[] = [];
@@ -47,14 +47,26 @@
 
     for (const match of matches) {
       if (match.start > cursor) {
-        segments.push({ text: text.slice(cursor, match.start), kind: 'plain' });
+        segments.push({
+          key: `plain-${cursor}-${match.start}`,
+          text: text.slice(cursor, match.start),
+          kind: 'plain',
+        });
       }
-      segments.push({ text: match.match, kind: match.kind });
+      segments.push({
+        key: `${match.kind}-${match.start}-${match.end}`,
+        text: match.match,
+        kind: match.kind,
+      });
       cursor = match.end;
     }
 
     if (cursor < text.length) {
-      segments.push({ text: text.slice(cursor), kind: 'plain' });
+      segments.push({
+        key: `plain-${cursor}-${text.length}`,
+        text: text.slice(cursor),
+        kind: 'plain',
+      });
     }
 
     return segments;
@@ -65,7 +77,7 @@
 
 <div class="value-section">
   <h2 class="value-headline">
-    {#each headlineSegments as segment, index (index)}
+    {#each headlineSegments as segment (segment.key)}
       {#if segment.kind === 'primary'}<mark class="value-headline__hl value-headline__hl--primary"
           >{segment.text}</mark
         >{:else if segment.kind === 'accent'}<mark
@@ -108,7 +120,7 @@
   }
 
   .value-headline {
-    max-width: 16ch;
+    max-inline-size: 16ch;
     font-size: clamp(var(--token-font-size-2xl), 7vw, var(--token-font-size-4xl));
     font-weight: var(--token-font-weight-medium);
     line-height: 1.14;
@@ -117,14 +129,14 @@
     margin: 0 auto;
 
     @media (min-width: $breakpoint-md) {
-      max-width: 21ch;
+      max-inline-size: 21ch;
       font-size: clamp(var(--token-font-size-3xl), 5.2vw, var(--token-font-size-5xl));
       line-height: 1.12;
       margin-inline: auto;
     }
 
     @media (min-width: $breakpoint-lg) {
-      max-width: 22ch;
+      max-inline-size: 22ch;
       font-size: clamp(var(--token-font-size-3xl), 2.65vw, var(--token-font-size-5xl));
       letter-spacing: var(--token-letter-spacing-normal);
       margin-inline: 0;
@@ -145,15 +157,15 @@
   .value-headline__underline {
     position: absolute;
     inset-inline: 0.05em;
-    bottom: -0.3em;
-    width: calc(100% - 0.1em);
-    height: 0.32em;
+    block-size: 0.32em;
+    inline-size: calc(100% - 0.1em);
+    inset-block-end: -0.3em;
     color: var(--token-emphasis-color);
     overflow: visible;
   }
 
   .value-description {
-    max-width: 41rem;
+    max-inline-size: 41rem;
     font-size: var(--token-font-size-base);
     line-height: var(--token-line-height-relaxed);
     color: var(--token-text-secondary);
@@ -162,14 +174,14 @@
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-font-size-lg);
       line-height: var(--token-line-height-loose);
-      max-width: 44rem;
+      max-inline-size: 44rem;
       margin-inline: auto;
     }
 
     @media (min-width: $breakpoint-lg) {
       font-size: var(--token-font-size-xl);
       letter-spacing: var(--token-letter-spacing-wide);
-      max-width: 41rem;
+      max-inline-size: 41rem;
       margin-inline: 0;
     }
   }

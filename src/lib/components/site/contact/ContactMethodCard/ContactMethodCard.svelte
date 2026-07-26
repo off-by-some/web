@@ -9,17 +9,17 @@
     value: string;
     imagePath: string;
     description: string;
-    onclick?: (event: MouseEvent) => void;
+    onContactRequested?: () => void;
   };
 
-  let { href, type, label, value, imagePath, description, onclick }: Props = $props();
+  let { href, type, label, value, imagePath, description, onContactRequested }: Props = $props();
 </script>
 
 <Card
   as="a"
   {href}
   className="method-card"
-  {onclick}
+  onclick={() => onContactRequested?.()}
   target={type === 'email' ? '_self' : '_blank'}
   rel={type === 'email' ? '' : 'noopener noreferrer'}
   aria-label="Contact via {label}: {value} - {description}"
@@ -74,13 +74,11 @@
   }
 
   :global(.method-card:hover .method__icon) {
+    --icon-tile-image-filter: var(--token-icon-filter-hover, var(--token-icon-filter, none));
+    --icon-tile-image-transform: scale(1.1);
+
     transform: scale(1.05);
     box-shadow: var(--token-shadow-default);
-  }
-
-  :global(.method-card:hover .method__icon img) {
-    transform: scale(1.1);
-    filter: var(--token-icon-filter-hover, var(--token-icon-filter, none));
   }
 
   :global(.method__icon) {
@@ -102,7 +100,7 @@
 
   .method__content {
     flex: 1;
-    min-width: 0;
+    min-inline-size: 0;
     position: relative;
     z-index: 2;
   }
@@ -111,7 +109,7 @@
     font-size: var(--token-font-size-sm);
     font-weight: var(--token-font-weight-semibold);
     color: var(--token-text-primary);
-    margin-bottom: var(--token-space-1);
+    margin-block-end: var(--token-space-1);
     letter-spacing: var(--token-letter-spacing-normal);
     line-height: var(--token-line-height-snug);
 
@@ -130,7 +128,7 @@
     font-size: var(--token-font-size-sm);
     font-weight: var(--token-font-weight-medium);
     color: var(--token-text-brand);
-    margin-bottom: var(--token-space-2);
+    margin-block-end: var(--token-space-2);
     letter-spacing: var(--token-letter-spacing-normal);
     line-height: var(--token-line-height-snug);
     word-break: break-word;

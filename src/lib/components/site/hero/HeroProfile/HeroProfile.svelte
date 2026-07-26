@@ -46,7 +46,7 @@
     text-transform: uppercase;
     letter-spacing: var(--token-letter-spacing-widest);
     color: var(--token-text-tertiary);
-    margin-bottom: clamp(0.85rem, 2vh, 1.35rem);
+    margin-block-end: clamp(0.85rem, 2vh, 1.35rem);
 
     @include motion.fade-in-up(heroGreetingIn, 1.5rem, 0.6s, 0.15s);
   }
@@ -63,8 +63,8 @@
     font-size: clamp(3.6rem, 16vw, 6.25rem);
     font-weight: var(--token-font-weight-bold);
     line-height: 1;
-    margin-bottom: clamp(0.9rem, 1.8vh, 1.45rem);
-    padding-bottom: 0.08em;
+    margin-block-end: clamp(0.9rem, 1.8vh, 1.45rem);
+    padding-block-end: 0.08em;
     color: var(--token-text-heading);
     letter-spacing: var(--token-letter-spacing-tight);
     background: var(--token-gradients-heading);
@@ -77,13 +77,13 @@
     @media (min-width: $breakpoint-md) {
       font-size: clamp(5.25rem, 9vw, 8rem);
       line-height: 0.98;
-      padding-bottom: 0.07em;
+      padding-block-end: 0.07em;
     }
 
     @media (min-width: $breakpoint-lg) {
       font-size: clamp(5rem, 5.15vw, 7.2rem);
       line-height: 0.96;
-      padding-bottom: 0.055em;
+      padding-block-end: 0.055em;
       white-space: nowrap;
     }
 
@@ -98,7 +98,7 @@
     color: var(--token-text-secondary);
     letter-spacing: var(--token-letter-spacing-normal);
     line-height: var(--token-line-height-snug);
-    margin-bottom: 0;
+    margin-block-end: 0;
 
     @include motion.fade-in-up(heroRoleIn, 1.5rem, 0.6s, 0.9s);
 
@@ -113,16 +113,17 @@
   }
 
   .profile-accent {
-    width: clamp(2.35rem, 1.9rem + 1.6vw, 3.35rem);
-    height: 3px;
+    inline-size: clamp(2.35rem, 1.9rem + 1.6vw, 3.35rem);
+    block-size: 3px;
     background: var(--token-emphasis-color);
     border-radius: var(--token-radius-full);
-    margin: var(--token-space-fluid-md) auto 0;
+    margin-block-start: var(--token-space-fluid-md);
+    margin-inline: auto;
     transform-origin: left center;
     animation: accentExpand 1.8s var(--token-motion-ease-out) 0.8s both;
 
     @media (min-width: $breakpoint-lg) {
-      margin: var(--token-space-fluid-md) 0 0;
+      margin-inline: 0;
     }
   }
 

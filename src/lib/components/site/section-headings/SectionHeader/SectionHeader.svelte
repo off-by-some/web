@@ -5,18 +5,17 @@
     title: string;
     subtitle: string;
     titleId: string;
-    variant?: 'standard' | 'compact';
     contentClass?: string;
   };
 
-  let { title, subtitle, titleId, variant = 'standard', contentClass = '' }: Props = $props();
+  let { title, subtitle, titleId, contentClass = '' }: Props = $props();
 
   const contentClasses = $derived(
     ['section-header__content', contentClass].filter(Boolean).join(' '),
   );
 </script>
 
-<Header className="section-header section-header--{variant}">
+<Header className="section-header">
   <div class={contentClasses}>
     <h2 class="header__title" id={titleId}>{title}</h2>
     <p class="header__subtitle">{subtitle}</p>
@@ -29,20 +28,11 @@
 
   :global(.section-header) {
     text-align: center;
-    margin-bottom: var(--token-space-fluid-5xl);
     @include motion.fade-in-up(sectionHeaderIn, 30px, 1s);
   }
 
-  :global(.section-header--compact) {
-    margin-bottom: var(--token-space-fluid-3xl);
-
-    @media (min-width: $breakpoint-md) {
-      margin-bottom: var(--token-space-fluid-4xl);
-    }
-  }
-
   .section-header__content {
-    max-width: 110ch;
+    max-inline-size: 110ch;
     margin: 0 auto;
   }
 
@@ -51,7 +41,7 @@
     font-weight: var(--token-font-weight-bold);
     line-height: var(--token-line-height-tight);
     color: var(--token-text-heading);
-    margin-bottom: var(--token-space-fluid-lg);
+    margin-block-end: var(--token-space-fluid-lg);
     letter-spacing: var(--token-letter-spacing-tight);
     background: var(--token-gradients-heading);
     background-size: 200% 200%;
@@ -73,7 +63,7 @@
     font-size: var(--token-font-size-lg);
     color: var(--token-text-secondary);
     line-height: var(--token-line-height-relaxed);
-    max-width: 70ch;
+    max-inline-size: 70ch;
     margin: 0 auto;
 
     @media (min-width: $breakpoint-md) {

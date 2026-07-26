@@ -1,7 +1,10 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import Button from './components/primitives/actions/Button';
+  import VisuallyHidden from './components/primitives/accessibility/VisuallyHidden';
   import Image from './components/primitives/media/Image/Image.svelte';
   import Section from './components/primitives/layout/Section';
+  import IconTile from './components/primitives/surfaces/IconTile';
   import SectionHeader from './components/site/section-headings/SectionHeader';
 
   interface Testimonial {
@@ -24,11 +27,10 @@
     subtitle?: string;
     testimonials: Testimonial[];
     linkedinUrl?: string;
-    onTestimonialView?: (testimonial: Testimonial) => void;
-    onTestimonialInteraction?: (payload: {
+    onTestimonialSelectionRequested?: (testimonial: Testimonial) => void;
+    onTimelineNavigationRequested?: (payload: {
       testimonial: Testimonial;
-      action: string;
-      company?: string;
+      company: string;
     }) => void;
   };
 
@@ -37,8 +39,8 @@
     subtitle = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     testimonials,
     linkedinUrl,
-    onTestimonialView,
-    onTestimonialInteraction,
+    onTestimonialSelectionRequested,
+    onTimelineNavigationRequested,
   }: Props = $props();
 
   // State
@@ -51,7 +53,9 @@
 
   // Reactive values
   const activeTestimonial = $derived(testimonials[activeIndex]);
-  const progressValue = $derived(((activeIndex + 1) / testimonials.length) * 100);
+  const progressValue = $derived(
+    testimonials.length > 0 ? ((activeIndex + 1) / testimonials.length) * 100 : 0,
+  );
 
   // Navigation
   const setActiveTestimonial = (index: number) => {
@@ -63,31 +67,21 @@
     const testimonial = testimonials[index];
     announcementText = `Now viewing testimonial ${index + 1} of ${testimonials.length} from ${testimonial.author}, ${testimonial.role} at ${testimonial.company}`;
 
-    onTestimonialView?.(testimonial);
+    onTestimonialSelectionRequested?.(testimonial);
 
     setTimeout(() => {
       isTransitioning = false;
     }, 600);
   };
 
-  const navigateToTimeline = (companyName: string) => {
-    const timelineSection = document.getElementById('experience');
-    if (timelineSection) {
-      const companyItems = document.querySelectorAll('[data-company]');
-      const targetItem = Array.from(companyItems).find(
-        (item) => item.getAttribute('data-company')?.toLowerCase() === companyName.toLowerCase(),
-      );
+  const requestTimelineNavigation = (companyName: string) => {
+    const testimonial = testimonials.find((item) => item.company === companyName);
+    if (!testimonial) return;
 
-      if (targetItem) {
-        targetItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-
-      onTestimonialInteraction?.({
-        testimonial: testimonials.find((t) => t.company === companyName) || testimonials[0],
-        action: 'navigate-to-timeline',
-        company: companyName,
-      });
-    }
+    onTimelineNavigationRequested?.({
+      testimonial,
+      company: companyName,
+    });
   };
 
   // Keyboard navigation
@@ -154,289 +148,280 @@
   bind:this={sectionElement}
 >
   <!-- Screen reader announcements -->
-  <div class="sr-only" role="status" aria-live="polite" aria-atomic="true">
+  <VisuallyHidden as="div" role="status" aria-live="polite" aria-atomic="true">
     {announcementText}
-  </div>
+  </VisuallyHidden>
 
   <Section className="testimonials__container">
     <!-- Header -->
-    <SectionHeader
-      {title}
-      {subtitle}
-      titleId="testimonials-heading"
-      variant="compact"
-      contentClass="header__content"
-    />
-
-    <!-- Navigation -->
-    <div class="navigation" role="tablist" aria-label="Navigate testimonials">
-      {#each testimonials as testimonial, index (testimonial.id)}
-        <button
-          class="nav-item"
-          class:nav-item--active={index === activeIndex}
-          onclick={() => setActiveTestimonial(index)}
-          role="tab"
-          aria-selected={index === activeIndex}
-          aria-controls="testimonial-{testimonial.id}"
-          aria-label="View testimonial from {testimonial.author}"
-          disabled={isTransitioning}
-        >
-          <div class="nav-item__avatar">
-            <Image src={testimonial.avatar} alt="" sizes="48px" loading="lazy" />
-          </div>
-          <div class="nav-item__content">
-            <span class="nav-item__name">{testimonial.author}</span>
-            <span class="nav-item__role">{testimonial.role}</span>
-          </div>
-        </button>
-      {/each}
+    <div class="testimonials__header">
+      <SectionHeader
+        {title}
+        {subtitle}
+        titleId="testimonials-heading"
+        contentClass="header__content"
+      />
     </div>
 
-    <!-- Progress indicator -->
-    <div class="progress">
-      <div class="progress__track">
-        <div class="progress__fill" style="width: {progressValue}%"></div>
-      </div>
-      <div class="progress__counter">
-        {activeIndex + 1} / {testimonials.length}
-      </div>
-    </div>
-
-    <!-- Main content -->
-    <div class="content">
-      <!-- Quote panel -->
-      <div class="quote-panel">
-        <div class="quote">
-          <blockquote class="quote__text">
-            "{activeTestimonial.quote}"
-          </blockquote>
-
-          <footer class="quote__attribution">
-            <div class="attribution__avatar">
-              <Image
-                src={activeTestimonial.avatar}
-                alt="Profile photo of {activeTestimonial.author}"
-                sizes="64px"
-                loading="lazy"
-              />
+    {#if activeTestimonial}
+      <!-- Navigation -->
+      <div class="navigation" role="tablist" aria-label="Navigate testimonials">
+        {#each testimonials as testimonial, index (testimonial.id)}
+          <button
+            class="nav-item"
+            class:nav-item--active={index === activeIndex}
+            onclick={() => setActiveTestimonial(index)}
+            role="tab"
+            aria-selected={index === activeIndex}
+            aria-controls="testimonial-{testimonial.id}"
+            aria-label="View testimonial from {testimonial.author}"
+            disabled={isTransitioning}
+          >
+            <div class="nav-item__avatar">
+              <Image src={testimonial.avatar} alt="" sizes="48px" loading="lazy" />
             </div>
-
-            <div class="attribution__content">
-              <cite class="attribution__author">{activeTestimonial.author}</cite>
-              <div class="attribution__role">{activeTestimonial.role}</div>
-              <button
-                class="attribution__company"
-                onclick={() => navigateToTimeline(activeTestimonial.company)}
-                aria-label="Go to {activeTestimonial.company} experience in timeline"
-              >
-                {activeTestimonial.company}
-              </button>
-              <div class="attribution__meta">
-                <span>{activeTestimonial.relationship}</span>
-                <span>•</span>
-                <time datetime={activeTestimonial.date}>{activeTestimonial.date}</time>
-                {#if linkedinUrl}
-                  <span>•</span>
-                  <!-- eslint-disable svelte/no-navigation-without-resolve -->
-                  <a
-                    href={linkedinUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="attribution__linkedin"
-                  >
-                    View on LinkedIn
-                  </a>
-                  <!-- eslint-enable svelte/no-navigation-without-resolve -->
-                {/if}
-              </div>
+            <div class="nav-item__content">
+              <span class="nav-item__name">{testimonial.author}</span>
+              <span class="nav-item__role">{testimonial.role}</span>
             </div>
+          </button>
+        {/each}
+      </div>
 
-            {#if activeTestimonial.companyLogo}
-              <div class="attribution__logo">
+      <!-- Progress indicator -->
+      <div class="progress">
+        <div class="progress__track">
+          <div class="progress__fill" style="--testimonial-progress: {progressValue}%"></div>
+        </div>
+        <div class="progress__counter">
+          {activeIndex + 1} / {testimonials.length}
+        </div>
+      </div>
+
+      <!-- Main content -->
+      <div class="content">
+        <!-- Quote panel -->
+        <div class="quote-panel">
+          <div class="quote">
+            <blockquote class="quote__text">
+              "{activeTestimonial.quote}"
+            </blockquote>
+
+            <footer class="quote__attribution">
+              <div class="attribution__avatar">
                 <Image
+                  src={activeTestimonial.avatar}
+                  alt="Profile photo of {activeTestimonial.author}"
+                  sizes="64px"
+                  loading="lazy"
+                />
+              </div>
+
+              <div class="attribution__content">
+                <cite class="attribution__author">{activeTestimonial.author}</cite>
+                <div class="attribution__role">{activeTestimonial.role}</div>
+                <button
+                  class="attribution__company"
+                  onclick={() => requestTimelineNavigation(activeTestimonial.company)}
+                  aria-label="Go to {activeTestimonial.company} experience in timeline"
+                >
+                  {activeTestimonial.company}
+                </button>
+                <div class="attribution__meta">
+                  <span>{activeTestimonial.relationship}</span>
+                  <span>•</span>
+                  <time datetime={activeTestimonial.date}>{activeTestimonial.date}</time>
+                  {#if linkedinUrl}
+                    <span>•</span>
+                    <!-- eslint-disable svelte/no-navigation-without-resolve -->
+                    <a
+                      href={linkedinUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="attribution__linkedin"
+                    >
+                      View on LinkedIn
+                    </a>
+                    <!-- eslint-enable svelte/no-navigation-without-resolve -->
+                  {/if}
+                </div>
+              </div>
+
+              {#if activeTestimonial.companyLogo}
+                <IconTile
                   src={activeTestimonial.companyLogo}
                   alt="{activeTestimonial.company} logo"
                   sizes="48px"
-                  loading="lazy"
+                  className="attribution__logo"
                 />
-              </div>
-            {/if}
-          </footer>
+              {/if}
+            </footer>
+          </div>
         </div>
-      </div>
 
-      <!-- Context panel -->
-      <div class="context-panel">
-        {#each testimonials as testimonial, index (testimonial.id)}
-          <article
-            class="context-card"
-            class:context-card--active={index === activeIndex}
-            class:context-card--prev={index < activeIndex}
-            class:context-card--next={index > activeIndex}
-            id="testimonial-{testimonial.id}"
-            aria-labelledby="context-{testimonial.id}-title"
-            aria-hidden={index !== activeIndex}
-          >
-            <header class="context-card__header">
-              <div class="context-card__avatar">
-                <Image
-                  src={testimonial.avatar}
-                  alt="Profile photo of {testimonial.author}"
-                  sizes="96px"
-                  loading="lazy"
-                />
-                {#if testimonial.companyLogo}
-                  <div class="context-card__logo">
-                    <Image
+        <!-- Context panel -->
+        <div class="context-panel">
+          {#each testimonials as testimonial, index (testimonial.id)}
+            <article
+              class="context-card"
+              class:context-card--active={index === activeIndex}
+              class:context-card--prev={index < activeIndex}
+              class:context-card--next={index > activeIndex}
+              id="testimonial-{testimonial.id}"
+              aria-labelledby="context-{testimonial.id}-title"
+              aria-hidden={index !== activeIndex}
+            >
+              <header class="context-card__header">
+                <div class="context-card__avatar">
+                  <Image
+                    src={testimonial.avatar}
+                    alt="Profile photo of {testimonial.author}"
+                    sizes="96px"
+                    loading="lazy"
+                  />
+                  {#if testimonial.companyLogo}
+                    <IconTile
                       src={testimonial.companyLogo}
                       alt="{testimonial.company} logo"
                       sizes="32px"
-                      loading="lazy"
+                      className="context-card__logo"
                     />
+                  {/if}
+                </div>
+
+                <div class="context-card__info">
+                  <h3 class="context-card__name" id="context-{testimonial.id}-title">
+                    {testimonial.author}
+                  </h3>
+                  <div class="context-card__role">{testimonial.role}</div>
+                  <button
+                    class="context-card__company"
+                    onclick={() => requestTimelineNavigation(testimonial.company)}
+                  >
+                    {testimonial.company}
+                  </button>
+                </div>
+              </header>
+
+              <div class="context-card__content">
+                <div class="context-detail">
+                  <span class="context-detail__label">Focus Area</span>
+                  <span class="context-detail__value">{testimonial.context}</span>
+                </div>
+
+                {#if testimonial.projectHighlight}
+                  <div class="context-detail">
+                    <span class="context-detail__label">Key Project</span>
+                    <span class="context-detail__value">{testimonial.projectHighlight}</span>
                   </div>
                 {/if}
-              </div>
 
-              <div class="context-card__info">
-                <h3 class="context-card__name" id="context-{testimonial.id}-title">
-                  {testimonial.author}
-                </h3>
-                <div class="context-card__role">{testimonial.role}</div>
-                <button
-                  class="context-card__company"
-                  onclick={() => navigateToTimeline(testimonial.company)}
-                >
-                  {testimonial.company}
-                </button>
-              </div>
-            </header>
-
-            <div class="context-card__content">
-              <div class="context-detail">
-                <span class="context-detail__label">Focus Area</span>
-                <span class="context-detail__value">{testimonial.context}</span>
-              </div>
-
-              {#if testimonial.projectHighlight}
-                <div class="context-detail">
-                  <span class="context-detail__label">Key Project</span>
-                  <span class="context-detail__value">{testimonial.projectHighlight}</span>
+                <div class="tags">
+                  {#each testimonial.tags as tag, tagIndex (tag)}
+                    <span
+                      class="tag"
+                      class:tag--animated={index === activeIndex}
+                      style="--testimonial-tag-delay: {tagIndex * 0.1}s"
+                    >
+                      {tag}
+                    </span>
+                  {/each}
                 </div>
-              {/if}
-
-              <div class="tags">
-                {#each testimonial.tags as tag, tagIndex (tag)}
-                  <span
-                    class="tag"
-                    class:tag--animated={index === activeIndex}
-                    style="animation-delay: {tagIndex * 0.1}s"
-                  >
-                    {tag}
-                  </span>
-                {/each}
               </div>
-            </div>
-          </article>
-        {/each}
-      </div>
-    </div>
-
-    <!-- Floating Navigation - Mobile Only -->
-    <div
-      class="floating-nav"
-      class:floating-nav--visible={showFloatingNav}
-      role="navigation"
-      aria-label="Quick testimonial navigation"
-    >
-      <div class="floating-nav__content">
-        <!-- Previous/Next arrows -->
-        <button
-          class="floating-nav__arrow floating-nav__arrow--prev"
-          onclick={() => setActiveTestimonial(Math.max(0, activeIndex - 1))}
-          disabled={activeIndex === 0 || isTransitioning}
-          aria-label="Previous testimonial"
-        >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M15 18L9 12L15 6"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </button>
-
-        <!-- Mini navigation dots -->
-        <div class="floating-nav__dots">
-          {#each testimonials as testimonial, index (testimonial.id)}
-            <button
-              class="floating-nav__dot"
-              class:floating-nav__dot--active={index === activeIndex}
-              onclick={() => setActiveTestimonial(index)}
-              disabled={isTransitioning}
-              aria-label="Go to testimonial {index + 1}: {testimonial.author}"
-            >
-              <div class="floating-nav__dot-avatar">
-                <Image src={testimonial.avatar} alt="" sizes="24px" loading="lazy" />
-              </div>
-            </button>
+            </article>
           {/each}
         </div>
+      </div>
 
-        <!-- Next arrow -->
-        <button
-          class="floating-nav__arrow floating-nav__arrow--next"
-          onclick={() => setActiveTestimonial(Math.min(testimonials.length - 1, activeIndex + 1))}
-          disabled={activeIndex === testimonials.length - 1 || isTransitioning}
-          aria-label="Next testimonial"
-        >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+      <!-- Floating Navigation - Mobile Only -->
+      <div
+        class="floating-nav"
+        class:floating-nav--visible={showFloatingNav}
+        role="navigation"
+        aria-label="Quick testimonial navigation"
+      >
+        <div class="floating-nav__content">
+          <!-- Previous/Next arrows -->
+          <Button
+            variant="secondary"
+            className="testimonial-floating-nav__arrow testimonial-floating-nav__arrow--prev"
+            onclick={() => setActiveTestimonial(Math.max(0, activeIndex - 1))}
+            disabled={activeIndex === 0 || isTransitioning}
+            aria-label="Previous testimonial"
           >
-            <path
-              d="M9 18L15 12L9 6"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </button>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15 18L9 12L15 6"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </Button>
 
-        <!-- Progress indicator -->
-        <div class="floating-nav__progress">
-          <span class="floating-nav__counter">{activeIndex + 1}/{testimonials.length}</span>
+          <!-- Mini navigation dots -->
+          <div class="floating-nav__dots">
+            {#each testimonials as testimonial, index (testimonial.id)}
+              <button
+                class="floating-nav__dot"
+                class:floating-nav__dot--active={index === activeIndex}
+                onclick={() => setActiveTestimonial(index)}
+                disabled={isTransitioning}
+                aria-label="Go to testimonial {index + 1}: {testimonial.author}"
+              >
+                <div class="floating-nav__dot-avatar">
+                  <Image src={testimonial.avatar} alt="" sizes="24px" loading="lazy" />
+                </div>
+              </button>
+            {/each}
+          </div>
+
+          <!-- Next arrow -->
+          <Button
+            variant="secondary"
+            className="testimonial-floating-nav__arrow testimonial-floating-nav__arrow--next"
+            onclick={() => setActiveTestimonial(Math.min(testimonials.length - 1, activeIndex + 1))}
+            disabled={activeIndex === testimonials.length - 1 || isTransitioning}
+            aria-label="Next testimonial"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9 18L15 12L9 6"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </Button>
+
+          <!-- Progress indicator -->
+          <div class="floating-nav__progress">
+            <span class="floating-nav__counter">{activeIndex + 1}/{testimonials.length}</span>
+          </div>
         </div>
       </div>
-    </div>
+    {:else}
+      <p class="empty-state">Testimonials will appear here once they are available.</p>
+    {/if}
   </Section>
 </section>
 
 <style lang="scss">
   @use '../styles/breakpoints' as *;
-
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
 
   .testimonials {
     position: relative;
@@ -472,7 +457,7 @@
     z-index: 1;
     margin: 0 auto;
     padding: 0 var(--token-space-fluid-lg);
-    max-width: var(--token-container-max);
+    max-inline-size: var(--token-container-max);
 
     @media (min-width: $breakpoint-md) {
       padding: 0 var(--token-space-fluid-xl);
@@ -483,12 +468,20 @@
     }
   }
 
+  .testimonials__header {
+    margin-block-end: var(--token-space-fluid-3xl);
+
+    @media (min-width: $breakpoint-md) {
+      margin-block-end: var(--token-space-fluid-4xl);
+    }
+  }
+
   .navigation {
     display: flex;
     gap: var(--token-space-fluid-sm);
     justify-content: center;
     flex-wrap: wrap;
-    margin-bottom: var(--token-space-fluid-2xl);
+    margin-block-end: var(--token-space-fluid-2xl);
     animation: fadeInUp 1s var(--token-motion-ease-out) 0.2s both;
 
     @media (min-width: $breakpoint-md) {
@@ -497,7 +490,7 @@
 
     @media (min-width: $breakpoint-lg) {
       gap: var(--token-space-fluid-lg);
-      margin-bottom: var(--token-space-fluid-3xl);
+      margin-block-end: var(--token-space-fluid-3xl);
     }
 
     // Hide on mobile when floating nav is shown
@@ -583,8 +576,8 @@
   }
 
   .nav-item__avatar {
-    width: 2.5rem;
-    height: 2.5rem;
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
     border-radius: var(--token-radius-full);
     overflow: hidden;
     border: 2px solid var(--token-border-color-default);
@@ -596,20 +589,20 @@
     position: relative;
 
     :global(img) {
-      width: 100%;
-      height: 100%;
+      inline-size: 100%;
+      block-size: 100%;
       object-fit: cover;
     }
 
     @media (min-width: $breakpoint-lg) {
-      width: 3rem;
-      height: 3rem;
+      inline-size: 3rem;
+      block-size: 3rem;
     }
   }
 
   .nav-item__content {
     display: none;
-    min-width: 0;
+    min-inline-size: 0;
 
     @media (min-width: $breakpoint-lg) {
       display: block;
@@ -646,12 +639,12 @@
     align-items: center;
     justify-content: center;
     gap: var(--token-space-fluid-lg);
-    margin-bottom: var(--token-space-fluid-3xl);
+    margin-block-end: var(--token-space-fluid-3xl);
     animation: fadeInUp 1s var(--token-motion-ease-out) 0.4s both;
 
     @media (min-width: $breakpoint-lg) {
       gap: var(--token-space-fluid-xl);
-      margin-bottom: var(--token-space-fluid-4xl);
+      margin-block-end: var(--token-space-fluid-4xl);
     }
 
     // Hide on mobile when floating nav is shown
@@ -661,51 +654,52 @@
   }
 
   .progress__track {
-    width: 16rem;
-    height: 4px;
+    inline-size: 16rem;
+    block-size: 4px;
     background: var(--token-surface-glass-strong);
     border-radius: var(--token-radius-full);
     overflow: hidden;
     position: relative;
 
     @media (min-width: $breakpoint-lg) {
-      width: 20rem;
-      height: 5px;
+      inline-size: 20rem;
+      block-size: 5px;
     }
 
     @media (min-width: $breakpoint-xlg) {
-      width: 24rem;
-      height: 6px;
+      inline-size: 24rem;
+      block-size: 6px;
     }
   }
 
   .progress__fill {
-    height: 100%;
+    inline-size: var(--testimonial-progress);
+    block-size: 100%;
     background: linear-gradient(
       90deg,
       var(--token-interactive-color),
       var(--token-interactive-hover)
     );
     border-radius: inherit;
-    transition: width 0.6s var(--token-motion-ease-out);
+    transition: inline-size 0.6s var(--token-motion-ease-out);
     position: relative;
 
     &::after {
       content: '';
       position: absolute;
       inset-inline-end: -4px;
-      top: 50%;
+      inset-block-start: 50%;
       transform: translateY(-50%);
-      width: 8px;
-      height: 8px;
+      inline-size: 8px;
+      block-size: 8px;
       background: var(--token-interactive-color);
       border-radius: var(--token-radius-full);
       box-shadow: 0 0 12px var(--token-interactive-glow);
 
       @media (min-width: $breakpoint-lg) {
         inset-inline-end: -5px;
-        width: 10px;
-        height: 10px;
+        inline-size: 10px;
+        block-size: 10px;
       }
     }
   }
@@ -735,7 +729,7 @@
 
     @media (min-width: $breakpoint-lg) {
       position: sticky;
-      top: var(--token-space-fluid-4xl);
+      inset-block-start: var(--token-space-fluid-4xl);
     }
   }
 
@@ -788,14 +782,14 @@
     font-style: italic;
     line-height: var(--token-line-height-very-loose);
     color: var(--token-text-primary);
-    margin-bottom: var(--token-space-fluid-2xl);
+    margin-block-end: var(--token-space-fluid-2xl);
     position: relative;
     z-index: 1;
     white-space: pre-line;
 
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-font-size-xl);
-      margin-bottom: var(--token-space-fluid-3xl);
+      margin-block-end: var(--token-space-fluid-3xl);
     }
 
     @media (min-width: $breakpoint-lg) {
@@ -808,51 +802,51 @@
     align-items: flex-start;
     gap: var(--token-space-fluid-lg);
     border-top: var(--token-border-default-small);
-    padding-top: var(--token-space-fluid-xl);
+    padding-block-start: var(--token-space-fluid-xl);
     position: relative;
     z-index: 1;
 
     @media (min-width: $breakpoint-lg) {
       gap: var(--token-space-fluid-xl);
-      padding-top: var(--token-space-fluid-2xl);
+      padding-block-start: var(--token-space-fluid-2xl);
     }
   }
 
   .attribution__avatar {
-    width: 4rem;
-    height: 4rem;
+    inline-size: 4rem;
+    block-size: 4rem;
     border-radius: var(--token-radius-full);
     overflow: hidden;
     border: 3px solid var(--token-interactive-color);
     flex-shrink: 0;
 
     :global(img) {
-      width: 100%;
-      height: 100%;
+      inline-size: 100%;
+      block-size: 100%;
       object-fit: cover;
     }
 
     @media (min-width: $breakpoint-md) {
-      width: 4.5rem;
-      height: 4.5rem;
+      inline-size: 4.5rem;
+      block-size: 4.5rem;
     }
 
     @media (min-width: $breakpoint-lg) {
-      width: 5rem;
-      height: 5rem;
+      inline-size: 5rem;
+      block-size: 5rem;
     }
   }
 
   .attribution__content {
     flex: 1;
-    min-width: 0;
+    min-inline-size: 0;
   }
 
   .attribution__author {
     font-size: var(--token-font-size-lg);
     font-weight: var(--token-font-weight-semibold);
     color: var(--token-text-primary);
-    margin-bottom: var(--token-space-fluid-sm);
+    margin-block-end: var(--token-space-fluid-sm);
     line-height: var(--token-line-height-snug);
     font-style: normal;
 
@@ -869,7 +863,7 @@
     font-size: var(--token-font-size-sm);
     font-weight: var(--token-font-weight-medium);
     color: var(--token-text-secondary);
-    margin-bottom: var(--token-space-fluid-sm);
+    margin-block-end: var(--token-space-fluid-sm);
 
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-font-size-base);
@@ -893,8 +887,8 @@
       background-color 0.3s var(--token-motion-ease-out),
       color 0.3s var(--token-motion-ease-out),
       transform 0.3s var(--token-motion-ease-out);
-    margin-bottom: var(--token-space-fluid-md);
-    min-height: 2.75rem;
+    margin-block-end: var(--token-space-fluid-md);
+    min-block-size: 2.75rem;
     display: flex;
     align-items: center;
     border-radius: var(--token-radius-sm);
@@ -912,7 +906,7 @@
 
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-font-size-base);
-      min-height: auto;
+      min-block-size: auto;
       padding: 0;
     }
 
@@ -953,33 +947,17 @@
     }
   }
 
-  .attribution__logo {
-    width: 2.5rem;
-    height: 2.5rem;
-    background: var(--token-surface-color);
-    border: var(--token-border-default-small);
-    border-radius: var(--token-radius-lg);
-    padding: var(--token-space-2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-
-    :global(img) {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      filter: grayscale(0.1);
-    }
+  :global(.attribution__logo) {
+    --icon-tile-size: 2.5rem;
+    --icon-tile-padding: var(--token-space-2);
+    --icon-tile-image-filter: grayscale(0.1);
 
     @media (min-width: $breakpoint-md) {
-      width: 3rem;
-      height: 3rem;
+      --icon-tile-size: 3rem;
     }
 
     @media (min-width: $breakpoint-lg) {
-      width: 3.5rem;
-      height: 3.5rem;
+      --icon-tile-size: 3.5rem;
     }
   }
 
@@ -988,19 +966,19 @@
   // the card's content actually needs instead of padding out to fill 100vh.
   .context-panel {
     position: relative;
-    height: 34rem;
+    block-size: 34rem;
     perspective: 1000px;
 
     @media (min-width: $breakpoint-md) {
-      height: 38rem;
+      block-size: 38rem;
     }
 
     @media (min-width: $breakpoint-lg) {
-      height: 39rem;
+      block-size: 39rem;
     }
 
     @media (min-width: $breakpoint-xlg) {
-      height: 43rem;
+      block-size: 43rem;
     }
   }
 
@@ -1120,7 +1098,7 @@
     display: flex;
     align-items: flex-start;
     gap: var(--token-space-fluid-lg);
-    margin-bottom: var(--token-space-fluid-xl);
+    margin-block-end: var(--token-space-fluid-xl);
     opacity: 0.7;
     transform: translateY(20px);
     transition:
@@ -1129,86 +1107,75 @@
 
     @media (min-width: $breakpoint-lg) {
       gap: var(--token-space-fluid-xl);
-      margin-bottom: var(--token-space-fluid-2xl);
+      margin-block-end: var(--token-space-fluid-2xl);
     }
   }
 
   .context-card__avatar {
     position: relative;
-    width: 4rem;
-    height: 4rem;
+    inline-size: 4rem;
+    block-size: 4rem;
     border-radius: var(--token-radius-full);
     overflow: hidden;
     border: 3px solid var(--token-interactive-color);
     flex-shrink: 0;
 
     :global(img) {
-      width: 100%;
-      height: 100%;
+      inline-size: 100%;
+      block-size: 100%;
       object-fit: cover;
     }
 
     @media (min-width: $breakpoint-md) {
-      width: 5rem;
-      height: 5rem;
+      inline-size: 5rem;
+      block-size: 5rem;
     }
 
     @media (min-width: $breakpoint-lg) {
-      width: 6rem;
-      height: 6rem;
+      inline-size: 6rem;
+      block-size: 6rem;
     }
 
     @media (min-width: $breakpoint-xlg) {
-      width: 7rem;
-      height: 7rem;
+      inline-size: 7rem;
+      block-size: 7rem;
     }
   }
 
-  .context-card__logo {
-    position: absolute;
-    bottom: -4px;
-    inset-inline-end: -4px;
-    width: 1.5rem;
-    height: 1.5rem;
-    background: var(--token-surface-color);
-    border: var(--token-border-default-small);
-    border-radius: var(--token-radius-md);
-    padding: var(--token-space-1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  :global(.context-card__logo) {
+    --icon-tile-size: 1.5rem;
+    --icon-tile-padding: var(--token-space-1);
+    --icon-tile-radius: var(--token-radius-md);
 
-    :global(img) {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
+    position: absolute;
+    inset-block-end: -4px;
+    inset-inline-end: -4px;
 
     @media (min-width: $breakpoint-md) {
-      width: 1.75rem;
-      height: 1.75rem;
-      bottom: -6px;
+      --icon-tile-size: 1.75rem;
+
+      inset-block-end: -6px;
       inset-inline-end: -6px;
     }
 
     @media (min-width: $breakpoint-lg) {
-      width: 2rem;
-      height: 2rem;
-      bottom: -8px;
+      --icon-tile-size: 2rem;
+
+      inset-block-end: -8px;
       inset-inline-end: -8px;
     }
   }
 
   .context-card__info {
     flex: 1;
-    min-width: 0;
+    min-inline-size: 0;
   }
 
   .context-card__name {
     font-size: var(--token-font-size-base);
     font-weight: var(--token-font-weight-semibold);
     color: var(--token-text-primary);
-    margin-bottom: var(--token-space-fluid-xs);
+    margin-block-end: var(--token-space-fluid-xs);
     line-height: var(--token-line-height-snug);
 
     @media (min-width: $breakpoint-md) {
@@ -1227,7 +1194,7 @@
   .context-card__role {
     font-size: var(--token-font-size-xs);
     color: var(--token-text-secondary);
-    margin-bottom: var(--token-space-fluid-xs);
+    margin-block-end: var(--token-space-fluid-xs);
 
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-font-size-sm);
@@ -1281,7 +1248,7 @@
 
   .context-detail {
     display: none;
-    margin-bottom: var(--token-space-fluid-lg);
+    margin-block-end: var(--token-space-fluid-lg);
     padding: var(--token-space-fluid-md);
     background: var(--token-surface-glass-medium);
     border: var(--token-border-default-small);
@@ -1292,7 +1259,7 @@
     }
 
     @media (min-width: $breakpoint-lg) {
-      margin-bottom: var(--token-space-fluid-xl);
+      margin-block-end: var(--token-space-fluid-xl);
       padding: var(--token-space-fluid-lg);
     }
   }
@@ -1304,7 +1271,7 @@
     color: var(--token-text-tertiary);
     text-transform: uppercase;
     letter-spacing: var(--token-letter-spacing-widest);
-    margin-bottom: var(--token-space-fluid-xs);
+    margin-block-end: var(--token-space-fluid-xs);
   }
 
   .context-detail__value {
@@ -1353,6 +1320,7 @@
 
     &--animated {
       animation: tagFadeIn 0.6s var(--token-motion-ease-out) forwards;
+      animation-delay: var(--testimonial-tag-delay);
     }
 
     @media (min-width: $breakpoint-lg) {
@@ -1364,7 +1332,7 @@
   // Enhanced Floating Navigation - Sticky Footer
   .floating-nav {
     position: fixed;
-    bottom: 0;
+    inset-block-end: 0;
     inset-inline: 0;
     transform: translateY(100%);
     opacity: 0;
@@ -1377,7 +1345,7 @@
     backdrop-filter: blur(var(--token-blur-xl));
     border-top: var(--token-border-default-small);
     padding: var(--token-space-fluid-lg) var(--token-space-fluid-md);
-    padding-bottom: calc(var(--token-space-fluid-lg) + env(safe-area-inset-bottom));
+    padding-block-end: calc(var(--token-space-fluid-lg) + env(safe-area-inset-bottom));
 
     &--visible {
       opacity: 1;
@@ -1405,59 +1373,43 @@
     align-items: center;
     justify-content: center;
     gap: var(--token-space-fluid-xl);
-    max-width: 100%;
+    max-inline-size: 100%;
     margin: 0 auto;
     position: relative;
     z-index: 1;
 
     @media (min-width: $breakpoint-md) {
       gap: var(--token-space-fluid-2xl);
-      max-width: 28rem;
+      max-inline-size: 28rem;
     }
   }
 
-  .floating-nav__arrow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 3.5rem;
-    height: 3.5rem;
-    background: var(--token-surface-color);
-    border: var(--token-border-default-small);
-    border-radius: var(--token-radius-xl);
-    color: var(--token-text-primary);
-    cursor: pointer;
-    transition:
-      background-color 0.3s var(--token-motion-ease-out),
-      border-color 0.3s var(--token-motion-ease-out),
-      box-shadow 0.3s var(--token-motion-ease-out),
-      color 0.3s var(--token-motion-ease-out),
-      transform 0.3s var(--token-motion-ease-out);
-    position: relative;
-    z-index: 1;
-    box-shadow: var(--token-shadow-default);
+  :global(.testimonial-floating-nav__arrow) {
+    --button-width: 3.5rem;
+    --button-min-height: 3.5rem;
+    --button-padding: 0;
+    --button-padding-md: 0;
+    --button-radius: var(--token-radius-xl);
+    --button-secondary-background: var(--token-surface-color);
+    --button-secondary-color: var(--token-text-primary);
+    --button-secondary-shadow: var(--token-shadow-default);
+    --button-secondary-hover-transform: scale(1.1);
+    --button-secondary-hover-shadow: 0 0 25px var(--token-interactive-glow);
 
-    &:hover:not(:disabled) {
-      background: var(--token-interactive-color);
-      color: var(--token-text-dark);
-      transform: scale(1.1);
-      border-color: var(--token-interactive-color);
-      box-shadow: 0 0 25px var(--token-interactive-glow);
+    z-index: 1;
+
+    &:hover:not(:disabled):not([aria-disabled='true']) {
+      --button-secondary-background: var(--token-interactive-color);
+      --button-secondary-color: var(--token-text-dark);
     }
 
     &:disabled {
       opacity: 0.4;
-      cursor: not-allowed;
-    }
-
-    &:focus {
-      outline: 2px solid var(--token-interactive-color);
-      outline-offset: 3px;
     }
 
     svg {
-      width: 22px;
-      height: 22px;
+      inline-size: 22px;
+      block-size: 22px;
     }
   }
 
@@ -1478,8 +1430,8 @@
   }
 
   .floating-nav__dot {
-    width: 2.75rem;
-    height: 2.75rem;
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
     border-radius: var(--token-radius-full);
     border: 2px solid var(--token-border-color-neutral);
     background: var(--token-surface-color);
@@ -1517,20 +1469,20 @@
     }
 
     @media (min-width: $breakpoint-md) {
-      width: 3rem;
-      height: 3rem;
+      inline-size: 3rem;
+      block-size: 3rem;
     }
   }
 
   .floating-nav__dot-avatar {
-    width: 100%;
-    height: 100%;
+    inline-size: 100%;
+    block-size: 100%;
     border-radius: var(--token-radius-full);
     overflow: hidden;
 
     :global(img) {
-      width: 100%;
-      height: 100%;
+      inline-size: 100%;
+      block-size: 100%;
       object-fit: cover;
     }
   }
@@ -1539,8 +1491,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 3rem;
-    height: 2.5rem;
+    min-inline-size: 3rem;
+    block-size: 2.5rem;
     background: var(--token-surface-glass-medium);
     border: var(--token-border-default-small);
     border-radius: var(--token-radius-lg);

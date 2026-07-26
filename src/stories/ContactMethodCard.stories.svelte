@@ -26,7 +26,8 @@
       description: 'View my code',
     },
     argTypes: {
-      ...hideControls(['href', 'type']),
+      ...hideControls(['href', 'onContactRequested']),
+      type: { control: 'select', options: ['email', 'linkedin', 'github', 'calendar'] },
       label: { control: 'text' },
       value: { control: 'text' },
       imagePath: { control: 'text' },
@@ -52,17 +53,29 @@
       value={args.value}
       imagePath={args.imagePath}
       description={args.description}
-      onclick={() => console.log('Contact method clicked')}
+      onContactRequested={() => console.log('Contact requested')}
     />
   </div>
 {/snippet}
 
 <Story name="Default" />
 
+<Story
+  name="Email"
+  args={{
+    href: 'mailto:cassidybridges@gmail.com',
+    type: 'email',
+    label: 'Email',
+    value: 'cassidybridges@gmail.com',
+    imagePath: 'svg/email_brand_icon.svg',
+    description: 'Direct message',
+  }}
+/>
+
 <style lang="scss">
   .story-width {
     color: var(--token-text-primary);
     font-family: var(--token-font-family-sans);
-    max-width: 34rem;
+    max-inline-size: 34rem;
   }
 </style>

@@ -5,9 +5,13 @@
 
   const technologies = ['React', 'TypeScript', 'Svelte', 'SCSS', 'Accessibility', 'Storybook'];
 
+  const overflowTechnologies = technologies.concat(['Node.js', 'GraphQL', 'Docker', 'Kubernetes']);
+
   type Args = {
     title: string;
+    level: 'expert' | 'advanced';
     technologies: string[];
+    narrow: boolean;
   };
 
   const { Story } = defineMeta({
@@ -17,10 +21,21 @@
     tags: ['autodocs'],
     args: {
       title: 'Frontend Architecture',
+      level: 'expert',
       technologies,
+      narrow: false,
     },
     argTypes: {
-      ...hideControls(['level']),
+      level: {
+        control: 'select',
+        options: ['expert', 'advanced'],
+      },
+      narrow: {
+        control: 'boolean',
+        description:
+          'Story-only toggle that shrinks the preview to force the tag-overflow "+N" collapse described above.',
+      },
+      ...hideControls(['delay', 'onSelectRequested']),
     },
     parameters: {
       docs: {
@@ -34,22 +49,33 @@
 </script>
 
 {#snippet template(args: Args)}
-  <div class="story-width">
+  <div class="story-width" class:story-width--narrow={args.narrow}>
     <TechCategoryCard
       title={args.title}
-      level="expert"
+      level={args.level}
       technologies={args.technologies}
-      onclick={() => console.log('Technology category clicked')}
+      onSelectRequested={() => console.log('Technology category selected')}
     />
   </div>
 {/snippet}
 
 <Story name="Default" />
 
+<Story name="Advanced" args={{ level: 'advanced' }} />
+
+<Story
+  name="Overflow in Narrow Container"
+  args={{ technologies: overflowTechnologies, narrow: true }}
+/>
+
 <style lang="scss">
   .story-width {
     color: var(--token-text-primary);
     font-family: var(--token-font-family-sans);
-    max-width: 30rem;
+    max-inline-size: 30rem;
+  }
+
+  .story-width--narrow {
+    max-inline-size: 16rem;
   }
 </style>

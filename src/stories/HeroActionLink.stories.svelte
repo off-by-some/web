@@ -23,7 +23,7 @@
       shape: 'label',
     },
     argTypes: {
-      ...hideControls(['href', 'download', 'target', 'rel']),
+      ...hideControls(['href', 'download', 'target', 'rel', 'onclick', 'onActionRequested']),
       label: { control: { type: 'text' } },
       icon: {
         control: { type: 'select' },
@@ -49,18 +49,28 @@
       label={args.label}
       icon={args.icon}
       shape={args.shape}
-      onclick={() => console.log('Hero action clicked')}
+      onActionRequested={() => console.log('Hero action requested')}
     />
   </div>
 {/snippet}
 
 <Story name="Default" />
 
+<Story
+  name="Circle"
+  args={{
+    href: 'https://github.com/off-by-some',
+    label: 'Open GitHub profile',
+    icon: 'github',
+    shape: 'circle',
+  }}
+/>
+
 <style lang="scss">
   .story-shell {
     display: flex;
     align-items: center;
     gap: var(--token-space-fluid-lg);
-    min-height: 7rem;
+    min-block-size: 7rem;
   }
 </style>

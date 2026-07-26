@@ -23,8 +23,8 @@
     --tone-dot-glow-size: 8px;
 
     display: inline-block;
-    width: var(--tone-dot-size);
-    height: var(--tone-dot-size);
+    inline-size: var(--tone-dot-size);
+    block-size: var(--tone-dot-size);
     background: var(--tone-color);
     border: var(--tone-dot-border);
     border-radius: var(--token-radius-full);

@@ -74,7 +74,7 @@
     font-size: var(--field-label-font-size, var(--token-font-size-sm));
     font-weight: var(--field-label-font-weight, var(--token-font-weight-medium));
     color: var(--field-label-color, var(--token-text-overlay));
-    margin-bottom: var(--field-label-margin-bottom, var(--token-space-fluid-sm));
+    margin-block-end: var(--field-label-margin-bottom, var(--token-space-fluid-sm));
     letter-spacing: var(--token-letter-spacing-wide);
     line-height: var(--token-line-height-snug);
 
@@ -85,7 +85,7 @@
 
   .field__error {
     position: absolute;
-    bottom: calc(-1 * var(--token-space-fluid-lg));
+    inset-block-end: calc(-1 * var(--token-space-fluid-lg));
     inset-inline-start: 0;
     font-size: var(--field-meta-font-size, var(--token-font-size-xs));
     font-weight: var(--token-font-weight-medium);
@@ -104,7 +104,7 @@
 
   .field__counter {
     position: absolute;
-    bottom: calc(-1 * var(--token-space-fluid-lg));
+    inset-block-end: calc(-1 * var(--token-space-fluid-lg));
     inset-inline-end: 0;
     font-size: var(--field-meta-font-size, var(--token-font-size-xs));
     color: var(--field-counter-color, var(--token-text-tertiary));

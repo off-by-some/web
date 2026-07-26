@@ -92,7 +92,7 @@
   .input {
     @include root.interactive-root;
 
-    width: 100%;
+    inline-size: 100%;
     background: var(--input-background, var(--token-surface-glass-strong));
     border: var(--input-border, var(--token-border-default-small));
     border-radius: var(--input-radius, var(--token-radius-lg));
@@ -179,7 +179,7 @@
 
     &--textarea {
       resize: vertical;
-      min-height: var(--input-textarea-min-height, 8rem);
+      min-block-size: var(--input-textarea-min-height, 8rem);
       font-family: inherit;
       line-height: var(--token-line-height-relaxed);
     }

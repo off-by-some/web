@@ -20,13 +20,13 @@
       titleId: 'storybook-section-header',
     },
     argTypes: {
-      ...hideControls(['titleId', 'variant']),
+      ...hideControls(['titleId']),
     },
     parameters: {
       docs: {
         description: {
           component:
-            'Title-plus-subtitle pairing used at the top of every major page section. The title\'s gradient text shimmers on a slow 8s loop by default (disabled under reduced motion); `variant="compact"` only trims the bottom margin for tighter sections, it does not change either type size.',
+            'Title-plus-subtitle pairing used at the top of every major page section. The title owns its shimmer and text hierarchy; surrounding sections own placement so the same heading can be reused without hidden margin contracts.',
         },
       },
     },

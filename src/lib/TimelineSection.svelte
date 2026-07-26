@@ -1,5 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import Button from './components/primitives/actions/Button';
+  import VisuallyHidden from './components/primitives/accessibility/VisuallyHidden';
   import Section from './components/primitives/layout/Section';
   import ExperienceCard from './components/site/timeline/ExperienceCard';
   import SectionHeader from './components/site/section-headings/SectionHeader';
@@ -22,7 +24,7 @@
     subtitle?: string;
     initialActiveIndex?: number;
     initialExpandedItems?: number[];
-    onExperienceSelect?: (experience: Experience) => void;
+    onExperienceDetailsToggleRequested?: (experience: Experience) => void;
   };
 
   let {
@@ -31,7 +33,7 @@
     subtitle = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     initialActiveIndex = 0,
     initialExpandedItems = [],
-    onExperienceSelect,
+    onExperienceDetailsToggleRequested,
   }: Props = $props();
 
   // State
@@ -95,7 +97,7 @@
     const action = wasExpanded ? 'Collapsed' : 'Expanded';
     announcementText = `${action} details for ${experience.title} at ${experience.company}`;
 
-    onExperienceSelect?.(experience);
+    onExperienceDetailsToggleRequested?.(experience);
   };
 
   const updateProgress = () => {
@@ -159,6 +161,8 @@
     });
   };
 
+  const getExperienceDelay = (index: number) => `${index * 0.1}s`;
+
   // Keyboard navigation
   const handleKeydown = (event: KeyboardEvent) => {
     if (!timelineElement?.contains(event.target as Node)) return;
@@ -214,13 +218,15 @@
   bind:this={timelineElement}
 >
   <!-- Screen reader announcements -->
-  <div class="sr-only" role="status" aria-live="polite" aria-atomic="true">
+  <VisuallyHidden as="div" role="status" aria-live="polite" aria-atomic="true">
     {announcementText}
-  </div>
+  </VisuallyHidden>
 
   <Section className="timeline__container">
     <!-- Header -->
-    <SectionHeader {title} {subtitle} titleId="timeline-heading" />
+    <div class="timeline__header">
+      <SectionHeader {title} {subtitle} titleId="timeline-heading" />
+    </div>
 
     <!-- Timeline Content -->
     <div class="timeline-content">
@@ -231,15 +237,15 @@
 
       <!-- Experience Items -->
       <div class="timeline-items" aria-label="Professional experience timeline">
-        {#each experiences as experience, index (index)}
+        {#each experiences as experience, index (`${experience.company}-${experience.dateValue}`)}
           <ExperienceCard
             {experience}
             {index}
+            delay={getExperienceDelay(index)}
             active={activeIndex === index}
             expanded={expandedItems.has(index)}
-            clickable={isDesktop}
-            onSelect={() => toggleExpanded(index)}
-            onToggle={() => toggleExpanded(index)}
+            detailsClickable={isDesktop}
+            onDetailsToggleRequested={() => toggleExpanded(index)}
           />
         {/each}
       </div>
@@ -252,13 +258,14 @@
       aria-label="Timeline navigation"
     >
       <div class="floating-nav__content">
-        <button
-          class="floating-nav__button floating-nav__button--prev"
+        <Button
+          variant="secondary"
+          className="timeline-floating-nav__button timeline-floating-nav__button--prev"
           onclick={() => setActiveExperience(Math.max(0, activeIndex - 1), true)}
           disabled={activeIndex === 0}
           aria-label="Previous experience"
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path
               d="M18 15L12 9L6 15"
               stroke="currentColor"
@@ -267,17 +274,18 @@
               stroke-linejoin="round"
             />
           </svg>
-        </button>
+        </Button>
 
         <div class="floating-nav__progress">
           <div class="floating-nav__track">
-            <div class="floating-nav__fill" style="height: {progressValue}%"></div>
+            <div class="floating-nav__fill" style="--timeline-progress: {progressValue}%"></div>
           </div>
           <span class="floating-nav__counter">{activeIndex + 1}/{experiences.length}</span>
         </div>
 
-        <button
-          class="floating-nav__button floating-nav__button--next"
+        <Button
+          variant="secondary"
+          className="timeline-floating-nav__button timeline-floating-nav__button--next"
           onclick={() =>
             setActiveExperience(Math.min(experiences.length - 1, activeIndex + 1), true)}
           disabled={activeIndex === experiences.length - 1}
@@ -292,7 +300,7 @@
               stroke-linejoin="round"
             />
           </svg>
-        </button>
+        </Button>
       </div>
     </div>
   </Section>
@@ -300,18 +308,6 @@
 
 <style lang="scss">
   @use 'styles/_breakpoints' as *;
-
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
 
   .timeline {
     position: relative;
@@ -353,6 +349,10 @@
     }
   }
 
+  .timeline__header {
+    margin-block-end: var(--token-space-fluid-5xl);
+  }
+
   .timeline-content {
     position: relative;
     animation: fadeInUp 1s var(--token-motion-ease-out) 0.3s both;
@@ -360,9 +360,9 @@
 
   .timeline-line {
     position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 2px;
+    inset-block-start: 0;
+    inset-block-end: 0;
+    inline-size: 2px;
     inset-inline-start: var(--token-space-fluid-2xl);
     background: var(--token-surface-glass-strong);
     border-radius: var(--token-radius-full);
@@ -370,19 +370,19 @@
 
     @media (min-width: $breakpoint-md) {
       inset-inline-start: var(--token-space-fluid-3xl);
-      width: 3px;
+      inline-size: 3px;
     }
 
     @media (min-width: $breakpoint-lg) {
       inset-inline-start: 50%;
       transform: translateX(-50%);
-      width: 4px;
+      inline-size: 4px;
     }
   }
 
   .timeline-progress {
-    width: 100%;
-    height: 100%;
+    inline-size: 100%;
+    block-size: 100%;
     background: linear-gradient(
       to bottom,
       transparent 0%,
@@ -404,7 +404,7 @@
   // Floating navigation
   .floating-nav {
     position: fixed;
-    bottom: var(--token-space-fluid-2xl);
+    inset-block-end: var(--token-space-fluid-2xl);
     inset-inline-start: 50%;
     transform: translateX(-50%) translateY(100px);
     opacity: 0;
@@ -451,36 +451,27 @@
     }
   }
 
-  .floating-nav__button {
-    width: 2.5rem;
-    height: 2.5rem;
-    background: var(--token-surface-glass-medium);
-    border: var(--token-border-default-small);
-    border-radius: var(--token-radius-lg);
-    color: var(--token-text-secondary);
-    cursor: pointer;
-    transition:
-      background-color 0.3s var(--token-motion-ease-out),
-      border-color 0.3s var(--token-motion-ease-out),
-      color 0.3s var(--token-motion-ease-out),
-      transform 0.3s var(--token-motion-ease-out);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  :global(.timeline-floating-nav__button) {
+    --button-width: 2.5rem;
+    --button-min-height: 2.5rem;
+    --button-padding: 0;
+    --button-padding-md: 0;
+    --button-radius: var(--token-radius-lg);
+    --button-secondary-background: var(--token-surface-glass-medium);
+    --button-secondary-color: var(--token-text-secondary);
+    --button-secondary-hover-transform: scale(1.1);
+    --button-secondary-hover-shadow: none;
+
     flex-shrink: 0;
-    position: relative;
     z-index: 1;
 
-    &:hover:not(:disabled) {
-      background: var(--token-interactive-color);
-      color: var(--token-text-dark);
-      transform: scale(1.1);
-      border-color: var(--token-interactive-color);
+    &:hover:not(:disabled):not([aria-disabled='true']) {
+      --button-secondary-background: var(--token-interactive-color);
+      --button-secondary-color: var(--token-text-dark);
     }
 
     &:disabled {
       opacity: 0.4;
-      cursor: not-allowed;
     }
   }
 
@@ -494,8 +485,8 @@
   }
 
   .floating-nav__track {
-    width: 4px;
-    height: 3rem;
+    inline-size: 4px;
+    block-size: 3rem;
     background: var(--token-surface-glass-strong);
     border-radius: var(--token-radius-full);
     overflow: hidden;
@@ -503,14 +494,15 @@
   }
 
   .floating-nav__fill {
-    width: 100%;
+    inline-size: 100%;
+    block-size: var(--timeline-progress);
     background: linear-gradient(
       to top,
       var(--token-interactive-color),
       var(--token-interactive-hover)
     );
     border-radius: inherit;
-    transition: height 0.6s var(--token-motion-ease-out);
+    transition: block-size 0.6s var(--token-motion-ease-out);
     transform-origin: bottom;
   }
 

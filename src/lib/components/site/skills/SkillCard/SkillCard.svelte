@@ -13,12 +13,12 @@
 
   type Props = {
     skill: SkillCardData;
-    index?: number;
+    delay?: string;
     hovered?: boolean;
-    onInteract?: (active: boolean) => void;
+    onEngagementChangeRequested?: (active: boolean) => void;
   };
 
-  let { skill, index = 0, hovered = false, onInteract }: Props = $props();
+  let { skill, delay = '0s', hovered = false, onEngagementChangeRequested }: Props = $props();
 
   const toTitleCase = (str: string): string =>
     str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
@@ -27,15 +27,15 @@
 <article
   class="skill-card"
   class:skill-card--hovered={hovered}
-  style="animation-delay: {index * 0.05}s"
+  style="--skill-card-delay: {delay};"
 >
   <Card
     as="button"
     className="skill-card__button skill-card__button--{skill.level}"
     type="button"
-    onclick={() => onInteract?.(true)}
-    onmouseenter={() => onInteract?.(true)}
-    onmouseleave={() => onInteract?.(false)}
+    onclick={() => onEngagementChangeRequested?.(true)}
+    onmouseenter={() => onEngagementChangeRequested?.(true)}
+    onmouseleave={() => onEngagementChangeRequested?.(false)}
   >
     <IconTile src={skill.image} alt="" sizes="48px" className="skill-image">
       <ToneDot tone={skill.level} className="skill-level-indicator" />
@@ -68,7 +68,7 @@
   @use 'lib/components/primitives/tone' as tone;
 
   .skill-card {
-    @include motion.fade-in-up(skillCardFadeIn, 20px, 0.6s, 0s, forwards);
+    @include motion.fade-in-up(skillCardFadeIn, 20px, 0.6s, var(--skill-card-delay), forwards);
   }
 
   :global(.skill-card__button) {
@@ -76,9 +76,9 @@
     --card-hover-transform: translateY(-4px) scale(1.02);
 
     cursor: pointer;
-    height: 100%;
+    block-size: 100%;
     text-align: center;
-    width: 100%;
+    inline-size: 100%;
 
     @media (min-width: $breakpoint-md) {
       --card-padding: var(--token-space-fluid-xl);
@@ -142,7 +142,7 @@
 
   :global(.skill-level-indicator) {
     position: absolute;
-    top: -4px;
+    inset-block-start: -4px;
     inset-inline-end: -4px;
     --tone-dot-size: 1rem;
     --tone-dot-border: 2px solid var(--token-surface-color);
@@ -161,7 +161,7 @@
     font-size: var(--token-font-size-base);
     font-weight: var(--token-font-weight-semibold);
     color: var(--token-text-primary);
-    margin-bottom: var(--token-space-fluid-xs);
+    margin-block-end: var(--token-space-fluid-xs);
     line-height: var(--token-line-height-snug);
 
     @media (min-width: $breakpoint-md) {
@@ -178,7 +178,7 @@
     align-items: center;
     justify-content: center;
     gap: var(--token-space-fluid-xs);
-    margin-bottom: var(--token-space-fluid-sm);
+    margin-block-end: var(--token-space-fluid-sm);
     flex-wrap: wrap;
 
     @media (min-width: $breakpoint-md) {

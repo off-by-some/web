@@ -20,9 +20,9 @@
   .section-wrapper {
     @include root.component-root;
 
-    max-width: 90vw;
+    max-inline-size: 90vw;
     position: relative;
-    width: 100%;
+    inline-size: 100%;
     margin-inline: auto;
     margin-block: var(--section-margin-block, 0);
   }

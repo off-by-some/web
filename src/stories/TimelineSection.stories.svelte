@@ -4,6 +4,7 @@
   import content from '$lib/content/en.json';
   import { format } from '$lib/content';
   import ViewportFrame from './helpers/ViewportFrame.svelte';
+  import { hideControls } from './helpers/controls';
   import { sectionViewportGlobals, sectionViewportParameters } from './helpers/section-viewports';
   import type { SectionViewport } from './helpers/section-viewports';
 
@@ -70,6 +71,7 @@
         options: ['mobile', 'ipad', 'desktop'],
         table: { disable: true },
       },
+      ...hideControls(['onExperienceDetailsToggleRequested']),
     },
     parameters: {
       layout: 'fullscreen',
@@ -91,7 +93,8 @@
       subtitle={args.subtitle}
       initialActiveIndex={args.initialActiveIndex}
       initialExpandedItems={args.initialExpandedItems}
-      onExperienceSelect={(experience) => console.log('Experience selected:', experience)}
+      onExperienceDetailsToggleRequested={(experience) =>
+        console.log('Experience details toggled:', experience)}
     />
   </ViewportFrame>
 {/snippet}

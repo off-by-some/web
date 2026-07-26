@@ -37,7 +37,7 @@
 <div bind:this={frame} class="viewport-frame viewport-frame--{mode}">
   <div
     class="viewport-frame__surface"
-    style="--viewport-frame-width: {size.width}px; --viewport-frame-height: {size.height}px;"
+    style="--viewport-frame-inline-size: {size.width}px; --viewport-frame-block-size: {size.height}px;"
   >
     {@render children?.()}
   </div>
@@ -45,7 +45,7 @@
 
 <style lang="scss">
   .viewport-frame {
-    width: 100%;
+    inline-size: 100%;
     overflow-x: auto;
     overflow-y: visible;
     display: block;
@@ -54,8 +54,8 @@
   }
 
   .viewport-frame__surface {
-    width: var(--viewport-frame-width);
-    min-height: var(--viewport-frame-height);
+    inline-size: var(--viewport-frame-inline-size);
+    min-block-size: var(--viewport-frame-block-size);
     margin-inline: auto;
     overflow: visible;
     background: var(--token-gradients-hero, #080a18);

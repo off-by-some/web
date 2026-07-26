@@ -24,7 +24,7 @@
     parameters: {
       docs: {
         description: {
-          component: `Wraps composed headings so line-height, measure, and non-justified text stay consistent wherever a heading appears — the kind of detail that's easy to drift on page-by-page and hard to notice once it has. References: [W3C Visual Presentation](${designReferences.visualPresentation}) and [IFLA dyslexia-friendly printing guidance](${designReferences.dyslexiaPrinting}).`,
+          component: `A thin semantic wrapper — \`<header>\` by default, or \`<div>\` via \`as\` when a nested header would be invalid HTML — that box-sizing/font-inherit resets and gives every heading block one composition point. Line-height, measure, and text alignment aren't enforced here; each consumer (SectionHeader, SectionAccentHeader) sets its own, which is why those are the components to check against [W3C Visual Presentation](${designReferences.visualPresentation}) and [IFLA dyslexia-friendly printing guidance](${designReferences.dyslexiaPrinting}), not this wrapper.`,
         },
       },
     },
@@ -49,7 +49,8 @@
   h2 {
     color: var(--token-text-heading);
     font-size: var(--token-font-size-3xl);
-    margin-bottom: var(--token-space-fluid-sm);
+    margin: 0;
+    margin-block-end: var(--token-space-fluid-sm);
   }
 
   p {

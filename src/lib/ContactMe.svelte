@@ -4,6 +4,7 @@
   import type { ContactFormData, FormErrors } from './components/site/contact/ContactForm';
   import ContactMethodsPanel from './components/site/contact/ContactMethodsPanel';
   import type { ContactMethod } from './components/site/contact/ContactMethodsPanel';
+  import SectionHeader from './components/site/section-headings/SectionHeader';
   import StatusPill from './components/site/status/StatusPill';
   import type { ContactFormContent } from '$lib/content';
 
@@ -46,9 +47,7 @@
   <Section className="contact__content">
     <div class="contact__container">
       <header class="contact__header">
-        <h2 class="contact__title" id="contact-title">{title}</h2>
-        <p class="contact__subtitle">{subtitle}</p>
-
+        <SectionHeader {title} {subtitle} titleId="contact-title" contentClass="contact__heading" />
         <StatusPill text={availabilityText} />
       </header>
 
@@ -66,7 +65,7 @@
           title={methodsTitle}
           subtitle={methodsSubtitle}
           methods={contactMethods}
-          onMethodClick={onContactMethodClick}
+          onContactRequested={onContactMethodClick}
         />
       </div>
     </div>
@@ -118,49 +117,8 @@
     animation: fadeInUp var(--token-motion-duration-slow) var(--token-motion-ease-out) 0.2s both;
   }
 
-  .contact__title {
-    font-size: var(--token-font-size-4xl);
-    font-weight: var(--token-font-weight-bold);
-    line-height: var(--token-line-height-tight);
-    color: var(--token-text-heading);
-    margin-bottom: var(--token-space-fluid-md);
-    letter-spacing: var(--token-letter-spacing-tight);
-    background: var(--token-gradients-heading);
-    background-size: 200% 200%;
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: textShimmer 8s ease-in-out infinite;
-
-    @media (min-width: $breakpoint-md) {
-      font-size: var(--token-font-size-5xl);
-      line-height: var(--token-line-height-snug);
-    }
-
-    @media (min-width: $breakpoint-lg) {
-      font-size: var(--token-font-size-6xl);
-      letter-spacing: var(--token-letter-spacing-normal);
-    }
-  }
-
-  .contact__subtitle {
-    font-size: var(--token-font-size-lg);
-    color: var(--token-text-secondary);
-    font-weight: var(--token-font-weight-normal);
-    line-height: var(--token-line-height-relaxed);
-    letter-spacing: var(--token-letter-spacing-normal);
-    max-width: var(--token-container-5xl);
-    margin: 0 auto var(--token-space-fluid-lg);
-
-    @media (min-width: $breakpoint-md) {
-      font-size: var(--token-font-size-xl);
-      line-height: var(--token-line-height-loose);
-    }
-
-    @media (min-width: $breakpoint-lg) {
-      font-size: var(--token-font-size-2xl);
-      letter-spacing: var(--token-letter-spacing-wide);
-    }
+  :global(.contact__heading) {
+    margin-block-end: var(--token-space-fluid-lg);
   }
 
   .contact__main {
@@ -184,17 +142,6 @@
     to {
       opacity: 1;
       transform: translateY(0);
-    }
-  }
-
-  @keyframes textShimmer {
-    0%,
-    100% {
-      background-position: 0% 50%;
-    }
-
-    50% {
-      background-position: 100% 50%;
     }
   }
 
@@ -231,19 +178,6 @@
       opacity: 1;
       transform: none;
     }
-
-    .contact__title {
-      animation: none;
-    }
-  }
-
-  @media (prefers-contrast: high) {
-    .contact__title {
-      text-shadow: none;
-      font-weight: var(--token-font-weight-bold);
-      color: var(--token-text-primary);
-      -webkit-text-fill-color: var(--token-text-primary);
-    }
   }
 
   @media print {
@@ -256,11 +190,6 @@
     .contact__main {
       grid-template-columns: 1fr;
       gap: var(--token-space-fluid-lg);
-    }
-
-    .contact__title {
-      color: black;
-      -webkit-text-fill-color: black;
     }
   }
 </style>

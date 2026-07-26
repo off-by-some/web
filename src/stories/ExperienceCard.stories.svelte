@@ -22,6 +22,7 @@
     experience: typeof experience;
     active: boolean;
     expanded: boolean;
+    detailsClickable: boolean;
   };
 
   const { Story } = defineMeta({
@@ -33,15 +34,16 @@
       experience,
       active: true,
       expanded: true,
+      detailsClickable: false,
     },
     argTypes: {
-      ...hideControls(['index', 'clickable']),
+      ...hideControls(['index', 'delay', 'onDetailsToggleRequested']),
     },
     parameters: {
       docs: {
         description: {
           component:
-            'Summary and highlight text run through a small markdown-link parser — write `[label](https://...)` inside `experience.summary` or `.highlights` and it renders as a real anchor; anything else stays literal text, so a bracket that isn\'t a real link is left alone rather than stripped. The card is only clickable when `clickable` is true (ExperienceCard itself doesn\'t decide this — TimelineSection passes it based on a desktop breakpoint check); the "More/Less" expand button works independently and stops its click from bubbling to the card underneath it.',
+            'Summary and highlight text run through a small markdown-link parser — write `[label](https://...)` inside `experience.summary` or `.highlights` and it renders as a real anchor; anything else stays literal text, so a bracket that is not a real link is left alone rather than stripped. The card is only clickable when `detailsClickable` is true; the "More/Less" button always reports the same semantic details-toggle request and stops its click from bubbling to the card surface.',
         },
       },
     },
@@ -55,20 +57,23 @@
       index={0}
       active={args.active}
       expanded={args.expanded}
-      clickable={false}
-      onSelect={() => console.log('Experience selected')}
-      onToggle={() => console.log('Experience toggled')}
+      detailsClickable={args.detailsClickable}
+      onDetailsToggleRequested={() => console.log('Experience details toggle requested')}
     />
   </div>
 {/snippet}
 
 <Story name="Default" />
 
+<Story name="Collapsed" args={{ expanded: false }} />
+
+<Story name="Inactive" args={{ active: false }} />
+
 <style lang="scss">
   .story-width {
     color: var(--token-text-primary);
     font-family: var(--token-font-family-sans);
-    width: min(72rem, calc(100vw - 4rem));
-    max-width: 100%;
+    inline-size: min(72rem, calc(100vw - 4rem));
+    max-inline-size: 100%;
   }
 </style>

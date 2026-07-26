@@ -9,20 +9,23 @@
       technologies: string[];
     }>;
     title?: string;
-    onCategoryClick?: (category: string) => void;
+    onCategorySelectRequested?: (category: string) => void;
   };
 
-  let { techStack = [], title = 'Lorem Ipsum', onCategoryClick }: Props = $props();
+  let { techStack = [], title = 'Lorem Ipsum', onCategorySelectRequested }: Props = $props();
+
+  const getCategoryDelay = (index: number) => `${1.4 + index * 0.1}s`;
 </script>
 
 <HeroPanel {title} titleId="tech-title" area="tech" delay="0.7s">
   <div class="tech-grid">
-    {#each techStack as category, index (index)}
+    {#each techStack as category, index (category.title)}
       <TechCategoryCard
         title={category.title}
         level={category.level}
         technologies={category.technologies}
-        onclick={() => onCategoryClick?.(category.title)}
+        delay={getCategoryDelay(index)}
+        onSelectRequested={() => onCategorySelectRequested?.(category.title)}
       />
     {/each}
   </div>

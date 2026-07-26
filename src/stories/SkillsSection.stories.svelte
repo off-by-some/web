@@ -3,6 +3,7 @@
   import SkillsSection from '$lib/SkillsSection.svelte';
   import content from '$lib/content/en.json';
   import ViewportFrame from './helpers/ViewportFrame.svelte';
+  import { hideControls } from './helpers/controls';
   import { sectionViewportGlobals, sectionViewportParameters } from './helpers/section-viewports';
   import type { SectionViewport } from './helpers/section-viewports';
 
@@ -66,6 +67,7 @@
         options: ['mobile', 'ipad', 'desktop'],
         table: { disable: true },
       },
+      ...hideControls(['onSkillSelectionRequested', 'onCategorySelectionRequested']),
     },
     parameters: {
       layout: 'fullscreen',
@@ -86,8 +88,9 @@
       subtitle={args.subtitle}
       skillCategories={args.skillCategories}
       initialSelectedCategory={args.initialSelectedCategory}
-      onSkillSelect={(payload) => console.log('Skill selected:', payload)}
-      onCategorySelect={(payload) => console.log('Category selected:', payload)}
+      onSkillSelectionRequested={(payload) => console.log('Skill selection requested:', payload)}
+      onCategorySelectionRequested={(payload) =>
+        console.log('Category selection requested:', payload)}
     />
   </ViewportFrame>
 {/snippet}

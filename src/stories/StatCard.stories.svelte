@@ -1,6 +1,7 @@
 <script module lang="ts">
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import StatCard from '$lib/components/site/metrics/StatCard';
+  import { hideControls } from './helpers/controls';
 
   type Args = {
     count: string;
@@ -23,6 +24,7 @@
         control: 'select',
         options: ['years', 'scale', 'reliability', 'performance', 'languages'],
       },
+      ...hideControls(['delay']),
     },
     parameters: {
       docs: {
@@ -43,6 +45,15 @@
 
 <Story name="Default" />
 
+<Story
+  name="Percentage Suffix"
+  args={{ count: '99.99%', label: 'System Uptime', type: 'reliability' }}
+/>
+
+<Story name="Multiplier Suffix" args={{ count: '5x', label: 'Team Scale', type: 'scale' }} />
+
+<Story name="Plus Suffix" args={{ count: '40+', label: 'Systems Shipped', type: 'performance' }} />
+
 <style lang="scss">
   .story-grid {
     color: var(--token-text-primary);
@@ -50,6 +61,6 @@
     font-family: var(--token-font-family-sans);
     gap: var(--token-space-fluid-lg);
     grid-template-columns: minmax(12rem, 1fr);
-    max-width: 34rem;
+    max-inline-size: 34rem;
   }
 </style>

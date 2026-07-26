@@ -315,13 +315,13 @@
     @include root.component-root;
 
     position: relative;
-    width: 100%;
+    inline-size: 100%;
   }
 
   .dropdown :global(.dropdown-trigger) {
     --input-text-align: left;
 
-    width: 100%;
+    inline-size: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -335,8 +335,8 @@
     --input-filled-background: var(--token-surface-glass-medium);
     --input-shadow: var(--token-shadow-focus);
 
-    border-bottom-left-radius: var(--token-radius-sm);
-    border-bottom-right-radius: var(--token-radius-sm);
+    border-end-start-radius: var(--token-radius-sm);
+    border-end-end-radius: var(--token-radius-sm);
   }
 
   .dropdown :global(.dropdown-trigger--error) {
@@ -363,8 +363,8 @@
   }
 
   .dropdown-trigger__icon {
-    width: var(--token-size-5);
-    height: var(--token-size-5);
+    inline-size: var(--token-size-5);
+    block-size: var(--token-size-5);
     color: var(--token-text-tertiary);
     transition: transform var(--token-motion-duration-fast) var(--token-motion-ease-out);
     flex-shrink: 0;
@@ -375,25 +375,25 @@
     }
 
     @media (min-width: 768px) {
-      width: var(--token-size-6);
-      height: var(--token-size-6);
+      inline-size: var(--token-size-6);
+      block-size: var(--token-size-6);
     }
   }
 
   .dropdown-menu {
     position: absolute;
-    top: 100%;
+    inset-block-start: 100%;
     inset-inline: 0;
     z-index: 1001;
 
     background: var(--token-surface-glass-stronger);
     border: var(--token-border-default-small);
-    border-top: none;
-    border-bottom-left-radius: var(--token-radius-lg);
-    border-bottom-right-radius: var(--token-radius-lg);
+    border-block-start: none;
+    border-end-start-radius: var(--token-radius-lg);
+    border-end-end-radius: var(--token-radius-lg);
 
-    max-height: 20rem;
-    overflow-y: auto;
+    max-block-size: 20rem;
+    overflow-block: auto;
 
     box-shadow: var(--token-shadow-elevated);
 
@@ -405,7 +405,7 @@
 
     // Custom scrollbar
     &::-webkit-scrollbar {
-      width: 8px;
+      inline-size: 8px;
     }
 
     &::-webkit-scrollbar-track {
@@ -426,7 +426,7 @@
   .dropdown-option {
     @include root.interactive-root;
 
-    width: 100%;
+    inline-size: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -452,8 +452,8 @@
     }
 
     &:last-child {
-      border-bottom-left-radius: var(--token-radius-lg);
-      border-bottom-right-radius: var(--token-radius-lg);
+      border-end-start-radius: var(--token-radius-lg);
+      border-end-end-radius: var(--token-radius-lg);
     }
 
     &:hover,
@@ -479,14 +479,14 @@
 
   .dropdown-option__content {
     flex: 1;
-    min-width: 0;
+    min-inline-size: 0;
   }
 
   .dropdown-option__label {
     display: block;
     font-weight: var(--token-font-weight-medium);
     line-height: var(--token-line-height-snug);
-    margin-bottom: var(--token-space-1);
+    margin-block-end: var(--token-space-1);
   }
 
   .dropdown-option__description {
@@ -501,8 +501,8 @@
   }
 
   .dropdown-option__check {
-    width: var(--token-size-4);
-    height: var(--token-size-4);
+    inline-size: var(--token-size-4);
+    block-size: var(--token-size-4);
     color: var(--token-interactive-color);
     flex-shrink: 0;
   }

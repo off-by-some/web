@@ -71,7 +71,7 @@
     display: grid;
     gap: var(--token-space-fluid-md);
     grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
-    max-width: 42rem;
+    max-inline-size: 42rem;
   }
 
   .tone-item {

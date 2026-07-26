@@ -21,7 +21,9 @@
     aria-labelledby={titleId}
     style="--hero-panel-delay: {delay};"
   >
-    <SectionAccentHeader {title} {titleId} />
+    <div class="hero-panel__header">
+      <SectionAccentHeader {title} {titleId} />
+    </div>
     {@render children?.()}
   </Card>
 </div>
@@ -50,6 +52,10 @@
     @media (min-width: $breakpoint-md) {
       --card-padding: var(--token-space-fluid-md);
     }
+  }
+
+  .hero-panel__header {
+    margin-block-end: var(--token-space-fluid-md);
   }
 
   @include motion.reduced-motion-reset(':global(.hero-panel)');

@@ -1,3 +1,4 @@
+export { VisuallyHidden } from './accessibility';
 export { Button } from './actions';
 export { onVisible } from './behavior';
 export type { OnVisibleOptions } from './behavior';

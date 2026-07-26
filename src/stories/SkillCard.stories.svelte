@@ -3,15 +3,21 @@
   import SkillCard from '$lib/components/site/skills/SkillCard';
   import { hideControls } from './helpers/controls';
 
-  const skill = {
+  type Skill = {
+    name: string;
+    level: 'expert' | 'advanced' | 'proficient' | 'learning';
+    years?: number;
+    description?: string;
+    image: string;
+  };
+
+  const skill: Skill = {
     name: 'TypeScript',
     level: 'expert',
     years: 9,
     description: 'Complex type systems and scalable frontend architecture',
     image: 'svg/Typescript_logo.svg',
-  } as const;
-
-  type Skill = typeof skill;
+  };
 
   type Args = {
     skill: Skill;
@@ -28,7 +34,7 @@
       hovered: false,
     },
     argTypes: {
-      ...hideControls(['index']),
+      ...hideControls(['delay', 'onEngagementChangeRequested']),
     },
     parameters: {
       docs: {
@@ -45,19 +51,47 @@
   <div class="story-width">
     <SkillCard
       skill={args.skill}
-      index={0}
       hovered={args.hovered}
-      onInteract={(active) => console.log('Skill interaction:', active)}
+      onEngagementChangeRequested={(active) => console.log('Skill engagement changed:', active)}
     />
   </div>
 {/snippet}
 
 <Story name="Default" />
 
+<Story
+  name="Advanced"
+  args={{
+    skill: { ...skill, name: 'Go', level: 'advanced', years: 6, image: 'icons/golang logo.png' },
+  }}
+/>
+
+<Story
+  name="Proficient"
+  args={{
+    skill: {
+      ...skill,
+      name: 'GraphQL',
+      level: 'proficient',
+      years: 3,
+      image: 'icons/Graphql.webp',
+    },
+  }}
+/>
+
+<Story
+  name="Learning"
+  args={{
+    skill: { ...skill, name: 'Jest', level: 'learning', years: 1, image: 'svg/Jest.svg' },
+  }}
+/>
+
+<Story name="Hovered" args={{ hovered: true }} />
+
 <style lang="scss">
   .story-width {
     color: var(--token-text-primary);
     font-family: var(--token-font-family-sans);
-    max-width: 22rem;
+    max-inline-size: 22rem;
   }
 </style>

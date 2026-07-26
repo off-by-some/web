@@ -108,6 +108,6 @@
     display: grid;
     font-family: var(--token-font-family-sans);
     gap: var(--token-space-fluid-2xl);
-    max-width: 34rem;
+    max-inline-size: 34rem;
   }
 </style>

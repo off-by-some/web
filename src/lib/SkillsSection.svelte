@@ -1,12 +1,16 @@
 <script lang="ts">
   import Section from './components/primitives/layout/Section';
+  import VisuallyHidden from './components/primitives/accessibility/VisuallyHidden';
+  import ToneDot from './components/primitives/status/ToneDot';
   import FilterButton from './components/site/skills/FilterButton';
   import SectionHeader from './components/site/section-headings/SectionHeader';
   import SkillCard from './components/site/skills/SkillCard';
 
+  type SkillLevel = 'expert' | 'advanced' | 'proficient' | 'learning';
+
   interface Skill {
     name: string;
-    level?: 'expert' | 'advanced' | 'proficient' | 'learning';
+    level?: SkillLevel;
     years?: number;
     category: string;
     description?: string;
@@ -22,7 +26,7 @@
   }
 
   type SkillWithCategory = Skill & {
-    level: 'expert' | 'advanced' | 'proficient' | 'learning';
+    level: SkillLevel;
     categoryInfo: SkillCategory;
   };
 
@@ -31,8 +35,11 @@
     subtitle: string;
     skillCategories: SkillCategory[];
     initialSelectedCategory?: string | null;
-    onSkillSelect?: (payload: { skill: SkillWithCategory; category: SkillCategory }) => void;
-    onCategorySelect?: (payload: { category: SkillCategory }) => void;
+    onSkillSelectionRequested?: (payload: {
+      skill: SkillWithCategory;
+      category: SkillCategory;
+    }) => void;
+    onCategorySelectionRequested?: (payload: { category: SkillCategory }) => void;
   };
 
   let {
@@ -40,8 +47,8 @@
     subtitle,
     skillCategories,
     initialSelectedCategory = null,
-    onSkillSelect,
-    onCategorySelect,
+    onSkillSelectionRequested,
+    onCategorySelectionRequested,
   }: Props = $props();
 
   // Helper function to convert skill levels to title-case
@@ -50,9 +57,7 @@
   };
 
   // Function to calculate proficiency level based on years of experience
-  const calculateProficiencyLevel = (
-    years?: number,
-  ): 'expert' | 'advanced' | 'proficient' | 'learning' => {
+  const calculateProficiencyLevel = (years?: number): SkillLevel => {
     if (!years || years <= 2) return 'learning';
     if (years <= 4) return 'proficient';
     if (years <= 7) return 'advanced';
@@ -66,6 +71,7 @@
   let touchStartX = 0;
   let touchEndX = 0;
   let hasInitialized = false;
+  const skillLevels: SkillLevel[] = ['expert', 'advanced', 'proficient', 'learning'];
 
   // Reactive values
   const allSkills = $derived(
@@ -107,7 +113,7 @@
         acc[skill.level] = (acc[skill.level] || 0) + 1;
         return acc;
       },
-      {} as Record<string, number>,
+      {} as Partial<Record<SkillLevel, number>>,
     ),
   );
 
@@ -128,7 +134,7 @@
     announcementText = `Filtered to ${categoryName}. Showing ${skillCount} skills.`;
 
     if (category) {
-      onCategorySelect?.({ category });
+      onCategorySelectionRequested?.({ category });
     }
   };
 
@@ -136,7 +142,7 @@
     hoveredSkill = isActive ? skill.name : null;
 
     if (isActive) {
-      onSkillSelect?.({ skill, category: skill.categoryInfo });
+      onSkillSelectionRequested?.({ skill, category: skill.categoryInfo });
 
       let announcement = `Selected ${skill.name}, ${toTitleCase(skill.level)} level skill`;
       if (skill.years) announcement += ` with ${skill.years} years experience`;
@@ -176,6 +182,8 @@
     touchStartX = 0;
     touchEndX = 0;
   };
+
+  const getSkillDelay = (index: number) => `${index * 0.05}s`;
 </script>
 
 <section
@@ -187,13 +195,15 @@
   ontouchend={handleTouchEnd}
 >
   <!-- Screen reader announcements -->
-  <div class="sr-only" role="status" aria-live="polite" aria-atomic="true">
+  <VisuallyHidden as="div" role="status" aria-live="polite" aria-atomic="true">
     {announcementText}
-  </div>
+  </VisuallyHidden>
 
   <Section className="skills__container">
     <!-- Header -->
-    <SectionHeader {title} {subtitle} titleId="skills-heading" />
+    <div class="skills__header">
+      <SectionHeader {title} {subtitle} titleId="skills-heading" />
+    </div>
 
     <!-- Category Filters -->
     <div class="filters" role="tablist" aria-label="Filter skills by category">
@@ -201,7 +211,7 @@
         label="All Skills"
         count={allSkills.length}
         active={!selectedCategory}
-        onclick={() => selectCategory(null)}
+        onSelectRequested={() => selectCategory(null)}
       />
 
       {#each skillCategories as category (category.name)}
@@ -210,7 +220,7 @@
           icon={category.icon}
           count={category.skills.length}
           active={selectedCategory === category.name}
-          onclick={() => selectCategory(category)}
+          onSelectRequested={() => selectCategory(category)}
         />
       {/each}
     </div>
@@ -220,20 +230,20 @@
       {#each filteredSkills as skill, index (skill.name)}
         <SkillCard
           {skill}
-          {index}
+          delay={getSkillDelay(index)}
           hovered={hoveredSkill === skill.name}
-          onInteract={(active) => selectSkill(skill, active)}
+          onEngagementChangeRequested={(active) => selectSkill(skill, active)}
         />
       {/each}
     </div>
 
     <!-- Legend -->
     <div class="legend" role="region" aria-labelledby="legend-heading">
-      <h3 id="legend-heading" class="sr-only">Skill level legend</h3>
+      <VisuallyHidden as="h3" id="legend-heading">Skill level legend</VisuallyHidden>
       <div class="legend-items">
-        {#each ['expert', 'advanced', 'proficient', 'learning'] as level (level)}
+        {#each skillLevels as level (level)}
           <div class="legend-item legend-item--{level}">
-            <div class="legend-dot"></div>
+            <ToneDot tone={level} className="legend-dot" />
             <span class="legend-label">{toTitleCase(level)}</span>
             <span class="legend-count">{skillsByLevel[level] || 0}</span>
           </div>
@@ -245,18 +255,6 @@
 
 <style lang="scss">
   @use 'styles/_breakpoints' as *;
-
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
 
   .skills {
     position: relative;
@@ -286,7 +284,7 @@
   :global(.skills__container) {
     position: relative;
     z-index: 1;
-    max-width: var(--token-container-max);
+    max-inline-size: var(--token-container-max);
     margin: 0 auto;
     padding: 0 var(--token-space-fluid-lg);
 
@@ -299,12 +297,16 @@
     }
   }
 
+  .skills__header {
+    margin-block-end: var(--token-space-fluid-5xl);
+  }
+
   .filters {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
     gap: var(--token-space-fluid-sm);
-    margin-bottom: var(--token-space-fluid-5xl);
+    margin-block-end: var(--token-space-fluid-5xl);
     animation: fadeInUp 1s var(--token-motion-ease-out) 0.2s both;
 
     @media (min-width: $breakpoint-md) {
@@ -321,7 +323,7 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: var(--token-space-fluid-lg);
-    margin-bottom: var(--token-space-fluid-5xl);
+    margin-block-end: var(--token-space-fluid-5xl);
     animation: fadeInUp 1s var(--token-motion-ease-out) 0.4s both;
 
     @media (min-width: $breakpoint-sm) {
@@ -367,7 +369,6 @@
     transition:
       color 0.3s var(--token-motion-ease-out),
       transform 0.3s var(--token-motion-ease-out);
-    cursor: pointer;
     padding: var(--token-space-fluid-xs) var(--token-space-fluid-sm);
     border-radius: var(--token-radius-sm);
 
@@ -375,15 +376,9 @@
       color: var(--token-text-primary);
       transform: translateY(-2px);
 
-      .legend-dot {
+      :global(.legend-dot) {
         transform: scale(1.2);
       }
-    }
-
-    &:focus {
-      outline: 2px solid var(--token-interactive-color);
-      outline-offset: 2px;
-      border-radius: var(--token-radius-sm);
     }
 
     @media (min-width: $breakpoint-md) {
@@ -391,35 +386,12 @@
     }
   }
 
-  .legend-dot {
-    width: 0.75rem;
-    height: 0.75rem;
-    border-radius: var(--token-radius-full);
-    transition: transform 0.3s var(--token-motion-ease-out);
+  :global(.legend-dot) {
+    --tone-dot-size: 0.75rem;
+    --tone-dot-glow-size: 8px;
 
     @media (min-width: $breakpoint-md) {
-      width: 1rem;
-      height: 1rem;
-    }
-
-    .legend-item--expert & {
-      background: var(--token-state-mastery-expert);
-      box-shadow: 0 0 8px var(--token-state-mastery-glow);
-    }
-
-    .legend-item--advanced & {
-      background: var(--token-status-advanced);
-      box-shadow: 0 0 8px rgba(99, 102, 241, 0.3);
-    }
-
-    .legend-item--proficient & {
-      background: var(--token-status-proficient);
-      box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
-    }
-
-    .legend-item--learning & {
-      background: var(--token-status-learning);
-      box-shadow: 0 0 8px rgba(6, 182, 212, 0.3);
+      --tone-dot-size: 1rem;
     }
   }
 

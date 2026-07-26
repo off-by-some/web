@@ -1,5 +1,6 @@
 <script lang="ts">
   import Button from '$lib/components/primitives/actions/Button';
+  import VisuallyHidden from '$lib/components/primitives/accessibility/VisuallyHidden';
   import Card from '$lib/components/primitives/surfaces/Card';
   import Dropdown from '$lib/components/primitives/forms/Dropdown';
   import Field from '$lib/components/primitives/forms/Field';
@@ -400,31 +401,19 @@
       {/if}
     </Button>
 
-    <div id="submit-status" class="sr-only" aria-live="polite">
+    <VisuallyHidden id="submit-status" aria-live="polite">
       {#if isSubmitting}
         {content.status.submitting}
       {:else if submitSuccess}
         {content.status.success}
       {/if}
-    </div>
+    </VisuallyHidden>
   </form>
 </Card>
 
 <style lang="scss">
   @use 'styles/breakpoints' as *;
   @use 'lib/components/primitives/motion' as motion;
-
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
 
   :global(.contact-form-card) {
     --card-background: linear-gradient(

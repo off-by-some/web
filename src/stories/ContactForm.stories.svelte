@@ -118,6 +118,6 @@
 
 <style lang="scss">
   .story-shell {
-    max-width: 56rem;
+    max-inline-size: 56rem;
   }
 </style>

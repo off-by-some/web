@@ -16,13 +16,13 @@
       text: 'Explore',
     },
     argTypes: {
-      ...hideControls(['ariaLabel']),
+      ...hideControls(['ariaLabel', 'onScrollRequested']),
     },
     parameters: {
       docs: {
         description: {
           component:
-            'Purely decorative — the floating mouse/wheel/arrow animation is disabled via `prefers-reduced-motion`, but it also hides itself completely below a 600px viewport height or on narrow mobile widths via a hardcoded media query, not a prop. If the hero ever gets shorter, check this component before assuming the indicator is broken.',
+            'A compact hero affordance that reports `onScrollRequested` when activated. The floating mouse/wheel/arrow motion is disabled via `prefers-reduced-motion`, and the component hides below a 600px viewport height or on narrow mobile widths because the full hero already has a primary explore action.',
         },
       },
     },
@@ -31,7 +31,7 @@
 
 {#snippet template(args: Args)}
   <div class="story-shell">
-    <ScrollIndicator text={args.text} />
+    <ScrollIndicator text={args.text} onScrollRequested={() => console.log('Scroll requested')} />
   </div>
 {/snippet}
 
@@ -39,7 +39,7 @@
 
 <style lang="scss">
   .story-shell {
-    min-height: 10rem;
+    min-block-size: 10rem;
     position: relative;
   }
 </style>

@@ -68,6 +68,7 @@
 <Story name="Default" />
 <Story name="With Highlights" args={{ project: highlightedProject, mediaReady: true }} />
 <Story name="Long Content" args={{ project: longProject, mediaReady: true }} />
+<Story name="Media Not Ready" args={{ project: defaultProject, mediaReady: false }} />
 
 <style lang="scss">
   .story-card-shell {

@@ -75,6 +75,10 @@
 
 <Story name="Default" />
 
+<Story name="Bottom Position" args={{ position: 'bottom' }} />
+
+<Story name="Hidden" args={{ visible: false }} />
+
 <style lang="scss">
   .story-dot-shell {
     inline-size: min(100%, 40rem);
