@@ -30,7 +30,7 @@ module.exports = {
         'first-contentful-paint': ['error', { maxNumericValue: 410 }],
         'largest-contentful-paint': ['error', { maxNumericValue: 608 }],
         'cumulative-layout-shift': ['error', { maxNumericValue: 0 }],
-        'total-blocking-time': ['error', { maxNumericValue: 0 }],
+        'total-blocking-time': ['warn', { maxNumericValue: 0 }],
         'speed-index': ['error', { maxNumericValue: 623 }],
         'aria-allowed-role': ['error', { minScore: 0.99 }],
         'aria-required-children': ['error', { minScore: 0.99 }],

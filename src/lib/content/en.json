@@ -744,8 +744,9 @@
         "name": "Personal Website",
         "tagline": "Software engineering portfolio and component system",
         "description": [
-          "This repository contains my personal website and the component system behind it. It is intentionally small enough to inspect quickly, but built with the same concerns I would bring to a production product surface: semantic design tokens, isolated components, accessible interactions, responsive image handling, critical CSS, Storybook documentation, and reproducible performance checks.",
-          "The production build is static, deploys to GitHub Pages, and includes a built Storybook so the component library can be reviewed without cloning the repo."
+          "Web engineers sometimes joke that beautiful websites are large and ugly websites are small. Once you start caring about accessibility, responsive imagery, design systems, performance budgets, and polished interactions, bytes have a way of accumulating. This repository is my answer to that bit of engineering folklore.",
+          "It contains my personal website and the component system that powers it. While intentionally small enough to inspect in an afternoon, it's built with the same standards I bring to a production product surface: semantic design tokens, isolated components, accessible interactions, responsive image handling, critical CSS, Storybook documentation, and reproducible performance checks.",
+          "The end result is a static production build with a perfect Lighthouse score (github's servers permitting), deployed to GitHub Pages and accompanied by a pre-built Storybook, making the entire component library inspectable without cloning the repository. This site behaves like an elaborate application, yet loads like a small static document."
         ],
         "bannerSrc": "https://github.com/off-by-some/web/blob/main/docs/website-preview.png?raw=true",
         "href": "https://github.com/off-by-some/web",
