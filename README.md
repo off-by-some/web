@@ -58,36 +58,47 @@ The repository is meant to show both parts: the live result and the engineering 
 
 ## Design System
 
-The design system exists simply because even a compact site benefits from product-level consistency. Shared tokens and primitives make the interface easier to extend, easier to theme, and easier to keep visually coherent as new sections are added. Modifying styles and prototyping themses consistently in this application only requires modifying a single page.
+The design system exists because even a compact site benefits from product-level consistency. Shared tokens and primitives make the interface easier to extend, easier to theme, and easier to keep visually coherent as new sections are added. Modifying styles or prototyping themes consistently in this application starts in one place.
 
 My take is that design-system work is less about making everything look identical and more about making decisions reusable. The system should protect consistency while still giving components enough room to express their role.
 
-The visual language is defined within `src/styles/foundations/_tokens.scss`. Components do not hardcode brand colors directly; they consume semantic CSS custom properties:
+The visual language is defined in `src/styles/foundations/_tokens.scss`, which is organized around four top-level concerns:
+
+| Section     | Purpose                                                                       |
+| ----------- | ----------------------------------------------------------------------------- |
+| `reference` | Raw ingredients: color anchors, type scale, spacing, radii, opacity, motion.  |
+| `theme`     | Product semantics: text, surfaces, interaction, emphasis, attention, focus.   |
+| `component` | Reusable component contracts for primitives and shared site components.       |
+| `feature`   | Section-specific decisions for hero, skills, timeline, contact, and projects. |
+
+Components do not hardcode brand colors directly; they consume semantic CSS custom properties:
 
 ```scss
-color: var(--token-text-primary);
-border: var(--token-border-default-small);
-box-shadow: var(--token-shadow-elevated);
+color: var(--token-theme-color-text-primary);
+border: var(--token-theme-border-default-small);
+box-shadow: var(--token-theme-shadow-elevated);
 ```
 
-The token engine in `src/styles/lib/_themes.scss` supports semantic references, alpha transforms, generated color scales, and failure checks for invalid or circular references. A token can derive from another token by intent:
+The token engine in `src/styles/lib/_themes.scss` supports semantic references, alpha transforms, generated color scales, and failure checks for invalid or circular references. Color scales are generated in OKLCH, then checked against sRGB gamut and contrast constraints so palette changes remain perceptual rather than arbitrary.
+
+A token can derive from another token by intent:
 
 ```scss
 interactive: (
   color: (
-    teal: 100,
+    teal: 200,
   ),
   hover: (
-    teal: 50,
+    teal: 100,
   ),
-  glow: themes.reference('interactive.color', $alpha: 20%),
-  shadow: themes.reference('interactive.color', $alpha: 30%)
+  glow: themes.reference('theme.color.interactive.color', $alpha: 20%),
+  shadow: themes.reference('theme.color.interactive.color', $alpha: 30%)
 );
 ```
 
 That lets the theme behave more like a production design system than a palette file. If the interactive color changes, hover borders, focus rings, glows, shadows, and interactive text can follow without searching through component styles.
 
-Gold is used sparingly as the attention color, teal as the primary interactive signal, and magenta as emphasis. The point is not only visual style; it is a repeated cue system that helps users understand what is interactive, what is important, and what belongs together.
+Teal is the primary interactive signal, magenta is editorial emphasis, and gold is used sparingly for attention. The point is not only visual style; it is a repeated cue system that helps users understand what is interactive, what is important, and what belongs together.
 
 ## Component Library
 
