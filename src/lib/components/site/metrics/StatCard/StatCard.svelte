@@ -10,7 +10,7 @@
     delay?: string;
   };
 
-  let { count, label, type, delay = 'var(--token-reference-motion-delay-none)' }: Props = $props();
+  let { count, label, type, delay = 'var(--token-reference-motion-delay-0)' }: Props = $props();
 
   let numberElement: HTMLElement | undefined = $state();
   let hasAnimated = false;
@@ -102,7 +102,7 @@
     --card-radius: var(--token-reference-radius-lg);
     --card-padding: var(--token-reference-spacing-fluid-md);
     --card-hover-transform: translateY(-4px) scale(1.02);
-    --stat-counter-duration: var(--token-reference-motion-duration-counter);
+    --stat-counter-duration: var(--token-component-stat-card-motion-counter-duration);
 
     cursor: pointer;
     display: flex;
@@ -113,7 +113,7 @@
     @include motion.fade-in-up(
       statReveal,
       20px,
-      var(--token-reference-motion-duration-narrative),
+      var(--token-theme-motion-enter-narrative),
       var(--stat-card-delay),
       both,
       0.95
@@ -141,16 +141,16 @@
     color: var(--token-theme-color-text-emphasis-heading);
     letter-spacing: var(--token-reference-typography-letter-spacing-tight);
     transition:
-      color var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out),
-      transform var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out);
+      color var(--token-theme-motion-feedback-default) var(--token-reference-motion-easing-standard),
+      transform var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard);
 
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-reference-typography-size-3xl);
     }
 
     @media (min-width: $breakpoint-lg) {
-      font-size: var(--token-reference-typography-size-35xl);
+      font-size: var(--token-reference-typography-size-display-sm);
     }
   }
 
@@ -162,8 +162,8 @@
     letter-spacing: var(--token-reference-typography-letter-spacing-widest);
     line-height: var(--token-reference-typography-line-height-relaxed);
     white-space: pre-line;
-    transition: color var(--token-reference-motion-duration-normal)
-      var(--token-reference-motion-easing-out);
+    transition: color var(--token-theme-motion-feedback-default)
+      var(--token-reference-motion-easing-standard);
 
     @media (min-width: $breakpoint-lg) {
       font-size: var(--token-reference-typography-size-base);

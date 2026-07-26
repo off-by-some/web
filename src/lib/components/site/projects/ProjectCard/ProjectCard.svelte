@@ -189,11 +189,7 @@
     text-align: start;
     container-type: inline-size;
 
-    @include motion.fade-in-up(
-      projectCardEnter,
-      14px,
-      var(--token-reference-motion-duration-emphasis)
-    );
+    @include motion.fade-in-up(projectCardEnter, 14px, var(--token-theme-motion-feedback-emphasis));
 
     @media (min-width: $breakpoint-md) {
       --card-padding: var(--token-reference-spacing-fluid-2xl);
@@ -252,8 +248,8 @@
 
   .project-card__badge-link {
     display: flex;
-    transition: transform var(--token-reference-motion-duration-normal)
-      var(--token-reference-motion-easing-out);
+    transition: transform var(--token-theme-motion-feedback-default)
+      var(--token-reference-motion-easing-standard);
 
     &:hover {
       transform: translateY(-2px);

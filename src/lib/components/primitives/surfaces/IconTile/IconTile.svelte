@@ -36,14 +36,7 @@
   .icon-tile {
     @include root.component-root;
 
-    --icon-tile-resolved-size: var(
-      --icon-tile-size,
-      clamp(
-        var(--icon-tile-min-size, var(--token-component-icon-tile-size-min)),
-        var(--icon-tile-fluid-size, var(--token-component-icon-tile-size-fluid)),
-        var(--icon-tile-max-size, var(--token-component-icon-tile-size-max))
-      )
-    );
+    --icon-tile-resolved-size: var(--icon-tile-size, var(--token-component-icon-tile-size));
     --icon-tile-resolved-padding: var(--icon-tile-padding, var(--token-reference-spacing-2));
     --icon-tile-resolved-image-size: var(
       --icon-tile-image-size,
@@ -64,14 +57,14 @@
     padding: var(--icon-tile-resolved-padding);
     position: relative;
     transition:
-      background-color var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out),
-      border-color var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out),
-      box-shadow var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out),
-      transform var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out);
+      background-color var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard),
+      border-color var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard),
+      box-shadow var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard),
+      transform var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard);
     inline-size: var(--icon-tile-resolved-size);
     z-index: var(--icon-tile-z-index, var(--token-reference-layer-base));
   }
@@ -85,10 +78,12 @@
     object-fit: contain;
     transform: var(--icon-tile-image-transform, none);
     transition:
-      filter var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out),
-      opacity var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out),
-      transform var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out);
+      filter var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard),
+      opacity var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard),
+      transform var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard);
     inline-size: var(--icon-tile-resolved-image-size);
   }
 </style>

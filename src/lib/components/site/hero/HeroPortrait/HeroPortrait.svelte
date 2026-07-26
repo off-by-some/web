@@ -63,8 +63,8 @@
     @include motion.fade-in-up(
       heroPortraitIn,
       1.5rem,
-      var(--token-reference-motion-duration-entrance),
-      var(--token-reference-motion-delay-normal)
+      var(--token-theme-motion-enter-default),
+      var(--token-reference-motion-delay-300)
     );
   }
 
@@ -272,7 +272,7 @@
     font-weight: var(--token-reference-typography-weight-normal);
     line-height: 1;
     color: currentColor;
-    letter-spacing: var(--token-reference-typography-letter-spacing-normal);
+    letter-spacing: var(--token-reference-typography-letter-spacing-slightly-tight);
     white-space: nowrap;
     text-shadow:
       0 1px 0 var(--token-feature-hero-portrait-annotation-shadow-rest),

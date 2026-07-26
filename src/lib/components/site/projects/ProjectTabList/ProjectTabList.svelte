@@ -120,11 +120,14 @@
     cursor: pointer;
     text-align: start;
     transition:
-      background var(--token-reference-motion-delay-normal) var(--token-reference-motion-easing-out),
-      border-color var(--token-reference-motion-delay-normal)
-        var(--token-reference-motion-easing-out),
-      box-shadow var(--token-reference-motion-delay-normal) var(--token-reference-motion-easing-out),
-      transform var(--token-reference-motion-delay-normal) var(--token-reference-motion-easing-out);
+      background var(--token-reference-motion-delay-300)
+        var(--token-reference-motion-easing-standard),
+      border-color var(--token-reference-motion-delay-300)
+        var(--token-reference-motion-easing-standard),
+      box-shadow var(--token-reference-motion-delay-300)
+        var(--token-reference-motion-easing-standard),
+      transform var(--token-reference-motion-delay-300)
+        var(--token-reference-motion-easing-standard);
 
     &:hover {
       background: var(--token-theme-color-surface-glass-light);
@@ -165,11 +168,12 @@
     --tone-dot-glow-size: 6px;
 
     transition:
-      opacity var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out),
-      transform var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out),
-      box-shadow var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out);
+      opacity var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard),
+      transform var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard),
+      box-shadow var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard);
   }
 
   :global(.project-tab-list__dot--idle) {
@@ -188,8 +192,8 @@
     color: var(--token-theme-color-text-primary);
     font-size: var(--token-reference-typography-size-base);
     font-weight: var(--token-reference-typography-weight-semibold);
-    transition: color var(--token-reference-motion-duration-normal)
-      var(--token-reference-motion-easing-out);
+    transition: color var(--token-theme-motion-feedback-default)
+      var(--token-reference-motion-easing-standard);
   }
 
   .project-tab-list__tagline {

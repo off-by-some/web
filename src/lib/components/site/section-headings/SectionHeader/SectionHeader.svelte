@@ -28,11 +28,7 @@
 
   :global(.section-header) {
     text-align: center;
-    @include motion.fade-in-up(
-      sectionHeaderIn,
-      30px,
-      var(--token-reference-motion-duration-entrance)
-    );
+    @include motion.fade-in-up(sectionHeaderIn, 30px, var(--token-theme-motion-enter-default));
   }
 
   .section-header__content {
@@ -53,8 +49,8 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: textShimmer
-      var(--section-header-shimmer-duration, var(--token-reference-motion-duration-ambient))
-      var(--token-reference-motion-easing-out) infinite;
+      var(--section-header-shimmer-duration, var(--token-component-shimmer-text-motion-duration))
+      var(--token-reference-motion-easing-standard) infinite;
 
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-reference-typography-size-5xl);

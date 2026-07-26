@@ -77,9 +77,9 @@
     pointer-events: none;
     backdrop-filter: blur(var(--token-reference-blur-md));
     transition:
-      opacity var(--token-reference-motion-delay-emphasis) var(--token-reference-motion-easing-out),
-      transform var(--token-reference-motion-delay-emphasis)
-        var(--token-reference-motion-easing-out);
+      opacity var(--token-reference-motion-delay-400) var(--token-reference-motion-easing-standard),
+      transform var(--token-reference-motion-delay-400)
+        var(--token-reference-motion-easing-standard);
 
     @media (min-width: $breakpoint-md) {
       gap: var(--token-reference-spacing-fluid-lg);
@@ -112,10 +112,12 @@
     cursor: pointer;
     box-shadow: var(--token-theme-shadow-default);
     transition:
-      border-color var(--token-reference-motion-delay-normal)
-        var(--token-reference-motion-easing-out),
-      box-shadow var(--token-reference-motion-delay-normal) var(--token-reference-motion-easing-out),
-      transform var(--token-reference-motion-delay-normal) var(--token-reference-motion-easing-out);
+      border-color var(--token-reference-motion-delay-300)
+        var(--token-reference-motion-easing-standard),
+      box-shadow var(--token-reference-motion-delay-300)
+        var(--token-reference-motion-easing-standard),
+      transform var(--token-reference-motion-delay-300)
+        var(--token-reference-motion-easing-standard);
 
     &:hover:not(:disabled) {
       border-color: var(--token-theme-color-interactive-color);

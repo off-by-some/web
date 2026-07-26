@@ -14,7 +14,7 @@
     transform: translateY($distance) scale($scale-from);
   }
 
-  animation: #{$name} $duration var(--token-reference-motion-easing-out) $delay $fill-mode;
+  animation: #{$name} $duration var(--token-reference-motion-easing-standard) $delay $fill-mode;
 
   @keyframes #{$name} {
     to {

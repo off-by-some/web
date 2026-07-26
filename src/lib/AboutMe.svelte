@@ -107,8 +107,8 @@
       inset: 0;
       background: var(--token-feature-hero-glow);
       opacity: 0;
-      animation: backgroundGlow var(--token-reference-motion-duration-background)
-        var(--token-reference-motion-easing-out) var(--token-reference-motion-delay-background) both;
+      animation: backgroundGlow var(--token-feature-hero-motion-background)
+        var(--token-reference-motion-easing-standard) var(--token-reference-motion-delay-1000) both;
       pointer-events: none;
     }
 
@@ -153,8 +153,8 @@
     @include motion.fade-in-up(
       heroEntrance,
       2rem,
-      var(--token-reference-motion-duration-hero),
-      var(--token-reference-motion-delay-none),
+      var(--token-feature-hero-motion-entrance),
+      var(--token-reference-motion-delay-0),
       both,
       0.98
     );

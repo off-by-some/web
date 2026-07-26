@@ -307,8 +307,8 @@
     flex-wrap: wrap;
     gap: var(--token-reference-spacing-fluid-sm);
     margin-block-end: var(--token-reference-spacing-fluid-5xl);
-    animation: fadeInUp var(--token-reference-motion-duration-entrance)
-      var(--token-reference-motion-easing-out) var(--token-reference-motion-delay-short) both;
+    animation: fadeInUp var(--token-theme-motion-enter-default)
+      var(--token-reference-motion-easing-standard) var(--token-reference-motion-delay-200) both;
 
     @media (min-width: $breakpoint-md) {
       gap: var(--token-reference-spacing-fluid-md);
@@ -325,8 +325,8 @@
     grid-template-columns: repeat(2, 1fr);
     gap: var(--token-reference-spacing-fluid-lg);
     margin-block-end: var(--token-reference-spacing-fluid-5xl);
-    animation: fadeInUp var(--token-reference-motion-duration-entrance)
-      var(--token-reference-motion-easing-out) var(--token-reference-motion-delay-emphasis) both;
+    animation: fadeInUp var(--token-theme-motion-enter-default)
+      var(--token-reference-motion-easing-standard) var(--token-reference-motion-delay-400) both;
 
     @media (min-width: $breakpoint-sm) {
       grid-template-columns: repeat(3, 1fr);
@@ -347,8 +347,8 @@
   // Legend
   .legend {
     text-align: center;
-    animation: fadeInUp var(--token-reference-motion-duration-entrance)
-      var(--token-reference-motion-easing-out) var(--token-reference-motion-delay-slow) both;
+    animation: fadeInUp var(--token-theme-motion-enter-default)
+      var(--token-reference-motion-easing-standard) var(--token-reference-motion-delay-600) both;
   }
 
   .legend-items {
@@ -370,9 +370,9 @@
     font-weight: var(--token-reference-typography-weight-medium);
     color: var(--token-theme-color-text-tertiary);
     transition:
-      color var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out),
-      transform var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out);
+      color var(--token-theme-motion-feedback-default) var(--token-reference-motion-easing-standard),
+      transform var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard);
     padding: var(--token-reference-spacing-fluid-xs) var(--token-reference-spacing-fluid-sm);
     border-radius: var(--token-reference-radius-sm);
 

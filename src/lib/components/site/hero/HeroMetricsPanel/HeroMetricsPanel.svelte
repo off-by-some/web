@@ -20,7 +20,7 @@
   {title}
   titleId="stats-title"
   area="stats"
-  delay="var(--token-reference-motion-delay-panel)"
+  delay="var(--token-reference-motion-delay-500)"
 >
   <div class="stats-grid">
     {#each stats as stat, index (`${stat.type}-${stat.label}`)}

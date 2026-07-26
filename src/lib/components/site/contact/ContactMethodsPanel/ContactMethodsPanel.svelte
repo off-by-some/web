@@ -57,8 +57,8 @@
     @include motion.fade-in-up(
       contactMethodsSlideInUp,
       var(--token-reference-spacing-fluid-2xl),
-      var(--token-reference-motion-duration-slow),
-      var(--token-reference-motion-delay-slow),
+      var(--token-theme-motion-feedback-slow),
+      var(--token-reference-motion-delay-600),
       both,
       0.95
     );
@@ -73,7 +73,7 @@
       font-weight: var(--token-reference-typography-weight-semibold);
       color: var(--token-theme-color-text-primary);
       margin-block-end: var(--token-reference-spacing-fluid-sm);
-      letter-spacing: var(--token-reference-typography-letter-spacing-normal);
+      letter-spacing: var(--token-reference-typography-letter-spacing-slightly-tight);
       line-height: var(--token-reference-typography-line-height-snug);
       position: relative;
       z-index: 2;
@@ -94,7 +94,7 @@
       color: var(--token-theme-color-text-overlay);
       line-height: var(--token-reference-typography-line-height-relaxed);
       margin-block-end: var(--token-reference-spacing-fluid-xl);
-      letter-spacing: var(--token-reference-typography-letter-spacing-normal);
+      letter-spacing: var(--token-reference-typography-letter-spacing-slightly-tight);
       position: relative;
       z-index: 2;
 

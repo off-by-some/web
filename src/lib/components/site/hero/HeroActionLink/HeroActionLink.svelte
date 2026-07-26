@@ -170,9 +170,10 @@
     block-size: 1.5rem;
     opacity: 0.9;
     transition:
-      transform var(--token-reference-motion-duration-emphasis)
-        var(--token-reference-motion-easing-out),
-      opacity var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out);
+      transform var(--token-theme-motion-feedback-emphasis)
+        var(--token-reference-motion-easing-standard),
+      opacity var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard);
   }
 
   .hero-action-link__text {

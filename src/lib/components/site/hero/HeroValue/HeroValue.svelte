@@ -115,8 +115,8 @@
     @include motion.fade-in-up(
       heroValueIn,
       1.5rem,
-      var(--token-reference-motion-duration-entrance),
-      var(--token-reference-motion-delay-slow)
+      var(--token-theme-motion-enter-default),
+      var(--token-reference-motion-delay-600)
     );
 
     @media (min-width: $breakpoint-lg) {
@@ -155,7 +155,7 @@
         2.65vw,
         var(--token-reference-typography-size-5xl)
       );
-      letter-spacing: var(--token-reference-typography-letter-spacing-normal);
+      letter-spacing: var(--token-reference-typography-letter-spacing-slightly-tight);
       margin-inline: 0;
     }
 

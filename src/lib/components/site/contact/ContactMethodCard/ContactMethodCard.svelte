@@ -116,7 +116,7 @@
     font-weight: var(--token-reference-typography-weight-semibold);
     color: var(--token-theme-color-text-primary);
     margin-block-end: var(--token-reference-spacing-1);
-    letter-spacing: var(--token-reference-typography-letter-spacing-normal);
+    letter-spacing: var(--token-reference-typography-letter-spacing-slightly-tight);
     line-height: var(--token-reference-typography-line-height-snug);
 
     @media (min-width: $breakpoint-md) {
@@ -135,7 +135,7 @@
     font-weight: var(--token-reference-typography-weight-medium);
     color: var(--token-theme-color-text-brand);
     margin-block-end: var(--token-reference-spacing-2);
-    letter-spacing: var(--token-reference-typography-letter-spacing-normal);
+    letter-spacing: var(--token-reference-typography-letter-spacing-slightly-tight);
     line-height: var(--token-reference-typography-line-height-snug);
     word-break: break-word;
 

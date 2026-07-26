@@ -104,16 +104,16 @@
     color: var(--input-color, var(--token-theme-color-text-primary));
     text-align: var(--input-text-align, left);
     transition:
-      transform var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out),
-      border-color var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out),
-      box-shadow var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out),
-      color var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out),
-      background var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out);
-    letter-spacing: var(--token-reference-typography-letter-spacing-normal);
+      transform var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard),
+      border-color var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard),
+      box-shadow var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard),
+      color var(--token-theme-motion-feedback-default) var(--token-reference-motion-easing-standard),
+      background var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard);
+    letter-spacing: var(--token-reference-typography-letter-spacing-slightly-tight);
     line-height: var(--token-reference-typography-line-height-normal);
     position: relative;
     box-shadow: var(--input-shadow, var(--token-theme-shadow-light));
@@ -129,7 +129,7 @@
 
     &::placeholder {
       color: var(--input-placeholder-color, var(--token-theme-color-text-tertiary));
-      letter-spacing: var(--token-reference-typography-letter-spacing-normal);
+      letter-spacing: var(--token-reference-typography-letter-spacing-slightly-tight);
     }
 
     &:focus {
@@ -163,7 +163,7 @@
         var(--token-theme-color-text-disabled, var(--token-theme-color-text-tertiary))
       );
       cursor: not-allowed;
-      opacity: var(--token-reference-opacity-default);
+      opacity: var(--token-theme-opacity-disabled);
     }
 
     &:is(button) {

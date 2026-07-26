@@ -15,7 +15,7 @@
     title,
     titleId,
     area,
-    delay = 'var(--token-reference-motion-delay-panel)',
+    delay = 'var(--token-reference-motion-delay-500)',
     children,
   }: Props = $props();
 </script>
@@ -56,7 +56,7 @@
     @include motion.fade-in-up(
       heroPanelIn,
       1.5rem,
-      var(--token-reference-motion-duration-entrance),
+      var(--token-theme-motion-enter-default),
       var(--hero-panel-delay)
     );
 

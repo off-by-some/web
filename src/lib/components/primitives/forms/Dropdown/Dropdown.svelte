@@ -370,8 +370,8 @@
     inline-size: var(--token-reference-size-5);
     block-size: var(--token-reference-size-5);
     color: var(--token-theme-color-text-tertiary);
-    transition: transform var(--token-reference-motion-duration-fast)
-      var(--token-reference-motion-easing-out);
+    transition: transform var(--token-theme-motion-feedback-fast)
+      var(--token-reference-motion-easing-standard);
     flex-shrink: 0;
 
     &--rotated {
@@ -391,7 +391,7 @@
     inset-inline: 0;
     z-index: var(--dropdown-menu-z-index, var(--token-reference-layer-popover));
 
-    background: var(--token-theme-color-surface-glass-stronger);
+    background: var(--token-theme-color-surface-glass-near-opaque);
     border: var(--token-theme-border-default-small);
     border-block-start: none;
     border-end-start-radius: var(--token-reference-radius-lg);
@@ -403,8 +403,8 @@
     box-shadow: var(--token-theme-shadow-elevated);
 
     animation: slideDown
-      var(--dropdown-menu-enter-duration, var(--token-reference-motion-duration-menu-enter))
-      var(--token-reference-motion-easing-out);
+      var(--dropdown-menu-enter-duration, var(--token-component-menu-motion-enter-duration))
+      var(--token-reference-motion-easing-standard);
 
     &:focus {
       outline: none;
@@ -425,7 +425,7 @@
       border-radius: var(--token-reference-radius-sm);
 
       &:hover {
-        background: var(--token-theme-color-surface-glass-stronger);
+        background: var(--token-theme-color-surface-glass-near-opaque);
       }
     }
   }
@@ -450,9 +450,9 @@
 
     cursor: pointer;
     transition:
-      background-color var(--token-reference-motion-duration-fast)
-        var(--token-reference-motion-easing-out),
-      color var(--token-reference-motion-duration-fast) var(--token-reference-motion-easing-out);
+      background-color var(--token-theme-motion-feedback-fast)
+        var(--token-reference-motion-easing-standard),
+      color var(--token-theme-motion-feedback-fast) var(--token-reference-motion-easing-standard);
 
     @media (min-width: $breakpoint-md) {
       padding: var(--token-reference-spacing-fluid-lg) var(--token-reference-spacing-fluid-xl);
@@ -481,7 +481,7 @@
     }
 
     &:active {
-      background: var(--token-theme-color-surface-glass-stronger);
+      background: var(--token-theme-color-surface-glass-near-opaque);
     }
   }
 

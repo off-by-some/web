@@ -28,7 +28,7 @@
   let {
     experience,
     index,
-    delay = 'var(--token-reference-motion-delay-none)',
+    delay = 'var(--token-reference-motion-delay-0)',
     active = false,
     expanded = false,
     detailsClickable = false,
@@ -207,7 +207,7 @@
     @include motion.fade-in-up(
       timelineItemFadeIn,
       40px,
-      var(--token-reference-motion-duration-narrative),
+      var(--token-theme-motion-enter-narrative),
       var(--timeline-item-delay),
       forwards
     );
@@ -265,16 +265,16 @@
     background: var(--token-theme-color-surface-glass-strong);
     border: var(--token-reference-border-width-large) solid var(--token-theme-color-border-default);
     transition:
-      background-color var(--token-reference-motion-duration-emphasis)
-        var(--token-reference-motion-easing-out),
-      border-color var(--token-reference-motion-duration-emphasis)
-        var(--token-reference-motion-easing-out),
-      box-shadow var(--token-reference-motion-duration-emphasis)
-        var(--token-reference-motion-easing-out),
-      opacity var(--token-reference-motion-duration-emphasis)
-        var(--token-reference-motion-easing-out),
-      transform var(--token-reference-motion-duration-emphasis)
-        var(--token-reference-motion-easing-out);
+      background-color var(--token-theme-motion-feedback-emphasis)
+        var(--token-reference-motion-easing-standard),
+      border-color var(--token-theme-motion-feedback-emphasis)
+        var(--token-reference-motion-easing-standard),
+      box-shadow var(--token-theme-motion-feedback-emphasis)
+        var(--token-reference-motion-easing-standard),
+      opacity var(--token-theme-motion-feedback-emphasis)
+        var(--token-reference-motion-easing-standard),
+      transform var(--token-theme-motion-feedback-emphasis)
+        var(--token-reference-motion-easing-standard);
     opacity: 0.6;
     backdrop-filter: blur(var(--token-reference-blur-sm));
 
@@ -410,7 +410,7 @@
   .card-company {
     font-size: var(--token-reference-typography-size-base);
     font-weight: var(--token-reference-typography-weight-medium);
-    color: var(--token-theme-color-text-emphasis-default);
+    color: var(--token-theme-color-emphasis-color);
     margin-block-end: var(--token-reference-spacing-fluid-xs);
 
     @media (min-width: $breakpoint-md) {
@@ -438,15 +438,15 @@
     color: var(--token-theme-color-text-secondary);
     cursor: pointer;
     transition:
-      background-color var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out),
-      border-color var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out),
-      box-shadow var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out),
-      color var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out),
-      transform var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out);
+      background-color var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard),
+      border-color var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard),
+      box-shadow var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard),
+      color var(--token-theme-motion-feedback-default) var(--token-reference-motion-easing-standard),
+      transform var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard);
     backdrop-filter: blur(var(--token-reference-blur-lg));
     display: flex;
     align-items: center;
@@ -486,8 +486,8 @@
   }
 
   .expand-button__icon {
-    transition: transform var(--token-reference-motion-duration-normal)
-      var(--token-reference-motion-easing-out);
+    transition: transform var(--token-theme-motion-feedback-default)
+      var(--token-reference-motion-easing-standard);
     flex-shrink: 0;
   }
 
@@ -510,9 +510,9 @@
     text-decoration-color: transparent;
     text-underline-offset: 2px;
     transition:
-      color var(--token-reference-motion-duration-fast) var(--token-reference-motion-easing-out),
-      text-decoration-color var(--token-reference-motion-duration-fast)
-        var(--token-reference-motion-easing-out);
+      color var(--token-theme-motion-feedback-fast) var(--token-reference-motion-easing-standard),
+      text-decoration-color var(--token-theme-motion-feedback-fast)
+        var(--token-reference-motion-easing-standard);
     font-weight: var(--token-reference-typography-weight-medium);
 
     &:hover {
@@ -530,8 +530,8 @@
   .card-details {
     max-block-size: 0;
     overflow: hidden;
-    transition: max-block-size var(--token-reference-motion-duration-emphasis)
-      var(--token-reference-motion-easing-out);
+    transition: max-block-size var(--token-theme-motion-feedback-emphasis)
+      var(--token-reference-motion-easing-standard);
     position: relative;
     z-index: 1;
 
@@ -584,7 +584,7 @@
       content: '✓';
       position: absolute;
       inset-inline-start: 0;
-      color: var(--token-theme-color-text-emphasis-default);
+      color: var(--token-theme-color-emphasis-color);
       font-weight: var(--token-reference-typography-weight-semibold);
     }
 
@@ -613,11 +613,11 @@
     color: var(--token-theme-color-text-primary);
     white-space: nowrap;
     transition:
-      background-color var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out),
-      color var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out),
-      transform var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out);
+      background-color var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard),
+      color var(--token-theme-motion-feedback-default) var(--token-reference-motion-easing-standard),
+      transform var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard);
 
     &:hover {
       background: var(--token-theme-color-interactive-color);

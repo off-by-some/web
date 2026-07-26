@@ -32,8 +32,8 @@
     @include motion.fade-in-up(
       heroProfileIn,
       1.5rem,
-      var(--token-reference-motion-duration-entrance),
-      var(--token-reference-motion-delay-normal)
+      var(--token-theme-motion-enter-default),
+      var(--token-reference-motion-delay-300)
     );
 
     @media (min-width: $breakpoint-lg) {
@@ -56,18 +56,17 @@
     @include motion.fade-in-up(
       heroGreetingIn,
       1.5rem,
-      var(--token-reference-motion-duration-slow),
-      var(--token-reference-motion-delay-tiny)
+      var(--token-theme-motion-feedback-slow),
+      var(--token-reference-motion-delay-150)
     );
   }
 
   .profile-greeting__wave {
     font-size: var(--token-reference-typography-size-lg);
     line-height: 1;
-    animation: wave
-      var(--hero-profile-wave-duration, var(--token-reference-motion-duration-gesture))
-      var(--token-reference-motion-easing-out)
-      var(--hero-profile-wave-delay, var(--token-reference-motion-duration-slow)) infinite;
+    animation: wave var(--hero-profile-wave-duration, var(--token-feature-hero-motion-gesture))
+      var(--token-reference-motion-easing-standard)
+      var(--hero-profile-wave-delay, var(--token-theme-motion-feedback-slow)) infinite;
     transform-origin: 70% 70%;
   }
 
@@ -86,8 +85,8 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: textShimmer
-      var(--hero-profile-shimmer-duration, var(--token-reference-motion-duration-ambient))
-      var(--token-reference-motion-easing-out) infinite;
+      var(--hero-profile-shimmer-duration, var(--token-component-shimmer-text-motion-duration))
+      var(--token-reference-motion-easing-standard) infinite;
 
     @media (min-width: $breakpoint-md) {
       font-size: clamp(5.25rem, 9vw, 8rem);
@@ -115,15 +114,15 @@
     );
     font-weight: var(--token-reference-typography-weight-medium);
     color: var(--token-theme-color-text-secondary);
-    letter-spacing: var(--token-reference-typography-letter-spacing-normal);
+    letter-spacing: var(--token-reference-typography-letter-spacing-slightly-tight);
     line-height: var(--token-reference-typography-line-height-snug);
     margin-block-end: 0;
 
     @include motion.fade-in-up(
       heroRoleIn,
       1.5rem,
-      var(--token-reference-motion-duration-slow),
-      var(--token-reference-motion-delay-hero)
+      var(--token-theme-motion-feedback-slow),
+      var(--token-reference-motion-delay-900)
     );
 
     @media (min-width: $breakpoint-md) {
@@ -153,9 +152,9 @@
     margin-inline: auto;
     transform-origin: left center;
     animation: accentExpand
-      var(--hero-profile-accent-duration, var(--token-reference-motion-duration-ornament))
-      var(--token-reference-motion-easing-out)
-      var(--hero-profile-accent-delay, var(--token-reference-motion-duration-normal)) both;
+      var(--hero-profile-accent-duration, var(--token-feature-hero-motion-ornament))
+      var(--token-reference-motion-easing-standard)
+      var(--hero-profile-accent-delay, var(--token-theme-motion-feedback-default)) both;
 
     @media (min-width: $breakpoint-lg) {
       margin-inline: 0;

@@ -42,7 +42,7 @@ $scale-steps: (
     @error '$step-count must be a unitless number, got #{$step-count}';
   }
 
-  @if round($step-count) != $step-count {
+  @if math.round($step-count) != $step-count {
     @error '$step-count must be an integer, got #{$step-count}';
   }
 
@@ -60,7 +60,7 @@ $scale-steps: (
 
   $steps: ();
   @for $i from 1 through $step-count {
-    $index: round(1 + math.div(($i - 1) * ($available-count - 1), $step-count - 1));
+    $index: math.round(1 + math.div(($i - 1) * ($available-count - 1), $step-count - 1));
     $steps: list.append($steps, list.nth($scale-steps, $index), $separator: comma);
   }
 
@@ -113,6 +113,24 @@ $step-to-normalized: () !default;
     )
   );
 }
+
+$scale-contrast-contracts: (
+  (
+    lighter: 0,
+    darker: 1000,
+    minimum: 7,
+  ),
+  (
+    lighter: 100,
+    darker: 900,
+    minimum: 4.5,
+  ),
+  (
+    lighter: 300,
+    darker: 700,
+    minimum: 3,
+  )
+) !default;
 
 // Hue family ranges and properties
 $hue-lightness-ranges: (
@@ -218,15 +236,11 @@ $pi: 3.141592653589793 !default;
 }
 
 @function cbrt($value) {
-  @return sign($value) * pow(abs($value), 1/3);
+  @return sign($value) * math.pow(math.abs($value), math.div(1, 3));
 }
 
 @function deg-to-rad($degrees) {
   @return math.div($degrees * $pi, 180);
-}
-
-@function rad-to-deg($radians) {
-  @return math.div($radians * 180, $pi);
 }
 
 @function normalize-hue($angle) {
@@ -237,14 +251,14 @@ $pi: 3.141592653589793 !default;
   @if $channel <= 0.04045 {
     @return math.div($channel, 12.92);
   }
-  @return pow(math.div($channel + 0.055, 1.055), 2.4);
+  @return math.pow(math.div($channel + 0.055, 1.055), 2.4);
 }
 
 @function linear-channel-to-srgb($channel) {
   @if $channel <= 0.0031308 {
     @return $channel * 12.92;
   }
-  @return 1.055 * pow($channel, 1/2.4) - 0.055;
+  @return 1.055 * math.pow($channel, math.div(1, 2.4)) - 0.055;
 }
 
 @function get-actual-step($normalized-step) {
@@ -313,17 +327,17 @@ $pi: 3.141592653589793 !default;
   $b-val: 0.0259040371 * $l-root + 0.7827717662 * $m-root - 0.808675766 * $s-root;
 
   // Convert to OKLCH
-  $C: sqrt($a * $a + $b-val * $b-val);
+  $C: math.sqrt($a * $a + $b-val * $b-val);
   $h: 0;
   @if $C > 1e-10 {
-    $hue-value: normalize-hue(atan2($b-val, $a));
+    $hue-value: normalize-hue(math.atan2($b-val, $a));
     $h: math.div(math.round($hue-value * 1000), 1000); // Round to 3 decimal places
   }
 
   @return (
-    L: math.div(math.round(max(0, $L) * 10000), 10000),
+    L: math.div(math.round(math.max(0, $L) * 10000), 10000),
     // Round to 4 decimal places
-    C: math.div(math.round(max(0, $C) * 10000), 10000),
+    C: math.div(math.round(math.max(0, $C) * 10000), 10000),
     // Round to 4 decimal places
     h: $h
   );
@@ -340,17 +354,17 @@ $pi: 3.141592653589793 !default;
     $h-unitless: math.div($h, 1deg);
   }
   $h-rad: deg-to-rad($h-unitless);
-  $a: $C * cos($h-rad);
-  $b-val: $C * sin($h-rad);
+  $a: $C * math.cos($h-rad);
+  $b-val: $C * math.sin($h-rad);
 
   // OKLab to LMS (inverse cube root)
   $l-root: $L + 0.3963377774 * $a + 0.2158037573 * $b-val;
   $m-root: $L - 0.1055613458 * $a - 0.0638541728 * $b-val;
   $s-root: $L - 0.0894841775 * $a - 1.291485548 * $b-val;
 
-  $l: sign($l-root) * pow(abs($l-root), 3);
-  $m: sign($m-root) * pow(abs($m-root), 3);
-  $s: sign($s-root) * pow(abs($s-root), 3);
+  $l: sign($l-root) * math.pow(math.abs($l-root), 3);
+  $m: sign($m-root) * math.pow(math.abs($m-root), 3);
+  $s: sign($s-root) * math.pow(math.abs($s-root), 3);
 
   // LMS to unclamped linear RGB. Keep these raw for gamut tests.
   @return (
@@ -373,9 +387,9 @@ $pi: 3.141592653589793 !default;
   $b: linear-channel-to-srgb($b-lin);
 
   @return rgb(
-    round(constrain($r * 255, 0, 255)),
-    round(constrain($g * 255, 0, 255)),
-    round(constrain($b * 255, 0, 255))
+    math.round(constrain($r * 255, 0, 255)),
+    math.round(constrain($g * 255, 0, 255)),
+    math.round(constrain($b * 255, 0, 255))
   );
 }
 
@@ -436,7 +450,7 @@ $pi: 3.141592653589793 !default;
   $h: math.atan2($b, $a);
 
   // If by any chance it carries a deg unit, strip it
-  @if not unitless($h) {
+  @if not math.is-unitless($h) {
     $h: math.div($h, 1deg);
   }
   @if $h < 0 {
@@ -451,7 +465,7 @@ $pi: 3.141592653589793 !default;
 @function delta-hue-prime($C1p, $C2p, $h1p, $h2p) {
   @if $C1p * $C2p == 0 {
     @return 0;
-  } @else if abs($h2p - $h1p) <= 180 {
+  } @else if math.abs($h2p - $h1p) <= 180 {
     @return $h2p - $h1p;
   } @else if $h2p - $h1p > 180 {
     @return $h2p - $h1p - 360;
@@ -466,9 +480,9 @@ $pi: 3.141592653589793 !default;
 @function hue-bar-prime($C1p, $C2p, $h1p, $h2p) {
   @if $C1p * $C2p == 0 {
     @return $h1p + $h2p;
-  } @else if abs($h1p - $h2p) <= 180 {
+  } @else if math.abs($h1p - $h2p) <= 180 {
     @return math.div($h1p + $h2p, 2);
-  } @else if abs($h1p - $h2p) > 180 and ($h1p + $h2p) < 360 {
+  } @else if math.abs($h1p - $h2p) > 180 and ($h1p + $h2p) < 360 {
     @return math.div($h1p + $h2p + 360, 2);
   } @else {
     @return math.div($h1p + $h2p - 360, 2);
@@ -562,14 +576,10 @@ $pi: 3.141592653589793 !default;
         h: $hue,
       )
     );
-    $test-red: linear-channel-to-srgb(map.get($test-linear-rgb, red)) * 255;
-    $test-green: linear-channel-to-srgb(map.get($test-linear-rgb, green)) * 255;
-    $test-blue: linear-channel-to-srgb(map.get($test-linear-rgb, blue)) * 255;
 
-    // Check if color is in sRGB gamut and has reasonable dynamic range
-    $in-gamut: is-in-gamut($test-linear-rgb) and
-      (max($test-red, $test-green, $test-blue) - min($test-red, $test-green, $test-blue)) >
-      2;
+    // Chroma increases monotonically until the color leaves sRGB gamut.
+    // Neutrality thresholds are handled separately from this binary search.
+    $in-gamut: is-in-gamut($test-linear-rgb);
 
     @if $in-gamut {
       $low: $mid;
@@ -580,6 +590,97 @@ $pi: 3.141592653589793 !default;
   }
 
   @return $max-chroma;
+}
+
+@function require-relative-luminance($value, $name) {
+  @if meta.type-of($value) != 'number' or not math.is-unitless($value) {
+    @error '#{$name} must be a unitless relative luminance, got #{$value}';
+  }
+
+  @if $value < 0 or $value > 1 {
+    @error '#{$name} must be between 0 and 1, got #{$value}';
+  }
+
+  @return $value;
+}
+
+@function require-exact-scale-color($scale, $normalized-step) {
+  @if not map.has-key($normalized-step-mapping, $normalized-step) {
+    @error 'Unknown normalized scale step #{$normalized-step}';
+  }
+
+  $actual-step: map.get($normalized-step-mapping, $normalized-step);
+
+  @if not map.has-key($scale, $actual-step) {
+    @error 'Scale is missing normalized step #{$normalized-step} (internal step #{$actual-step})';
+  }
+
+  $value: map.get($scale, $actual-step);
+
+  @if meta.type-of($value) != 'color' {
+    @error 'Expected a color at normalized step #{$normalized-step}, got #{meta.type-of($value)}';
+  }
+
+  @return $value;
+}
+
+@function required-contrast-ratio-per-gap($steps, $contracts) {
+  $required-ratio: 1;
+
+  @each $contract in $contracts {
+    @if meta.type-of($contract) != 'map' {
+      @error 'Each contrast contract must be a map';
+    }
+
+    @each $required-key in (lighter, darker, minimum) {
+      @if not map.has-key($contract, $required-key) {
+        @error 'Contrast contract is missing "#{$required-key}"';
+      }
+    }
+
+    $lighter-step: get-actual-step(map.get($contract, lighter));
+    $darker-step: get-actual-step(map.get($contract, darker));
+    $minimum: map.get($contract, minimum);
+
+    @if meta.type-of($minimum) != 'number' or not math.is-unitless($minimum) or $minimum < 1 {
+      @error 'Contrast minimum must be a unitless number >= 1';
+    }
+
+    $lighter-index: find-step-index($lighter-step, $steps);
+    $darker-index: find-step-index($darker-step, $steps);
+
+    @if $lighter-index == null or $darker-index == null {
+      @error 'Contrast contract references steps that are not in the active scale.';
+    }
+
+    $gap-count: math.abs($darker-index - $lighter-index);
+
+    @if $gap-count == 0 {
+      @error 'Contrast contract cannot compare a step with itself.';
+    }
+
+    $ratio-for-pair: math.pow($minimum, math.div(1, $gap-count));
+    $required-ratio: math.max($required-ratio, $ratio-for-pair);
+  }
+
+  @return $required-ratio;
+}
+
+@function require-scale-contrast-contracts($scale, $contracts, $epsilon: 0.001) {
+  @each $contract in $contracts {
+    $lighter-step: map.get($contract, lighter);
+    $darker-step: map.get($contract, darker);
+    $minimum: map.get($contract, minimum);
+    $lighter-color: require-exact-scale-color($scale, $lighter-step);
+    $darker-color: require-exact-scale-color($scale, $darker-step);
+    $actual: calculate-contrast($lighter-color, $darker-color);
+
+    @if $actual + $epsilon < $minimum {
+      @error 'Contrast contract failed for steps #{$lighter-step} and #{$darker-step}: required #{$minimum}:1, got #{$actual}:1.';
+    }
+  }
+
+  @return true;
 }
 
 @function is-in-gamut($color) {
@@ -605,9 +706,9 @@ $pi: 3.141592653589793 !default;
     $reversed-index: ($num-steps - $i);
     $t: math.div($reversed-index, $num-steps - 1);
 
-    $curve: 1 - pow(1 - $t, 1 / $curve-factor);
+    $curve: 1 - math.pow(1 - $t, math.div(1, $curve-factor));
     @if $curve-factor > 1 {
-      $curve: pow($t, $curve-factor);
+      $curve: math.pow($t, $curve-factor);
     }
 
     $L: $min-L + ($max-L - $min-L) * $curve;
@@ -676,13 +777,13 @@ $pi: 3.141592653589793 !default;
   @if $earth-tone and ($target-L < $optimal-min) {
     $range-min: map.get($range, min);
     $earth-tone-range: $optimal-min - $range-min;
-    $position: ($optimal-min - $target-L) / $earth-tone-range;
-    $earth-clamp: max(0.8, 1 - $position * 0.6);
+    $position: math.div($optimal-min - $target-L, $earth-tone-range);
+    $earth-clamp: math.max(0.8, 1 - $position * 0.6);
 
     $earth-tone-chroma: $max-chroma * $earth-clamp;
     $scaled-chroma: $earth-tone-chroma * $chroma-ratio;
 
-    @return min($scaled-chroma * 1, $max-chroma);
+    @return math.min($scaled-chroma * 1, $max-chroma);
   }
 
   // Standard perceptual adjustments for non-earth-tone colors
@@ -692,21 +793,21 @@ $pi: 3.141592653589793 !default;
 
   @if $target-L < $range-min {
     $fade-range: 0.1;
-    $fade-amount: max(0, ($target-L - ($range-min - $fade-range)) / $fade-range);
+    $fade-amount: math.max(0, math.div($target-L - ($range-min - $fade-range), $fade-range));
     $perceptual-multiplier: 0.6 + 0.3 * $fade-amount;
   } @else if $target-L < $optimal-min {
-    $distance: ($optimal-min - $target-L) / ($optimal-min - $range-min);
+    $distance: math.div($optimal-min - $target-L, $optimal-min - $range-min);
     $perceptual-multiplier: 0.8 + 0.2 * (1 - $distance);
   } @else if ($target-L > $optimal-max) and ($target-L < $range-max) {
-    $distance: ($target-L - $optimal-max) / ($range-max - $optimal-max);
+    $distance: math.div($target-L - $optimal-max, $range-max - $optimal-max);
     $perceptual-multiplier: 0.9 + 0.1 * (1 - $distance);
   } @else if $target-L > $range-max {
     $fade-range: 0.05;
-    $fade-amount: max(0, 1 - ($target-L - $range-max) / $fade-range);
+    $fade-amount: math.max(0, 1 - math.div($target-L - $range-max, $fade-range));
     $perceptual-multiplier: 0.7 + 0.2 * $fade-amount;
   }
 
-  @return min($base-chroma-scale * $perceptual-multiplier, $max-chroma);
+  @return math.min($base-chroma-scale * $perceptual-multiplier, $max-chroma);
 }
 
 @function get-relative-luminance($color) {
@@ -722,27 +823,44 @@ $pi: 3.141592653589793 !default;
 }
 
 @function luminance-to-oklab-l($luminance) {
-  $Y: constrain($luminance, 0.000001, 0.999999);
+  $target-Y: constrain($luminance, 0.000001, 0.999999);
+  $low: 0;
+  $high: 1;
+  $best: 0.5;
 
-  // Direct Y → OKLab L* conversion (exact formula)
-  @if $Y <= 0.008856 {
-    // Linear portion
-    @return 903.3 * $Y;
+  @for $i from 1 through 24 {
+    $mid: math.div($low + $high, 2);
+    $candidate: oklch-to-rgb(
+      (
+        L: $mid,
+        C: 0,
+        h: 0,
+      )
+    );
+    $measured-Y: get-relative-luminance($candidate);
+    $best: $mid;
+
+    @if $measured-Y < $target-Y {
+      $low: $mid;
+    } @else {
+      $high: $mid;
+    }
   }
-  // Cube root portion
-  @return 1.16 * pow($Y, 1/3) - 0.16;
+
+  @return $best;
 }
 
 @function oklab-l-to-luminance($L) {
   $lightness: constrain($L, 0.000001, 0.999999);
+  $candidate: oklch-to-rgb(
+    (
+      L: $lightness,
+      C: 0,
+      h: 0,
+    )
+  );
 
-  // Inverse of the Y → OKLab L* conversion
-  @if $lightness <= (903.3 * 0.008856) {
-    // Linear portion: Y = L / 903.3
-    @return math.div($lightness, 903.3);
-  }
-  // Cube root portion: Y = ((L + 0.16) / 1.16)^3
-  @return pow(($lightness + 0.16) / 1.16, 3);
+  @return get-relative-luminance($candidate);
 }
 
 @function calculate-cusp-for-hue($hue) {
@@ -750,7 +868,7 @@ $pi: 3.141592653589793 !default;
   $cusp-L: 0.5; // Start with middle lightness
 
   // Search through lightness range to find maximum chroma
-  @for $i from 1 through 50 {
+  @for $i from 1 through 46 {
     // 0.05 to 0.95 in 0.02 increments
     $L: 0.05 + ($i - 1) * 0.02;
     $chroma: calculate-max-chroma($L, $hue);
@@ -771,8 +889,8 @@ $pi: 3.141592653589793 !default;
   $target-AA,
   $target-AAA
 ) {
-  $index-distance: abs($step-index2 - $step-index1);
-  $value-distance: abs(
+  $index-distance: math.abs($step-index2 - $step-index1);
+  $value-distance: math.abs(
     list.nth($steps, $step-index2) - list.nth($steps, $step-index1)
   ); // 1-indexed
   $relative-distance: math.div($value-distance, $total-range);
@@ -803,73 +921,29 @@ $pi: 3.141592653589793 !default;
   $num-steps: list.length($steps);
 
   @if $num-steps < 2 {
-    @return ($max-lum / 2); // Single step fallback
+    @return math.div($max-lum, 2); // Single step fallback
   }
 
-  // Calculate step distances and determine contrast requirements
-  $total-range: list.nth($steps, $num-steps) - list.nth($steps, 1); // 1-indexed
+  $lightest-luminance: require-relative-luminance($max-lum, '$max-lum');
+  $darkest-luminance: 0.005;
+  $required-ratio: required-contrast-ratio-per-gap($steps, $scale-contrast-contracts);
+  $lightest-shifted: $lightest-luminance + 0.05;
+  $darkest-shifted: $darkest-luminance + 0.05;
+  $available-total-ratio: math.div($lightest-shifted, $darkest-shifted);
+  $available-ratio-per-gap: math.pow($available-total-ratio, math.div(1, $num-steps - 1));
+  $epsilon: 0.000001;
 
-  // Calculate required geometric ratio to satisfy most demanding constraint
-  $max-required-ratio: 1.1; // Minimum sensible ratio
-
-  @for $i from 1 through ($num-steps - 1) {
-    // Prevent $j from exceeding bounds
-    @for $j from ($i + 1) through $num-steps {
-      $required-contrast: get-required-contrast(
-        $steps,
-        $i,
-        $j,
-        $total-range,
-        $target-AA,
-        $target-AAA
-      );
-      $steps-separation: $j - $i;
-
-      // Calculate ratio needed: ratio^stepsSeparation = requiredContrast
-      $needed-ratio: pow($required-contrast, 1 / $steps-separation);
-      $max-required-ratio: max($max-required-ratio, $needed-ratio);
-    }
+  @if $available-ratio-per-gap + $epsilon < $required-ratio {
+    @error 'Contrast contracts are impossible within the requested luminance range. Required per-gap ratio: #{$required-ratio}; available per-gap ratio: #{$available-ratio-per-gap}.';
   }
 
-  // Handle cusp constraints
-  $cusp: calculate-cusp-for-hue($hue);
-  $cusp-L: map.get($cusp, L);
-  $bottom-L: max(0.12, $cusp-L - 0.02); // Higher minimum for more midtone shades
-  $bottom-Y: oklab-l-to-luminance($bottom-L);
-
-  // Calculate minimum luminance that allows our ratio to reach maxLum
-  $calculated-min-lum: math.div($max-lum, pow($max-required-ratio, $num-steps - 1));
-
-  // Choose the more restrictive minimum (cusp or calculated)
-  $min-lum: max($bottom-Y, $calculated-min-lum);
-
-  // Verify this is achievable, adjust if needed
-  $achievable-max-lum: $min-lum * pow($max-required-ratio, $num-steps - 1);
-  $final-max-lum: min($max-lum, $achievable-max-lum);
-
-  // If we can't achieve the target, reduce the ratio slightly
-  $final-ratio: $max-required-ratio;
-  @if $achievable-max-lum > $max-lum {
-    $final-ratio: pow($max-lum / $min-lum, 1 / ($num-steps - 1));
-  }
-
-  // Generate the progression (reversed so highest numbers are darkest)
   $progression: ();
   @for $i from 1 through $num-steps {
-    $luminance: $min-lum * pow($final-ratio, $i - 1);
-    $progression: list.append($progression, min($final-max-lum, $luminance));
+    $shifted-luminance: math.div($lightest-shifted, math.pow($available-ratio-per-gap, $i - 1));
+    $progression: list.append($progression, $shifted-luminance - 0.05);
   }
 
-  // Reverse the progression so highest step numbers get lowest luminance (darkest)
-  $reversed-progression: ();
-  @for $i from $num-steps through 1 {
-    $reversed-progression: list.append(
-      $reversed-progression,
-      list.nth($progression, $i)
-    ); // 1-indexed
-  }
-
-  @return $reversed-progression;
+  @return $progression;
 }
 
 @function apply-bezold-brucke-shift($hue, $lightness, $hue-family) {
@@ -883,14 +957,14 @@ $pi: 3.141592653589793 !default;
     @return $hue;
   }
 
-  $t: max(0, ($L-mid - $lightness) / ($L-mid - $L-min));
+  $t: math.max(0, math.div($L-mid - $lightness, $L-mid - $L-min));
   $t-ease: 3 * $t * $t - 2 * $t * $t * $t; // Cubic ease
 
   $delta-h: 10; // Degrees toward red-brown
   @if $hue-family == 'yellow' {
     $delta-h: 20;
   }
-  @return normalize-hue($hue + $delta-h * $t-ease);
+  @return normalize-hue($hue - $delta-h * $t-ease);
 }
 
 @function is-color-black($color) {
@@ -903,9 +977,9 @@ $pi: 3.141592653589793 !default;
 
 @function interpolate-colors($color1, $color2) {
   @return rgb(
-    round((color.channel($color1, 'red') + color.channel($color2, 'red')) / 2),
-    round((color.channel($color1, 'green') + color.channel($color2, 'green')) / 2),
-    round((color.channel($color1, 'blue') + color.channel($color2, 'blue')) / 2)
+    math.round(math.div(color.channel($color1, 'red') + color.channel($color2, 'red'), 2)),
+    math.round(math.div(color.channel($color1, 'green') + color.channel($color2, 'green'), 2)),
+    math.round(math.div(color.channel($color1, 'blue') + color.channel($color2, 'blue'), 2))
   );
 }
 
@@ -920,15 +994,13 @@ $pi: 3.141592653589793 !default;
       @if is-color-black($current-color) {
         // Find the next lighter color in the scale
         $next-lighter-color: null;
-        $found-next-lighter: false;
 
         @each $check-step in $steps {
-          @if not $found-next-lighter and $check-step > $step {
+          @if $check-step < $step {
             @if map.has-key($adjusted-scale, $check-step) {
               $check-color: map.get($adjusted-scale, $check-step);
               @if not is-color-black($check-color) {
                 $next-lighter-color: $check-color;
-                $found-next-lighter: true;
               }
             }
           }
@@ -948,6 +1020,63 @@ $pi: 3.141592653589793 !default;
   }
 
   @return $adjusted-scale;
+}
+
+@function generate-scale-color-at-lightness(
+  $lightness,
+  $base-oklch,
+  $hue-family,
+  $is-anchor: false
+) {
+  $base-lightness: map.get($base-oklch, L);
+  $base-chroma: map.get($base-oklch, C);
+  $base-hue: map.get($base-oklch, h);
+  $adjusted-hue: apply-bezold-brucke-shift($base-hue, $lightness, $hue-family);
+  $max-chroma: calculate-max-chroma($lightness, $adjusted-hue);
+  $target-chroma: math.min($base-chroma, $max-chroma);
+
+  @if not $is-anchor {
+    $distance-from-anchor: math.abs($lightness - $base-lightness);
+    $exponent: -$distance-from-anchor * 2;
+    $chroma-falloff: math.pow($e, $exponent);
+    $target-chroma: math.min($base-chroma * $chroma-falloff, $max-chroma);
+  }
+
+  $oklch-point: (
+    L: $lightness,
+    C: $target-chroma,
+    h: $adjusted-hue,
+  );
+
+  @return (
+    color: oklch-to-rgb($oklch-point),
+    adjusted-hue: $adjusted-hue,
+    max-chroma: $max-chroma,
+    target-chroma: $target-chroma
+  );
+}
+
+@function solve-lightness-for-luminance($target-Y, $base-oklch, $hue-family, $is-anchor: false) {
+  $target-Y: require-relative-luminance($target-Y, '$target-Y');
+  $low: 0;
+  $high: 1;
+  $best: 0.5;
+
+  @for $i from 1 through 24 {
+    $mid: math.div($low + $high, 2);
+    $candidate: generate-scale-color-at-lightness($mid, $base-oklch, $hue-family, $is-anchor);
+    $candidate-color: map.get($candidate, color);
+    $measured-Y: get-relative-luminance($candidate-color);
+    $best: $mid;
+
+    @if $measured-Y < $target-Y {
+      $low: $mid;
+    } @else {
+      $high: $mid;
+    }
+  }
+
+  @return $best;
 }
 
 @function generate-color-scale($base-color, $step-count: list.length($scale-steps)) {
@@ -974,12 +1103,12 @@ $pi: 3.141592653589793 !default;
   );
 
   // Find natural anchor position based on Y-space proximity
-  $natural-step-index: round(list.length($steps) / 2); // Default middle
+  $natural-step-index: math.round(math.div(list.length($steps), 2)); // Default middle
   $min-diff: 999999;
 
   @for $i from 1 through list.length($steps) {
     $step-lum: list.nth($luminance-progression, $i); // 1-indexed
-    $diff: abs($step-lum - $base-lum);
+    $diff: math.abs($step-lum - $base-lum);
     @if $diff < $min-diff {
       $min-diff: $diff;
       $natural-step-index: $i;
@@ -995,13 +1124,16 @@ $pi: 3.141592653589793 !default;
   @for $i from 1 through list.length($steps) {
     $step: list.nth($steps, $i); // 1-indexed
     $target-Y: list.nth($luminance-progression, $i); // 1-indexed
-    $target-L: luminance-to-oklab-l($target-Y);
+    $is-anchor: $i == $natural-step-index;
+    $target-L: solve-lightness-for-luminance($target-Y, $base-oklch, $hue-family, $is-anchor);
+    $final-color: generate-scale-color-at-lightness(
+      $target-L,
+      $base-oklch,
+      $hue-family,
+      $is-anchor
+    );
+    $max-chroma: map.get($final-color, max-chroma);
 
-    // Apply hue shifts
-    $adjusted-hue: apply-bezold-brucke-shift(map.get($base-oklch, h), $target-L, $hue-family);
-
-    // Calculate chroma
-    $max-chroma: calculate-max-chroma($target-L, $adjusted-hue);
     $chroma-profile: map.merge(
       $chroma-profile,
       (
@@ -1009,37 +1141,17 @@ $pi: 3.141592653589793 !default;
       )
     );
 
-    $target-chroma: null;
-    @if $i == $natural-step-index {
-      // Anchor: preserve base color chroma
-      $target-chroma: min(map.get($base-oklch, C), $max-chroma);
-    } @else {
-      // Distance-based chroma falloff
-      $distance-from-anchor: abs($target-L - map.get($base-oklch, L));
-      // Use Euler's number directly since SCSS does not support math.$e
-      $E: 2.718281828459045;
-      $exponent: -$distance-from-anchor * 2;
-      $chroma-falloff: pow($E, $exponent);
-      $target-chroma: min(map.get($base-oklch, C) * $chroma-falloff * 1, $max-chroma);
-    }
-
-    $oklch-point: (
-      L: $target-L,
-      C: $target-chroma,
-      h: $adjusted-hue,
-    );
-    $rgb-color: oklch-to-rgb($oklch-point);
-
     $scale: map.merge(
       $scale,
       (
-        $step: $rgb-color,
+        $step: map.get($final-color, color),
       )
     );
   }
 
   // Adjust black colors to be midpoints between black and next lighter color
   $scale: adjust-black-colors($scale, $steps);
+  $contrast-valid: require-scale-contrast-contracts($scale, $scale-contrast-contracts);
 
   // Add metadata (matching JS implementation)
   $scale: map.merge(
@@ -1096,7 +1208,7 @@ $pi: 3.141592653589793 !default;
     $scale,
     (
       'chroma-profile': $chroma-profile,
-      'natural-step': list.nth($steps, round(list.length($steps) / 2)),
+      'natural-step': list.nth($steps, math.round(math.div(list.length($steps), 2))),
       // 1-indexed
       'hue-family': 'neutral',
     )
@@ -1122,7 +1234,7 @@ $pi: 3.141592653589793 !default;
   $min-diff: 999999;
   @each $key, $value in $scale {
     @if meta.type-of($key) == 'number' {
-      $diff: abs($key - $step);
+      $diff: math.abs($key - $step);
       @if $diff < $min-diff {
         $min-diff: $diff;
         $closest-step: $key;
@@ -1195,8 +1307,8 @@ $pi: 3.141592653589793 !default;
   }
 
   $range-map: ();
-  $start-index: max(1, $base-index - $range);
-  $end-index: min(list.length($scale-steps), $base-index + $range);
+  $start-index: math.max(1, $base-index - $range);
+  $end-index: math.min(list.length($scale-steps), $base-index + $range);
 
   @for $i from $start-index through $end-index {
     $step: list.nth($scale-steps, $i);
@@ -1216,46 +1328,37 @@ $pi: 3.141592653589793 !default;
 @function calculate-contrast($color1, $color2) {
   $lum1: get-relative-luminance($color1);
   $lum2: get-relative-luminance($color2);
-  $lighter: max($lum1, $lum2);
-  $darker: min($lum1, $lum2);
-  @return ($lighter + 0.05) / ($darker + 0.05);
+  $lighter: math.max($lum1, $lum2);
+  $darker: math.min($lum1, $lum2);
+  @return math.div($lighter + 0.05, $darker + 0.05);
 }
 
 @function get-text-color($bg-color) {
-  $luminance: get-relative-luminance($bg-color);
-  @if $luminance > 0.5 {
+  $black-contrast: calculate-contrast($bg-color, #000000);
+  $white-contrast: calculate-contrast($bg-color, #ffffff);
+
+  @if $black-contrast >= $white-contrast {
     @return #000000;
   }
+
   @return #ffffff;
 }
 
-@function calculate-gamut-efficiency($scale, $chroma-profile) {
-  $total-utilization: 0;
-  $count: 0;
+@function require-text-contrast($bg-color, $minimum: 4.5) {
+  $text-color: get-text-color($bg-color);
+  $contrast: calculate-contrast($bg-color, $text-color);
 
-  @each $step in $scale-steps {
-    @if map.has-key($scale, $step) and map.has-key($chroma-profile, $step) {
-      $color: map.get($scale, $step);
-      $oklch: rgb-to-oklch($color);
-      $max-chroma: map.get($chroma-profile, $step);
-
-      @if $max-chroma > 0 {
-        $total-utilization: $total-utilization + (map.get($oklch, C) / $max-chroma);
-        $count: $count + 1;
-      }
-    }
+  @if $contrast < $minimum {
+    @error 'No black/white text color candidate reaches #{$minimum}:1 contrast against #{$bg-color}. Best candidate #{$text-color} gives #{$contrast}:1.';
   }
 
-  @if $count > 0 {
-    @return ($total-utilization / $count) * 100;
-  }
-  @return 0;
+  @return $text-color;
 }
 
 @function get-harmony-chroma($L, $hue, $adjusted-base-chroma, $chroma-multiplier: 1) {
   $max-chroma: calculate-max-chroma($L, $hue);
   $target-chroma: $adjusted-base-chroma * $chroma-multiplier;
-  @return min($target-chroma, $max-chroma);
+  @return math.min($target-chroma, $max-chroma);
 }
 
 @function generate-harmony-colors($base-color) {

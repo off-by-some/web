@@ -79,14 +79,15 @@
     cursor: pointer;
     text-decoration: none;
     transition:
-      transform var(--token-reference-motion-duration-fast) var(--token-reference-motion-easing-out),
-      border-color var(--token-reference-motion-duration-fast)
-        var(--token-reference-motion-easing-out),
-      box-shadow var(--token-reference-motion-duration-fast)
-        var(--token-reference-motion-easing-out),
-      color var(--token-reference-motion-duration-fast) var(--token-reference-motion-easing-out),
-      background var(--token-reference-motion-duration-fast)
-        var(--token-reference-motion-easing-out);
+      transform var(--token-theme-motion-feedback-fast)
+        var(--token-reference-motion-easing-standard),
+      border-color var(--token-theme-motion-feedback-fast)
+        var(--token-reference-motion-easing-standard),
+      box-shadow var(--token-theme-motion-feedback-fast)
+        var(--token-reference-motion-easing-standard),
+      color var(--token-theme-motion-feedback-fast) var(--token-reference-motion-easing-standard),
+      background var(--token-theme-motion-feedback-fast)
+        var(--token-reference-motion-easing-standard);
     overflow: var(--button-overflow, hidden);
     letter-spacing: var(--token-reference-typography-letter-spacing-wide);
     line-height: var(--token-reference-typography-line-height-snug);
@@ -101,8 +102,8 @@
         var(--token-theme-color-surface-glass-iridescent)
       );
       opacity: 0;
-      transition: opacity var(--token-reference-motion-duration-fast)
-        var(--token-reference-motion-easing-out);
+      transition: opacity var(--token-theme-motion-feedback-fast)
+        var(--token-reference-motion-easing-standard);
       border-radius: inherit;
       pointer-events: none;
       z-index: 0;
@@ -117,7 +118,7 @@
     &:disabled,
     &[aria-disabled='true'] {
       cursor: not-allowed;
-      opacity: var(--token-reference-opacity-default);
+      opacity: var(--token-theme-opacity-disabled);
     }
 
     @media (min-width: $breakpoint-md) {

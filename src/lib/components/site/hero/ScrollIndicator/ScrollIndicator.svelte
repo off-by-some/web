@@ -43,14 +43,15 @@
     opacity: 0.74;
     cursor: pointer;
     animation: scrollFloat
-      var(--scroll-indicator-duration, var(--token-reference-motion-duration-pulse))
-      var(--token-reference-motion-easing-out) infinite;
+      var(--scroll-indicator-duration, var(--token-theme-motion-feedback-pulse))
+      var(--token-reference-motion-easing-standard) infinite;
     z-index: 10;
     transition:
-      color var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out),
-      opacity var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out),
-      transform var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out);
+      color var(--token-theme-motion-feedback-default) var(--token-reference-motion-easing-standard),
+      opacity var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard),
+      transform var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard);
 
     &:focus {
       outline: var(--token-theme-focus-outline);
@@ -98,12 +99,12 @@
     background: var(--token-theme-color-surface-glass-medium);
     backdrop-filter: blur(var(--token-reference-blur-sm));
     transition:
-      background-color var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out),
-      border-color var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out),
-      box-shadow var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out);
+      background-color var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard),
+      border-color var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard),
+      box-shadow var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard);
   }
 
   .scroll-wheel {
@@ -120,10 +121,10 @@
     transform: translateX(-50%);
     border-radius: var(--token-reference-radius-full);
     animation: wheelScroll
-      var(--scroll-indicator-duration, var(--token-reference-motion-duration-pulse))
-      var(--token-reference-motion-easing-out) infinite;
-    transition: background var(--token-reference-motion-duration-normal)
-      var(--token-reference-motion-easing-out);
+      var(--scroll-indicator-duration, var(--token-theme-motion-feedback-pulse))
+      var(--token-reference-motion-easing-standard) infinite;
+    transition: background var(--token-theme-motion-feedback-default)
+      var(--token-reference-motion-easing-standard);
   }
 
   .scroll-arrow {
@@ -138,11 +139,11 @@
         var(--token-theme-color-text-primary)
       );
     animation: arrowBounce
-      var(--scroll-indicator-duration, var(--token-reference-motion-duration-pulse))
-      var(--token-reference-motion-easing-out) infinite
-      var(--scroll-indicator-arrow-delay, calc(var(--token-reference-motion-duration-pulse) / 4));
-    transition: border-block-start-color var(--token-reference-motion-duration-normal)
-      var(--token-reference-motion-easing-out);
+      var(--scroll-indicator-duration, var(--token-theme-motion-feedback-pulse))
+      var(--token-reference-motion-easing-standard) infinite
+      var(--scroll-indicator-arrow-delay, calc(var(--token-theme-motion-feedback-pulse) / 4));
+    transition: border-block-start-color var(--token-theme-motion-feedback-default)
+      var(--token-reference-motion-easing-standard);
   }
 
   .scroll-text {

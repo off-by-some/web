@@ -10,19 +10,6 @@ $step-mapping: colors.$normalized-step-mapping !default;
 
 $debug-color-resolution: false !default;
 
-$alpha-range: (
-  min: 0,
-  max: 1000,
-) !default;
-$numeric-range: (
-  min: -10000,
-  max: 10000,
-) !default;
-$percentage-range: (
-  min: -1000,
-  max: 1000,
-) !default;
-
 $resolve-pattern: 'var(' !default;
 $resolve-end: '):' !default;
 $reference-pattern: 'reference(' !default;
@@ -80,16 +67,6 @@ $reference-end: ')' !default;
     }
   }
   @return null;
-}
-
-@function validate-range($value, $range, $context: '') {
-  $min: map.get($range, 'min');
-  $max: map.get($range, 'max');
-
-  @if $value < $min or $value > $max {
-    @warn "Value #{$value} outside range #{$min}-#{$max} in #{$context}";
-  }
-  @return $value;
 }
 
 @function trim($string) {
@@ -1387,10 +1364,6 @@ $reference-end: ')' !default;
 }
 
 @function schema-brand-colors($schema) {
-  @if map.has-key($schema, 'brand') {
-    @return map.get($schema, 'brand');
-  }
-
   @if not map.has-key($schema, 'reference') {
     @return ();
   }
@@ -1462,7 +1435,7 @@ $reference-end: ')' !default;
         $tokens: map.merge(
           $tokens,
           (
-            '#{$prefix}-#{$role}-#{$step}': $value,
+            '#{$prefix}-reference-color-#{$role}-#{$step}': $value,
           )
         );
       }
@@ -1470,23 +1443,9 @@ $reference-end: ')' !default;
   }
 
   @each $category, $category-data in $schema {
-    @if $category != 'brand' {
-      @if is-valid-type($category-data, 'map') {
-        $map-length: list.length($category-data);
-        @if $map-length == 2 and map.has-key($category-data, 'alpha') {
-          $resolved: resolve-value($category-data, $primitives);
-          $tokens: map.merge(
-            $tokens,
-            (
-              '#{$prefix}-#{$category}': $resolved,
-            )
-          );
-        } @else {
-          $resolved: resolve-schema($category-data, $primitives);
-          $flattened: flatten-tokens($resolved, '#{$prefix}-#{$category}');
-          $tokens: map.merge($tokens, $flattened);
-        }
-      } @else {
+    @if is-valid-type($category-data, 'map') {
+      $map-length: list.length($category-data);
+      @if $map-length == 2 and map.has-key($category-data, 'alpha') {
         $resolved: resolve-value($category-data, $primitives);
         $tokens: map.merge(
           $tokens,
@@ -1494,7 +1453,19 @@ $reference-end: ')' !default;
             '#{$prefix}-#{$category}': $resolved,
           )
         );
+      } @else {
+        $resolved: resolve-schema($category-data, $primitives);
+        $flattened: flatten-tokens($resolved, '#{$prefix}-#{$category}');
+        $tokens: map.merge($tokens, $flattened);
       }
+    } @else {
+      $resolved: resolve-value($category-data, $primitives);
+      $tokens: map.merge(
+        $tokens,
+        (
+          '#{$prefix}-#{$category}': $resolved,
+        )
+      );
     }
   }
 
@@ -1513,56 +1484,6 @@ $reference-end: ')' !default;
 @mixin export-semantic-theme($schema, $primitives: null, $prefix: 'semantic') {
   $tokens: process-semantic-schema($schema, $primitives, $prefix);
   @include export-tokens($tokens);
-}
-
-@function debug-primitives($primitives) {
-  @if $primitives == null {
-    @return (error: 'Primitives is null');
-  }
-
-  $debug: (
-    total-scales: list.length($primitives),
-    scale-names: map.keys($primitives),
-  );
-
-  $scales: ();
-  @each $name, $scale in $primitives {
-    @if is-valid-type($scale, 'map') {
-      $steps: ();
-      @each $step, $value in $scale {
-        @if is-valid-type($step, 'number') and is-valid-type($value, 'color') {
-          $steps: list.append($steps, $step);
-        }
-      }
-
-      $scales: map.merge(
-        $scales,
-        (
-          $name: (
-              color-steps: list.length($steps),
-              available-steps: $steps,
-            ),
-        )
-      );
-    }
-  }
-
-  @return map.merge(
-    $debug,
-    (
-      scales: $scales,
-    )
-  );
-}
-
-@mixin print-debug($debug-info) {
-  @each $key, $value in $debug-info {
-    @if $key != 'scales' {
-    } @else {
-      @each $scale, $info in $value {
-      }
-    }
-  }
 }
 
 // $example-schema: (

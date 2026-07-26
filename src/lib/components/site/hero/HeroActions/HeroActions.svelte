@@ -93,8 +93,8 @@
     @include motion.fade-in-up(
       heroActionsIn,
       1.5rem,
-      var(--token-reference-motion-duration-slow),
-      var(--token-reference-motion-delay-narrative)
+      var(--token-theme-motion-feedback-slow),
+      var(--token-reference-motion-delay-800)
     );
 
     @media (min-width: $breakpoint-lg) {
@@ -128,8 +128,8 @@
     font-weight: var(--token-reference-typography-weight-semibold);
     text-decoration: none;
     transition:
-      color var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out),
-      gap var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out);
+      color var(--token-theme-motion-feedback-default) var(--token-reference-motion-easing-standard),
+      gap var(--token-theme-motion-feedback-default) var(--token-reference-motion-easing-standard);
 
     &:hover,
     &:focus-visible {

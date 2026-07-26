@@ -258,8 +258,8 @@
     @include motion.fade-in-up(
       projectsSectionEnter,
       30px,
-      var(--token-reference-motion-duration-entrance),
-      var(--token-reference-motion-delay-short)
+      var(--token-theme-motion-enter-default),
+      var(--token-reference-motion-delay-200)
     );
 
     @media (min-width: $breakpoint-lg) {

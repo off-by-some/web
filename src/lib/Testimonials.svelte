@@ -482,8 +482,8 @@
     justify-content: center;
     flex-wrap: wrap;
     margin-block-end: var(--token-reference-spacing-fluid-2xl);
-    animation: fadeInUp var(--token-reference-motion-duration-entrance)
-      var(--token-reference-motion-easing-out) var(--token-reference-motion-delay-short) both;
+    animation: fadeInUp var(--token-theme-motion-enter-default)
+      var(--token-reference-motion-easing-standard) var(--token-reference-motion-delay-200) both;
 
     @media (min-width: $breakpoint-md) {
       gap: var(--token-reference-spacing-fluid-md);
@@ -510,16 +510,16 @@
     padding: var(--token-reference-spacing-fluid-md) var(--token-reference-spacing-fluid-lg);
     cursor: pointer;
     transition:
-      background-color var(--token-reference-motion-duration-emphasis)
-        var(--token-reference-motion-easing-out),
-      border-color var(--token-reference-motion-duration-emphasis)
-        var(--token-reference-motion-easing-out),
-      box-shadow var(--token-reference-motion-duration-emphasis)
-        var(--token-reference-motion-easing-out),
-      opacity var(--token-reference-motion-duration-emphasis)
-        var(--token-reference-motion-easing-out),
-      transform var(--token-reference-motion-duration-emphasis)
-        var(--token-reference-motion-easing-out);
+      background-color var(--token-theme-motion-feedback-emphasis)
+        var(--token-reference-motion-easing-standard),
+      border-color var(--token-theme-motion-feedback-emphasis)
+        var(--token-reference-motion-easing-standard),
+      box-shadow var(--token-theme-motion-feedback-emphasis)
+        var(--token-reference-motion-easing-standard),
+      opacity var(--token-theme-motion-feedback-emphasis)
+        var(--token-reference-motion-easing-standard),
+      transform var(--token-theme-motion-feedback-emphasis)
+        var(--token-reference-motion-easing-standard);
     backdrop-filter: blur(var(--token-reference-blur-lg));
     position: relative;
     overflow: hidden;
@@ -530,8 +530,8 @@
       inset: 0;
       background: var(--token-theme-color-surface-glass-iridescent);
       opacity: 0;
-      transition: opacity var(--token-reference-motion-duration-emphasis)
-        var(--token-reference-motion-easing-out);
+      transition: opacity var(--token-theme-motion-feedback-emphasis)
+        var(--token-reference-motion-easing-standard);
     }
 
     &:hover {
@@ -594,12 +594,12 @@
     border: var(--token-reference-border-width-large) solid var(--token-theme-color-border-default);
     flex-shrink: 0;
     transition:
-      border-color var(--token-reference-motion-duration-emphasis)
-        var(--token-reference-motion-easing-out),
-      box-shadow var(--token-reference-motion-duration-emphasis)
-        var(--token-reference-motion-easing-out),
-      transform var(--token-reference-motion-duration-emphasis)
-        var(--token-reference-motion-easing-out);
+      border-color var(--token-theme-motion-feedback-emphasis)
+        var(--token-reference-motion-easing-standard),
+      box-shadow var(--token-theme-motion-feedback-emphasis)
+        var(--token-reference-motion-easing-standard),
+      transform var(--token-theme-motion-feedback-emphasis)
+        var(--token-reference-motion-easing-standard);
     position: relative;
 
     :global(img) {
@@ -629,8 +629,8 @@
     color: var(--token-theme-color-text-overlay);
     line-height: var(--token-reference-typography-line-height-snug);
     white-space: nowrap;
-    transition: color var(--token-reference-motion-duration-emphasis)
-      var(--token-reference-motion-easing-out);
+    transition: color var(--token-theme-motion-feedback-emphasis)
+      var(--token-reference-motion-easing-standard);
 
     @media (min-width: $breakpoint-lg) {
       font-size: var(--token-reference-typography-size-base);
@@ -655,8 +655,8 @@
     justify-content: center;
     gap: var(--token-reference-spacing-fluid-lg);
     margin-block-end: var(--token-reference-spacing-fluid-3xl);
-    animation: fadeInUp var(--token-reference-motion-duration-entrance)
-      var(--token-reference-motion-easing-out) var(--token-reference-motion-delay-emphasis) both;
+    animation: fadeInUp var(--token-theme-motion-enter-default)
+      var(--token-reference-motion-easing-standard) var(--token-reference-motion-delay-400) both;
 
     @media (min-width: $breakpoint-lg) {
       gap: var(--token-reference-spacing-fluid-xl);
@@ -697,8 +697,8 @@
       var(--token-theme-color-interactive-hover)
     );
     border-radius: inherit;
-    transition: inline-size var(--token-reference-motion-duration-slow)
-      var(--token-reference-motion-easing-out);
+    transition: inline-size var(--token-theme-motion-feedback-slow)
+      var(--token-reference-motion-easing-standard);
     position: relative;
 
     &::after {
@@ -731,8 +731,8 @@
   .content {
     display: grid;
     gap: var(--token-reference-spacing-fluid-3xl);
-    animation: fadeInUp var(--token-reference-motion-duration-entrance)
-      var(--token-reference-motion-easing-out) var(--token-reference-motion-delay-slow) both;
+    animation: fadeInUp var(--token-theme-motion-enter-default)
+      var(--token-reference-motion-easing-standard) var(--token-reference-motion-delay-600) both;
 
     @media (min-width: $breakpoint-lg) {
       grid-template-columns: 1.5fr 1fr;
@@ -761,10 +761,10 @@
     position: relative;
     overflow: hidden;
     transition:
-      box-shadow var(--token-reference-motion-duration-emphasis)
-        var(--token-reference-motion-easing-out),
-      transform var(--token-reference-motion-duration-emphasis)
-        var(--token-reference-motion-easing-out);
+      box-shadow var(--token-theme-motion-feedback-emphasis)
+        var(--token-reference-motion-easing-standard),
+      transform var(--token-theme-motion-feedback-emphasis)
+        var(--token-reference-motion-easing-standard);
 
     &::before {
       content: '';
@@ -774,8 +774,8 @@
       opacity: 0.4;
       border-radius: inherit;
       pointer-events: none;
-      transition: opacity var(--token-reference-motion-duration-emphasis)
-        var(--token-reference-motion-easing-out);
+      transition: opacity var(--token-theme-motion-feedback-emphasis)
+        var(--token-reference-motion-easing-standard);
     }
 
     &:hover {
@@ -906,11 +906,11 @@
     font-weight: var(--token-reference-typography-weight-semibold);
     cursor: pointer;
     transition:
-      background-color var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out),
-      color var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out),
-      transform var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out);
+      background-color var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard),
+      color var(--token-theme-motion-feedback-default) var(--token-reference-motion-easing-standard),
+      transform var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard);
     margin-block-end: var(--token-reference-spacing-fluid-md);
     min-block-size: 2.75rem;
     display: flex;
@@ -957,8 +957,8 @@
   .attribution__linkedin {
     color: var(--token-theme-color-text-tertiary);
     text-decoration: none;
-    transition: color var(--token-reference-motion-duration-normal)
-      var(--token-reference-motion-easing-out);
+    transition: color var(--token-theme-motion-feedback-default)
+      var(--token-reference-motion-easing-standard);
 
     &:hover {
       color: var(--token-theme-color-text-brand);
@@ -1017,12 +1017,12 @@
     backdrop-filter: blur(var(--token-reference-blur-lg));
     box-shadow: var(--token-theme-shadow-default);
     transition:
-      box-shadow var(--token-reference-motion-duration-narrative)
-        var(--token-reference-motion-easing-out),
-      opacity var(--token-reference-motion-duration-narrative)
-        var(--token-reference-motion-easing-out),
-      transform var(--token-reference-motion-duration-narrative)
-        var(--token-reference-motion-easing-out);
+      box-shadow var(--token-theme-motion-enter-narrative)
+        var(--token-reference-motion-easing-standard),
+      opacity var(--token-theme-motion-enter-narrative)
+        var(--token-reference-motion-easing-standard),
+      transform var(--token-theme-motion-enter-narrative)
+        var(--token-reference-motion-easing-standard);
     opacity: 0;
     transform: translateX(100px) translateZ(-200px) rotateY(15deg) scale(0.8);
     overflow: hidden;
@@ -1033,8 +1033,8 @@
       inset: 0;
       background: var(--token-theme-color-surface-glass-iridescent);
       opacity: 0;
-      transition: opacity var(--token-reference-motion-duration-slow)
-        var(--token-reference-motion-easing-out);
+      transition: opacity var(--token-theme-motion-feedback-slow)
+        var(--token-reference-motion-easing-standard);
       border-radius: inherit;
       pointer-events: none;
     }
@@ -1045,8 +1045,8 @@
       inset: 0;
       background: var(--token-theme-color-background-color);
       opacity: 0;
-      transition: opacity var(--token-reference-motion-duration-slow)
-        var(--token-reference-motion-easing-out);
+      transition: opacity var(--token-theme-motion-feedback-slow)
+        var(--token-reference-motion-easing-standard);
       border-radius: inherit;
       pointer-events: none;
       z-index: -1;
@@ -1132,10 +1132,10 @@
     opacity: 0.7;
     transform: translateY(20px);
     transition:
-      opacity var(--token-reference-motion-duration-narrative)
-        var(--token-reference-motion-easing-out),
-      transform var(--token-reference-motion-duration-narrative)
-        var(--token-reference-motion-easing-out);
+      opacity var(--token-theme-motion-enter-narrative)
+        var(--token-reference-motion-easing-standard),
+      transform var(--token-theme-motion-enter-narrative)
+        var(--token-reference-motion-easing-standard);
 
     @media (min-width: $breakpoint-lg) {
       gap: var(--token-reference-spacing-fluid-xl);
@@ -1250,8 +1250,8 @@
     color: var(--token-theme-color-text-brand);
     font-weight: var(--token-reference-typography-weight-semibold);
     cursor: pointer;
-    transition: color var(--token-reference-motion-duration-normal)
-      var(--token-reference-motion-easing-out);
+    transition: color var(--token-theme-motion-feedback-default)
+      var(--token-reference-motion-easing-standard);
 
     &:hover {
       color: var(--token-theme-color-interactive-hover);
@@ -1276,10 +1276,10 @@
     opacity: 0.7;
     transform: translateY(20px);
     transition:
-      opacity var(--token-reference-motion-duration-narrative)
-        var(--token-reference-motion-easing-out) var(--token-reference-motion-delay-short),
-      transform var(--token-reference-motion-duration-narrative)
-        var(--token-reference-motion-easing-out) var(--token-reference-motion-delay-short);
+      opacity var(--token-theme-motion-enter-narrative)
+        var(--token-reference-motion-easing-standard) var(--token-reference-motion-delay-200),
+      transform var(--token-theme-motion-enter-narrative)
+        var(--token-reference-motion-easing-standard) var(--token-reference-motion-delay-200);
   }
 
   .context-detail {
@@ -1341,12 +1341,13 @@
     color: var(--token-theme-color-text-primary);
     white-space: nowrap;
     transition:
-      background-color var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out),
-      color var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out),
-      opacity var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out),
-      transform var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out);
+      background-color var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard),
+      color var(--token-theme-motion-feedback-default) var(--token-reference-motion-easing-standard),
+      opacity var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard),
+      transform var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard);
     opacity: 0;
     transform: translateY(10px);
 
@@ -1357,8 +1358,8 @@
     }
 
     &--animated {
-      animation: tagFadeIn var(--token-reference-motion-duration-slow)
-        var(--token-reference-motion-easing-out) forwards;
+      animation: tagFadeIn var(--token-theme-motion-feedback-slow)
+        var(--token-reference-motion-easing-standard) forwards;
       animation-delay: var(--testimonial-tag-delay);
     }
 
@@ -1377,12 +1378,12 @@
     opacity: 0;
     pointer-events: none;
     transition:
-      opacity var(--token-reference-motion-duration-emphasis)
-        var(--token-reference-motion-easing-out),
-      transform var(--token-reference-motion-duration-emphasis)
-        var(--token-reference-motion-easing-out);
+      opacity var(--token-theme-motion-feedback-emphasis)
+        var(--token-reference-motion-easing-standard),
+      transform var(--token-theme-motion-feedback-emphasis)
+        var(--token-reference-motion-easing-standard);
     z-index: 50;
-    background: var(--token-theme-color-surface-glass-stronger);
+    background: var(--token-theme-color-surface-glass-near-opaque);
     backdrop-filter: blur(var(--token-reference-blur-xl));
     border-top: var(--token-theme-border-default-small);
     padding: var(--token-reference-spacing-fluid-lg) var(--token-reference-spacing-fluid-md);
@@ -1478,12 +1479,12 @@
     background: var(--token-theme-color-surface-color);
     cursor: pointer;
     transition:
-      border-color var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out),
-      box-shadow var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out),
-      transform var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out);
+      border-color var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard),
+      box-shadow var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard),
+      transform var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard);
     padding: 2px;
     position: relative;
     z-index: 1;

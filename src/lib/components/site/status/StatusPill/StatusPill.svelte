@@ -13,7 +13,7 @@
     text = 'Available for new opportunities',
     className = '',
     entrance = false,
-    delay = 'var(--token-reference-motion-delay-none)',
+    delay = 'var(--token-reference-motion-delay-0)',
   }: Props = $props();
 
   const classes = $derived(
@@ -52,7 +52,7 @@
     @include motion.fade-in-up(
       statusPillIn,
       30px,
-      var(--token-reference-motion-duration-slow),
+      var(--token-theme-motion-feedback-slow),
       var(--status-pill-delay)
     );
   }

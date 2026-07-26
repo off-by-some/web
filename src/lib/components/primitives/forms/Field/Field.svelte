@@ -93,7 +93,7 @@
     display: flex;
     align-items: center;
     gap: var(--token-reference-spacing-2);
-    letter-spacing: var(--token-reference-typography-letter-spacing-normal);
+    letter-spacing: var(--token-reference-typography-letter-spacing-slightly-tight);
     line-height: var(--token-reference-typography-line-height-snug);
 
     &::before {
@@ -108,7 +108,7 @@
     inset-inline-end: 0;
     font-size: var(--field-meta-font-size, var(--token-reference-typography-size-xs));
     color: var(--field-counter-color, var(--token-theme-color-text-tertiary));
-    letter-spacing: var(--token-reference-typography-letter-spacing-normal);
+    letter-spacing: var(--token-reference-typography-letter-spacing-slightly-tight);
     line-height: var(--token-reference-typography-line-height-snug);
   }
 </style>

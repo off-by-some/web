@@ -108,15 +108,15 @@
   }
 
   .contact__container {
-    animation: fadeInUp var(--token-reference-motion-duration-slow)
-      var(--token-reference-motion-easing-out) both;
+    animation: fadeInUp var(--token-theme-motion-feedback-slow)
+      var(--token-reference-motion-easing-standard) both;
   }
 
   .contact__header {
     text-align: center;
     margin-bottom: var(--token-reference-spacing-fluid-5xl);
-    animation: fadeInUp var(--token-reference-motion-duration-slow)
-      var(--token-reference-motion-easing-out) var(--token-reference-motion-delay-short) both;
+    animation: fadeInUp var(--token-theme-motion-feedback-slow)
+      var(--token-reference-motion-easing-standard) var(--token-reference-motion-delay-200) both;
   }
 
   :global(.contact__heading) {

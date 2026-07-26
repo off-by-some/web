@@ -355,8 +355,8 @@
 
   .timeline-content {
     position: relative;
-    animation: fadeInUp var(--token-reference-motion-duration-entrance)
-      var(--token-reference-motion-easing-out) var(--token-reference-motion-delay-normal) both;
+    animation: fadeInUp var(--token-theme-motion-enter-default)
+      var(--token-reference-motion-easing-standard) var(--token-reference-motion-delay-300) both;
   }
 
   .timeline-line {
@@ -394,8 +394,8 @@
     border-radius: inherit;
     transform: scaleY(0);
     transform-origin: top;
-    transition: transform var(--token-reference-motion-duration-slow)
-      var(--token-reference-motion-easing-out);
+    transition: transform var(--token-theme-motion-feedback-slow)
+      var(--token-reference-motion-easing-standard);
     box-shadow: 0 0 var(--token-reference-blur-sm) var(--token-theme-color-interactive-glow);
   }
 
@@ -412,10 +412,10 @@
     opacity: 0;
     pointer-events: none;
     transition:
-      opacity var(--token-reference-motion-duration-emphasis)
-        var(--token-reference-motion-easing-out),
-      transform var(--token-reference-motion-duration-emphasis)
-        var(--token-reference-motion-easing-out);
+      opacity var(--token-theme-motion-feedback-emphasis)
+        var(--token-reference-motion-easing-standard),
+      transform var(--token-theme-motion-feedback-emphasis)
+        var(--token-reference-motion-easing-standard);
     z-index: 50;
 
     &--visible {
@@ -433,7 +433,7 @@
     display: flex;
     align-items: center;
     gap: var(--token-reference-spacing-fluid-md);
-    background: var(--token-theme-color-surface-glass-stronger);
+    background: var(--token-theme-color-surface-glass-near-opaque);
     border: var(--token-theme-border-default-small);
     border-radius: var(--token-reference-radius-xl);
     padding: var(--token-reference-spacing-fluid-md);
@@ -506,8 +506,8 @@
       var(--token-theme-color-interactive-hover)
     );
     border-radius: inherit;
-    transition: block-size var(--token-reference-motion-duration-slow)
-      var(--token-reference-motion-easing-out);
+    transition: block-size var(--token-theme-motion-feedback-slow)
+      var(--token-reference-motion-easing-standard);
     transform-origin: bottom;
   }
 

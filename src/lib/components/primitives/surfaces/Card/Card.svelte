@@ -53,16 +53,16 @@
     position: relative;
     overflow: var(--card-overflow, hidden);
     transition:
-      transform var(--card-transition-duration, var(--token-reference-motion-duration-emphasis))
-        var(--token-reference-motion-easing-out),
-      border-color var(--card-transition-duration, var(--token-reference-motion-duration-emphasis))
-        var(--token-reference-motion-easing-out),
-      box-shadow var(--card-transition-duration, var(--token-reference-motion-duration-emphasis))
-        var(--token-reference-motion-easing-out),
-      color var(--card-transition-duration, var(--token-reference-motion-duration-emphasis))
-        var(--token-reference-motion-easing-out),
-      background var(--card-transition-duration, var(--token-reference-motion-duration-emphasis))
-        var(--token-reference-motion-easing-out);
+      transform var(--card-transition-duration, var(--token-theme-motion-feedback-emphasis))
+        var(--token-reference-motion-easing-standard),
+      border-color var(--card-transition-duration, var(--token-theme-motion-feedback-emphasis))
+        var(--token-reference-motion-easing-standard),
+      box-shadow var(--card-transition-duration, var(--token-theme-motion-feedback-emphasis))
+        var(--token-reference-motion-easing-standard),
+      color var(--card-transition-duration, var(--token-theme-motion-feedback-emphasis))
+        var(--token-reference-motion-easing-standard),
+      background var(--card-transition-duration, var(--token-theme-motion-feedback-emphasis))
+        var(--token-reference-motion-easing-standard);
 
     &::before {
       box-sizing: border-box;
@@ -75,8 +75,8 @@
       );
       opacity: var(--card-iridescent-opacity, 0);
       transition: opacity
-        var(--card-transition-duration, var(--token-reference-motion-duration-emphasis))
-        var(--token-reference-motion-easing-out);
+        var(--card-transition-duration, var(--token-theme-motion-feedback-emphasis))
+        var(--token-reference-motion-easing-standard);
       border-radius: inherit;
       pointer-events: none;
     }
@@ -93,10 +93,7 @@
 
     &:active {
       transform: var(--card-active-transform, translateY(-2px) scale(1));
-      transition-duration: var(
-        --card-active-duration,
-        var(--token-reference-motion-duration-press)
-      );
+      transition-duration: var(--card-active-duration, var(--token-theme-motion-feedback-press));
     }
 
     &:focus,

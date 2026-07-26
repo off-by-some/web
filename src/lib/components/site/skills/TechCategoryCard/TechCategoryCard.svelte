@@ -15,7 +15,7 @@
     title,
     level,
     technologies = [],
-    delay = 'var(--token-reference-motion-delay-none)',
+    delay = 'var(--token-reference-motion-delay-0)',
     onSelectRequested,
   }: Props = $props();
 
@@ -147,7 +147,7 @@
     @include motion.fade-in-up(
       fadeInUp,
       30px,
-      var(--token-reference-motion-duration-slow),
+      var(--token-theme-motion-feedback-slow),
       var(--tech-category-delay)
     );
 
@@ -183,8 +183,8 @@
     color: var(--token-theme-color-text-overlay);
     letter-spacing: var(--token-reference-typography-letter-spacing-wide);
     line-height: var(--token-reference-typography-line-height-snug);
-    transition: color var(--token-reference-motion-duration-normal)
-      var(--token-reference-motion-easing-out);
+    transition: color var(--token-theme-motion-feedback-default)
+      var(--token-reference-motion-easing-standard);
     flex: 1;
     min-inline-size: 0;
 
@@ -216,13 +216,13 @@
     font-weight: var(--token-reference-typography-weight-medium);
     color: var(--token-theme-color-text-secondary);
     transition:
-      background-color var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out),
-      border-color var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out),
-      color var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out),
-      transform var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out);
+      background-color var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard),
+      border-color var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard),
+      color var(--token-theme-motion-feedback-default) var(--token-reference-motion-easing-standard),
+      transform var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard);
     white-space: nowrap;
     flex-shrink: 0;
 

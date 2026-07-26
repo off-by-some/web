@@ -431,8 +431,8 @@
     @include motion.fade-in-up(
       contactFormSlideInUp,
       var(--token-reference-spacing-fluid-2xl),
-      var(--token-reference-motion-duration-slow),
-      var(--token-reference-motion-delay-emphasis),
+      var(--token-theme-motion-feedback-slow),
+      var(--token-reference-motion-delay-400),
       both,
       0.95
     );
@@ -454,7 +454,7 @@
       font-weight: var(--token-reference-typography-weight-semibold);
       color: var(--token-theme-color-text-primary);
       margin-bottom: var(--token-reference-spacing-fluid-sm);
-      letter-spacing: var(--token-reference-typography-letter-spacing-normal);
+      letter-spacing: var(--token-reference-typography-letter-spacing-slightly-tight);
       line-height: var(--token-reference-typography-line-height-snug);
 
       @media (min-width: $breakpoint-md) {
@@ -472,7 +472,7 @@
       font-size: var(--token-reference-typography-size-sm);
       color: var(--token-theme-color-text-overlay);
       line-height: var(--token-reference-typography-line-height-relaxed);
-      letter-spacing: var(--token-reference-typography-letter-spacing-normal);
+      letter-spacing: var(--token-reference-typography-letter-spacing-slightly-tight);
 
       @media (min-width: $breakpoint-md) {
         font-size: var(--token-reference-typography-size-base);
@@ -522,7 +522,7 @@
 
   :global(.contact-form__submit--success) {
     --button-primary-background: var(--token-theme-color-status-success-color);
-    animation: successPulse var(--token-reference-motion-duration-slow) ease-in-out;
+    animation: successPulse var(--token-theme-motion-feedback-slow) ease-in-out;
   }
 
   .submit__spinner {
@@ -531,13 +531,13 @@
     border: var(--token-reference-border-width-large) solid transparent;
     border-top: var(--token-reference-border-width-large) solid var(--token-theme-color-text-dark);
     border-radius: var(--token-reference-radius-full);
-    animation: spin var(--token-reference-motion-duration-slow) linear infinite;
+    animation: spin var(--token-theme-motion-feedback-slow) linear infinite;
   }
 
   .submit__check {
     font-size: var(--token-reference-typography-size-lg);
-    animation: bounceIn var(--token-reference-motion-duration-slow)
-      var(--token-reference-motion-easing-bounce);
+    animation: bounceIn var(--token-theme-motion-feedback-slow)
+      var(--token-reference-motion-easing-spring);
   }
 
   @keyframes spin {

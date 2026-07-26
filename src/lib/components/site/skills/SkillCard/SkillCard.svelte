@@ -20,7 +20,7 @@
 
   let {
     skill,
-    delay = 'var(--token-reference-motion-delay-none)',
+    delay = 'var(--token-reference-motion-delay-0)',
     hovered = false,
     onEngagementChangeRequested,
   }: Props = $props();
@@ -76,7 +76,7 @@
     @include motion.fade-in-up(
       skillCardFadeIn,
       20px,
-      var(--token-reference-motion-duration-slow),
+      var(--token-theme-motion-feedback-slow),
       var(--skill-card-delay),
       forwards
     );
@@ -209,11 +209,11 @@
     border: var(--token-theme-border-default-small);
     backdrop-filter: blur(var(--token-reference-blur-sm));
     transition:
-      background-color var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out),
-      border-color var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out),
-      color var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out);
+      background-color var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard),
+      border-color var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard),
+      color var(--token-theme-motion-feedback-default) var(--token-reference-motion-easing-standard);
 
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-reference-typography-size-sm);
@@ -258,10 +258,11 @@
     opacity: 0;
     transform: translateY(8px);
     transition:
-      color var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out),
-      opacity var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out),
-      transform var(--token-reference-motion-duration-normal)
-        var(--token-reference-motion-easing-out);
+      color var(--token-theme-motion-feedback-default) var(--token-reference-motion-easing-standard),
+      opacity var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard),
+      transform var(--token-theme-motion-feedback-default)
+        var(--token-reference-motion-easing-standard);
 
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-reference-typography-size-sm);
