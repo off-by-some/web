@@ -235,387 +235,387 @@ $theme-defaults: (
       // Color roles define the product color language. Prefer these tokens in
       // components over direct palette values so theme overrides stay coherent.
       color: (
-        // Page and section backdrops. This is the default dark canvas that
-        // surfaces, text, and effects are designed to sit on top of.
-        background: (
-          color: (
-            dark: 1000,
-            alpha: 80%,
-          ),
-        ),
+          // Page and section backdrops. This is the default dark canvas that
+          // surfaces, text, and effects are designed to sit on top of.
+          background: (
+              color: (
+                dark: 1000,
+                alpha: 80%,
+              ),
+            ),
 
-        // Semantic foreground colors for copy, headings, muted text, inverse
-        // text, and accent text. Use these for readability decisions.
-        text: (
-          color: (
-            neutral: 0,
-          ),
-          hovered: themes.reference('theme.color.interactive.hover'),
-          primary: themes.reference('theme.color.text.color', $alpha: 95%),
-          secondary: themes.reference('theme.color.text.color', $alpha: 85%),
-          tertiary: themes.reference('theme.color.text.color', $alpha: 70%),
-          disabled: themes.reference('theme.color.text.color', $alpha: 45%),
-          overlay: themes.reference('theme.color.text.color', $alpha: 90%),
-          dark: themes.reference('theme.color.background.color'),
-          brand: themes.reference('theme.color.interactive.color'),
+          // Semantic foreground colors for copy, headings, muted text, inverse
+          // text, and accent text. Use these for readability decisions.
+          text: (
+              color: (
+                neutral: 0,
+              ),
+              hovered: themes.reference('theme.color.interactive.hover'),
+              primary: themes.reference('theme.color.text.color', $alpha: 95%),
+              secondary: themes.reference('theme.color.text.color', $alpha: 85%),
+              tertiary: themes.reference('theme.color.text.color', $alpha: 70%),
+              disabled: themes.reference('theme.color.text.color', $alpha: 45%),
+              overlay: themes.reference('theme.color.text.color', $alpha: 90%),
+              dark: themes.reference('theme.color.background.color'),
+              brand: themes.reference('theme.color.interactive.color'),
+              emphasis: (
+                default: themes.reference('theme.color.emphasis.color', $step: 250),
+                heading: themes.reference('theme.color.emphasis.color', $step: 300, $alpha: 100%),
+              ),
+
+              body: themes.reference('theme.color.text.primary'),
+              heading: themes.reference('theme.color.interactive.color'),
+              attention: themes.reference('theme.color.attention.color', $step: 50),
+            ),
+
+          // Primary action color. This covers clickable controls, links, focus
+          // affordances, active timeline state, and anything that says "you can
+          // interact with this."
+          interactive: (
+              color: (
+                teal: 200,
+              ),
+              hover: (
+                teal: 100,
+              ),
+              focus: (
+                teal: 0,
+              ),
+              ring: (
+                teal: 0,
+              ),
+              glow: themes.reference('theme.color.interactive.color', $alpha: 20%),
+              shadow: themes.reference('theme.color.interactive.color', $alpha: 30%),
+              pressed: themes.reference('theme.color.interactive.color', $alpha: 25%),
+              magnetic: themes.reference('theme.color.interactive.color', $alpha: 10%),
+            ),
+
+          // Editorial accent color. This is for highlighted language, section
+          // accents, decorative emphasis, and supporting visual rhythm. It should
+          // draw attention without implying clickability.
           emphasis: (
-            default: themes.reference('theme.color.emphasis.color', $step: 250),
-            heading: themes.reference('theme.color.emphasis.color', $step: 300, $alpha: 100%),
-          ),
-
-          body: themes.reference('theme.color.text.primary'),
-          heading: themes.reference('theme.color.interactive.color'),
-          attention: themes.reference('theme.color.attention.color', $step: 50),
-        ),
-
-        // Primary action color. This covers clickable controls, links, focus
-        // affordances, active timeline state, and anything that says "you can
-        // interact with this."
-        interactive: (
-          color: (
-            teal: 200,
-          ),
-          hover: (
-            teal: 100,
-          ),
-          focus: (
-            teal: 0,
-          ),
-          ring: (
-            teal: 0,
-          ),
-          glow: themes.reference('theme.color.interactive.color', $alpha: 20%),
-          shadow: themes.reference('theme.color.interactive.color', $alpha: 30%),
-          pressed: themes.reference('theme.color.interactive.color', $alpha: 25%),
-          magnetic: themes.reference('theme.color.interactive.color', $alpha: 10%),
-        ),
-
-        // Editorial accent color. This is for highlighted language, section
-        // accents, decorative emphasis, and supporting visual rhythm. It should
-        // draw attention without implying clickability.
-        emphasis: (
-          color: (
-            magenta: 400,
-          ),
-          glow: themes.reference('theme.color.emphasis.color', $alpha: 30%),
-          shadow: themes.reference('theme.color.emphasis.color', $alpha: 40%),
-        ),
-
-        // Notice-me color. Use this sparingly for availability, notification,
-        // and priority cues where warmth should guide the eye.
-        attention: (
-          color: (
-            gold: 250,
-          ),
-          glow: themes.reference('theme.color.attention.color', $alpha: 40%),
-          pulse: (
-            from: themes.reference('theme.color.attention.color', $alpha: 80%),
-            to: themes.reference('theme.color.attention.color'),
-          ),
-        ),
-
-        // Surface colors are layered containers, overlays, and glass effects.
-        // They define elevation/context without introducing new brand meaning.
-        surface: (
-          color: themes.reference('theme.color.background.color'),
-          overlay: (
-            grayscale: 1000,
-            alpha: 90%,
-          ),
-          glass: (
-            subtle: themes.reference('theme.color.surface.color', $alpha: 2%),
-            light: themes.reference('theme.color.surface.color', $alpha: 3%),
-            medium: themes.reference('theme.color.surface.color', $alpha: 10%),
-            strong: themes.reference('theme.color.surface.color', $alpha: 30%),
-            near-opaque: themes.reference('theme.color.surface.color', $alpha: 98%),
-            border: themes.reference('theme.color.border.default'),
-            hover: (
-              'linear-gradient(' '135deg',
-              '#{themes.reference("theme.color.surface.color", $alpha: 5%)} 0%',
-              'transparent 50%',
-              '#{themes.reference("theme.color.interactive.color", $alpha: 3%)} 100%' ')',
+              color: (
+                magenta: 400,
+              ),
+              glow: themes.reference('theme.color.emphasis.color', $alpha: 30%),
+              shadow: themes.reference('theme.color.emphasis.color', $alpha: 40%),
             ),
 
-            iridescent: (
-              'linear-gradient(' '135deg',
-              'rgba(255, 255, 255, 0.1) 0%',
-              'rgba(255, 0, 128, 0.05) 25%',
-              'rgba(0, 255, 255, 0.05) 50%',
-              'rgba(128, 255, 0, 0.05) 75%',
-              'rgba(255, 255, 255, 0.1) 100%' ')',
+          // Notice-me color. Use this sparingly for availability, notification,
+          // and priority cues where warmth should guide the eye.
+          attention: (
+              color: (
+                gold: 250,
+              ),
+              glow: themes.reference('theme.color.attention.color', $alpha: 40%),
+              pulse: (
+                from: themes.reference('theme.color.attention.color', $alpha: 80%),
+                to: themes.reference('theme.color.attention.color'),
+              ),
             ),
 
-            magnetic: themes.reference('theme.color.surface.color', $alpha: 20%),
-            pressed: themes.reference('theme.color.surface.color', $alpha: 15%),
-          ),
+          // Surface colors are layered containers, overlays, and glass effects.
+          // They define elevation/context without introducing new brand meaning.
+          surface: (
+              color: themes.reference('theme.color.background.color'),
+              overlay: (
+                grayscale: 1000,
+                alpha: 90%,
+              ),
+              glass: (
+                subtle: themes.reference('theme.color.surface.color', $alpha: 2%),
+                light: themes.reference('theme.color.surface.color', $alpha: 3%),
+                medium: themes.reference('theme.color.surface.color', $alpha: 10%),
+                strong: themes.reference('theme.color.surface.color', $alpha: 30%),
+                near-opaque: themes.reference('theme.color.surface.color', $alpha: 98%),
+                border: themes.reference('theme.color.border.default'),
+                hover: (
+                  'linear-gradient(' '135deg',
+                  '#{themes.reference("theme.color.surface.color", $alpha: 5%)} 0%',
+                  'transparent 50%',
+                  '#{themes.reference("theme.color.interactive.color", $alpha: 3%)} 100%' ')',
+                ),
+
+                iridescent: (
+                  'linear-gradient(' '135deg',
+                  'rgba(255, 255, 255, 0.1) 0%',
+                  'rgba(255, 0, 128, 0.05) 25%',
+                  'rgba(0, 255, 255, 0.05) 50%',
+                  'rgba(128, 255, 0, 0.05) 75%',
+                  'rgba(255, 255, 255, 0.1) 100%' ')',
+                ),
+
+                magnetic: themes.reference('theme.color.surface.color', $alpha: 20%),
+                pressed: themes.reference('theme.color.surface.color', $alpha: 15%),
+              ),
+            ),
+
+          // Border colors express containment, hover/focus affordances, and
+          // neutral separation. Pair with theme.border for full border shorthands.
+          border: (
+              default: (
+                grayscale: 100,
+                alpha: 10%,
+              ),
+              neutral: (
+                neutral: 0,
+                alpha: 10%,
+              ),
+              hover: themes.reference('theme.color.interactive.hover'),
+              focus: themes.reference('theme.color.interactive.focus'),
+              ring: themes.reference('theme.color.interactive.ring'),
+            ),
+
+          // Low-opacity color washes used inside chips, cards, panels, and
+          // hover layers. These are decorative fills, not text colors.
+          tint: (
+              primary: (
+                rest: themes.reference('theme.color.interactive.color', $step: 50, $alpha: 25%),
+                strong: themes.reference('theme.color.interactive.color', $step: 50, $alpha: 35%),
+                stronger: themes.reference('theme.color.interactive.color', $step: 50, $alpha: 55%),
+              ),
+              accent: themes.reference('theme.color.attention.color', $alpha: 30%),
+              highlight: themes.reference('theme.color.emphasis.color', $alpha: 25%),
+              overlay: (
+                subtle: themes.reference('theme.color.interactive.color', $alpha: 10%),
+                medium: themes.reference('theme.color.interactive.color', $alpha: 15%),
+                strong: themes.reference('theme.color.interactive.color', $alpha: 25%),
+              ),
+            ),
+
+          // Feedback colors for success/warning/error states. These are
+          // status-specific and should not be repurposed as brand accents.
+          status: (
+              success: (
+                color: themes.reference('reference.color.status.success'),
+                fg: themes.reference('reference.color.status.success'),
+                bg: themes.reference('reference.color.status.success', $alpha: 4%),
+                border: themes.reference('reference.color.status.success', $alpha: 25%),
+                glow: themes.reference('reference.color.status.success', $alpha: 30%),
+              ),
+
+              warning: (
+                color: themes.reference('reference.color.status.warning'),
+                fg: themes.reference('reference.color.status.warning'),
+                bg: themes.reference('reference.color.status.warning', $alpha: 4%),
+                border: themes.reference('reference.color.status.warning', $alpha: 25%),
+              ),
+
+              danger: (
+                color: themes.reference('reference.color.status.danger'),
+                fg: themes.reference('reference.color.status.danger'),
+                bg: themes.reference('reference.color.status.danger', $alpha: 4%),
+                border: themes.reference('reference.color.status.danger', $alpha: 40%),
+                glow: themes.reference('reference.color.status.danger', $alpha: 8%),
+              ),
+            )
         ),
-
-        // Border colors express containment, hover/focus affordances, and
-        // neutral separation. Pair with theme.border for full border shorthands.
-        border: (
-          default: (
-            grayscale: 100,
-            alpha: 10%,
-          ),
-          neutral: (
-            neutral: 0,
-            alpha: 10%,
-          ),
-          hover: themes.reference('theme.color.interactive.hover'),
-          focus: themes.reference('theme.color.interactive.focus'),
-          ring: themes.reference('theme.color.interactive.ring'),
-        ),
-
-        // Low-opacity color washes used inside chips, cards, panels, and
-        // hover layers. These are decorative fills, not text colors.
-        tint: (
-          primary: (
-            rest: themes.reference('theme.color.interactive.color', $step: 50, $alpha: 25%),
-            strong: themes.reference('theme.color.interactive.color', $step: 50, $alpha: 35%),
-            stronger: themes.reference('theme.color.interactive.color', $step: 50, $alpha: 55%),
-          ),
-          accent: themes.reference('theme.color.attention.color', $alpha: 30%),
-          highlight: themes.reference('theme.color.emphasis.color', $alpha: 25%),
-          overlay: (
-            subtle: themes.reference('theme.color.interactive.color', $alpha: 10%),
-            medium: themes.reference('theme.color.interactive.color', $alpha: 15%),
-            strong: themes.reference('theme.color.interactive.color', $alpha: 25%),
-          ),
-        ),
-
-        // Feedback colors for success/warning/error states. These are
-        // status-specific and should not be repurposed as brand accents.
-        status: (
-          success: (
-            color: themes.reference('reference.color.status.success'),
-            fg: themes.reference('reference.color.status.success'),
-            bg: themes.reference('reference.color.status.success', $alpha: 4%),
-            border: themes.reference('reference.color.status.success', $alpha: 25%),
-            glow: themes.reference('reference.color.status.success', $alpha: 30%),
-          ),
-
-          warning: (
-            color: themes.reference('reference.color.status.warning'),
-            fg: themes.reference('reference.color.status.warning'),
-            bg: themes.reference('reference.color.status.warning', $alpha: 4%),
-            border: themes.reference('reference.color.status.warning', $alpha: 25%),
-          ),
-
-          danger: (
-            color: themes.reference('reference.color.status.danger'),
-            fg: themes.reference('reference.color.status.danger'),
-            bg: themes.reference('reference.color.status.danger', $alpha: 4%),
-            border: themes.reference('reference.color.status.danger', $alpha: 40%),
-            glow: themes.reference('reference.color.status.danger', $alpha: 8%),
-          ),
-        ),
-      ),
 
       // Semantic opacity roles. Numeric opacity lives in reference.opacity;
       // these names describe why transparency is being applied.
       opacity: (
-        disabled: themes.reference('reference.opacity.60'),
-        muted: themes.reference('reference.opacity.60'),
-        decoration: themes.reference('reference.opacity.20'),
-        scrim: themes.reference('reference.opacity.80'),
-        ring: (
-          default: themes.reference('reference.opacity.15'),
-          hover: themes.reference('reference.opacity.30'),
+          disabled: themes.reference('reference.opacity.60'),
+          muted: themes.reference('reference.opacity.60'),
+          decoration: themes.reference('reference.opacity.20'),
+          scrim: themes.reference('reference.opacity.80'),
+          ring: (
+            default: themes.reference('reference.opacity.15'),
+            hover: themes.reference('reference.opacity.30'),
+          ),
         ),
-      ),
 
       // Shared interactive state bundles. Use these when a component needs the
       // complete visual language for hover, active, or focus rather than one
       // isolated color.
       state: (
-        hover: (
-          glow: themes.reference('theme.color.interactive.color', $alpha: 15%),
-          shadow: themes.reference('theme.color.interactive.color', $alpha: 20%),
-          border: themes.reference('theme.color.interactive.hover'),
-          text: themes.reference('theme.color.text.hovered'),
-          surface: themes.reference('theme.color.surface.glass.hover'),
-        ),
+          hover: (
+            glow: themes.reference('theme.color.interactive.color', $alpha: 15%),
+            shadow: themes.reference('theme.color.interactive.color', $alpha: 20%),
+            border: themes.reference('theme.color.interactive.hover'),
+            text: themes.reference('theme.color.text.hovered'),
+            surface: themes.reference('theme.color.surface.glass.hover'),
+          ),
 
-        active: (
-          glow: themes.reference('theme.color.interactive.color', $alpha: 25%),
-          shadow: themes.reference('theme.color.interactive.color', $alpha: 35%),
-        ),
+          active: (
+            glow: themes.reference('theme.color.interactive.color', $alpha: 25%),
+            shadow: themes.reference('theme.color.interactive.color', $alpha: 35%),
+          ),
 
-        focus: (
-          ring: themes.reference('theme.color.interactive.ring'),
-          glow: themes.reference('theme.color.interactive.color', $alpha: 8%),
+          focus: (
+            ring: themes.reference('theme.color.interactive.ring'),
+            glow: themes.reference('theme.color.interactive.color', $alpha: 8%),
+          ),
         ),
-      ),
 
       // Full border declarations. These combine reference border widths with
       // semantic border colors so components can request a complete stroke.
       border: (
-        default: (
-          small: (
-            '#{themes.reference("reference.border-width.small")} solid #{themes.reference("theme.color.border.default")}'
+          default: (
+            small: (
+              '#{themes.reference("reference.border-width.small")} solid #{themes.reference("theme.color.border.default")}'
+            ),
+            medium: (
+              '#{themes.reference("reference.border-width.medium")} solid #{themes.reference("theme.color.border.default")}'
+            ),
+            large: (
+              '#{themes.reference("reference.border-width.large")} solid #{themes.reference("theme.color.border.default")}'
+            ),
           ),
-          medium: (
-            '#{themes.reference("reference.border-width.medium")} solid #{themes.reference("theme.color.border.default")}'
-          ),
-          large: (
-            '#{themes.reference("reference.border-width.large")} solid #{themes.reference("theme.color.border.default")}'
-          ),
-        ),
 
-        neutral: (
-          small: (
-            '#{themes.reference("reference.border-width.small")} solid #{themes.reference("theme.color.border.neutral")}'
+          neutral: (
+            small: (
+              '#{themes.reference("reference.border-width.small")} solid #{themes.reference("theme.color.border.neutral")}'
+            ),
+            medium: (
+              '#{themes.reference("reference.border-width.medium")} solid #{themes.reference("theme.color.border.neutral")}'
+            ),
+            large: (
+              '#{themes.reference("reference.border-width.large")} solid #{themes.reference("theme.color.border.neutral")}'
+            ),
           ),
-          medium: (
-            '#{themes.reference("reference.border-width.medium")} solid #{themes.reference("theme.color.border.neutral")}'
-          ),
-          large: (
-            '#{themes.reference("reference.border-width.large")} solid #{themes.reference("theme.color.border.neutral")}'
-          ),
-        ),
 
-        interactive: (
-          small: (
-            '#{themes.reference("reference.border-width.small")} solid #{themes.reference("theme.color.interactive.color")}'
+          interactive: (
+            small: (
+              '#{themes.reference("reference.border-width.small")} solid #{themes.reference("theme.color.interactive.color")}'
+            ),
+            medium: (
+              '#{themes.reference("reference.border-width.medium")} solid #{themes.reference("theme.color.interactive.color")}'
+            ),
+            large: (
+              '#{themes.reference("reference.border-width.large")} solid #{themes.reference("theme.color.interactive.color")}'
+            ),
           ),
-          medium: (
-            '#{themes.reference("reference.border-width.medium")} solid #{themes.reference("theme.color.interactive.color")}'
-          ),
-          large: (
-            '#{themes.reference("reference.border-width.large")} solid #{themes.reference("theme.color.interactive.color")}'
-          ),
-        ),
 
-        hover: (
-          small: (
-            '#{themes.reference("reference.border-width.small")} solid #{themes.reference("theme.color.border.hover", $alpha: 35%)}'
+          hover: (
+            small: (
+              '#{themes.reference("reference.border-width.small")} solid #{themes.reference("theme.color.border.hover", $alpha: 35%)}'
+            ),
+            medium: (
+              '#{themes.reference("reference.border-width.medium")} solid #{themes.reference("theme.color.border.hover", $alpha: 35%)}'
+            ),
+            large: (
+              '#{themes.reference("reference.border-width.large")} solid #{themes.reference("theme.color.border.hover", $alpha: 35%)}'
+            ),
           ),
-          medium: (
-            '#{themes.reference("reference.border-width.medium")} solid #{themes.reference("theme.color.border.hover", $alpha: 35%)}'
-          ),
-          large: (
-            '#{themes.reference("reference.border-width.large")} solid #{themes.reference("theme.color.border.hover", $alpha: 35%)}'
-          ),
-        ),
 
-        focus: (
-          small: (
-            '#{themes.reference("reference.border-width.small")} solid #{themes.reference("theme.color.border.focus", $alpha: 35%)}'
+          focus: (
+            small: (
+              '#{themes.reference("reference.border-width.small")} solid #{themes.reference("theme.color.border.focus", $alpha: 35%)}'
+            ),
+            medium: (
+              '#{themes.reference("reference.border-width.medium")} solid #{themes.reference("theme.color.border.focus", $alpha: 35%)}'
+            ),
+            large: (
+              '#{themes.reference("reference.border-width.large")} solid #{themes.reference("theme.color.border.focus", $alpha: 35%)}'
+            ),
           ),
-          medium: (
-            '#{themes.reference("reference.border-width.medium")} solid #{themes.reference("theme.color.border.focus", $alpha: 35%)}'
-          ),
-          large: (
-            '#{themes.reference("reference.border-width.large")} solid #{themes.reference("theme.color.border.focus", $alpha: 35%)}'
-          ),
-        ),
 
-        ring: (
-          small: (
-            '#{themes.reference("reference.border-width.small")} solid #{themes.reference("theme.color.border.ring", $alpha: 35%)}'
-          ),
-          medium: (
-            '#{themes.reference("reference.border-width.medium")} solid #{themes.reference("theme.color.border.ring", $alpha: 35%)}'
-          ),
-          large: (
-            '#{themes.reference("reference.border-width.large")} solid #{themes.reference("theme.color.border.ring", $alpha: 35%)}'
+          ring: (
+            small: (
+              '#{themes.reference("reference.border-width.small")} solid #{themes.reference("theme.color.border.ring", $alpha: 35%)}'
+            ),
+            medium: (
+              '#{themes.reference("reference.border-width.medium")} solid #{themes.reference("theme.color.border.ring", $alpha: 35%)}'
+            ),
+            large: (
+              '#{themes.reference("reference.border-width.large")} solid #{themes.reference("theme.color.border.ring", $alpha: 35%)}'
+            ),
           ),
         ),
-      ),
 
       // Elevation, glow, and text shadows. Shadows should come from here unless
       // a component has a documented component-level shadow contract.
       shadow: (
-        color: (
-          grayscale: 950,
-        ),
-        light: themes.reference('theme.shadow.color', $alpha: 6%),
-        medium: themes.reference('theme.shadow.color', $alpha: 10%),
-        strong: themes.reference('theme.shadow.color', $alpha: 15%),
-        interactive: themes.reference('theme.color.interactive.color', $alpha: 20%, $step: 200),
-        default: themes.reference('theme.shadow.color', $alpha: 8%),
-        glow: (
-          subtle: themes.reference('theme.color.interactive.color', $alpha: 8%),
-          medium: themes.reference('theme.color.interactive.color', $alpha: 15%),
-          strong: themes.reference('theme.color.interactive.color', $alpha: 25%),
-          attention: themes.reference('theme.color.attention.color', $alpha: 30%),
-          emphasis: themes.reference('theme.color.emphasis.color', $alpha: 20%),
-        ),
+          color: (
+            grayscale: 950,
+          ),
+          light: themes.reference('theme.shadow.color', $alpha: 6%),
+          medium: themes.reference('theme.shadow.color', $alpha: 10%),
+          strong: themes.reference('theme.shadow.color', $alpha: 15%),
+          interactive: themes.reference('theme.color.interactive.color', $alpha: 20%, $step: 200),
+          default: themes.reference('theme.shadow.color', $alpha: 8%),
+          glow: (
+            subtle: themes.reference('theme.color.interactive.color', $alpha: 8%),
+            medium: themes.reference('theme.color.interactive.color', $alpha: 15%),
+            strong: themes.reference('theme.color.interactive.color', $alpha: 25%),
+            attention: themes.reference('theme.color.attention.color', $alpha: 30%),
+            emphasis: themes.reference('theme.color.emphasis.color', $alpha: 20%),
+          ),
 
-        elevated: (
-          '0 1px 3px #{themes.reference("theme.shadow.color", $alpha: 8%)}',
-          '0 2px 6px #{themes.reference("theme.shadow.color", $alpha: 6%)}',
-          '0 0 0 1px #{themes.reference("theme.color.interactive.color", $alpha: 4%)}',
-        ),
+          elevated: (
+            '0 1px 3px #{themes.reference("theme.shadow.color", $alpha: 8%)}',
+            '0 2px 6px #{themes.reference("theme.shadow.color", $alpha: 6%)}',
+            '0 0 0 1px #{themes.reference("theme.color.interactive.color", $alpha: 4%)}',
+          ),
 
-        focus: (
-          '0 0 0 2px #{themes.reference("theme.color.border.ring")}',
-          '0 0 8px 2px #{themes.reference("theme.color.interactive.color", $alpha: 8%)}',
-        ),
+          focus: (
+            '0 0 0 2px #{themes.reference("theme.color.border.ring")}',
+            '0 0 8px 2px #{themes.reference("theme.color.interactive.color", $alpha: 8%)}',
+          ),
 
-        magnetic: (
-          '0 0 0 1px #{themes.reference("theme.shadow.interactive")}',
-          '#{themes.reference("theme.shadow.elevated")}',
-          '0 0 30px #{themes.reference("theme.color.interactive.color", $alpha: 40%)}',
-        ),
+          magnetic: (
+            '0 0 0 1px #{themes.reference("theme.shadow.interactive")}',
+            '#{themes.reference("theme.shadow.elevated")}',
+            '0 0 30px #{themes.reference("theme.color.interactive.color", $alpha: 40%)}',
+          ),
 
-        text: (
-          subtle: '0 1px 2px #{themes.reference("theme.shadow.color", $alpha: 10%)}',
+          text: (
+            subtle: '0 1px 2px #{themes.reference("theme.shadow.color", $alpha: 10%)}',
+          ),
         ),
-      ),
 
       // Keyboard and accessibility focus treatment. Components can override
       // offsets locally, but the outline color/weight should remain shared.
       focus: (
-        outline:
-          '#{themes.reference("reference.border-width.large")} solid #{themes.reference("theme.color.interactive.color")}',
-        offset: (
-          sm: 2px,
-          md: 3px,
-          lg: 4px,
+          outline:
+            '#{themes.reference("reference.border-width.large")} solid #{themes.reference("theme.color.interactive.color")}',
+          offset: (
+            sm: 2px,
+            md: 3px,
+            lg: 4px,
+          ),
         ),
-      ),
 
       // Semantic gradients for reusable motifs like brand text and neon frames.
       // Feature-specific art direction belongs under feature.* instead.
       gradient: (
-        heading: (
-          'linear-gradient(' '135deg',
-          '#{themes.reference("theme.color.text.brand")} 0%',
-          '#{themes.reference("theme.color.text.hovered")} 50%',
-          '#{themes.reference("theme.color.text.brand")} 100%' ')',
-        ),
+          heading: (
+            'linear-gradient(' '135deg',
+            '#{themes.reference("theme.color.text.brand")} 0%',
+            '#{themes.reference("theme.color.text.hovered")} 50%',
+            '#{themes.reference("theme.color.text.brand")} 100%' ')',
+          ),
 
-        frame: (
-          'conic-gradient(' 'from 0deg',
-          '#{themes.reference("theme.color.interactive.color")}',
-          '#{themes.reference("theme.color.emphasis.color")}',
-          '#{themes.reference("theme.color.attention.color")}',
-          '#{themes.reference("theme.color.interactive.color")}' ')',
+          frame: (
+            'conic-gradient(' 'from 0deg',
+            '#{themes.reference("theme.color.interactive.color")}',
+            '#{themes.reference("theme.color.emphasis.color")}',
+            '#{themes.reference("theme.color.attention.color")}',
+            '#{themes.reference("theme.color.interactive.color")}' ')',
+          ),
         ),
-      ),
 
       // Product-level motion semantics. Reference durations are raw timings;
       // these roles describe how motion should feel in feedback, enter, and
       // exit contexts.
       motion: (
-        feedback: (
-          press: themes.reference('reference.motion.duration.100'),
-          fast: themes.reference('reference.motion.duration.200'),
-          default: themes.reference('reference.motion.duration.300'),
-          emphasis: themes.reference('reference.motion.duration.400'),
-          slow: themes.reference('reference.motion.duration.600'),
-          pulse: themes.reference('reference.motion.duration.2000'),
-        ),
-        enter: (
-          default: themes.reference('reference.motion.duration.1000'),
-          slow: themes.reference('reference.motion.duration.600'),
-          narrative: themes.reference('reference.motion.duration.800'),
-        ),
-        exit: (
-          default: themes.reference('reference.motion.duration.200'),
-        ),
-      ),
+          feedback: (
+            press: themes.reference('reference.motion.duration.100'),
+            fast: themes.reference('reference.motion.duration.200'),
+            default: themes.reference('reference.motion.duration.300'),
+            emphasis: themes.reference('reference.motion.duration.400'),
+            slow: themes.reference('reference.motion.duration.600'),
+            pulse: themes.reference('reference.motion.duration.2000'),
+          ),
+          enter: (
+            default: themes.reference('reference.motion.duration.1000'),
+            slow: themes.reference('reference.motion.duration.600'),
+            narrative: themes.reference('reference.motion.duration.800'),
+          ),
+          exit: (
+            default: themes.reference('reference.motion.duration.200'),
+          ),
+        )
     ),
 
   // Component tokens are reusable implementation contracts for library pieces.
