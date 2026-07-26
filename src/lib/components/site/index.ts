@@ -3,6 +3,7 @@ export type { ContactFormData, ContactMethod } from './contact';
 export {
   HeroMetricsPanel,
   HeroPanel,
+  HeroPortrait,
   HeroProfile,
   HeroTechPanel,
   HeroValue,

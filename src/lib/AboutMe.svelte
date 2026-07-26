@@ -1,69 +1,54 @@
 <script lang="ts">
   import Section from './components/primitives/layout/Section';
-  import HeroMetricsPanel from './components/site/hero/HeroMetricsPanel';
+  import HeroPortrait from './components/site/hero/HeroPortrait';
   import HeroProfile from './components/site/hero/HeroProfile';
-  import HeroTechPanel from './components/site/hero/HeroTechPanel';
   import HeroValue from './components/site/hero/HeroValue';
   import ScrollIndicator from './components/site/hero/ScrollIndicator';
 
   type Props = {
+    greeting?: string;
     name: string;
     role: string;
-    statusText: string;
     valueHeadline: string;
+    valueHeadlineEmphasis?: { primary?: string; accent?: string };
     valueDescription: string;
     avatarSrc: string;
     avatarAlt: string;
     primaryButtonText: string;
+    exploreLinkText?: string;
     linkedinUrl?: string;
     githubUrl?: string;
     resumeHref?: string;
     resumeFilename?: string;
     scrollText: string;
     showCanvasBackground: boolean;
-    metricsTitle?: string;
-    techTitle?: string;
     scrollAriaLabel?: string;
-    stats: Array<{
-      count: string;
-      label: string;
-      type: 'years' | 'scale' | 'reliability' | 'performance' | 'languages';
-    }>;
-    techStack: Array<{
-      title: string;
-      level: 'expert' | 'advanced';
-      technologies: string[];
-    }>;
+    portraitAnnotations?: Array<{ label: string }>;
     onPrimaryAction?: () => void;
     onScrollIndicator?: () => void;
-    onTechCategoryClick?: (category: string) => void;
-    onAvatarClick?: () => void;
   };
 
   let {
+    greeting,
     name,
     role,
-    statusText,
     valueHeadline,
+    valueHeadlineEmphasis,
     valueDescription,
     avatarSrc,
     avatarAlt,
     primaryButtonText,
+    exploreLinkText,
     linkedinUrl,
     githubUrl,
     resumeHref,
     resumeFilename,
     scrollText,
     showCanvasBackground,
-    metricsTitle,
-    techTitle,
     scrollAriaLabel,
-    stats,
-    techStack,
+    portraitAnnotations,
     onPrimaryAction,
     onScrollIndicator,
-    onTechCategoryClick,
-    onAvatarClick,
   }: Props = $props();
 </script>
 
@@ -74,25 +59,27 @@
 
   <Section className="hero__container">
     <div class="hero-grid">
-      <div class="hero-grid__primary">
-        <HeroProfile {name} {role} {statusText} {avatarSrc} {avatarAlt} onclick={onAvatarClick} />
+      <div class="hero-grid__content">
+        <HeroProfile {greeting} {name} {role} />
 
         <HeroValue
           headline={valueHeadline}
+          headlineEmphasis={valueHeadlineEmphasis}
           description={valueDescription}
           {primaryButtonText}
+          {exploreLinkText}
           {linkedinUrl}
           {githubUrl}
           repoUrl="https://github.com/off-by-some/web"
           {resumeHref}
           {resumeFilename}
           {onPrimaryAction}
+          onExploreClick={onScrollIndicator}
         />
       </div>
 
-      <div class="hero-grid__secondary">
-        <HeroMetricsPanel {stats} title={metricsTitle} />
-        <HeroTechPanel {techStack} title={techTitle} onCategoryClick={onTechCategoryClick} />
+      <div class="hero-grid__portrait">
+        <HeroPortrait {avatarSrc} {avatarAlt} annotations={portraitAnnotations} />
       </div>
     </div>
   </Section>
@@ -106,9 +93,10 @@
   .hero {
     position: relative;
     min-height: 100vh;
+    min-height: 100svh;
     background: var(--token-gradients-hero);
     overflow: hidden;
-    padding: var(--token-space-fluid-2xl) 0;
+    padding: clamp(2.75rem, 5vh, 5.5rem) 0 clamp(5rem, 8vh, 7rem);
     font-family: var(--token-font-family-sans);
     font-feature-settings:
       'kern' 1,
@@ -132,7 +120,7 @@
     }
 
     @media (max-height: 600px) {
-      padding: var(--token-space-fluid-lg) 0;
+      padding: var(--token-space-fluid-lg) 0 calc(var(--token-space-fluid-3xl) + 2rem);
     }
   }
 
@@ -142,7 +130,7 @@
     flex: 1;
     display: flex;
     align-items: center;
-    max-width: var(--token-container-max);
+    max-width: min(var(--token-container-max), 118rem);
     margin: 0 auto;
     padding: 0 var(--token-space-fluid-lg);
     width: 100%;
@@ -157,25 +145,32 @@
   }
 
   .hero-grid {
-    display: flex;
-    flex-direction: column;
-    gap: var(--token-space-fluid-xl);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'content'
+      'portrait';
+    align-items: center;
+    justify-items: center;
+    gap: clamp(1.75rem, 5vh, 3.25rem);
     animation: heroEntrance 1.2s var(--token-motion-ease-out) both;
     width: 100%;
     overflow: visible;
 
     @media (min-width: $breakpoint-md) {
-      gap: var(--token-space-fluid-2xl);
+      gap: clamp(2rem, 4.25vh, 3.75rem);
     }
 
     @media (min-width: $breakpoint-lg) {
-      flex-direction: row;
-      align-items: flex-start;
-      gap: var(--token-space-fluid-3xl);
+      grid-template-columns: minmax(44rem, 1.02fr) minmax(38rem, 0.98fr);
+      grid-template-areas: 'content portrait';
+      justify-items: stretch;
+      gap: clamp(2.75rem, 4.6vw, 6.25rem);
     }
 
     @media (min-width: $breakpoint-xlg) {
-      gap: var(--token-space-fluid-4xl);
+      grid-template-columns: minmax(56rem, 1fr) minmax(44rem, 1fr);
+      gap: clamp(4rem, 6vw, 8rem);
     }
 
     @media (max-height: 600px) {
@@ -184,60 +179,39 @@
     }
   }
 
-  // Each column manages its own vertical rhythm independently, so the gap
-  // between profile/value never depends on how tall stats/tech happen to be
-  // (and vice versa) — see the two-row grid this replaced, where shared row
-  // tracks let the taller column's height leak into the shorter one's gap.
-  .hero-grid__primary,
-  .hero-grid__secondary {
+  .hero-grid__portrait {
+    grid-area: portrait;
+    display: flex;
+    justify-content: center;
+    align-self: center;
+    min-width: 0;
+    width: 100%;
+
+    @media (min-width: $breakpoint-lg) {
+      justify-content: flex-start;
+    }
+  }
+
+  .hero-grid__content {
+    grid-area: content;
     display: flex;
     flex-direction: column;
-    gap: var(--token-space-fluid-xl);
+    gap: clamp(1.75rem, 4vh, 3rem);
     min-width: 0;
+    width: min(100%, 52rem);
 
     @media (min-width: $breakpoint-md) {
-      gap: var(--token-space-fluid-2xl);
+      gap: clamp(1.85rem, 3.5vh, 3rem);
     }
 
     @media (min-width: $breakpoint-lg) {
-      gap: var(--token-space-fluid-xl);
+      width: 100%;
+      max-width: 66rem;
+      gap: clamp(2.25rem, 4vh, 3.75rem);
     }
 
     @media (min-width: $breakpoint-xlg) {
-      gap: var(--token-space-fluid-2xl);
-    }
-  }
-
-  // The identity block (name/role) and the value block (headline/description)
-  // get extra separation beyond the base rhythm above, so the headline reads
-  // as a deliberate second beat instead of a continuation of the name.
-  .hero-grid__primary {
-    @media (min-width: $breakpoint-lg) {
-      gap: var(--token-space-fluid-2xl);
-    }
-
-    @media (min-width: $breakpoint-xlg) {
-      gap: var(--token-space-fluid-3xl);
-    }
-  }
-
-  @media (min-width: $breakpoint-lg) {
-    .hero-grid__primary {
-      flex: 1.3 1 0%;
-    }
-
-    .hero-grid__secondary {
-      flex: 1 1 0%;
-    }
-  }
-
-  @media (min-width: $breakpoint-xlg) {
-    .hero-grid__primary {
-      flex: 1.4 1 0%;
-    }
-
-    .hero-grid__secondary {
-      flex: 0.9 1 0%;
+      max-width: 78rem;
     }
   }
 
@@ -280,8 +254,7 @@
       gap: var(--token-space-fluid-lg);
     }
 
-    .hero-grid__primary,
-    .hero-grid__secondary {
+    .hero-grid__content {
       gap: var(--token-space-fluid-lg);
     }
   }

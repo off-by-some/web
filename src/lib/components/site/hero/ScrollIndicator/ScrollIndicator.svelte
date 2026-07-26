@@ -35,7 +35,7 @@
     background: none;
     border: none;
     color: var(--token-attention-color);
-    opacity: 0.6;
+    opacity: 0.74;
     cursor: pointer;
     animation: scrollFloat 2s ease-in-out infinite;
     z-index: 10;
@@ -73,7 +73,8 @@
   .scroll-mouse {
     width: var(--token-size-6);
     height: 1.75rem;
-    border: var(--token-border-default-medium);
+    border: 1px solid
+      color-mix(in srgb, var(--token-interactive-color) 44%, var(--token-border-color));
     border-radius: 0.625rem;
     position: relative;
     background: var(--token-surface-glass-medium);
@@ -85,7 +86,7 @@
     position: absolute;
     width: 1.5px;
     height: var(--token-size-1);
-    background: var(--token-interactive-color);
+    background: color-mix(in srgb, var(--token-interactive-color) 82%, white);
     left: 50%;
     top: 0.375rem;
     transform: translateX(-50%);
@@ -99,7 +100,7 @@
     height: 0;
     border-left: 0.25rem solid transparent;
     border-right: 0.25rem solid transparent;
-    border-top: 0.375rem solid var(--token-interactive-color);
+    border-top: 0.375rem solid color-mix(in srgb, var(--token-interactive-color) 78%, white);
     animation: arrowBounce 2s ease-in-out infinite 0.5s;
     transition: border-top-color 0.3s var(--token-motion-ease-out);
   }
@@ -109,7 +110,7 @@
     font-weight: var(--token-font-weight-medium);
     text-transform: uppercase;
     letter-spacing: var(--token-letter-spacing-extra-wide);
-    color: var(--token-attention-color);
+    color: color-mix(in srgb, var(--token-attention-color) 78%, var(--token-text-secondary));
     line-height: var(--token-line-height-snug);
   }
 

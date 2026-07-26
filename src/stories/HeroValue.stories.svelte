@@ -5,8 +5,10 @@
 
   type Args = {
     headline: string;
+    headlineEmphasis?: { primary?: string; accent?: string };
     description: string;
     primaryButtonText: string;
+    exploreLinkText?: string;
     linkedinUrl?: string;
     githubUrl?: string;
     repoUrl?: string;
@@ -20,10 +22,13 @@
     render: template,
     tags: ['autodocs'],
     args: {
-      headline: 'I build resilient systems and focused engineering teams.',
+      headline:
+        'I architect systems that scale, lead teams that thrive, and build products that last.',
+      headlineEmphasis: { primary: 'scale', accent: 'last' },
       description:
-        'From architecture to delivery, I turn messy product ideas into reliable software with clear operational guardrails.',
-      primaryButtonText: 'Get in Touch',
+        'I turn complex challenges into durable systems and help high-performing engineering teams do their best work, from product architecture to cloud infrastructure.',
+      primaryButtonText: "Let's build something great",
+      exploreLinkText: 'Explore my work',
       linkedinUrl: 'https://linkedin.com/in/cassidy-bridges-tech',
       githubUrl: 'https://github.com/off-by-some',
       repoUrl: 'https://github.com/off-by-some/web',
@@ -48,8 +53,10 @@
   <div class="story-shell">
     <HeroValue
       headline={args.headline}
+      headlineEmphasis={args.headlineEmphasis}
       description={args.description}
       primaryButtonText={args.primaryButtonText}
+      exploreLinkText={args.exploreLinkText}
       linkedinUrl={args.linkedinUrl}
       githubUrl={args.githubUrl}
       repoUrl={args.repoUrl}

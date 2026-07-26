@@ -41,6 +41,7 @@
   href={withBasePath(href)}
   className={classes}
   aria-label={label}
+  title={label}
   {download}
   {target}
   rel={rel || undefined}
@@ -137,8 +138,8 @@
   }
 
   :global(.hero-action-link--label) {
-    --button-padding: var(--token-space-fluid-sm) var(--token-space-fluid-lg);
-    --button-padding-md: var(--token-space-fluid-sm) var(--token-space-fluid-lg);
+    --button-padding: var(--token-space-fluid-sm) clamp(1.45rem, 1.15rem + 1vw, 2rem);
+    --button-padding-md: var(--token-space-fluid-sm) clamp(1.55rem, 1.2rem + 1vw, 2.25rem);
     --button-min-height: auto;
     --button-width: auto;
     --button-font-weight: var(--token-font-weight-semibold);

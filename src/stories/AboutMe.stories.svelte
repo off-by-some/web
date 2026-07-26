@@ -7,73 +7,52 @@
   import type { SectionViewport } from './helpers/section-viewports';
   import { hideControls } from './helpers/controls';
 
-  type StatType = 'years' | 'scale' | 'reliability' | 'performance' | 'languages';
-  type TechLevel = 'expert' | 'advanced';
-
   type Args = {
+    greeting?: string;
     name: string;
     role: string;
-    statusText: string;
     valueHeadline: string;
+    valueHeadlineEmphasis?: { primary?: string; accent?: string };
     valueDescription: string;
     avatarSrc: string;
     avatarAlt: string;
     primaryButtonText: string;
+    exploreLinkText?: string;
     linkedinUrl?: string;
     githubUrl?: string;
     resumeHref?: string;
+    resumeFilename?: string;
     scrollText: string;
     showCanvasBackground: boolean;
-    metricsTitle?: string;
-    techTitle?: string;
     scrollAriaLabel?: string;
-    stats: Array<{ count: string; label: string; type: StatType }>;
-    techStack: Array<{
-      title: string;
-      level: TechLevel;
-      technologies: string[];
-    }>;
+    portraitAnnotations?: Array<{ label: string }>;
     previewViewport: SectionViewport;
   };
 
   const contactMethods = content.contactMe.methods;
-  const skillCategories = content.skillsSection.categories;
-  const companyCount = content.timelineSection.experiences.length;
   const aboutMe = content.aboutMe;
   const linkedinUrl = contactMethods.find((method) => method.type === 'linkedin')?.href;
   const githubUrl = contactMethods.find((method) => method.type === 'github')?.href;
 
-  const stats = aboutMe.stats.map((stat) => ({
-    type: stat.type as StatType,
-    label: stat.label,
-    count: 'count' in stat && stat.count ? stat.count : String(companyCount),
-  }));
-
-  const techStack = skillCategories.map((category) => ({
-    title: category.name,
-    level: category.mastery as TechLevel,
-    technologies: category.skills.map((skill) => skill.name).sort((a, b) => a.length - b.length),
-  }));
-
   const aboutMeArgs: Args = {
+    greeting: aboutMe.greeting,
     name: aboutMe.name,
     role: aboutMe.role,
-    statusText: aboutMe.statusText,
     valueHeadline: aboutMe.valueHeadline,
+    valueHeadlineEmphasis: aboutMe.valueHeadlineEmphasis,
     valueDescription: aboutMe.valueDescription,
     avatarSrc: aboutMe.avatarSrc,
     avatarAlt: aboutMe.avatarAlt,
     primaryButtonText: aboutMe.primaryButtonText,
+    exploreLinkText: aboutMe.exploreLinkText,
     linkedinUrl,
     githubUrl,
     resumeHref: '/resume/Cassidy-Bridges-Software-Engineering.pdf',
+    resumeFilename: 'Cassidy-Bridges-Software-Engineering.pdf',
     scrollText: aboutMe.scrollText,
     showCanvasBackground: true,
-    metricsTitle: aboutMe.metricsTitle,
-    techTitle: aboutMe.techTitle,
     scrollAriaLabel: aboutMe.scrollIndicatorAriaLabel,
-    stats,
-    techStack,
+    portraitAnnotations: aboutMe.portraitAnnotations,
     previewViewport: 'desktop',
   };
 
@@ -89,27 +68,23 @@
         'linkedinUrl',
         'githubUrl',
         'resumeHref',
+        'resumeFilename',
         'scrollAriaLabel',
         'showCanvasBackground',
       ]),
+      greeting: { control: { type: 'text' } },
       name: { control: { type: 'text' } },
       role: { control: { type: 'text' } },
-      statusText: { control: { type: 'text' } },
       valueHeadline: { control: { type: 'text' } },
+      valueHeadlineEmphasis: { control: { type: 'object' } },
       valueDescription: { control: { type: 'text' } },
       avatarSrc: { control: { type: 'text' } },
       primaryButtonText: { control: { type: 'text' } },
+      exploreLinkText: { control: { type: 'text' } },
       scrollText: { control: { type: 'text' } },
-      metricsTitle: { control: { type: 'text' } },
-      techTitle: { control: { type: 'text' } },
-      stats: {
+      portraitAnnotations: {
         control: { type: 'object' },
-        description: 'Metric tiles rendered in order. Type selects the visual treatment.',
-      },
-      techStack: {
-        control: { type: 'object' },
-        description:
-          'Technology groups rendered in order. Level controls the status treatment on each group.',
+        description: 'Desktop-only callouts rendered around the portrait composition.',
       },
       previewViewport: {
         control: 'select',
@@ -122,7 +97,7 @@
       docs: {
         description: {
           component:
-            'About Me is the opening section of the site: profile, role signal, value proposition, social/resume actions, key metrics, and technology groups. The stories below treat it as a full viewport experience because its composition changes meaningfully between phone, tablet, and desktop widths.',
+            'About Me is the opening section of the site: greeting, identity, value proposition, portrait art, social/resume actions, and scroll affordance. The stories below treat it as a full viewport experience because its composition changes meaningfully between phone, tablet, and desktop widths.',
         },
       },
     },
@@ -132,27 +107,26 @@
 {#snippet template(args: Args)}
   <ViewportFrame mode={args.previewViewport}>
     <AboutMe
+      greeting={args.greeting}
       name={args.name}
       role={args.role}
-      statusText={args.statusText}
       valueHeadline={args.valueHeadline}
+      valueHeadlineEmphasis={args.valueHeadlineEmphasis}
       valueDescription={args.valueDescription}
       avatarSrc={args.avatarSrc}
       avatarAlt={args.avatarAlt}
       primaryButtonText={args.primaryButtonText}
+      exploreLinkText={args.exploreLinkText}
       linkedinUrl={args.linkedinUrl}
       githubUrl={args.githubUrl}
       resumeHref={args.resumeHref}
+      resumeFilename={args.resumeFilename}
       scrollText={args.scrollText}
       showCanvasBackground={args.showCanvasBackground}
-      metricsTitle={args.metricsTitle}
-      techTitle={args.techTitle}
       scrollAriaLabel={args.scrollAriaLabel}
-      stats={args.stats}
-      techStack={args.techStack}
+      portraitAnnotations={args.portraitAnnotations}
       onPrimaryAction={() => console.log('Primary action')}
       onScrollIndicator={() => console.log('Scroll indicator clicked')}
-      onTechCategoryClick={(category) => console.log('Tech category clicked:', category)}
     />
   </ViewportFrame>
 {/snippet}

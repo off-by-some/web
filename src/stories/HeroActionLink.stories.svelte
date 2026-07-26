@@ -24,7 +24,10 @@
     argTypes: {
       ...hideControls(['href', 'download', 'target', 'rel']),
       label: { control: { type: 'text' } },
-      icon: { control: { type: 'select' }, options: ['github', 'linkedin', 'download', 'arrow'] },
+      icon: {
+        control: { type: 'select' },
+        options: ['github', 'linkedin', 'download', 'arrow', 'star'],
+      },
       shape: { control: { type: 'select' }, options: ['circle', 'label'] },
     },
     parameters: {

@@ -4,11 +4,9 @@
   import { hideControls } from './helpers/controls';
 
   type Args = {
+    greeting?: string;
     name: string;
     role: string;
-    statusText: string;
-    avatarSrc: string;
-    avatarAlt: string;
     titleId: string;
   };
 
@@ -18,11 +16,9 @@
     render: template,
     tags: ['autodocs'],
     args: {
+      greeting: "Hi, I'm",
       name: 'Cassidy Bridges',
-      role: 'Engineering Leader',
-      statusText: 'Open to Staff / Lead roles',
-      avatarSrc: 'headshot.png',
-      avatarAlt: 'Portrait of Cassidy Bridges',
+      role: 'Software Engineering Leader',
       titleId: 'storybook-profile-name',
     },
     argTypes: {
@@ -32,7 +28,7 @@
       docs: {
         description: {
           component:
-            'Pairs the avatar Image with name, role, and availability status in the one layout the hero (and any future profile block) can reuse — resolving avatar formats and responsive sources is handled entirely by Image underneath.',
+            'Hero identity block for greeting, name, role, and accent mark. The portrait and actions stay separate so the typography can be reused without carrying page-specific layout.',
         },
       },
     },
@@ -42,13 +38,10 @@
 {#snippet template(args: Args)}
   <div class="story-shell">
     <HeroProfile
+      greeting={args.greeting}
       name={args.name}
       role={args.role}
-      statusText={args.statusText}
-      avatarSrc={args.avatarSrc}
-      avatarAlt={args.avatarAlt}
       titleId={args.titleId}
-      onclick={() => console.log('Profile clicked')}
     />
   </div>
 {/snippet}
@@ -57,6 +50,6 @@
 
 <style lang="scss">
   .story-shell {
-    max-width: 34rem;
+    max-width: 42rem;
   }
 </style>

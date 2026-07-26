@@ -24,19 +24,6 @@
     mastery: 'expert' | 'advanced' | 'proficient';
   }
 
-  // Types for AboutMe
-  interface Stat {
-    count: string;
-    label: string;
-    type: 'years' | 'scale' | 'reliability' | 'performance' | 'languages';
-  }
-
-  interface TechStack {
-    title: string;
-    level: 'expert' | 'advanced';
-    technologies: string[];
-  }
-
   interface Experience {
     title: string;
     company: string;
@@ -116,21 +103,12 @@
     }
   }
 
-  // State for selected skills category
-  let selectedSkillsCategory: string | null = null;
-
   function handlePrimaryAction() {
     smoothScrollTo('contact');
   }
 
   function handleScrollIndicator() {
     smoothScrollTo('experience');
-  }
-
-  // Handle tech category clicks from AboutMe
-  function handleTechCategoryClick(category: string) {
-    selectedSkillsCategory = category;
-    smoothScrollTo('skills'); // Scroll to skills section with offset
   }
 
   // All page content lives in src/lib/content/en.json — edit that file to change
@@ -145,21 +123,7 @@
   const githubUrl = contactMethods.find((method) => method.type === 'github')?.href;
   const resumeHref = '/resume/Cassidy-Bridges-Software-Engineering.pdf';
 
-  // Dynamically generate tech stack from skill categories
-  const aboutMeTechStack: TechStack[] = skillCategories.map((category) => ({
-    title: category.name,
-    level: category.mastery as 'expert' | 'advanced',
-    technologies: category.skills.map((skill) => skill.name).sort((a, b) => a.length - b.length), // Sort by character count, shortest first
-  }));
-
   const companyCount = experiences.length;
-
-  // Stats come from JSON as-is, except "Companies Served" whose count is derived
-  // from the experiences list rather than hand-maintained.
-  const aboutMeStats: Stat[] = t.aboutMe.stats.map((stat) => ({
-    ...stat,
-    count: stat.count ?? String(companyCount),
-  })) as Stat[];
 
   const timelineSubtitle = format(t.timelineSection.subtitle, { count: companyCount });
 </script>
@@ -167,27 +131,25 @@
 <main>
   <!-- About Me Section -->
   <AboutMe
+    greeting={t.aboutMe.greeting}
     name={t.aboutMe.name}
     role={t.aboutMe.role}
-    statusText={t.aboutMe.statusText}
     valueHeadline={t.aboutMe.valueHeadline}
+    valueHeadlineEmphasis={t.aboutMe.valueHeadlineEmphasis}
     valueDescription={t.aboutMe.valueDescription}
     avatarSrc={t.aboutMe.avatarSrc}
     avatarAlt={t.aboutMe.avatarAlt}
     primaryButtonText={t.aboutMe.primaryButtonText}
+    exploreLinkText={t.aboutMe.exploreLinkText}
     {linkedinUrl}
     {githubUrl}
     {resumeHref}
     scrollText={t.aboutMe.scrollText}
-    metricsTitle={t.aboutMe.metricsTitle}
-    techTitle={t.aboutMe.techTitle}
     scrollAriaLabel={t.aboutMe.scrollIndicatorAriaLabel}
     showCanvasBackground={true}
-    stats={aboutMeStats}
-    techStack={aboutMeTechStack}
+    portraitAnnotations={t.aboutMe.portraitAnnotations}
     onPrimaryAction={handlePrimaryAction}
     onScrollIndicator={handleScrollIndicator}
-    onTechCategoryClick={handleTechCategoryClick}
   />
 
   <!-- Timeline Section -->
@@ -203,7 +165,7 @@
     title={t.skillsSection.title}
     subtitle={t.skillsSection.subtitle}
     {skillCategories}
-    initialSelectedCategory={selectedSkillsCategory || skillCategories[0]?.name}
+    initialSelectedCategory={skillCategories[0]?.name}
     onSkillSelect={(payload) => console.log('Skill selected:', payload)}
     onCategorySelect={(payload) => console.log('Category selected:', payload)}
   />
