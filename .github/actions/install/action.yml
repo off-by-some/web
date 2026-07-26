@@ -1,5 +1,5 @@
 name: Install dependencies
-description: Set up Node.js and install npm dependencies, restoring npm and Vite/SvelteKit build caches where possible.
+description: Set up Node.js and install npm dependencies, restoring dependency and build caches where possible.
 
 runs:
   using: composite
@@ -8,24 +8,29 @@ runs:
       with:
         node-version: '24'
 
-    - name: Cache node_modules
-      id: npm-cache
-      uses: actions/cache@v5
-      with:
-        path: node_modules
-        key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-
-    - name: Cache Vite/SvelteKit build cache
+    # Everything `npm ci` produces — node_modules and Puppeteer's downloaded
+    # browser (which lands outside node_modules, in ~/.cache/puppeteer) — lives
+    # under one key so they can never restore out of sync with each other.
+    - name: Cache dependencies
+      id: deps-cache
       uses: actions/cache@v5
       with:
         path: |
-          .svelte-kit
-          node_modules/.vite
+          node_modules
+          ~/.cache/puppeteer
+        key: deps-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+    - name: Install dependencies
+      if: steps.deps-cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: npm ci
+
+    # Best-effort warm start for svelte-kit sync; safe to fall back to a
+    # stale entry since svelte-kit regenerates this from source either way.
+    - name: Cache SvelteKit build cache
+      uses: actions/cache@v5
+      with:
+        path: .svelte-kit
         key: build-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
         restore-keys: |
           build-cache-${{ runner.os }}-
-
-    - name: Install dependencies
-      if: steps.npm-cache.outputs.cache-hit != 'true'
-      shell: bash
-      run: npm ci
