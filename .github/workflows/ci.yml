@@ -73,4 +73,9 @@ jobs:
           git config user.email "cassidybridges+automation@gmail.com"
           git config user.name "[Github Actions]"
 
-      - run: npx gh-pages -d build --dotfiles
+      - name: Publish to gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npx gh-pages -d build --dotfiles \
+            --repo "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"

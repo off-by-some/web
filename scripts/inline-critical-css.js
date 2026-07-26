@@ -1,14 +1,37 @@
-import { existsSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
 const rootDir = process.cwd();
 const buildDir = path.join(rootDir, 'build');
-const criticalCssPath = path.join(rootDir, 'static', 'index.css');
-const copiedCriticalCssPath = path.join(buildDir, 'index.css');
-const marker = '<!-- CRITICAL_CSS -->';
 
 function escapeStyle(css) {
   return css.replaceAll('</style', '<\\/style');
+}
+
+function attributeValue(tag, name) {
+  const pattern = new RegExp(`\\s${name}=(["'])(.*?)\\1`, 'i');
+  return tag.match(pattern)?.[2];
+}
+
+function isDisabledStylesheet(tag) {
+  return /\sdisabled(?:\s|>|=)/i.test(tag) || /media=(["'])\(max-width:\s*0\)\1/i.test(tag);
+}
+
+function stylesheetPathFromHref(href) {
+  if (!href.includes('/_app/immutable/assets/') && !href.includes('./_app/immutable/assets/')) {
+    return null;
+  }
+
+  const assetPath = href
+    .replace(/^https?:\/\/[^/]+/i, '')
+    .replace(/^\/web\//, '')
+    .replace(/^\.\//, '')
+    .replace(/^\//, '');
+
+  if (!assetPath.endsWith('.css')) return null;
+
+  const cssPath = path.join(buildDir, assetPath);
+  return cssPath.startsWith(buildDir) ? cssPath : null;
 }
 
 function htmlFilesIn(dir) {
@@ -24,37 +47,31 @@ function htmlFilesIn(dir) {
   });
 }
 
-function inlineCriticalCss(html, criticalCss) {
-  const styleTag = `<style data-critical-css>${criticalCss}</style>`;
+function inlineActiveAppStylesheets(html) {
+  return html.replace(/<link\b[^>]*>/gi, (tag) => {
+    const rel = attributeValue(tag, 'rel');
+    const href = attributeValue(tag, 'href');
 
-  let nextHtml = html.replaceAll(marker, styleTag);
+    if (rel?.toLowerCase() !== 'stylesheet' || !href || isDisabledStylesheet(tag)) {
+      return tag;
+    }
 
-  nextHtml = nextHtml.replace(
-    /<link\s+rel="stylesheet"\s+href="[^"]*\/?index\.css"\s*\/?>/g,
-    styleTag,
-  );
+    const cssPath = stylesheetPathFromHref(href);
+    if (!cssPath || !existsSync(cssPath)) return tag;
 
-  return nextHtml;
+    const css = escapeStyle(readFileSync(cssPath, 'utf8'));
+    return `<style data-app-css="${href}">${css}</style>`;
+  });
 }
 
-if (!existsSync(criticalCssPath)) {
-  throw new Error(`Critical CSS file not found: ${criticalCssPath}`);
-}
-
-const criticalCss = escapeStyle(readFileSync(criticalCssPath, 'utf8'));
 const htmlFiles = htmlFilesIn(buildDir);
 
 for (const file of htmlFiles) {
   const html = readFileSync(file, 'utf8');
-  const nextHtml = inlineCriticalCss(html, criticalCss);
+  const nextHtml = inlineActiveAppStylesheets(html);
 
   if (nextHtml !== html) {
     writeFileSync(file, nextHtml);
-    console.log(`✅ Inlined critical CSS in ${path.relative(rootDir, file)}`);
+    console.log(`✅ Inlined active app stylesheets in ${path.relative(rootDir, file)}`);
   }
-}
-
-if (existsSync(copiedCriticalCssPath)) {
-  rmSync(copiedCriticalCssPath);
-  console.log(`✅ Removed unreferenced ${path.relative(rootDir, copiedCriticalCssPath)}`);
 }
