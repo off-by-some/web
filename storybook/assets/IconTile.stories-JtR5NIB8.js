@@ -1,0 +1,8 @@
+import{n as a,a as n,f as l,c,p as m,d}from"./iframe-DxFiDLa5.js";import{c as p,i as g,d as v}from"./create-runtime-stories-NSVtZSGv.js";import{I as i}from"./IconTile-BLVaf2zC.js";import{h as f}from"./controls-B7FSozl-.js";import"./preload-helper-k3ZeA0S-.js";import"./attributes-Cs-iwmF9.js";import"./Image-BoQqiVUE.js";import"./each-DxhtZbfy.js";import"./this-PkhKcdJR.js";import"./paths-BrsXQSje.js";const u=(t,e=a)=>{var s=_(),o=c(s);i(o,{get src(){return e().src},get alt(){return e().alt},get sizes(){return e().sizes},get style(){return`--icon-tile-size: ${e().tileSize??""}; --icon-tile-image-size: ${e().imageSize??""};`}}),n(t,s)},z={title:"Library/Primitives/Surfaces/Icon Tile",component:i,render:u,tags:["autodocs"],args:{src:"svg/Svelte_Logo.svg",alt:"Svelte logo",sizes:"56px",tileSize:"4rem",imageSize:"2.75rem"},argTypes:{...f(["alt","sizes","loading","style"]),src:{control:"text"},tileSize:{control:"text"},imageSize:{control:"text"}},parameters:{docs:{description:{component:"IconTile is the shared square image container used by skill, experience, and contact cards. Consumers own size through CSS variables; the primitive owns centering, image fit, border, surface, and hover-safe transitions."}}}},{Story:S}=v();var _=l('<div class="story-row svelte-1i1v1d7"><!></div>');function r(t,e){m(e,!1),g(),S(t,{name:"Default",parameters:{__svelteCsf:{rawCode:`<div class="story-row">
+  <IconTile
+    src={args.src}
+    alt={args.alt}
+    sizes={args.sizes}
+    style="--icon-tile-size: {args.tileSize}; --icon-tile-image-size: {args.imageSize};"
+  />
+</div>`}}}),d()}r.__docgen={data:[],name:"IconTile.stories.svelte"};const h=p(r,z),k=["Default"],q={...h.Default,tags:["svelte-csf-v5"]};export{q as Default,k as __namedExportsOrder,z as default};
