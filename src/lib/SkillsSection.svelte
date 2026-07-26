@@ -364,7 +364,9 @@
     font-size: var(--token-font-size-sm);
     font-weight: var(--token-font-weight-medium);
     color: var(--token-text-tertiary);
-    transition: all 0.3s var(--token-motion-ease-out);
+    transition:
+      color 0.3s var(--token-motion-ease-out),
+      transform 0.3s var(--token-motion-ease-out);
     cursor: pointer;
     padding: var(--token-space-fluid-xs) var(--token-space-fluid-sm);
     border-radius: var(--token-radius-sm);

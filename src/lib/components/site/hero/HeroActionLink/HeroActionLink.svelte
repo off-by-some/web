@@ -1,15 +1,13 @@
 <script lang="ts">
   import Button from '$lib/components/primitives/actions/Button';
+  import type { HeroActionIcon, HeroActionShape } from '$lib/components/site/hero/types';
   import { withBasePath } from '$lib/utils/paths';
-
-  type Icon = 'github' | 'linkedin' | 'download' | 'arrow' | 'star';
-  type Shape = 'circle' | 'label';
 
   type Props = {
     href: string;
     label: string;
-    icon: Icon;
-    shape?: Shape;
+    icon: HeroActionIcon;
+    shape?: HeroActionShape;
     download?: boolean | string;
     target?: '_self' | '_blank';
     rel?: string;

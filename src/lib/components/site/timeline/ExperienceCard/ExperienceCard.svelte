@@ -195,19 +195,19 @@
   .timeline-item {
     position: relative;
     margin-bottom: var(--token-space-fluid-4xl);
-    padding-left: var(--token-space-fluid-5xl);
+    padding-inline-start: var(--token-space-fluid-5xl);
 
     @include motion.fade-in-up(timelineItemFadeIn, 40px, 0.8s, 0s, forwards);
 
     @media (min-width: $breakpoint-md) {
-      padding-left: var(--token-space-fluid-6xl);
+      padding-inline-start: var(--token-space-fluid-6xl);
     }
 
     @media (min-width: $breakpoint-lg) {
       display: grid;
       grid-template-columns: 1fr auto 1fr;
       gap: var(--token-space-fluid-2xl);
-      padding-left: 0;
+      padding-inline-start: 0;
       margin-bottom: var(--token-space-fluid-5xl);
 
       &--left :global(.experience-card) {
@@ -226,7 +226,7 @@
 
   .timeline-marker {
     position: absolute;
-    left: 0;
+    inset-inline-start: 0;
     top: var(--token-space-fluid-xl);
     display: flex;
     flex-direction: column;
@@ -234,13 +234,13 @@
     z-index: 2;
 
     @media (min-width: $breakpoint-md) {
-      left: var(--token-space-fluid-sm);
+      inset-inline-start: var(--token-space-fluid-sm);
     }
 
     @media (min-width: $breakpoint-lg) {
       grid-column: 2;
       position: relative;
-      left: auto;
+      inset-inline-start: auto;
       top: var(--token-space-fluid-2xl);
     }
   }
@@ -251,7 +251,12 @@
     border-radius: var(--token-radius-full);
     background: var(--token-surface-glass-strong);
     border: 2px solid var(--token-border-color-default);
-    transition: all 0.4s var(--token-motion-ease-out);
+    transition:
+      background-color 0.4s var(--token-motion-ease-out),
+      border-color 0.4s var(--token-motion-ease-out),
+      box-shadow 0.4s var(--token-motion-ease-out),
+      opacity 0.4s var(--token-motion-ease-out),
+      transform 0.4s var(--token-motion-ease-out);
     opacity: 0.6;
     backdrop-filter: blur(var(--token-blur-sm));
 
@@ -413,7 +418,12 @@
     font-weight: var(--token-font-weight-medium);
     color: var(--token-text-secondary);
     cursor: pointer;
-    transition: all 0.3s var(--token-motion-ease-out);
+    transition:
+      background-color 0.3s var(--token-motion-ease-out),
+      border-color 0.3s var(--token-motion-ease-out),
+      box-shadow 0.3s var(--token-motion-ease-out),
+      color 0.3s var(--token-motion-ease-out),
+      transform 0.3s var(--token-motion-ease-out);
     backdrop-filter: blur(var(--token-blur-lg));
     display: flex;
     align-items: center;
@@ -475,7 +485,9 @@
     text-decoration: underline;
     text-decoration-color: transparent;
     text-underline-offset: 2px;
-    transition: all 0.2s var(--token-motion-ease-out);
+    transition:
+      color 0.2s var(--token-motion-ease-out),
+      text-decoration-color 0.2s var(--token-motion-ease-out);
     font-weight: var(--token-font-weight-medium);
 
     &:hover {
@@ -536,7 +548,7 @@
 
   .highlights__item {
     position: relative;
-    padding-left: var(--token-space-fluid-lg);
+    padding-inline-start: var(--token-space-fluid-lg);
     margin-bottom: var(--token-space-fluid-sm);
     line-height: var(--token-line-height-relaxed);
     color: var(--token-text-secondary);
@@ -545,7 +557,7 @@
     &::before {
       content: '✓';
       position: absolute;
-      left: 0;
+      inset-inline-start: 0;
       color: var(--token-text-emphasis-default);
       font-weight: var(--token-font-weight-semibold);
     }
@@ -574,7 +586,10 @@
     font-weight: var(--token-font-weight-medium);
     color: var(--token-text-primary);
     white-space: nowrap;
-    transition: all 0.3s var(--token-motion-ease-out);
+    transition:
+      background-color 0.3s var(--token-motion-ease-out),
+      color 0.3s var(--token-motion-ease-out),
+      transform 0.3s var(--token-motion-ease-out);
 
     &:hover {
       background: var(--token-interactive-color);
@@ -590,7 +605,7 @@
 
   @media (max-width: calc($breakpoint-sm - 1px)) {
     .timeline-item {
-      padding-left: 0;
+      padding-inline-start: 0;
       margin-bottom: var(--token-space-fluid-2xl);
     }
 
@@ -603,11 +618,11 @@
       --card-radius: var(--token-radius-lg) var(--token-radius-lg) var(--token-radius-lg)
         var(--token-radius-sm);
 
-      border-left: 3px solid transparent;
+      border-inline-start: 3px solid transparent;
     }
 
     .timeline-item--active :global(.experience-card) {
-      border-left-color: var(--token-interactive-color);
+      border-inline-start-color: var(--token-interactive-color);
       box-shadow:
         var(--token-shadow-elevated),
         3px 0 20px var(--token-interactive-glow);
@@ -695,8 +710,8 @@
     }
 
     .card-details {
-      max-height: none !important;
-      overflow: visible !important;
+      max-height: none;
+      overflow: visible;
     }
   }
   @include motion.reduced-motion-reset('.timeline-item');

@@ -383,8 +383,7 @@
   .dropdown-menu {
     position: absolute;
     top: 100%;
-    left: 0;
-    right: 0;
+    inset-inline: 0;
     z-index: 1001;
 
     background: var(--token-surface-glass-stronger);
@@ -443,7 +442,9 @@
     text-align: left;
 
     cursor: pointer;
-    transition: all var(--token-motion-duration-fast) var(--token-motion-ease-out);
+    transition:
+      background-color var(--token-motion-duration-fast) var(--token-motion-ease-out),
+      color var(--token-motion-duration-fast) var(--token-motion-ease-out);
 
     @media (min-width: 768px) {
       padding: var(--token-space-fluid-lg) var(--token-space-fluid-xl);

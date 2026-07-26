@@ -1,10 +1,7 @@
 <script lang="ts">
-  type Props = {
-    greeting?: string;
-    name: string;
-    role: string;
-    titleId?: string;
-  };
+  import type { HeroProfileModel } from '$lib/components/site/hero/types';
+
+  type Props = HeroProfileModel;
 
   let { greeting, name, role, titleId = 'profile-name' }: Props = $props();
 </script>
@@ -24,13 +21,15 @@
 
 <style lang="scss">
   @use 'styles/breakpoints' as *;
+  @use 'lib/components/primitives/motion' as motion;
 
   .profile-section {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    animation: fadeInUp 1s var(--token-motion-ease-out) 0.3s both;
+
+    @include motion.fade-in-up(heroProfileIn, 1.5rem, 1s, 0.3s);
 
     @media (min-width: $breakpoint-lg) {
       align-items: flex-start;
@@ -48,8 +47,8 @@
     letter-spacing: var(--token-letter-spacing-widest);
     color: var(--token-text-tertiary);
     margin-bottom: clamp(0.85rem, 2vh, 1.35rem);
-    opacity: 0;
-    animation: fadeInUp 0.6s var(--token-motion-ease-out) 0.15s both;
+
+    @include motion.fade-in-up(heroGreetingIn, 1.5rem, 0.6s, 0.15s);
   }
 
   .profile-greeting__wave {
@@ -99,9 +98,9 @@
     color: var(--token-text-secondary);
     letter-spacing: var(--token-letter-spacing-normal);
     line-height: var(--token-line-height-snug);
-    opacity: 0;
-    animation: fadeInUp 0.6s var(--token-motion-ease-out) 0.9s both;
     margin-bottom: 0;
+
+    @include motion.fade-in-up(heroRoleIn, 1.5rem, 0.6s, 0.9s);
 
     @media (min-width: $breakpoint-md) {
       font-size: clamp(var(--token-font-size-xl), 3vw, var(--token-font-size-2xl));
@@ -124,18 +123,6 @@
 
     @media (min-width: $breakpoint-lg) {
       margin: var(--token-space-fluid-md) 0 0;
-    }
-  }
-
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(1.5rem);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
     }
   }
 

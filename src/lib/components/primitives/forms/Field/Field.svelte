@@ -86,7 +86,7 @@
   .field__error {
     position: absolute;
     bottom: calc(-1 * var(--token-space-fluid-lg));
-    left: 0;
+    inset-inline-start: 0;
     font-size: var(--field-meta-font-size, var(--token-font-size-xs));
     font-weight: var(--token-font-weight-medium);
     color: var(--field-error-color, var(--token-status-danger-color));
@@ -105,7 +105,7 @@
   .field__counter {
     position: absolute;
     bottom: calc(-1 * var(--token-space-fluid-lg));
-    right: 0;
+    inset-inline-end: 0;
     font-size: var(--field-meta-font-size, var(--token-font-size-xs));
     color: var(--field-counter-color, var(--token-text-tertiary));
     letter-spacing: var(--token-letter-spacing-normal);

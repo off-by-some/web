@@ -515,7 +515,12 @@
     border-radius: var(--token-radius-xl);
     padding: var(--token-space-fluid-md) var(--token-space-fluid-lg);
     cursor: pointer;
-    transition: all 0.4s var(--token-motion-ease-out);
+    transition:
+      background-color 0.4s var(--token-motion-ease-out),
+      border-color 0.4s var(--token-motion-ease-out),
+      box-shadow 0.4s var(--token-motion-ease-out),
+      opacity 0.4s var(--token-motion-ease-out),
+      transform 0.4s var(--token-motion-ease-out);
     backdrop-filter: blur(var(--token-blur-lg));
     position: relative;
     overflow: hidden;
@@ -584,7 +589,10 @@
     overflow: hidden;
     border: 2px solid var(--token-border-color-default);
     flex-shrink: 0;
-    transition: all 0.4s var(--token-motion-ease-out);
+    transition:
+      border-color 0.4s var(--token-motion-ease-out),
+      box-shadow 0.4s var(--token-motion-ease-out),
+      transform 0.4s var(--token-motion-ease-out);
     position: relative;
 
     :global(img) {
@@ -685,7 +693,7 @@
     &::after {
       content: '';
       position: absolute;
-      right: -4px;
+      inset-inline-end: -4px;
       top: 50%;
       transform: translateY(-50%);
       width: 8px;
@@ -695,7 +703,7 @@
       box-shadow: 0 0 12px var(--token-interactive-glow);
 
       @media (min-width: $breakpoint-lg) {
-        right: -5px;
+        inset-inline-end: -5px;
         width: 10px;
         height: 10px;
       }
@@ -740,7 +748,9 @@
     box-shadow: var(--token-shadow-elevated);
     position: relative;
     overflow: hidden;
-    transition: all 0.4s var(--token-motion-ease-out);
+    transition:
+      box-shadow 0.4s var(--token-motion-ease-out),
+      transform 0.4s var(--token-motion-ease-out);
 
     &::before {
       content: '';
@@ -879,7 +889,10 @@
     color: var(--token-text-brand);
     font-weight: var(--token-font-weight-semibold);
     cursor: pointer;
-    transition: all 0.3s var(--token-motion-ease-out);
+    transition:
+      background-color 0.3s var(--token-motion-ease-out),
+      color 0.3s var(--token-motion-ease-out),
+      transform 0.3s var(--token-motion-ease-out);
     margin-bottom: var(--token-space-fluid-md);
     min-height: 2.75rem;
     display: flex;
@@ -1000,7 +1013,10 @@
     padding: var(--token-space-fluid-xl);
     backdrop-filter: blur(var(--token-blur-lg));
     box-shadow: var(--token-shadow-default);
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transition:
+      box-shadow 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     opacity: 0;
     transform: translateX(100px) translateZ(-200px) rotateY(15deg) scale(0.8);
     overflow: hidden;
@@ -1107,7 +1123,9 @@
     margin-bottom: var(--token-space-fluid-xl);
     opacity: 0.7;
     transform: translateY(20px);
-    transition: all 0.8s var(--token-motion-ease-out);
+    transition:
+      opacity 0.8s var(--token-motion-ease-out),
+      transform 0.8s var(--token-motion-ease-out);
 
     @media (min-width: $breakpoint-lg) {
       gap: var(--token-space-fluid-xl);
@@ -1149,7 +1167,7 @@
   .context-card__logo {
     position: absolute;
     bottom: -4px;
-    right: -4px;
+    inset-inline-end: -4px;
     width: 1.5rem;
     height: 1.5rem;
     background: var(--token-surface-color);
@@ -1170,14 +1188,14 @@
       width: 1.75rem;
       height: 1.75rem;
       bottom: -6px;
-      right: -6px;
+      inset-inline-end: -6px;
     }
 
     @media (min-width: $breakpoint-lg) {
       width: 2rem;
       height: 2rem;
       bottom: -8px;
-      right: -8px;
+      inset-inline-end: -8px;
     }
   }
 
@@ -1256,7 +1274,9 @@
   .context-card__content {
     opacity: 0.7;
     transform: translateY(20px);
-    transition: all 0.8s var(--token-motion-ease-out) 0.2s;
+    transition:
+      opacity 0.8s var(--token-motion-ease-out) 0.2s,
+      transform 0.8s var(--token-motion-ease-out) 0.2s;
   }
 
   .context-detail {
@@ -1317,7 +1337,11 @@
     font-weight: var(--token-font-weight-medium);
     color: var(--token-text-primary);
     white-space: nowrap;
-    transition: all 0.3s var(--token-motion-ease-out);
+    transition:
+      background-color 0.3s var(--token-motion-ease-out),
+      color 0.3s var(--token-motion-ease-out),
+      opacity 0.3s var(--token-motion-ease-out),
+      transform 0.3s var(--token-motion-ease-out);
     opacity: 0;
     transform: translateY(10px);
 
@@ -1341,12 +1365,13 @@
   .floating-nav {
     position: fixed;
     bottom: 0;
-    left: 0;
-    right: 0;
+    inset-inline: 0;
     transform: translateY(100%);
     opacity: 0;
     pointer-events: none;
-    transition: all 0.4s var(--token-motion-ease-out);
+    transition:
+      opacity 0.4s var(--token-motion-ease-out),
+      transform 0.4s var(--token-motion-ease-out);
     z-index: 50;
     background: var(--token-surface-glass-stronger);
     backdrop-filter: blur(var(--token-blur-xl));
@@ -1402,7 +1427,12 @@
     border-radius: var(--token-radius-xl);
     color: var(--token-text-primary);
     cursor: pointer;
-    transition: all 0.3s var(--token-motion-ease-out);
+    transition:
+      background-color 0.3s var(--token-motion-ease-out),
+      border-color 0.3s var(--token-motion-ease-out),
+      box-shadow 0.3s var(--token-motion-ease-out),
+      color 0.3s var(--token-motion-ease-out),
+      transform 0.3s var(--token-motion-ease-out);
     position: relative;
     z-index: 1;
     box-shadow: var(--token-shadow-default);
@@ -1454,7 +1484,10 @@
     border: 2px solid var(--token-border-color-neutral);
     background: var(--token-surface-color);
     cursor: pointer;
-    transition: all 0.3s var(--token-motion-ease-out);
+    transition:
+      border-color 0.3s var(--token-motion-ease-out),
+      box-shadow 0.3s var(--token-motion-ease-out),
+      transform 0.3s var(--token-motion-ease-out);
     padding: 2px;
     position: relative;
     z-index: 1;
@@ -1577,7 +1610,7 @@
     }
 
     .context-card {
-      transform: none !important;
+      transform: none;
     }
   }
 
@@ -1609,9 +1642,9 @@
     }
 
     .context-card {
-      position: relative !important;
-      opacity: 1 !important;
-      transform: none !important;
+      position: relative;
+      opacity: 1;
+      transform: none;
       border: var(--token-border-default-small);
       background: white;
       break-inside: avoid;

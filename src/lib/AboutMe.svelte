@@ -1,58 +1,48 @@
 <script lang="ts">
   import Section from './components/primitives/layout/Section';
+  import HeroActions from './components/site/hero/HeroActions';
   import HeroPortrait from './components/site/hero/HeroPortrait';
   import HeroProfile from './components/site/hero/HeroProfile';
   import HeroValue from './components/site/hero/HeroValue';
   import ScrollIndicator from './components/site/hero/ScrollIndicator';
+  import type {
+    HeroActionsModel,
+    HeroPortraitModel,
+    HeroProfileModel,
+    HeroScrollModel,
+    HeroValueModel,
+  } from './components/site/hero/types';
 
   type Props = {
-    greeting?: string;
-    name: string;
-    role: string;
-    valueHeadline: string;
-    valueHeadlineEmphasis?: { primary?: string; accent?: string };
-    valueDescription: string;
-    avatarSrc: string;
-    avatarAlt: string;
-    primaryButtonText: string;
-    exploreLinkText?: string;
-    linkedinUrl?: string;
-    githubUrl?: string;
-    resumeHref?: string;
-    resumeFilename?: string;
-    scrollText: string;
+    profile: HeroProfileModel;
+    value: HeroValueModel;
+    portrait: HeroPortraitModel;
+    actions: HeroActionsModel;
+    scroll: HeroScrollModel;
     showCanvasBackground: boolean;
-    scrollAriaLabel?: string;
-    portraitAnnotations?: Array<{ label: string }>;
-    onPrimaryAction?: () => void;
-    onScrollIndicator?: () => void;
+    onContactRequested?: () => void;
+    onExploreRequested?: () => void;
   };
 
   let {
-    greeting,
-    name,
-    role,
-    valueHeadline,
-    valueHeadlineEmphasis,
-    valueDescription,
-    avatarSrc,
-    avatarAlt,
-    primaryButtonText,
-    exploreLinkText,
-    linkedinUrl,
-    githubUrl,
-    resumeHref,
-    resumeFilename,
-    scrollText,
+    profile,
+    value,
+    portrait,
+    actions,
+    scroll,
     showCanvasBackground,
-    scrollAriaLabel,
-    portraitAnnotations,
-    onPrimaryAction,
-    onScrollIndicator,
+    onContactRequested,
+    onExploreRequested,
   }: Props = $props();
 </script>
 
-<section class="hero" id="about" role="main" aria-labelledby="profile-name" data-section="about-me">
+<section
+  class="hero"
+  id="about"
+  role="main"
+  aria-labelledby={profile.titleId ?? 'profile-name'}
+  data-section="about-me"
+>
   {#if showCanvasBackground}
     <div class="hero__canvas" id="hero-canvas-container" aria-hidden="true"></div>
   {/if}
@@ -60,35 +50,33 @@
   <Section className="hero__container">
     <div class="hero-grid">
       <div class="hero-grid__content">
-        <HeroProfile {greeting} {name} {role} />
+        <HeroProfile {...profile} />
 
-        <HeroValue
-          headline={valueHeadline}
-          headlineEmphasis={valueHeadlineEmphasis}
-          description={valueDescription}
-          {primaryButtonText}
-          {exploreLinkText}
-          {linkedinUrl}
-          {githubUrl}
-          repoUrl="https://github.com/off-by-some/web"
-          {resumeHref}
-          {resumeFilename}
-          {onPrimaryAction}
-          onExploreClick={onScrollIndicator}
+        <HeroValue {...value} />
+
+        <HeroActions
+          {...actions}
+          onPrimaryAction={onContactRequested}
+          onExploreAction={onExploreRequested}
         />
       </div>
 
       <div class="hero-grid__portrait">
-        <HeroPortrait {avatarSrc} {avatarAlt} annotations={portraitAnnotations} />
+        <HeroPortrait
+          avatarSrc={portrait.src}
+          avatarAlt={portrait.alt}
+          annotations={portrait.annotations}
+        />
       </div>
     </div>
   </Section>
 
-  <ScrollIndicator text={scrollText} ariaLabel={scrollAriaLabel} onclick={onScrollIndicator} />
+  <ScrollIndicator text={scroll.text} ariaLabel={scroll.ariaLabel} onclick={onExploreRequested} />
 </section>
 
 <style lang="scss">
   @use '../styles/breakpoints' as *;
+  @use 'lib/components/primitives/motion' as motion;
 
   .hero {
     position: relative;
@@ -153,9 +141,10 @@
     align-items: center;
     justify-items: center;
     gap: clamp(1.75rem, 5vh, 3.25rem);
-    animation: heroEntrance 1.2s var(--token-motion-ease-out) both;
     width: 100%;
     overflow: visible;
+
+    @include motion.fade-in-up(heroEntrance, 2rem, 1.2s, 0s, both, 0.98);
 
     @media (min-width: $breakpoint-md) {
       gap: clamp(2rem, 4.25vh, 3.75rem);
@@ -215,30 +204,13 @@
     }
   }
 
-  @keyframes heroEntrance {
-    from {
-      opacity: 0;
-      transform: translateY(2rem) scale(0.98);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-  }
-
   @keyframes backgroundGlow {
     to {
       opacity: 1;
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .hero-grid {
-      animation: none;
-      opacity: 1;
-      transform: none;
-    }
-  }
+  @include motion.reduced-motion-reset('.hero-grid');
 
   @media print {
     .hero {

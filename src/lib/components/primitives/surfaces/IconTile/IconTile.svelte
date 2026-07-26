@@ -63,7 +63,11 @@
     overflow: var(--icon-tile-resolved-overflow);
     padding: var(--icon-tile-resolved-padding);
     position: relative;
-    transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
+    transition:
+      background-color var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      border-color var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      box-shadow var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
     width: var(--icon-tile-resolved-size);
     z-index: var(--icon-tile-z-index, 1);
   }
@@ -75,7 +79,10 @@
     min-height: var(--icon-tile-resolved-image-size);
     min-width: var(--icon-tile-resolved-image-size);
     object-fit: contain;
-    transition: all var(--token-motion-duration-normal) var(--token-motion-ease-out);
+    transition:
+      filter var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      opacity var(--token-motion-duration-normal) var(--token-motion-ease-out),
+      transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
     width: var(--icon-tile-resolved-image-size);
   }
 </style>

@@ -102,3 +102,4 @@ build/
 .lighthouseci/
 /metrics/
 .bundle-stats/
+/docs/style/

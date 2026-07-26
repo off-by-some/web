@@ -19,6 +19,9 @@ export interface PictureSourceSet {
 type RasterModuleMap = Partial<Record<string, ImageLoaderResult>>;
 type RasterModuleLoaderMap = Partial<Record<string, () => Promise<ImageLoaderResult>>>;
 type VectorModuleLoaderMap = Partial<Record<string, () => Promise<string>>>;
+type ImportMetaEnvWithStorybook = ImportMetaEnv & {
+  STORYBOOK?: boolean | string;
+};
 
 // Vite's import.meta.glob requires imagetools options to be static. Instead of
 // one giant all-purpose registry, paths choose their natural source tier:
@@ -56,16 +59,6 @@ const employeeRasterModules = import.meta.glob(
   },
 ) as RasterModuleLoaderMap;
 
-const headshotRasterModules = import.meta.glob('/assets/images/*.{jpg,jpeg,png,webp,avif}', {
-  eager: true,
-  import: 'default',
-  query: {
-    enhanced: true,
-    w: '160;240;360;480',
-    format: 'webp',
-  },
-}) as RasterModuleMap;
-
 const bannerRasterModules = import.meta.glob(
   '/assets/images/banners/**/*.{jpg,jpeg,png,webp,avif}',
   {
@@ -78,9 +71,7 @@ const bannerRasterModules = import.meta.glob(
   },
 ) as RasterModuleLoaderMap;
 
-const eagerRasterModules = {
-  ...headshotRasterModules,
-};
+const eagerRasterModules: RasterModuleMap = {};
 
 const lazyRasterModules = {
   ...iconRasterModules,
@@ -91,7 +82,11 @@ const lazyRasterModules = {
 
 // SVGs are below-the-fold site assets, so keep their URL modules out of the
 // first page chunk and resolve them only when the Image instance needs them.
-const svgModules = import.meta.glob('/assets/images/**/*.svg', {
+// Use a file-relative glob so Storybook's /assets/images static route cannot
+// shadow Vite's `?url` module request in dev.
+const SVG_ASSET_PREFIX = '../../../../../../assets/images/';
+
+const svgModules = import.meta.glob('../../../../../../assets/images/**/*.svg', {
   import: 'default',
   query: '?url',
 }) as VectorModuleLoaderMap;
@@ -99,6 +94,7 @@ const svgModules = import.meta.glob('/assets/images/**/*.svg', {
 // Configuration constants
 const PRIMARY_FORMAT = 'jpeg';
 const VECTOR_EXTENSIONS = ['.svg'];
+const isStorybook = Boolean((import.meta.env as ImportMetaEnvWithStorybook).STORYBOOK);
 
 // Image cache for better performance with priority loading
 const imageCache = new Map<string, Promise<PictureSourceSet | undefined>>();
@@ -162,6 +158,15 @@ const isVectorImage = (name: string): boolean => {
   return VECTOR_EXTENSIONS.some((ext) => lowered.endsWith(ext));
 };
 
+function loadStaticCatalogImage(name: string): PictureSourceSet | undefined {
+  if (!name) return undefined;
+
+  return {
+    src: prefix(`/assets/images/${name}`),
+    isVector: isVectorImage(name),
+  };
+}
+
 function warnInDev(message: string, error: unknown): void {
   if (import.meta.env.DEV) {
     console.warn(message, error);
@@ -169,7 +174,7 @@ function warnInDev(message: string, error: unknown): void {
 }
 
 async function loadVectorImage(name: string): Promise<PictureSourceSet | undefined> {
-  const key = `/assets/images/${name}`;
+  const key = `${SVG_ASSET_PREFIX}${name}`;
   const load = svgModules[key];
 
   if (!load) return undefined;
@@ -232,6 +237,8 @@ function preloadExternalImage(source: string): Promise<void> {
 // Core image loader with caching and priority support
 function loadImageUncached(name: string): Promise<PictureSourceSet | undefined> {
   try {
+    if (isStorybook) return Promise.resolve(loadStaticCatalogImage(name));
+
     const eagerImage = getImage(name);
     if (eagerImage) return Promise.resolve(eagerImage);
 
@@ -244,6 +251,7 @@ function loadImageUncached(name: string): Promise<PictureSourceSet | undefined> 
 
 export function getImage(name: string): PictureSourceSet | undefined {
   if (!name) return undefined;
+  if (isStorybook) return loadStaticCatalogImage(name);
   return isVectorImage(name) ? undefined : loadRasterImage(name);
 }
 

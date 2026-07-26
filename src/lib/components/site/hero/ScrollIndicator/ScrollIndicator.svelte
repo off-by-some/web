@@ -26,7 +26,7 @@
   .scroll-indicator {
     position: absolute;
     bottom: var(--token-space-fluid-2xl);
-    left: 50%;
+    inset-inline-start: 50%;
     transform: translateX(-50%);
     display: flex;
     flex-direction: column;
@@ -39,7 +39,10 @@
     cursor: pointer;
     animation: scrollFloat 2s ease-in-out infinite;
     z-index: 10;
-    transition: all 0.3s var(--token-motion-ease-out);
+    transition:
+      color 0.3s var(--token-motion-ease-out),
+      opacity 0.3s var(--token-motion-ease-out),
+      transform 0.3s var(--token-motion-ease-out);
 
     &:focus {
       outline: 2px solid var(--token-interactive-color);
@@ -61,7 +64,7 @@
       }
 
       .scroll-arrow {
-        border-top-color: var(--token-attention-color);
+        border-block-start-color: var(--token-attention-color);
       }
     }
 
@@ -79,7 +82,10 @@
     position: relative;
     background: var(--token-surface-glass-medium);
     backdrop-filter: blur(var(--token-blur-sm));
-    transition: all 0.3s var(--token-motion-ease-out);
+    transition:
+      background-color 0.3s var(--token-motion-ease-out),
+      border-color 0.3s var(--token-motion-ease-out),
+      box-shadow 0.3s var(--token-motion-ease-out);
   }
 
   .scroll-wheel {
@@ -87,7 +93,7 @@
     width: 1.5px;
     height: var(--token-size-1);
     background: color-mix(in srgb, var(--token-interactive-color) 82%, white);
-    left: 50%;
+    inset-inline-start: 50%;
     top: 0.375rem;
     transform: translateX(-50%);
     border-radius: var(--token-radius-full);
@@ -98,11 +104,11 @@
   .scroll-arrow {
     width: 0;
     height: 0;
-    border-left: 0.25rem solid transparent;
-    border-right: 0.25rem solid transparent;
-    border-top: 0.375rem solid color-mix(in srgb, var(--token-interactive-color) 78%, white);
+    border-inline-start: 0.25rem solid transparent;
+    border-inline-end: 0.25rem solid transparent;
+    border-block-start: 0.375rem solid color-mix(in srgb, var(--token-interactive-color) 78%, white);
     animation: arrowBounce 2s ease-in-out infinite 0.5s;
-    transition: border-top-color 0.3s var(--token-motion-ease-out);
+    transition: border-block-start-color 0.3s var(--token-motion-ease-out);
   }
 
   .scroll-text {

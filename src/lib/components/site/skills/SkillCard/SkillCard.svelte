@@ -143,7 +143,7 @@
   :global(.skill-level-indicator) {
     position: absolute;
     top: -4px;
-    right: -4px;
+    inset-inline-end: -4px;
     --tone-dot-size: 1rem;
     --tone-dot-border: 2px solid var(--token-surface-color);
 
@@ -196,7 +196,10 @@
     background: var(--token-surface-glass-strong);
     border: var(--token-border-default-small);
     backdrop-filter: blur(var(--token-blur-sm));
-    transition: all 0.3s var(--token-motion-ease-out);
+    transition:
+      background-color 0.3s var(--token-motion-ease-out),
+      border-color 0.3s var(--token-motion-ease-out),
+      color 0.3s var(--token-motion-ease-out);
 
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-font-size-sm);
@@ -240,7 +243,10 @@
     color: var(--token-text-secondary);
     opacity: 0;
     transform: translateY(8px);
-    transition: all 0.3s var(--token-motion-ease-out);
+    transition:
+      color 0.3s var(--token-motion-ease-out),
+      opacity 0.3s var(--token-motion-ease-out),
+      transform 0.3s var(--token-motion-ease-out);
 
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-font-size-sm);

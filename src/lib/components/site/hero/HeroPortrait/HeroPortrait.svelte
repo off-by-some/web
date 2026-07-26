@@ -1,30 +1,19 @@
 <script lang="ts">
   import Image from '$lib/components/primitives/media/Image';
-
-  type Annotation = { label: string };
+  import type { HeroPortraitAnnotation } from '$lib/components/site/hero/types';
+  import productArrow from './assets/annotation-arrow-product.svg?url';
+  import systemsArrow from './assets/annotation-arrow-systems.svg?url';
+  import teamArrow from './assets/annotation-arrow-team.svg?url';
 
   type Props = {
     avatarSrc: string;
     avatarAlt: string;
-    annotations?: Annotation[];
+    annotations?: HeroPortraitAnnotation[];
   };
 
   let { avatarSrc, avatarAlt, annotations = [] }: Props = $props();
 
-  const connectors = [
-    {
-      path: 'M 210,22 C 166,21 126,32 88,54 C 60,70 35,82 8,86',
-      arrow: 'M 27,75 8,86 29,94',
-    },
-    {
-      path: 'M 210,64 C 166,60 126,63 88,72 C 58,79 34,79 8,72',
-      arrow: 'M 28,63 8,72 27,83',
-    },
-    {
-      path: 'M 210,106 C 166,108 126,96 88,74 C 60,58 34,48 8,45',
-      arrow: 'M 29,37 8,45 26,58',
-    },
-  ];
+  const annotationArrows = [systemsArrow, teamArrow, productArrow];
 </script>
 
 <div class="hero-portrait">
@@ -48,29 +37,11 @@
       <ul class="hero-portrait__annotations" aria-label="Highlights">
         {#each annotations as annotation, index (annotation.label)}
           <li class="annotation">
-            <svg
+            <span
               class="annotation__connector"
-              viewBox="0 0 220 128"
-              width="132"
-              height="76"
+              style:--annotation-arrow={`url("${annotationArrows[index % annotationArrows.length]}")`}
               aria-hidden="true"
-            >
-              <path
-                d={connectors[index % connectors.length].path}
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-              />
-              <path
-                d={connectors[index % connectors.length].arrow}
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
+            ></span>
             <span class="annotation__label">{annotation.label}</span>
           </li>
         {/each}
@@ -81,12 +52,14 @@
 
 <style lang="scss">
   @use 'styles/breakpoints' as *;
+  @use 'lib/components/primitives/motion' as motion;
 
   .hero-portrait {
     display: flex;
     justify-content: center;
     width: 100%;
-    animation: fadeInUp 1s var(--token-motion-ease-out) 0.3s both;
+
+    @include motion.fade-in-up(heroPortraitIn, 1.5rem, 1s, 0.3s);
   }
 
   .hero-portrait__composition {
@@ -132,7 +105,7 @@
     z-index: 0;
     width: 90%;
     aspect-ratio: 1;
-    left: 50%;
+    inset-inline-start: 50%;
     top: 8%;
     transform: translateX(-39%);
     border-radius: var(--token-radius-full);
@@ -202,8 +175,7 @@
       content: '';
       position: absolute;
       z-index: 2;
-      left: -6%;
-      right: -6%;
+      inset-inline: -6%;
       bottom: -1%;
       height: 15%;
       pointer-events: none;
@@ -250,12 +222,12 @@
     --annotation-y: 17%;
 
     position: absolute;
-    left: var(--annotation-x);
+    inset-inline-start: var(--annotation-x);
     top: var(--annotation-y);
     display: grid;
-    grid-template-columns: 8.25rem max-content;
+    grid-template-columns: 8.75rem max-content;
     align-items: center;
-    gap: var(--token-space-fluid-xs);
+    gap: clamp(0.35rem, 0.6vw, 0.65rem);
     color: var(--token-text-secondary);
     opacity: 0.9;
 
@@ -271,14 +243,16 @@
   }
 
   .annotation__connector {
+    display: block;
+    width: 8.75rem;
+    aspect-ratio: 240 / 128;
     flex-shrink: 0;
+    background: currentColor;
     color: currentColor;
-    opacity: 0.58;
+    opacity: 0.56;
     transform: translateY(0.1rem);
-
-    path {
-      stroke-width: 1.45;
-    }
+    mask: var(--annotation-arrow) center / contain no-repeat;
+    -webkit-mask: var(--annotation-arrow) center / contain no-repeat;
   }
 
   .annotation__label {
@@ -297,25 +271,7 @@
     transform: rotate(-1deg);
   }
 
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(1.5rem);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .hero-portrait {
-      animation: none;
-      opacity: 1;
-      transform: none;
-    }
-  }
+  @include motion.reduced-motion-reset('.hero-portrait');
 
   @media print {
     .hero-portrait__halo,

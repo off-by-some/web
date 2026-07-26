@@ -2,41 +2,13 @@
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import Projects from '$lib/Projects.svelte';
   import content from '$lib/content/en.json';
+  import type { ProjectModel } from '$lib/components/site/projects';
   import ViewportFrame from './helpers/ViewportFrame.svelte';
   import { sectionViewportGlobals, sectionViewportParameters } from './helpers/section-viewports';
   import type { SectionViewport } from './helpers/section-viewports';
 
-  interface ProjectHighlight {
-    label: string;
-    detail: string;
-  }
-
-  interface ProjectBadge {
-    label: string;
-    imageSrc: string;
-    href?: string;
-  }
-
-  interface ProjectSecondaryLink {
-    label: string;
-    href: string;
-    icon: 'docs' | 'dockerhub' | 'storybook';
-  }
-
-  interface Project {
-    name: string;
-    tagline: string;
-    description: string[];
-    bannerSrc: string;
-    href: string;
-    tags: string[];
-    highlights?: ProjectHighlight[];
-    badges?: ProjectBadge[];
-    secondaryLink?: ProjectSecondaryLink;
-  }
-
   type Args = {
-    projects: Project[];
+    projects: ProjectModel[];
     title: string;
     subtitle: string;
     previewViewport: SectionViewport;
@@ -44,7 +16,7 @@
 
   const projectSection = content.projectsSection;
   const defaultArgs: Args = {
-    projects: projectSection.projects as Project[],
+    projects: projectSection.projects as ProjectModel[],
     title: projectSection.title,
     subtitle: projectSection.subtitle,
     previewViewport: 'desktop',

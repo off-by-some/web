@@ -14,7 +14,7 @@
     render: template,
     tags: ['autodocs'],
     args: {
-      src: 'headshot.png',
+      src: 'company_logos/upguard_logo.jpg',
     },
     argTypes: {
       ...hideControls([

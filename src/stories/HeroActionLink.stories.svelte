@@ -1,13 +1,14 @@
 <script module lang="ts">
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import HeroActionLink from '$lib/components/site/hero/HeroActionLink';
+  import type { HeroActionIcon, HeroActionShape } from '$lib/components/site/hero/types';
   import { hideControls } from './helpers/controls';
 
   type Args = {
     href: string;
     label: string;
-    icon: 'github' | 'linkedin' | 'download' | 'arrow' | 'star';
-    shape: 'circle' | 'label';
+    icon: HeroActionIcon;
+    shape: HeroActionShape;
   };
 
   const { Story } = defineMeta({
@@ -16,10 +17,10 @@
     render: template,
     tags: ['autodocs'],
     args: {
-      href: 'https://github.com/off-by-some',
-      label: 'Open GitHub profile',
-      icon: 'github',
-      shape: 'circle',
+      href: '#contact',
+      label: "Let's build something great",
+      icon: 'arrow',
+      shape: 'label',
     },
     argTypes: {
       ...hideControls(['href', 'download', 'target', 'rel']),
@@ -48,8 +49,6 @@
       label={args.label}
       icon={args.icon}
       shape={args.shape}
-      target="_blank"
-      rel="noopener noreferrer"
       onclick={() => console.log('Hero action clicked')}
     />
   </div>

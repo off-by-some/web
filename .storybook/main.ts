@@ -23,7 +23,12 @@ const config: StorybookConfig = {
         }
       : {};
 
-    return mergeConfig(config, pagesConfig);
+    return mergeConfig(config, {
+      ...pagesConfig,
+      define: {
+        'import.meta.env.STORYBOOK': JSON.stringify(true),
+      },
+    });
   },
 };
 

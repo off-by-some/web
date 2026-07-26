@@ -363,18 +363,18 @@
     top: 0;
     bottom: 0;
     width: 2px;
-    left: var(--token-space-fluid-2xl);
+    inset-inline-start: var(--token-space-fluid-2xl);
     background: var(--token-surface-glass-strong);
     border-radius: var(--token-radius-full);
     opacity: 0.3;
 
     @media (min-width: $breakpoint-md) {
-      left: var(--token-space-fluid-3xl);
+      inset-inline-start: var(--token-space-fluid-3xl);
       width: 3px;
     }
 
     @media (min-width: $breakpoint-lg) {
-      left: 50%;
+      inset-inline-start: 50%;
       transform: translateX(-50%);
       width: 4px;
     }
@@ -405,11 +405,13 @@
   .floating-nav {
     position: fixed;
     bottom: var(--token-space-fluid-2xl);
-    left: 50%;
+    inset-inline-start: 50%;
     transform: translateX(-50%) translateY(100px);
     opacity: 0;
     pointer-events: none;
-    transition: all 0.4s var(--token-motion-ease-out);
+    transition:
+      opacity 0.4s var(--token-motion-ease-out),
+      transform 0.4s var(--token-motion-ease-out);
     z-index: 50;
 
     &--visible {
@@ -457,7 +459,11 @@
     border-radius: var(--token-radius-lg);
     color: var(--token-text-secondary);
     cursor: pointer;
-    transition: all 0.3s var(--token-motion-ease-out);
+    transition:
+      background-color 0.3s var(--token-motion-ease-out),
+      border-color 0.3s var(--token-motion-ease-out),
+      color 0.3s var(--token-motion-ease-out),
+      transform 0.3s var(--token-motion-ease-out);
     display: flex;
     align-items: center;
     justify-content: center;

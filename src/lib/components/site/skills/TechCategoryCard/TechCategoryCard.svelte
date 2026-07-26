@@ -208,7 +208,11 @@
     font-size: var(--token-font-size-xs);
     font-weight: var(--token-font-weight-medium);
     color: var(--token-text-secondary);
-    transition: all 0.3s var(--token-motion-ease-out);
+    transition:
+      background-color 0.3s var(--token-motion-ease-out),
+      border-color 0.3s var(--token-motion-ease-out),
+      color 0.3s var(--token-motion-ease-out),
+      transform 0.3s var(--token-motion-ease-out);
     white-space: nowrap;
     flex-shrink: 0;
 

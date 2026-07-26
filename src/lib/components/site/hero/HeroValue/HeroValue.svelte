@@ -1,38 +1,11 @@
 <script lang="ts">
-  import HeroActionLink from '$lib/components/site/hero/HeroActionLink';
+  import type { HeroHeadlineEmphasis, HeroValueModel } from '$lib/components/site/hero/types';
 
-  type Emphasis = { primary?: string; accent?: string };
   type Segment = { text: string; kind: 'plain' | 'primary' | 'accent' };
 
-  type Props = {
-    headline: string;
-    headlineEmphasis?: Emphasis;
-    description: string;
-    primaryButtonText: string;
-    exploreLinkText?: string;
-    linkedinUrl?: string;
-    githubUrl?: string;
-    repoUrl?: string;
-    resumeHref?: string;
-    resumeFilename?: string;
-    onPrimaryAction?: () => void;
-    onExploreClick?: () => void;
-  };
+  type Props = HeroValueModel;
 
-  let {
-    headline,
-    headlineEmphasis,
-    description,
-    primaryButtonText,
-    exploreLinkText,
-    linkedinUrl,
-    githubUrl,
-    repoUrl,
-    resumeHref,
-    resumeFilename = 'Cassidy-Bridges-Software-Engineering.pdf',
-    onPrimaryAction,
-    onExploreClick,
-  }: Props = $props();
+  let { headline, headlineEmphasis, description }: Props = $props();
 
   function escapeRegExp(value: string): string {
     return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -50,7 +23,7 @@
 
   // Splits the headline around the primary/accent words (if present) so each
   // can be styled distinctly, without requiring markup inside content copy.
-  function buildSegments(text: string, emphasis?: Emphasis): Segment[] {
+  function buildSegments(text: string, emphasis?: HeroHeadlineEmphasis): Segment[] {
     const matches = (['primary', 'accent'] as const)
       .map((kind) => {
         const word = emphasis?.[kind];
@@ -88,20 +61,6 @@
   }
 
   const headlineSegments = $derived(buildSegments(headline, headlineEmphasis));
-
-  function handleContactClick(event: MouseEvent) {
-    if (onPrimaryAction) {
-      event.preventDefault();
-      onPrimaryAction();
-    }
-  }
-
-  function handleExploreClick(event: MouseEvent) {
-    if (onExploreClick) {
-      event.preventDefault();
-      onExploreClick();
-    }
-  }
 </script>
 
 <div class="value-section">
@@ -129,75 +88,6 @@
     {/each}
   </h2>
   <p class="value-description">{description}</p>
-
-  <div class="actions">
-    <div class="actions__row">
-      <HeroActionLink
-        href="#contact"
-        label={primaryButtonText}
-        icon="arrow"
-        shape="label"
-        onclick={handleContactClick}
-      />
-
-      {#if exploreLinkText}
-        <a class="actions__explore" href="#experience" onclick={handleExploreClick}>
-          {exploreLinkText}
-          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
-            <path
-              d="M12 5v14M6 13l6 6 6-6"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.25"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </a>
-      {/if}
-    </div>
-
-    <div class="action-icons" role="group" aria-label="Profile links">
-      {#if linkedinUrl}
-        <HeroActionLink
-          href={linkedinUrl}
-          label="Open LinkedIn profile"
-          icon="linkedin"
-          target="_blank"
-          rel="noopener noreferrer"
-        />
-      {/if}
-
-      {#if githubUrl}
-        <HeroActionLink
-          href={githubUrl}
-          label="Open GitHub profile"
-          icon="github"
-          target="_blank"
-          rel="noopener noreferrer"
-        />
-      {/if}
-
-      {#if repoUrl}
-        <HeroActionLink
-          href={repoUrl}
-          label="Star this project on GitHub"
-          icon="star"
-          target="_blank"
-          rel="noopener noreferrer"
-        />
-      {/if}
-
-      {#if resumeHref}
-        <HeroActionLink
-          href={resumeHref}
-          label="Download resume"
-          icon="download"
-          download={resumeFilename}
-        />
-      {/if}
-    </div>
-  </div>
 </div>
 
 <style lang="scss">
@@ -254,8 +144,7 @@
 
   .value-headline__underline {
     position: absolute;
-    left: 0.05em;
-    right: 0.05em;
+    inset-inline: 0.05em;
     bottom: -0.3em;
     width: calc(100% - 0.1em);
     height: 0.32em;
@@ -285,87 +174,13 @@
     }
   }
 
-  .actions {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: clamp(0.95rem, 2vh, 1.55rem);
-    flex-direction: column;
-    margin-top: var(--token-space-fluid-md);
-
-    @include motion.fade-in-up(heroActionsIn, 1.5rem, 0.6s, 0.8s);
-
-    @media (min-width: $breakpoint-lg) {
-      align-items: flex-start;
-    }
-  }
-
-  .actions__row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: var(--token-space-fluid-md) var(--token-space-fluid-lg);
-
-    @media (min-width: $breakpoint-lg) {
-      justify-content: flex-start;
-    }
-  }
-
-  .actions__explore {
-    --explore-link-color: color-mix(
-      in srgb,
-      var(--token-interactive-color) 54%,
-      var(--token-text-secondary)
-    );
-
-    display: inline-flex;
-    align-items: center;
-    gap: var(--token-space-fluid-xs);
-    color: var(--explore-link-color);
-    font-weight: var(--token-font-weight-semibold);
-    text-decoration: none;
-    transition:
-      color 0.3s var(--token-motion-ease-out),
-      gap 0.3s var(--token-motion-ease-out);
-
-    &:hover,
-    &:focus-visible {
-      color: var(--token-attention-color);
-      gap: var(--token-space-fluid-sm);
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--explore-link-color);
-      outline-offset: 4px;
-      border-radius: var(--token-radius-xs);
-    }
-  }
-
-  .action-icons {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--token-space-fluid-md);
-
-    @media (max-width: $breakpoint-sm) {
-      gap: var(--token-space-fluid-sm);
-    }
-  }
-
-  @include motion.reduced-motion-reset('.value-section, .actions');
+  @include motion.reduced-motion-reset('.value-section');
 
   @media (prefers-contrast: high) {
     .value-headline {
       text-shadow: none;
       font-weight: var(--token-font-weight-bold);
       color: var(--token-text-primary);
-    }
-  }
-
-  @media print {
-    .actions {
-      display: none;
     }
   }
 </style>

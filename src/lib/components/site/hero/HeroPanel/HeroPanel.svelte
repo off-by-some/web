@@ -28,6 +28,7 @@
 
 <style lang="scss">
   @use 'styles/breakpoints' as *;
+  @use 'lib/components/primitives/motion' as motion;
 
   .hero-panel-shell {
     display: contents;
@@ -42,34 +43,16 @@
     --card-hover-transform: none;
     --card-hover-iridescent-opacity: 0.6;
 
-    animation: fadeInUp 1s var(--token-motion-ease-out) var(--hero-panel-delay) both;
-    transform: scale(0.8);
     transform-origin: top left;
+
+    @include motion.fade-in-up(heroPanelIn, 1.5rem, 1s, var(--hero-panel-delay));
 
     @media (min-width: $breakpoint-md) {
       --card-padding: var(--token-space-fluid-md);
     }
   }
 
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(1.5rem);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    :global(.hero-panel) {
-      animation: none;
-      opacity: 1;
-      transform: none;
-    }
-  }
+  @include motion.reduced-motion-reset(':global(.hero-panel)');
 
   @media (prefers-contrast: high) {
     :global(.hero-panel) {

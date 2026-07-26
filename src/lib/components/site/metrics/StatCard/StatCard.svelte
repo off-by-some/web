@@ -141,7 +141,9 @@
     margin-bottom: var(--token-space-2);
     color: var(--token-text-emphasis-heading);
     letter-spacing: var(--token-letter-spacing-tight);
-    transition: all 0.3s var(--token-motion-ease-out);
+    transition:
+      color 0.3s var(--token-motion-ease-out),
+      transform 0.3s var(--token-motion-ease-out);
 
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-font-size-3xl);

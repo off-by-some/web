@@ -22,7 +22,7 @@
       titleId: 'storybook-profile-name',
     },
     argTypes: {
-      ...hideControls(['avatarAlt', 'titleId']),
+      ...hideControls(['titleId']),
     },
     parameters: {
       docs: {

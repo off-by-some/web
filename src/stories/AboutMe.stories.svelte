@@ -6,26 +6,21 @@
   import { sectionViewportGlobals, sectionViewportParameters } from './helpers/section-viewports';
   import type { SectionViewport } from './helpers/section-viewports';
   import { hideControls } from './helpers/controls';
+  import type {
+    HeroActionsModel,
+    HeroPortraitModel,
+    HeroProfileModel,
+    HeroScrollModel,
+    HeroValueModel,
+  } from '$lib/components/site/hero/types';
 
   type Args = {
-    greeting?: string;
-    name: string;
-    role: string;
-    valueHeadline: string;
-    valueHeadlineEmphasis?: { primary?: string; accent?: string };
-    valueDescription: string;
-    avatarSrc: string;
-    avatarAlt: string;
-    primaryButtonText: string;
-    exploreLinkText?: string;
-    linkedinUrl?: string;
-    githubUrl?: string;
-    resumeHref?: string;
-    resumeFilename?: string;
-    scrollText: string;
+    profile: HeroProfileModel;
+    value: HeroValueModel;
+    portrait: HeroPortraitModel;
+    actions: HeroActionsModel;
+    scroll: HeroScrollModel;
     showCanvasBackground: boolean;
-    scrollAriaLabel?: string;
-    portraitAnnotations?: Array<{ label: string }>;
     previewViewport: SectionViewport;
   };
 
@@ -35,24 +30,67 @@
   const githubUrl = contactMethods.find((method) => method.type === 'github')?.href;
 
   const aboutMeArgs: Args = {
-    greeting: aboutMe.greeting,
-    name: aboutMe.name,
-    role: aboutMe.role,
-    valueHeadline: aboutMe.valueHeadline,
-    valueHeadlineEmphasis: aboutMe.valueHeadlineEmphasis,
-    valueDescription: aboutMe.valueDescription,
-    avatarSrc: aboutMe.avatarSrc,
-    avatarAlt: aboutMe.avatarAlt,
-    primaryButtonText: aboutMe.primaryButtonText,
-    exploreLinkText: aboutMe.exploreLinkText,
-    linkedinUrl,
-    githubUrl,
-    resumeHref: '/resume/Cassidy-Bridges-Software-Engineering.pdf',
-    resumeFilename: 'Cassidy-Bridges-Software-Engineering.pdf',
-    scrollText: aboutMe.scrollText,
+    profile: {
+      greeting: aboutMe.greeting,
+      name: aboutMe.name,
+      role: aboutMe.role,
+    },
+    value: {
+      headline: aboutMe.valueHeadline,
+      headlineEmphasis: aboutMe.valueHeadlineEmphasis,
+      description: aboutMe.valueDescription,
+    },
+    portrait: {
+      src: aboutMe.avatarSrc,
+      alt: aboutMe.avatarAlt,
+      annotations: aboutMe.portraitAnnotations,
+    },
+    actions: {
+      primaryLabel: aboutMe.primaryButtonText,
+      primaryHref: '#contact',
+      exploreLabel: aboutMe.exploreLinkText,
+      exploreHref: '#experience',
+      iconLinksLabel: 'Profile links',
+      iconLinks: [
+        ...(linkedinUrl
+          ? [
+              {
+                label: 'Open LinkedIn profile',
+                href: linkedinUrl,
+                icon: 'linkedin' as const,
+                external: true,
+              },
+            ]
+          : []),
+        ...(githubUrl
+          ? [
+              {
+                label: 'Open GitHub profile',
+                href: githubUrl,
+                icon: 'github' as const,
+                external: true,
+              },
+            ]
+          : []),
+        {
+          label: 'Star this project on GitHub',
+          href: 'https://github.com/off-by-some/web',
+          icon: 'star',
+          external: true,
+        },
+        {
+          label: 'Download resume',
+          href: '/resume/Cassidy-Bridges-Software-Engineering.pdf',
+          icon: 'download',
+          download: 'Cassidy-Bridges-Software-Engineering.pdf',
+        },
+      ],
+    },
+    scroll: {
+      text: aboutMe.scrollText,
+      ariaLabel: aboutMe.scrollIndicatorAriaLabel,
+    },
     showCanvasBackground: true,
-    scrollAriaLabel: aboutMe.scrollIndicatorAriaLabel,
-    portraitAnnotations: aboutMe.portraitAnnotations,
     previewViewport: 'desktop',
   };
 
@@ -63,29 +101,15 @@
     tags: ['autodocs'],
     args: aboutMeArgs,
     argTypes: {
-      ...hideControls([
-        'avatarAlt',
-        'linkedinUrl',
-        'githubUrl',
-        'resumeHref',
-        'resumeFilename',
-        'scrollAriaLabel',
-        'showCanvasBackground',
-      ]),
-      greeting: { control: { type: 'text' } },
-      name: { control: { type: 'text' } },
-      role: { control: { type: 'text' } },
-      valueHeadline: { control: { type: 'text' } },
-      valueHeadlineEmphasis: { control: { type: 'object' } },
-      valueDescription: { control: { type: 'text' } },
-      avatarSrc: { control: { type: 'text' } },
-      primaryButtonText: { control: { type: 'text' } },
-      exploreLinkText: { control: { type: 'text' } },
-      scrollText: { control: { type: 'text' } },
-      portraitAnnotations: {
+      ...hideControls(['showCanvasBackground']),
+      profile: { control: { type: 'object' } },
+      value: { control: { type: 'object' } },
+      portrait: {
         control: { type: 'object' },
-        description: 'Desktop-only callouts rendered around the portrait composition.',
+        description: 'Portrait source, alt text, and desktop-only callouts.',
       },
+      actions: { control: { type: 'object' } },
+      scroll: { control: { type: 'object' } },
       previewViewport: {
         control: 'select',
         options: ['mobile', 'ipad', 'desktop'],
@@ -107,26 +131,14 @@
 {#snippet template(args: Args)}
   <ViewportFrame mode={args.previewViewport}>
     <AboutMe
-      greeting={args.greeting}
-      name={args.name}
-      role={args.role}
-      valueHeadline={args.valueHeadline}
-      valueHeadlineEmphasis={args.valueHeadlineEmphasis}
-      valueDescription={args.valueDescription}
-      avatarSrc={args.avatarSrc}
-      avatarAlt={args.avatarAlt}
-      primaryButtonText={args.primaryButtonText}
-      exploreLinkText={args.exploreLinkText}
-      linkedinUrl={args.linkedinUrl}
-      githubUrl={args.githubUrl}
-      resumeHref={args.resumeHref}
-      resumeFilename={args.resumeFilename}
-      scrollText={args.scrollText}
+      profile={args.profile}
+      value={args.value}
+      portrait={args.portrait}
+      actions={args.actions}
+      scroll={args.scroll}
       showCanvasBackground={args.showCanvasBackground}
-      scrollAriaLabel={args.scrollAriaLabel}
-      portraitAnnotations={args.portraitAnnotations}
-      onPrimaryAction={() => console.log('Primary action')}
-      onScrollIndicator={() => console.log('Scroll indicator clicked')}
+      onContactRequested={() => console.log('Contact requested')}
+      onExploreRequested={() => console.log('Explore requested')}
     />
   </ViewportFrame>
 {/snippet}

@@ -132,8 +132,8 @@ TROUBLESHOOTING 🔧
 
   const isExternalSrc = $derived(/^https?:\/\//i.test(src) || src?.startsWith('data:'));
 
-  // Keep the headshot/LCP path synchronous, but defer below-the-fold catalog
-  // resolution until the component is close enough for the browser to need it.
+  // Defer below-the-fold catalog resolution until the component is close enough
+  // for the browser to need it.
   $effect(() => {
     if (priority || loading === 'eager' || isExternalSrc) {
       shouldLoad = true;
@@ -271,7 +271,7 @@ TROUBLESHOOTING 🔧
 {/if}
 
 {#if import.meta.env.DEV && err}
-  <pre style="color:crimson;font:12px/1.3 ui-monospace,monospace;margin-top:.5rem">{err}</pre>
+  <pre class="image__error">{err}</pre>
 {/if}
 
 <style>
@@ -290,5 +290,13 @@ TROUBLESHOOTING 🔧
     height: 100%;
     min-width: 1px;
     min-height: 1px;
+  }
+
+  .image__error {
+    color: crimson;
+    font:
+      12px/1.3 ui-monospace,
+      monospace;
+    margin-block-start: 0.5rem;
   }
 </style>
