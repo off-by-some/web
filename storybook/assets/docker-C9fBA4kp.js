@@ -1,0 +1,1 @@
+const s={sources:{webp:"/web/storybook/assets/docker-BSbaFeMD.webp 64w, /web/storybook/assets/docker-CtIAHvch.webp 128w, /web/storybook/assets/docker-Bsn8NhSk.webp 192w"},img:{src:"/web/storybook/assets/docker-Bsn8NhSk.webp",w:192,h:164}};export{s as default};
