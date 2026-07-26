@@ -175,6 +175,8 @@ TROUBLESHOOTING 🔧
   // Reruns after the lazy gate opens and whenever `src` changes thereafter.
   $effect(() => {
     if (!shouldLoad) return;
+    if (isExternalSrc) return;
+    if (imageDataFor(src)) return;
     void startLoadFor(src, width);
   });
 

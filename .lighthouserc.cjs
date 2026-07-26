@@ -14,7 +14,7 @@ module.exports = {
             startServerReadyTimeout: 120000,
             url: ['http://localhost:4173/web/'],
           }),
-      numberOfRuns: 5,
+      numberOfRuns: 8,
       settings: {
         chromeFlags: '--no-sandbox --disable-dev-shm-usage',
         preset: 'desktop',
