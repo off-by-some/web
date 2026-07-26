@@ -81,7 +81,7 @@
       box-shadow var(--token-motion-duration-fast) var(--token-motion-ease-out),
       color var(--token-motion-duration-fast) var(--token-motion-ease-out),
       background var(--token-motion-duration-fast) var(--token-motion-ease-out);
-    overflow: hidden;
+    overflow: var(--button-overflow, hidden);
     letter-spacing: var(--token-letter-spacing-wide);
     line-height: var(--token-line-height-snug);
 
@@ -173,6 +173,19 @@
 
     &:active:not(:disabled):not([aria-disabled='true']) {
       transform: translateY(-1px) scale(1);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .button {
+      border: 1px solid ButtonText;
+      box-shadow: none;
+    }
+
+    .button:disabled,
+    .button[aria-disabled='true'] {
+      border-color: GrayText;
+      color: GrayText;
     }
   }
 </style>

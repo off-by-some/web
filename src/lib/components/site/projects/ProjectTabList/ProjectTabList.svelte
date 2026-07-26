@@ -89,11 +89,18 @@
 
 <style lang="scss">
   .project-tab-list {
+    --project-tab-list-paint-bleed: var(--token-space-2);
+    --project-tab-accent-color: transparent;
+    --project-tab-shadow: 0 0 0 transparent;
+
     display: flex;
     flex-direction: column;
     gap: var(--token-space-fluid-sm);
     inline-size: 100%;
     min-inline-size: 0;
+    margin: calc(var(--project-tab-list-paint-bleed) * -1);
+    padding: var(--project-tab-list-paint-bleed);
+    overflow: visible;
   }
 
   .project-tab-list__item {
@@ -104,9 +111,11 @@
     min-inline-size: 0;
     padding: var(--token-space-fluid-md) var(--token-space-fluid-lg);
     border: var(--token-border-default-small);
-    border-inline-start: 2px solid transparent;
     border-radius: var(--token-radius-lg);
     background: var(--token-surface-glass-subtle);
+    box-shadow:
+      inset 2px 0 0 var(--project-tab-accent-color),
+      var(--project-tab-shadow);
     color: inherit;
     cursor: pointer;
     text-align: start;
@@ -128,9 +137,11 @@
   }
 
   .project-tab-list__item[data-state='selected'] {
+    --project-tab-accent-color: var(--token-interactive-color);
+    --project-tab-shadow: 0 0 20px var(--token-interactive-glow);
+
     border-color: var(--token-interactive-color);
     background: var(--token-surface-glass-medium);
-    box-shadow: 0 0 20px var(--token-interactive-glow);
 
     .project-tab-list__name {
       color: var(--token-text-heading);

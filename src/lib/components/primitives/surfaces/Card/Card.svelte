@@ -51,7 +51,7 @@
     color: inherit;
     isolation: isolate;
     position: relative;
-    overflow: hidden;
+    overflow: var(--card-overflow, hidden);
     transition:
       transform var(--card-transition-duration, 0.4s) var(--token-motion-ease-out),
       border-color var(--card-transition-duration, 0.4s) var(--token-motion-ease-out),
@@ -90,6 +90,13 @@
     &:focus-visible {
       outline: var(--card-focus-outline, 2px solid var(--token-interactive-color));
       outline-offset: var(--card-focus-outline-offset, 2px);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .card {
+      border-color: CanvasText;
+      box-shadow: none;
     }
   }
 </style>

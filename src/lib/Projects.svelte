@@ -253,6 +253,7 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: var(--token-space-fluid-xl);
+    overflow: visible;
 
     @include motion.fade-in-up(projectsSectionEnter, 30px, 1s, 0.2s);
 
@@ -275,6 +276,7 @@
       inset-block-start: var(--token-space-fluid-2xl);
       display: block;
       min-inline-size: 0;
+      overflow: visible;
     }
   }
 
