@@ -232,7 +232,11 @@ $theme-defaults: (
   // Theme tokens are semantic product decisions. They turn reference values into
   // roles such as text, surfaces, borders, focus, shadows, gradients, and motion.
   theme: (
+      // Color roles define the product color language. Prefer these tokens in
+      // components over direct palette values so theme overrides stay coherent.
       color: (
+        // Page and section backdrops. This is the default dark canvas that
+        // surfaces, text, and effects are designed to sit on top of.
         background: (
           color: (
             dark: 1000,
@@ -240,6 +244,8 @@ $theme-defaults: (
           ),
         ),
 
+        // Semantic foreground colors for copy, headings, muted text, inverse
+        // text, and accent text. Use these for readability decisions.
         text: (
           color: (
             neutral: 0,
@@ -262,6 +268,9 @@ $theme-defaults: (
           attention: themes.reference('theme.color.attention.color', $step: 50),
         ),
 
+        // Primary action color. This covers clickable controls, links, focus
+        // affordances, active timeline state, and anything that says "you can
+        // interact with this."
         interactive: (
           color: (
             teal: 200,
@@ -281,6 +290,9 @@ $theme-defaults: (
           magnetic: themes.reference('theme.color.interactive.color', $alpha: 10%),
         ),
 
+        // Editorial accent color. This is for highlighted language, section
+        // accents, decorative emphasis, and supporting visual rhythm. It should
+        // draw attention without implying clickability.
         emphasis: (
           color: (
             magenta: 400,
@@ -289,6 +301,8 @@ $theme-defaults: (
           shadow: themes.reference('theme.color.emphasis.color', $alpha: 40%),
         ),
 
+        // Notice-me color. Use this sparingly for availability, notification,
+        // and priority cues where warmth should guide the eye.
         attention: (
           color: (
             gold: 250,
@@ -300,6 +314,8 @@ $theme-defaults: (
           ),
         ),
 
+        // Surface colors are layered containers, overlays, and glass effects.
+        // They define elevation/context without introducing new brand meaning.
         surface: (
           color: themes.reference('theme.color.background.color'),
           overlay: (
@@ -334,6 +350,8 @@ $theme-defaults: (
           ),
         ),
 
+        // Border colors express containment, hover/focus affordances, and
+        // neutral separation. Pair with theme.border for full border shorthands.
         border: (
           default: (
             grayscale: 100,
@@ -348,6 +366,8 @@ $theme-defaults: (
           ring: themes.reference('theme.color.interactive.ring'),
         ),
 
+        // Low-opacity color washes used inside chips, cards, panels, and
+        // hover layers. These are decorative fills, not text colors.
         tint: (
           primary: (
             rest: themes.reference('theme.color.interactive.color', $step: 50, $alpha: 25%),
@@ -363,6 +383,8 @@ $theme-defaults: (
           ),
         ),
 
+        // Feedback colors for success/warning/error states. These are
+        // status-specific and should not be repurposed as brand accents.
         status: (
           success: (
             color: themes.reference('reference.color.status.success'),
@@ -389,6 +411,8 @@ $theme-defaults: (
         ),
       ),
 
+      // Semantic opacity roles. Numeric opacity lives in reference.opacity;
+      // these names describe why transparency is being applied.
       opacity: (
         disabled: themes.reference('reference.opacity.60'),
         muted: themes.reference('reference.opacity.60'),
@@ -400,6 +424,9 @@ $theme-defaults: (
         ),
       ),
 
+      // Shared interactive state bundles. Use these when a component needs the
+      // complete visual language for hover, active, or focus rather than one
+      // isolated color.
       state: (
         hover: (
           glow: themes.reference('theme.color.interactive.color', $alpha: 15%),
@@ -420,6 +447,8 @@ $theme-defaults: (
         ),
       ),
 
+      // Full border declarations. These combine reference border widths with
+      // semantic border colors so components can request a complete stroke.
       border: (
         default: (
           small: (
@@ -494,6 +523,8 @@ $theme-defaults: (
         ),
       ),
 
+      // Elevation, glow, and text shadows. Shadows should come from here unless
+      // a component has a documented component-level shadow contract.
       shadow: (
         color: (
           grayscale: 950,
@@ -533,6 +564,8 @@ $theme-defaults: (
         ),
       ),
 
+      // Keyboard and accessibility focus treatment. Components can override
+      // offsets locally, but the outline color/weight should remain shared.
       focus: (
         outline:
           '#{themes.reference("reference.border-width.large")} solid #{themes.reference("theme.color.interactive.color")}',
@@ -543,6 +576,8 @@ $theme-defaults: (
         ),
       ),
 
+      // Semantic gradients for reusable motifs like brand text and neon frames.
+      // Feature-specific art direction belongs under feature.* instead.
       gradient: (
         heading: (
           'linear-gradient(' '135deg',
@@ -560,6 +595,9 @@ $theme-defaults: (
         ),
       ),
 
+      // Product-level motion semantics. Reference durations are raw timings;
+      // these roles describe how motion should feel in feedback, enter, and
+      // exit contexts.
       motion: (
         feedback: (
           press: themes.reference('reference.motion.duration.100'),
