@@ -521,7 +521,8 @@ $theme-defaults: (
     ),
 
     focus: (
-      outline: '#{themes.reference("reference.border-width.large")} solid #{themes.reference("theme.color.interactive.color")}',
+      outline:
+        '#{themes.reference("reference.border-width.large")} solid #{themes.reference("theme.color.interactive.color")}',
       offset: (
         sm: 2px,
         md: 3px,
@@ -685,26 +686,6 @@ $theme-defaults: (
   ),
 );
 
-$theme-overrides: () !default;
-$dark-mode-tokens: null !default;
-$theme: null !default;
-$theme-color-names: util.append-theme-color-names(
-  util.append-theme-color-names(util.theme-color-names($theme-defaults), $theme-overrides),
-  $dark-mode-tokens
-) !default;
-
-@if $theme == null {
-  @if $dark-mode-tokens == null {
-    $theme: util.merge-theme($theme-defaults, $theme-overrides, $theme-color-names);
-  } @else {
-    $theme: util.merge-theme(
-      $theme-defaults,
-      util.merge-theme($theme-overrides, $dark-mode-tokens, $theme-color-names),
-      $theme-color-names
-    );
-  }
-}
-
 :root {
-  @include themes.export-semantic-theme($theme, $prefix: 'token');
+  @include themes.export-semantic-theme($theme-defaults, $prefix: 'token');
 }
