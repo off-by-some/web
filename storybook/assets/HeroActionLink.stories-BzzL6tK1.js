@@ -1,9 +1,0 @@
-import{n as s,a as i,f as l,c,p,b as d}from"./iframe-NmQMUAFk.js";import{c as m,i as f,d as h}from"./create-runtime-stories-s97yaUQ7.js";import{H as r}from"./HeroActionLink-jSM0t2rm.js";import{h as u}from"./controls-B7FSozl-.js";import"./preload-helper-k3ZeA0S-.js";import"./Button-BeB0LDha.js";import"./svelte-element-DIVtkeEr.js";import"./attributes-Dugq6qa8.js";import"./class-Bw_OhP9U.js";import"./pressable-D8AtzM9Q.js";import"./paths-Bs9m8RIQ.js";const g=(o,e=s)=>{var t=k(),n=c(t);r(n,{get href(){return e().href},get label(){return e().label},get icon(){return e().icon},get shape(){return e().shape},onclick:()=>console.log("Hero action clicked")}),i(o,t)},b={title:"Library/Site/Hero/Action Link",component:r,render:g,tags:["autodocs"],args:{href:"#contact",label:"Let's build something great",icon:"arrow",shape:"label"},argTypes:{...u(["href","download","target","rel"]),label:{control:{type:"text"}},icon:{control:{type:"select"},options:["github","linkedin","download","arrow","star"]},shape:{control:{type:"select"},options:["circle","label"]}},parameters:{docs:{description:{component:"Reusable hero action link for circular social controls, resume download buttons, and text-arrow contact CTAs. This keeps the hero action language centralized instead of restyling each link separately."}}}},{Story:_}=h();var k=l('<div class="story-shell svelte-1wf3lfg"><!></div>');function a(o,e){p(e,!1),f(),_(o,{name:"Default",parameters:{__svelteCsf:{rawCode:`<div class="story-shell">
-  <HeroActionLink
-    href={args.href}
-    label={args.label}
-    icon={args.icon}
-    shape={args.shape}
-    onclick={() => console.log('Hero action clicked')}
-  />
-</div>`}}}),d()}a.__docgen={data:[],name:"HeroActionLink.stories.svelte"};const v=m(a,b),R=["Default"],z={...v.Default,tags:["svelte-csf-v5"]};export{z as Default,R as __namedExportsOrder,b as default};
