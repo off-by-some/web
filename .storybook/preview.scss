@@ -8,8 +8,8 @@ body,
 .sbdocs,
 .sbdocs-wrapper,
 .sbdocs-content {
-  background: var(--token-gradients-hero, #080a18) !important;
-  color: var(--token-text-primary, #f8fafc) !important;
+  background: var(--token-feature-hero-background, #080a18) !important;
+  color: var(--token-theme-color-text-primary, #f8fafc) !important;
 }
 
 .sbdocs-content {
@@ -31,13 +31,13 @@ body,
 .docblock-source,
 .docblock-code-toggle,
 .docblock-code-toggle--expanded {
-  background: var(--token-surface-glass-strong, rgba(255, 255, 255, 0.08)) !important;
-  color: var(--token-text-primary, #f8fafc) !important;
+  background: var(--token-theme-color-surface-glass-strong, rgba(255, 255, 255, 0.08)) !important;
+  color: var(--token-theme-color-text-primary, #f8fafc) !important;
 }
 
 .docblock-argstable table,
 .sbdocs table {
-  color: var(--token-text-dark, #080a18) !important;
+  color: var(--token-theme-color-text-dark, #080a18) !important;
 }
 
 .docblock-argstable thead th,
@@ -46,13 +46,13 @@ body,
 .docblock-argstable thead th *,
 .docblock-argstable-head th *,
 .sbdocs table thead th * {
-  color: var(--token-text-primary, #f8fafc) !important;
+  color: var(--token-theme-color-text-primary, #f8fafc) !important;
 }
 
 .docblock-argstable tbody td,
 .docblock-argstable-body td,
 .sbdocs table tbody td {
-  color: var(--token-text-dark, #080a18) !important;
+  color: var(--token-theme-color-text-dark, #080a18) !important;
 }
 
 .docblock-argstable-body td > span,
@@ -61,13 +61,13 @@ body,
 .docblock-argstable-body td .css-in3yi3,
 .docblock-argstable-body td .css-s7utv5,
 .docblock-argstable-body td .css-o1d7ko {
-  color: var(--token-text-dark, #080a18) !important;
+  color: var(--token-theme-color-text-dark, #080a18) !important;
 }
 
 .docblock-argstable tbody td code,
 .docblock-argstable-body td code,
 .sbdocs table tbody td code {
-  color: var(--token-text-dark, #080a18) !important;
+  color: var(--token-theme-color-text-dark, #080a18) !important;
 }
 
 .docblock-argstable-body td button:not(.css-d474as),
@@ -77,11 +77,11 @@ body,
 .docblock-argstable tbody td input,
 .docblock-argstable-body td input,
 .sbdocs table tbody td input {
-  color: var(--token-text-dark, #080a18) !important;
+  color: var(--token-theme-color-text-dark, #080a18) !important;
 }
 
 .docs-story {
-  border-radius: var(--token-radius-lg, 1rem);
+  border-radius: var(--token-reference-radius-lg, 1rem);
 }
 
 .section-docs-canvas {

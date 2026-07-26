@@ -13,7 +13,7 @@
     text = 'Available for new opportunities',
     className = '',
     entrance = false,
-    delay = 'var(--token-motion-delay-none)',
+    delay = 'var(--token-reference-motion-delay-none)',
   }: Props = $props();
 
   const classes = $derived(
@@ -37,10 +37,12 @@
   @use 'lib/components/primitives/motion' as motion;
 
   :global(.status-pill) {
-    --button-padding: var(--token-space-fluid-md) var(--token-space-fluid-lg);
-    --button-padding-md: var(--token-space-fluid-md) var(--token-space-fluid-xl);
-    --button-font-size: var(--token-font-size-sm);
-    --button-font-size-md: var(--token-font-size-base);
+    --button-padding: var(--token-reference-spacing-fluid-md)
+      var(--token-reference-spacing-fluid-lg);
+    --button-padding-md: var(--token-reference-spacing-fluid-md)
+      var(--token-reference-spacing-fluid-xl);
+    --button-font-size: var(--token-reference-typography-size-sm);
+    --button-font-size-md: var(--token-reference-typography-size-base);
     --button-secondary-hover-transform: translateY(-2px) scale(1.02);
 
     cursor: pointer;
@@ -50,19 +52,19 @@
     @include motion.fade-in-up(
       statusPillIn,
       30px,
-      var(--token-motion-duration-slow),
+      var(--token-reference-motion-duration-slow),
       var(--status-pill-delay)
     );
   }
 
   :global(.status-pill__indicator) {
-    --tone-dot-size: var(--token-size-3);
-    --tone-dot-glow-size: var(--token-blur-sm);
+    --tone-dot-size: var(--token-reference-size-3);
+    --tone-dot-glow-size: var(--token-reference-blur-sm);
   }
 
   :global(.status-pill:hover .status-pill__indicator) {
     transform: scale(1.2);
-    box-shadow: 0 0 var(--token-blur-sm) var(--token-attention-glow);
+    box-shadow: 0 0 var(--token-reference-blur-sm) var(--token-theme-color-attention-glow);
   }
 
   .status-pill__text {

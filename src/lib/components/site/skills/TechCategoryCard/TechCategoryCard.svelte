@@ -15,7 +15,7 @@
     title,
     level,
     technologies = [],
-    delay = 'var(--token-motion-delay-none)',
+    delay = 'var(--token-reference-motion-delay-none)',
     onSelectRequested,
   }: Props = $props();
 
@@ -133,36 +133,36 @@
   @use 'lib/components/primitives/motion' as motion;
 
   :global(.tech-category) {
-    --card-background: var(--token-surface-glass-strong);
-    --card-radius: var(--token-radius-lg);
-    --card-padding: var(--token-space-fluid-md);
+    --card-background: var(--token-theme-color-surface-glass-strong);
+    --card-radius: var(--token-reference-radius-lg);
+    --card-padding: var(--token-reference-spacing-fluid-md);
     --card-hover-transform: translateY(-4px) scale(1.02);
 
     cursor: pointer;
     display: flex;
     flex-direction: column;
-    gap: var(--token-space-fluid-md);
+    gap: var(--token-reference-spacing-fluid-md);
     text-align: left;
 
     @include motion.fade-in-up(
       fadeInUp,
       30px,
-      var(--token-motion-duration-slow),
+      var(--token-reference-motion-duration-slow),
       var(--tech-category-delay)
     );
 
     @media (min-width: $breakpoint-md) {
-      --card-padding: var(--token-space-fluid-xl);
+      --card-padding: var(--token-reference-spacing-fluid-xl);
     }
   }
 
   :global(.tech-category:hover) .category-title {
-    color: var(--token-text-heading);
+    color: var(--token-theme-color-text-heading);
   }
 
   :global(.tech-category:hover) .tech-tag {
-    background: var(--token-surface-glass-strong);
-    color: var(--token-text-primary);
+    background: var(--token-theme-color-surface-glass-strong);
+    color: var(--token-theme-color-text-primary);
     transform: scale(1.05);
   }
 
@@ -174,26 +174,27 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--token-space-fluid-xs);
+    gap: var(--token-reference-spacing-fluid-xs);
   }
 
   .category-title {
-    font-size: var(--token-font-size-base);
-    font-weight: var(--token-font-weight-semibold);
-    color: var(--token-text-overlay);
-    letter-spacing: var(--token-letter-spacing-wide);
-    line-height: var(--token-line-height-snug);
-    transition: color var(--token-motion-duration-normal) var(--token-motion-ease-out);
+    font-size: var(--token-reference-typography-size-base);
+    font-weight: var(--token-reference-typography-weight-semibold);
+    color: var(--token-theme-color-text-overlay);
+    letter-spacing: var(--token-reference-typography-letter-spacing-wide);
+    line-height: var(--token-reference-typography-line-height-snug);
+    transition: color var(--token-reference-motion-duration-normal)
+      var(--token-reference-motion-easing-out);
     flex: 1;
     min-inline-size: 0;
 
     @media (min-width: $breakpoint-lg) {
-      font-size: var(--token-font-size-lg);
+      font-size: var(--token-reference-typography-size-lg);
     }
   }
 
   :global(.mastery-indicator) {
-    --tone-dot-size: var(--token-size-4);
+    --tone-dot-size: var(--token-reference-size-4);
 
     flex-shrink: 0;
   }
@@ -203,35 +204,38 @@
     flex: 1;
     flex-wrap: wrap;
     align-content: center;
-    gap: var(--token-space-2);
+    gap: var(--token-reference-spacing-2);
   }
 
   .tech-tag {
-    padding: var(--token-space-1) var(--token-space-3);
-    background: var(--token-surface-glass-strong);
-    border: var(--token-border-default-small);
-    border-radius: var(--token-radius-full);
-    font-size: var(--token-font-size-xs);
-    font-weight: var(--token-font-weight-medium);
-    color: var(--token-text-secondary);
+    padding: var(--token-reference-spacing-1) var(--token-reference-spacing-3);
+    background: var(--token-theme-color-surface-glass-strong);
+    border: var(--token-theme-border-default-small);
+    border-radius: var(--token-reference-radius-full);
+    font-size: var(--token-reference-typography-size-xs);
+    font-weight: var(--token-reference-typography-weight-medium);
+    color: var(--token-theme-color-text-secondary);
     transition:
-      background-color var(--token-motion-duration-normal) var(--token-motion-ease-out),
-      border-color var(--token-motion-duration-normal) var(--token-motion-ease-out),
-      color var(--token-motion-duration-normal) var(--token-motion-ease-out),
-      transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
+      background-color var(--token-reference-motion-duration-normal)
+        var(--token-reference-motion-easing-out),
+      border-color var(--token-reference-motion-duration-normal)
+        var(--token-reference-motion-easing-out),
+      color var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out),
+      transform var(--token-reference-motion-duration-normal)
+        var(--token-reference-motion-easing-out);
     white-space: nowrap;
     flex-shrink: 0;
 
     &--overflow {
-      background: var(--token-surface-glass-medium);
-      color: var(--token-text-tertiary);
-      font-weight: var(--token-font-weight-semibold);
+      background: var(--token-theme-color-surface-glass-medium);
+      color: var(--token-theme-color-text-tertiary);
+      font-weight: var(--token-reference-typography-weight-semibold);
       border-style: dashed;
     }
 
     @media (min-width: $breakpoint-md) {
-      padding: var(--token-space-2) var(--token-space-3);
-      font-size: var(--token-font-size-sm);
+      padding: var(--token-reference-spacing-2) var(--token-reference-spacing-3);
+      font-size: var(--token-reference-typography-size-sm);
     }
   }
 </style>

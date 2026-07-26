@@ -38,64 +38,69 @@
   :global(.method-card) {
     --card-background: linear-gradient(
       135deg,
-      var(--token-surface-glass-strong) 0%,
-      var(--token-surface-glass-medium) 100%
+      var(--token-theme-color-surface-glass-strong) 0%,
+      var(--token-theme-color-surface-glass-medium) 100%
     );
     --card-iridescent-background: linear-gradient(
       135deg,
-      var(--token-tint-overlay-subtle) 0%,
+      var(--token-theme-color-tint-overlay-subtle) 0%,
       transparent 50%
     );
-    --card-padding: var(--token-space-fluid-lg);
-    --card-radius: var(--token-radius-lg);
-    --card-shadow: var(--token-shadow-light);
+    --card-padding: var(--token-reference-spacing-fluid-lg);
+    --card-radius: var(--token-reference-radius-lg);
+    --card-shadow: var(--token-theme-shadow-light);
     --card-hover-shadow:
-      var(--token-shadow-default), 0 0 var(--token-blur-md) var(--token-shadow-glow-subtle);
+      var(--token-theme-shadow-default),
+      0 0 var(--token-reference-blur-md) var(--token-theme-shadow-glow-subtle);
     --card-hover-transform: translateY(-3px) scale(1.02);
     --card-active-transform: translateY(-1px) scale(1);
-    --card-focus-outline: var(--token-border-size-accent) solid var(--token-interactive-color);
+    --card-focus-outline: var(--token-reference-border-width-accent) solid
+      var(--token-theme-color-interactive-color);
 
     align-items: center;
     display: flex;
-    gap: var(--token-space-fluid-lg);
+    gap: var(--token-reference-spacing-fluid-lg);
     text-decoration: none;
 
     @media (min-width: $breakpoint-md) {
-      --card-padding: var(--token-space-fluid-xl);
-      --card-radius: var(--token-radius-xl);
+      --card-padding: var(--token-reference-spacing-fluid-xl);
+      --card-radius: var(--token-reference-radius-xl);
 
-      gap: var(--token-space-fluid-xl);
+      gap: var(--token-reference-spacing-fluid-xl);
     }
 
     @media (max-width: #{$breakpoint-sm}) {
       flex-direction: column;
-      gap: var(--token-space-fluid-md);
+      gap: var(--token-reference-spacing-fluid-md);
       text-align: center;
     }
   }
 
   :global(.method-card:hover .method__icon) {
-    --icon-tile-image-filter: var(--token-icon-filter-hover, var(--token-icon-filter, none));
+    --icon-tile-image-filter: var(
+      --contact-method-icon-filter-hover,
+      var(--contact-method-icon-filter, none)
+    );
     --icon-tile-image-transform: scale(1.1);
 
     transform: scale(1.05);
-    box-shadow: var(--token-shadow-default);
+    box-shadow: var(--token-theme-shadow-default);
   }
 
   :global(.method__icon) {
-    --icon-tile-size: var(--token-size-12);
+    --icon-tile-size: var(--token-reference-size-12);
     --icon-tile-padding: 0;
     --icon-tile-image-size: var(--icon-tile-size);
-    --icon-tile-background: var(--token-surface-glass-medium);
-    --icon-tile-radius: var(--token-radius-lg);
-    --icon-tile-shadow: var(--token-shadow-light);
-    --icon-tile-z-index: var(--token-z-raised);
-    --icon-tile-image-filter: var(--token-icon-filter, none);
+    --icon-tile-background: var(--token-theme-color-surface-glass-medium);
+    --icon-tile-radius: var(--token-reference-radius-lg);
+    --icon-tile-shadow: var(--token-theme-shadow-light);
+    --icon-tile-z-index: var(--token-reference-layer-raised);
+    --icon-tile-image-filter: var(--contact-method-icon-filter, none);
     --icon-tile-overflow: hidden;
 
     @media (min-width: $breakpoint-md) {
       --icon-tile-size: 4rem;
-      --icon-tile-radius: var(--token-radius-xl);
+      --icon-tile-radius: var(--token-reference-radius-xl);
     }
   }
 
@@ -103,51 +108,51 @@
     flex: 1;
     min-inline-size: 0;
     position: relative;
-    z-index: var(--token-z-raised);
+    z-index: var(--token-reference-layer-raised);
   }
 
   .method__label {
-    font-size: var(--token-font-size-sm);
-    font-weight: var(--token-font-weight-semibold);
-    color: var(--token-text-primary);
-    margin-block-end: var(--token-space-1);
-    letter-spacing: var(--token-letter-spacing-normal);
-    line-height: var(--token-line-height-snug);
+    font-size: var(--token-reference-typography-size-sm);
+    font-weight: var(--token-reference-typography-weight-semibold);
+    color: var(--token-theme-color-text-primary);
+    margin-block-end: var(--token-reference-spacing-1);
+    letter-spacing: var(--token-reference-typography-letter-spacing-normal);
+    line-height: var(--token-reference-typography-line-height-snug);
 
     @media (min-width: $breakpoint-md) {
-      font-size: var(--token-font-size-base);
-      line-height: var(--token-line-height-normal);
+      font-size: var(--token-reference-typography-size-base);
+      line-height: var(--token-reference-typography-line-height-normal);
     }
 
     @media (min-width: $breakpoint-lg) {
-      font-size: var(--token-font-size-lg);
-      letter-spacing: var(--token-letter-spacing-tight);
+      font-size: var(--token-reference-typography-size-lg);
+      letter-spacing: var(--token-reference-typography-letter-spacing-tight);
     }
   }
 
   .method__value {
-    font-size: var(--token-font-size-sm);
-    font-weight: var(--token-font-weight-medium);
-    color: var(--token-text-brand);
-    margin-block-end: var(--token-space-2);
-    letter-spacing: var(--token-letter-spacing-normal);
-    line-height: var(--token-line-height-snug);
+    font-size: var(--token-reference-typography-size-sm);
+    font-weight: var(--token-reference-typography-weight-medium);
+    color: var(--token-theme-color-text-brand);
+    margin-block-end: var(--token-reference-spacing-2);
+    letter-spacing: var(--token-reference-typography-letter-spacing-normal);
+    line-height: var(--token-reference-typography-line-height-snug);
     word-break: break-word;
 
     @media (min-width: $breakpoint-md) {
-      font-size: var(--token-font-size-base);
+      font-size: var(--token-reference-typography-size-base);
     }
   }
 
   .method__description {
-    font-size: var(--token-font-size-xs);
-    color: var(--token-text-tertiary);
-    line-height: var(--token-line-height-normal);
-    letter-spacing: var(--token-letter-spacing-wide);
+    font-size: var(--token-reference-typography-size-xs);
+    color: var(--token-theme-color-text-tertiary);
+    line-height: var(--token-reference-typography-line-height-normal);
+    letter-spacing: var(--token-reference-typography-letter-spacing-wide);
     display: block;
 
     @media (min-width: $breakpoint-md) {
-      font-size: var(--token-font-size-sm);
+      font-size: var(--token-reference-typography-size-sm);
     }
   }
 </style>

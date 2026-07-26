@@ -2,28 +2,28 @@
 
 $tones: (
   expert: (
-    color: var(--token-state-mastery-expert),
-    glow: var(--token-state-mastery-glow),
+    color: var(--token-feature-mastery-level-expert),
+    glow: var(--token-feature-mastery-glow),
   ),
   advanced: (
-    color: var(--token-status-advanced),
+    color: var(--token-feature-mastery-level-advanced),
     glow: rgba(99, 102, 241, 0.3),
   ),
   proficient: (
-    color: var(--token-status-proficient),
+    color: var(--token-feature-mastery-level-proficient),
     glow: rgba(245, 158, 11, 0.3),
   ),
   learning: (
-    color: var(--token-status-learning),
+    color: var(--token-feature-mastery-level-learning),
     glow: rgba(6, 182, 212, 0.3),
   ),
   available: (
-    color: var(--token-attention-color),
-    glow: var(--token-attention-glow),
+    color: var(--token-theme-color-attention-color),
+    glow: var(--token-theme-color-attention-glow),
   ),
   interactive: (
-    color: var(--token-interactive-color),
-    glow: var(--token-interactive-glow),
+    color: var(--token-theme-color-interactive-color),
+    glow: var(--token-theme-color-interactive-glow),
   ),
 );
 

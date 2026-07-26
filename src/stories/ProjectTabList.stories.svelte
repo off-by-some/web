@@ -57,7 +57,7 @@
 <style lang="scss">
   .story-tab-shell {
     inline-size: min(100%, 22rem);
-    color: var(--token-text-primary);
-    font-family: var(--token-font-family-sans);
+    color: var(--token-theme-color-text-primary);
+    font-family: var(--token-reference-typography-family-sans);
   }
 </style>

@@ -28,7 +28,11 @@
 
   :global(.section-header) {
     text-align: center;
-    @include motion.fade-in-up(sectionHeaderIn, 30px, var(--token-motion-duration-entrance));
+    @include motion.fade-in-up(
+      sectionHeaderIn,
+      30px,
+      var(--token-reference-motion-duration-entrance)
+    );
   }
 
   .section-header__content {
@@ -37,43 +41,43 @@
   }
 
   .header__title {
-    font-size: var(--token-font-size-4xl);
-    font-weight: var(--token-font-weight-bold);
-    line-height: var(--token-line-height-tight);
-    color: var(--token-text-heading);
-    margin-block-end: var(--token-space-fluid-lg);
-    letter-spacing: var(--token-letter-spacing-tight);
-    background: var(--token-gradients-heading);
+    font-size: var(--token-reference-typography-size-4xl);
+    font-weight: var(--token-reference-typography-weight-bold);
+    line-height: var(--token-reference-typography-line-height-tight);
+    color: var(--token-theme-color-text-heading);
+    margin-block-end: var(--token-reference-spacing-fluid-lg);
+    letter-spacing: var(--token-reference-typography-letter-spacing-tight);
+    background: var(--token-theme-gradient-heading);
     background-size: 200% 200%;
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: textShimmer
-      var(--section-header-shimmer-duration, var(--token-motion-duration-ambient))
-      var(--token-motion-ease-out) infinite;
+      var(--section-header-shimmer-duration, var(--token-reference-motion-duration-ambient))
+      var(--token-reference-motion-easing-out) infinite;
 
     @media (min-width: $breakpoint-md) {
-      font-size: var(--token-font-size-5xl);
+      font-size: var(--token-reference-typography-size-5xl);
     }
 
     @media (min-width: $breakpoint-lg) {
-      font-size: var(--token-font-size-6xl);
+      font-size: var(--token-reference-typography-size-6xl);
     }
   }
 
   .header__subtitle {
-    font-size: var(--token-font-size-lg);
-    color: var(--token-text-secondary);
-    line-height: var(--token-line-height-relaxed);
+    font-size: var(--token-reference-typography-size-lg);
+    color: var(--token-theme-color-text-secondary);
+    line-height: var(--token-reference-typography-line-height-relaxed);
     max-inline-size: 70ch;
     margin: 0 auto;
 
     @media (min-width: $breakpoint-md) {
-      font-size: var(--token-font-size-xl);
+      font-size: var(--token-reference-typography-size-xl);
     }
 
     @media (min-width: $breakpoint-lg) {
-      font-size: var(--token-font-size-2xl);
+      font-size: var(--token-reference-typography-size-2xl);
     }
   }
 
@@ -101,9 +105,9 @@
   @media (prefers-contrast: high) {
     .header__title {
       text-shadow: none;
-      font-weight: var(--token-font-weight-bold);
-      color: var(--token-text-primary);
-      -webkit-text-fill-color: var(--token-text-primary);
+      font-weight: var(--token-reference-typography-weight-bold);
+      color: var(--token-theme-color-text-primary);
+      -webkit-text-fill-color: var(--token-theme-color-text-primary);
     }
   }
 

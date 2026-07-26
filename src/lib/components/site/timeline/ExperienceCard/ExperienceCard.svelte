@@ -28,7 +28,7 @@
   let {
     experience,
     index,
-    delay = 'var(--token-motion-delay-none)',
+    delay = 'var(--token-reference-motion-delay-none)',
     active = false,
     expanded = false,
     detailsClickable = false,
@@ -201,27 +201,27 @@
 
   .timeline-item {
     position: relative;
-    margin-block-end: var(--token-space-fluid-4xl);
-    padding-inline-start: var(--token-space-fluid-5xl);
+    margin-block-end: var(--token-reference-spacing-fluid-4xl);
+    padding-inline-start: var(--token-reference-spacing-fluid-5xl);
 
     @include motion.fade-in-up(
       timelineItemFadeIn,
       40px,
-      var(--token-motion-duration-narrative),
+      var(--token-reference-motion-duration-narrative),
       var(--timeline-item-delay),
       forwards
     );
 
     @media (min-width: $breakpoint-md) {
-      padding-inline-start: var(--token-space-fluid-6xl);
+      padding-inline-start: var(--token-reference-spacing-fluid-6xl);
     }
 
     @media (min-width: $breakpoint-lg) {
       display: grid;
       grid-template-columns: 1fr auto 1fr;
-      gap: var(--token-space-fluid-2xl);
+      gap: var(--token-reference-spacing-fluid-2xl);
       padding-inline-start: 0;
-      margin-block-end: var(--token-space-fluid-5xl);
+      margin-block-end: var(--token-reference-spacing-fluid-5xl);
 
       &--left :global(.experience-card) {
         grid-column: 1;
@@ -240,38 +240,43 @@
   .timeline-marker {
     position: absolute;
     inset-inline-start: 0;
-    inset-block-start: var(--token-space-fluid-xl);
+    inset-block-start: var(--token-reference-spacing-fluid-xl);
     display: flex;
     flex-direction: column;
     align-items: center;
     z-index: 2;
 
     @media (min-width: $breakpoint-md) {
-      inset-inline-start: var(--token-space-fluid-sm);
+      inset-inline-start: var(--token-reference-spacing-fluid-sm);
     }
 
     @media (min-width: $breakpoint-lg) {
       grid-column: 2;
       position: relative;
       inset-inline-start: auto;
-      inset-block-start: var(--token-space-fluid-2xl);
+      inset-block-start: var(--token-reference-spacing-fluid-2xl);
     }
   }
 
   .timeline-dot {
     inline-size: 1rem;
     block-size: 1rem;
-    border-radius: var(--token-radius-full);
-    background: var(--token-surface-glass-strong);
-    border: var(--token-border-size-large) solid var(--token-border-color-default);
+    border-radius: var(--token-reference-radius-full);
+    background: var(--token-theme-color-surface-glass-strong);
+    border: var(--token-reference-border-width-large) solid var(--token-theme-color-border-default);
     transition:
-      background-color var(--token-motion-duration-emphasis) var(--token-motion-ease-out),
-      border-color var(--token-motion-duration-emphasis) var(--token-motion-ease-out),
-      box-shadow var(--token-motion-duration-emphasis) var(--token-motion-ease-out),
-      opacity var(--token-motion-duration-emphasis) var(--token-motion-ease-out),
-      transform var(--token-motion-duration-emphasis) var(--token-motion-ease-out);
+      background-color var(--token-reference-motion-duration-emphasis)
+        var(--token-reference-motion-easing-out),
+      border-color var(--token-reference-motion-duration-emphasis)
+        var(--token-reference-motion-easing-out),
+      box-shadow var(--token-reference-motion-duration-emphasis)
+        var(--token-reference-motion-easing-out),
+      opacity var(--token-reference-motion-duration-emphasis)
+        var(--token-reference-motion-easing-out),
+      transform var(--token-reference-motion-duration-emphasis)
+        var(--token-reference-motion-easing-out);
     opacity: 0.6;
-    backdrop-filter: blur(var(--token-blur-sm));
+    backdrop-filter: blur(var(--token-reference-blur-sm));
 
     @media (min-width: $breakpoint-md) {
       inline-size: 1.25rem;
@@ -284,27 +289,27 @@
     }
 
     .timeline-item--active & {
-      background: var(--token-interactive-color);
-      border-color: var(--token-interactive-color);
+      background: var(--token-theme-color-interactive-color);
+      border-color: var(--token-theme-color-interactive-color);
       opacity: 1;
       transform: scale(1.2);
-      box-shadow: 0 0 var(--token-blur-md) var(--token-interactive-glow);
+      box-shadow: 0 0 var(--token-reference-blur-md) var(--token-theme-color-interactive-glow);
     }
   }
 
   .timeline-date {
-    margin-block-start: var(--token-space-fluid-sm);
-    font-size: var(--token-font-size-xs);
-    font-weight: var(--token-font-weight-semibold);
-    color: var(--token-text-tertiary);
+    margin-block-start: var(--token-reference-spacing-fluid-sm);
+    font-size: var(--token-reference-typography-size-xs);
+    font-weight: var(--token-reference-typography-weight-semibold);
+    color: var(--token-theme-color-text-tertiary);
     text-transform: uppercase;
-    letter-spacing: var(--token-letter-spacing-widest);
+    letter-spacing: var(--token-reference-typography-letter-spacing-widest);
     white-space: nowrap;
-    background: var(--token-surface-glass-strong);
-    padding: var(--token-space-fluid-xs) var(--token-space-fluid-sm);
-    border-radius: var(--token-radius-sm);
-    border: var(--token-border-default-small);
-    backdrop-filter: blur(var(--token-blur-lg));
+    background: var(--token-theme-color-surface-glass-strong);
+    padding: var(--token-reference-spacing-fluid-xs) var(--token-reference-spacing-fluid-sm);
+    border-radius: var(--token-reference-radius-sm);
+    border: var(--token-theme-border-default-small);
+    backdrop-filter: blur(var(--token-reference-blur-lg));
 
     @media (max-width: calc($breakpoint-lg - 1px)) {
       display: none;
@@ -312,7 +317,7 @@
   }
 
   :global(.experience-card) {
-    --card-padding: var(--token-space-fluid-xl);
+    --card-padding: var(--token-reference-spacing-fluid-xl);
     --card-hover-transform: translateY(-4px) scale(1.01);
     --card-hover-iridescent-opacity: 0.6;
 
@@ -320,11 +325,11 @@
     text-align: left;
 
     @media (min-width: $breakpoint-md) {
-      --card-padding: var(--token-space-fluid-2xl);
+      --card-padding: var(--token-reference-spacing-fluid-2xl);
     }
 
     @media (min-width: $breakpoint-lg) {
-      --card-padding: var(--token-space-fluid-3xl);
+      --card-padding: var(--token-reference-spacing-fluid-3xl);
     }
   }
 
@@ -334,39 +339,40 @@
   }
 
   .timeline-item--active :global(.experience-card) {
-    --card-hover-shadow: var(--token-shadow-elevated), 0 0 40px var(--token-interactive-glow);
+    --card-hover-shadow:
+      var(--token-theme-shadow-elevated), 0 0 40px var(--token-theme-color-interactive-glow);
     --card-hover-iridescent-opacity: 0.8;
 
-    border-color: var(--token-interactive-color);
+    border-color: var(--token-theme-color-interactive-color);
     box-shadow:
-      var(--token-shadow-elevated),
-      0 0 30px var(--token-interactive-glow);
+      var(--token-theme-shadow-elevated),
+      0 0 30px var(--token-theme-color-interactive-glow);
   }
 
   .timeline-item--expanded :global(.experience-card) {
     box-shadow:
-      var(--token-shadow-elevated),
-      0 0 25px var(--token-shadow-glow-subtle);
+      var(--token-theme-shadow-elevated),
+      0 0 25px var(--token-theme-shadow-glow-subtle);
   }
 
   .card-header {
     display: flex;
     align-items: flex-start;
-    gap: var(--token-space-fluid-lg);
-    margin-block-end: var(--token-space-fluid-lg);
+    gap: var(--token-reference-spacing-fluid-lg);
+    margin-block-end: var(--token-reference-spacing-fluid-lg);
     position: relative;
     z-index: 1;
 
     @media (min-width: $breakpoint-md) {
-      gap: var(--token-space-fluid-xl);
+      gap: var(--token-reference-spacing-fluid-xl);
     }
   }
 
   .card-header :global(.card-logo) {
     --icon-tile-size: 3.5rem;
-    --icon-tile-padding: var(--token-space-2);
-    --icon-tile-background: var(--token-surface-color);
-    --icon-tile-radius: var(--token-radius-lg);
+    --icon-tile-padding: var(--token-reference-spacing-2);
+    --icon-tile-background: var(--token-theme-color-surface-color);
+    --icon-tile-radius: var(--token-reference-radius-lg);
     --icon-tile-image-filter: grayscale(0.2);
   }
 
@@ -386,74 +392,78 @@
   }
 
   .card-title {
-    font-size: var(--token-font-size-lg);
-    font-weight: var(--token-font-weight-semibold);
-    color: var(--token-text-primary);
-    margin-block-end: var(--token-space-fluid-xs);
-    line-height: var(--token-line-height-snug);
+    font-size: var(--token-reference-typography-size-lg);
+    font-weight: var(--token-reference-typography-weight-semibold);
+    color: var(--token-theme-color-text-primary);
+    margin-block-end: var(--token-reference-spacing-fluid-xs);
+    line-height: var(--token-reference-typography-line-height-snug);
 
     @media (min-width: $breakpoint-md) {
-      font-size: var(--token-font-size-xl);
+      font-size: var(--token-reference-typography-size-xl);
     }
 
     @media (min-width: $breakpoint-lg) {
-      font-size: var(--token-font-size-2xl);
+      font-size: var(--token-reference-typography-size-2xl);
     }
   }
 
   .card-company {
-    font-size: var(--token-font-size-base);
-    font-weight: var(--token-font-weight-medium);
-    color: var(--token-text-emphasis-default);
-    margin-block-end: var(--token-space-fluid-xs);
+    font-size: var(--token-reference-typography-size-base);
+    font-weight: var(--token-reference-typography-weight-medium);
+    color: var(--token-theme-color-text-emphasis-default);
+    margin-block-end: var(--token-reference-spacing-fluid-xs);
 
     @media (min-width: $breakpoint-md) {
-      font-size: var(--token-font-size-lg);
+      font-size: var(--token-reference-typography-size-lg);
     }
   }
 
   .card-period {
-    font-size: var(--token-font-size-sm);
-    color: var(--token-text-tertiary);
-    line-height: var(--token-line-height-relaxed);
+    font-size: var(--token-reference-typography-size-sm);
+    color: var(--token-theme-color-text-tertiary);
+    line-height: var(--token-reference-typography-line-height-relaxed);
 
     @media (min-width: $breakpoint-md) {
-      font-size: var(--token-font-size-base);
+      font-size: var(--token-reference-typography-size-base);
     }
   }
 
   .expand-button {
-    background: var(--token-surface-glass-strong);
-    border: var(--token-border-default-small);
-    border-radius: var(--token-radius-full);
-    padding: var(--token-space-fluid-sm) var(--token-space-fluid-lg);
-    font-size: var(--token-font-size-sm);
-    font-weight: var(--token-font-weight-medium);
-    color: var(--token-text-secondary);
+    background: var(--token-theme-color-surface-glass-strong);
+    border: var(--token-theme-border-default-small);
+    border-radius: var(--token-reference-radius-full);
+    padding: var(--token-reference-spacing-fluid-sm) var(--token-reference-spacing-fluid-lg);
+    font-size: var(--token-reference-typography-size-sm);
+    font-weight: var(--token-reference-typography-weight-medium);
+    color: var(--token-theme-color-text-secondary);
     cursor: pointer;
     transition:
-      background-color var(--token-motion-duration-normal) var(--token-motion-ease-out),
-      border-color var(--token-motion-duration-normal) var(--token-motion-ease-out),
-      box-shadow var(--token-motion-duration-normal) var(--token-motion-ease-out),
-      color var(--token-motion-duration-normal) var(--token-motion-ease-out),
-      transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
-    backdrop-filter: blur(var(--token-blur-lg));
+      background-color var(--token-reference-motion-duration-normal)
+        var(--token-reference-motion-easing-out),
+      border-color var(--token-reference-motion-duration-normal)
+        var(--token-reference-motion-easing-out),
+      box-shadow var(--token-reference-motion-duration-normal)
+        var(--token-reference-motion-easing-out),
+      color var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out),
+      transform var(--token-reference-motion-duration-normal)
+        var(--token-reference-motion-easing-out);
+    backdrop-filter: blur(var(--token-reference-blur-lg));
     display: flex;
     align-items: center;
-    gap: var(--token-space-fluid-xs);
+    gap: var(--token-reference-spacing-fluid-xs);
     flex-shrink: 0;
 
     &:hover {
-      background: var(--token-interactive-color);
-      color: var(--token-text-dark);
+      background: var(--token-theme-color-interactive-color);
+      color: var(--token-theme-color-text-dark);
       transform: translateY(-2px) scale(1.05);
-      border-color: var(--token-interactive-color);
-      box-shadow: 0 0 var(--token-blur-sm) var(--token-interactive-glow);
+      border-color: var(--token-theme-color-interactive-color);
+      box-shadow: 0 0 var(--token-reference-blur-sm) var(--token-theme-color-interactive-glow);
     }
 
     &:focus {
-      outline: var(--token-focus-outline);
-      outline-offset: var(--token-focus-offset-sm);
+      outline: var(--token-theme-focus-outline);
+      outline-offset: var(--token-theme-focus-offset-sm);
     }
 
     .timeline-item--expanded & {
@@ -463,8 +473,8 @@
     }
 
     @media (max-width: calc($breakpoint-sm - 1px)) {
-      padding: var(--token-space-2);
-      border-radius: var(--token-radius-full);
+      padding: var(--token-reference-spacing-2);
+      border-radius: var(--token-reference-radius-full);
       min-inline-size: 2.5rem;
       block-size: 2.5rem;
       justify-content: center;
@@ -476,49 +486,52 @@
   }
 
   .expand-button__icon {
-    transition: transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
+    transition: transform var(--token-reference-motion-duration-normal)
+      var(--token-reference-motion-easing-out);
     flex-shrink: 0;
   }
 
   .card-summary {
-    font-size: var(--token-font-size-base);
-    line-height: var(--token-line-height-relaxed);
-    color: var(--token-text-secondary);
-    margin-block-end: var(--token-space-fluid-lg);
+    font-size: var(--token-reference-typography-size-base);
+    line-height: var(--token-reference-typography-line-height-relaxed);
+    color: var(--token-theme-color-text-secondary);
+    margin-block-end: var(--token-reference-spacing-fluid-lg);
     position: relative;
     z-index: 1;
 
     @media (min-width: $breakpoint-md) {
-      font-size: var(--token-font-size-lg);
+      font-size: var(--token-reference-typography-size-lg);
     }
   }
 
   .highlight-link {
-    color: var(--token-interactive-color);
+    color: var(--token-theme-color-interactive-color);
     text-decoration: underline;
     text-decoration-color: transparent;
     text-underline-offset: 2px;
     transition:
-      color var(--token-motion-duration-fast) var(--token-motion-ease-out),
-      text-decoration-color var(--token-motion-duration-fast) var(--token-motion-ease-out);
-    font-weight: var(--token-font-weight-medium);
+      color var(--token-reference-motion-duration-fast) var(--token-reference-motion-easing-out),
+      text-decoration-color var(--token-reference-motion-duration-fast)
+        var(--token-reference-motion-easing-out);
+    font-weight: var(--token-reference-typography-weight-medium);
 
     &:hover {
-      color: var(--token-interactive-hover);
-      text-decoration-color: var(--token-interactive-hover);
+      color: var(--token-theme-color-interactive-hover);
+      text-decoration-color: var(--token-theme-color-interactive-hover);
     }
 
     &:focus {
-      outline: var(--token-focus-outline);
-      outline-offset: var(--token-focus-offset-sm);
-      border-radius: var(--token-radius-xs);
+      outline: var(--token-theme-focus-outline);
+      outline-offset: var(--token-theme-focus-offset-sm);
+      border-radius: var(--token-reference-radius-xs);
     }
   }
 
   .card-details {
     max-block-size: 0;
     overflow: hidden;
-    transition: max-block-size var(--token-motion-duration-emphasis) var(--token-motion-ease-out);
+    transition: max-block-size var(--token-reference-motion-duration-emphasis)
+      var(--token-reference-motion-easing-out);
     position: relative;
     z-index: 1;
 
@@ -528,28 +541,28 @@
   }
 
   :global(.highlights) {
-    --card-background: var(--token-surface-glass-strong);
-    --card-radius: var(--token-radius-lg);
-    --card-padding: var(--token-space-fluid-lg);
+    --card-background: var(--token-theme-color-surface-glass-strong);
+    --card-radius: var(--token-reference-radius-lg);
+    --card-padding: var(--token-reference-spacing-fluid-lg);
     --card-hover-transform: none;
     --card-hover-iridescent-opacity: 0.3;
 
-    margin-block-end: var(--token-space-fluid-lg);
+    margin-block-end: var(--token-reference-spacing-fluid-lg);
 
     @media (min-width: $breakpoint-md) {
-      --card-padding: var(--token-space-fluid-xl);
+      --card-padding: var(--token-reference-spacing-fluid-xl);
     }
   }
 
   .highlights__title {
-    font-size: var(--token-font-size-base);
-    font-weight: var(--token-font-weight-semibold);
-    color: var(--token-text-primary);
-    margin-block-end: var(--token-space-fluid-md);
-    line-height: var(--token-line-height-snug);
+    font-size: var(--token-reference-typography-size-base);
+    font-weight: var(--token-reference-typography-weight-semibold);
+    color: var(--token-theme-color-text-primary);
+    margin-block-end: var(--token-reference-spacing-fluid-md);
+    line-height: var(--token-reference-typography-line-height-snug);
 
     @media (min-width: $breakpoint-md) {
-      font-size: var(--token-font-size-lg);
+      font-size: var(--token-reference-typography-size-lg);
     }
   }
 
@@ -561,18 +574,18 @@
 
   .highlights__item {
     position: relative;
-    padding-inline-start: var(--token-space-fluid-lg);
-    margin-block-end: var(--token-space-fluid-sm);
-    line-height: var(--token-line-height-relaxed);
-    color: var(--token-text-secondary);
-    font-size: var(--token-font-size-sm);
+    padding-inline-start: var(--token-reference-spacing-fluid-lg);
+    margin-block-end: var(--token-reference-spacing-fluid-sm);
+    line-height: var(--token-reference-typography-line-height-relaxed);
+    color: var(--token-theme-color-text-secondary);
+    font-size: var(--token-reference-typography-size-sm);
 
     &::before {
       content: '✓';
       position: absolute;
       inset-inline-start: 0;
-      color: var(--token-text-emphasis-default);
-      font-weight: var(--token-font-weight-semibold);
+      color: var(--token-theme-color-text-emphasis-default);
+      font-weight: var(--token-reference-typography-weight-semibold);
     }
 
     &:last-child {
@@ -580,46 +593,48 @@
     }
 
     @media (min-width: $breakpoint-md) {
-      font-size: var(--token-font-size-base);
+      font-size: var(--token-reference-typography-size-base);
     }
   }
 
   .skills {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--token-space-fluid-sm);
+    gap: var(--token-reference-spacing-fluid-sm);
   }
 
   .skill {
-    padding: var(--token-space-fluid-xs) var(--token-space-fluid-sm);
-    background: var(--token-tint-highlight);
-    border: var(--token-border-default-small);
-    border-radius: var(--token-radius-sm);
-    font-size: var(--token-font-size-xs);
-    font-weight: var(--token-font-weight-medium);
-    color: var(--token-text-primary);
+    padding: var(--token-reference-spacing-fluid-xs) var(--token-reference-spacing-fluid-sm);
+    background: var(--token-theme-color-tint-highlight);
+    border: var(--token-theme-border-default-small);
+    border-radius: var(--token-reference-radius-sm);
+    font-size: var(--token-reference-typography-size-xs);
+    font-weight: var(--token-reference-typography-weight-medium);
+    color: var(--token-theme-color-text-primary);
     white-space: nowrap;
     transition:
-      background-color var(--token-motion-duration-normal) var(--token-motion-ease-out),
-      color var(--token-motion-duration-normal) var(--token-motion-ease-out),
-      transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
+      background-color var(--token-reference-motion-duration-normal)
+        var(--token-reference-motion-easing-out),
+      color var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out),
+      transform var(--token-reference-motion-duration-normal)
+        var(--token-reference-motion-easing-out);
 
     &:hover {
-      background: var(--token-interactive-color);
-      color: var(--token-text-dark);
+      background: var(--token-theme-color-interactive-color);
+      color: var(--token-theme-color-text-dark);
       transform: translateY(-1px);
     }
 
     @media (min-width: $breakpoint-md) {
-      font-size: var(--token-font-size-sm);
-      padding: var(--token-space-fluid-sm) var(--token-space-fluid-md);
+      font-size: var(--token-reference-typography-size-sm);
+      padding: var(--token-reference-spacing-fluid-sm) var(--token-reference-spacing-fluid-md);
     }
   }
 
   @media (max-width: calc($breakpoint-sm - 1px)) {
     .timeline-item {
       padding-inline-start: 0;
-      margin-block-end: var(--token-space-fluid-2xl);
+      margin-block-end: var(--token-reference-spacing-fluid-2xl);
     }
 
     .timeline-marker {
@@ -627,23 +642,23 @@
     }
 
     :global(.experience-card) {
-      --card-padding: var(--token-space-fluid-lg);
-      --card-radius: var(--token-radius-lg) var(--token-radius-lg) var(--token-radius-lg)
-        var(--token-radius-sm);
+      --card-padding: var(--token-reference-spacing-fluid-lg);
+      --card-radius: var(--token-reference-radius-lg) var(--token-reference-radius-lg)
+        var(--token-reference-radius-lg) var(--token-reference-radius-sm);
 
-      border-inline-start: var(--token-border-size-accent) solid transparent;
+      border-inline-start: var(--token-reference-border-width-accent) solid transparent;
     }
 
     .timeline-item--active :global(.experience-card) {
-      border-inline-start-color: var(--token-interactive-color);
+      border-inline-start-color: var(--token-theme-color-interactive-color);
       box-shadow:
-        var(--token-shadow-elevated),
-        3px 0 20px var(--token-interactive-glow);
+        var(--token-theme-shadow-elevated),
+        3px 0 20px var(--token-theme-color-interactive-glow);
     }
 
     .card-header {
-      gap: var(--token-space-fluid-md);
-      margin-block-end: var(--token-space-fluid-md);
+      gap: var(--token-reference-spacing-fluid-md);
+      margin-block-end: var(--token-reference-spacing-fluid-md);
     }
 
     .card-header :global(.card-logo) {
@@ -651,27 +666,27 @@
     }
 
     .card-title {
-      font-size: var(--token-font-size-lg);
-      margin-block-end: var(--token-space-1);
+      font-size: var(--token-reference-typography-size-lg);
+      margin-block-end: var(--token-reference-spacing-1);
     }
 
     .card-company {
-      font-size: var(--token-font-size-base);
-      margin-block-end: var(--token-space-1);
+      font-size: var(--token-reference-typography-size-base);
+      margin-block-end: var(--token-reference-spacing-1);
     }
 
     .card-period {
-      font-size: var(--token-font-size-sm);
+      font-size: var(--token-reference-typography-size-sm);
     }
 
     .card-summary {
-      font-size: var(--token-font-size-base);
-      margin-block-end: var(--token-space-fluid-md);
+      font-size: var(--token-reference-typography-size-base);
+      margin-block-end: var(--token-reference-spacing-fluid-md);
     }
 
     .expand-button {
-      padding: var(--token-space-2);
-      border-radius: var(--token-radius-full);
+      padding: var(--token-reference-spacing-2);
+      border-radius: var(--token-reference-radius-full);
       min-inline-size: 2.5rem;
       block-size: 2.5rem;
       justify-content: center;
@@ -682,8 +697,8 @@
     }
 
     :global(.highlights) {
-      --card-padding: var(--token-space-fluid-md);
-      margin-block-end: var(--token-space-fluid-md);
+      --card-padding: var(--token-reference-spacing-fluid-md);
+      margin-block-end: var(--token-reference-spacing-fluid-md);
     }
   }
 
@@ -705,7 +720,7 @@
   @media (prefers-contrast: high) {
     :global(.experience-card),
     :global(.highlights) {
-      border-width: var(--token-border-size-large);
+      border-width: var(--token-reference-border-width-large);
       border-color: currentColor;
     }
   }
@@ -714,7 +729,7 @@
     :global(.experience-card) {
       --card-background: Canvas;
 
-      border: var(--token-border-default-small);
+      border: var(--token-theme-border-default-small);
       break-inside: avoid;
     }
 

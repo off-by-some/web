@@ -70,7 +70,7 @@
   .story-shell {
     display: flex;
     align-items: center;
-    gap: var(--token-space-fluid-lg);
+    gap: var(--token-reference-spacing-fluid-lg);
     min-block-size: 7rem;
   }
 </style>

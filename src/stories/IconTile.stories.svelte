@@ -58,6 +58,6 @@
     align-items: center;
     display: flex;
     flex-wrap: wrap;
-    gap: var(--token-space-fluid-lg);
+    gap: var(--token-reference-spacing-fluid-lg);
   }
 </style>

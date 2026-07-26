@@ -16,7 +16,12 @@
   const getStatDelay = (index: number) => `${1 + index * 0.1}s`;
 </script>
 
-<HeroPanel {title} titleId="stats-title" area="stats" delay="var(--token-motion-delay-panel)">
+<HeroPanel
+  {title}
+  titleId="stats-title"
+  area="stats"
+  delay="var(--token-reference-motion-delay-panel)"
+>
   <div class="stats-grid">
     {#each stats as stat, index (`${stat.type}-${stat.label}`)}
       <StatCard
@@ -34,7 +39,7 @@
 
   .stats-grid {
     display: grid;
-    gap: var(--token-space-fluid-md);
+    gap: var(--token-reference-spacing-fluid-md);
     grid-template-columns: 1fr;
 
     @media (min-width: $breakpoint-sm) {

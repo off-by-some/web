@@ -114,7 +114,7 @@
   // the two hero-specific silhouettes (circle / label).
   :global(.hero-action-link) {
     --hero-action-size: clamp(3.25rem, 3rem + 1vw, 4rem);
-    --button-focus-outline-offset: var(--token-focus-offset-lg);
+    --button-focus-outline-offset: var(--token-theme-focus-offset-lg);
 
     position: relative;
   }
@@ -143,13 +143,14 @@
   }
 
   :global(.hero-action-link--label) {
-    --button-padding: var(--token-space-fluid-sm) clamp(1.45rem, 1.15rem + 1vw, 2rem);
-    --button-padding-md: var(--token-space-fluid-sm) clamp(1.55rem, 1.2rem + 1vw, 2.25rem);
+    --button-padding: var(--token-reference-spacing-fluid-sm) clamp(1.45rem, 1.15rem + 1vw, 2rem);
+    --button-padding-md: var(--token-reference-spacing-fluid-sm)
+      clamp(1.55rem, 1.2rem + 1vw, 2.25rem);
     --button-min-height: auto;
     --button-width: auto;
-    --button-font-weight: var(--token-font-weight-semibold);
+    --button-font-weight: var(--token-reference-typography-weight-semibold);
 
-    letter-spacing: var(--token-letter-spacing-wide);
+    letter-spacing: var(--token-reference-typography-letter-spacing-wide);
 
     .hero-action-link__icon {
       order: 2;
@@ -169,8 +170,9 @@
     block-size: 1.5rem;
     opacity: 0.9;
     transition:
-      transform var(--token-motion-duration-emphasis) var(--token-motion-ease-out),
-      opacity var(--token-motion-duration-normal) var(--token-motion-ease-out);
+      transform var(--token-reference-motion-duration-emphasis)
+        var(--token-reference-motion-easing-out),
+      opacity var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out);
   }
 
   .hero-action-link__text {

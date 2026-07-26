@@ -30,30 +30,32 @@
 
   .scroll-indicator {
     position: absolute;
-    inset-block-end: var(--token-space-fluid-2xl);
+    inset-block-end: var(--token-reference-spacing-fluid-2xl);
     inset-inline-start: 50%;
     transform: translateX(-50%);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--token-space-fluid-sm);
+    gap: var(--token-reference-spacing-fluid-sm);
     background: none;
     border: none;
-    color: var(--token-attention-color);
+    color: var(--token-theme-color-attention-color);
     opacity: 0.74;
     cursor: pointer;
-    animation: scrollFloat var(--scroll-indicator-duration, var(--token-motion-duration-pulse))
-      var(--token-motion-ease-out) infinite;
+    animation: scrollFloat
+      var(--scroll-indicator-duration, var(--token-reference-motion-duration-pulse))
+      var(--token-reference-motion-easing-out) infinite;
     z-index: 10;
     transition:
-      color var(--token-motion-duration-normal) var(--token-motion-ease-out),
-      opacity var(--token-motion-duration-normal) var(--token-motion-ease-out),
-      transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
+      color var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out),
+      opacity var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out),
+      transform var(--token-reference-motion-duration-normal)
+        var(--token-reference-motion-easing-out);
 
     &:focus {
-      outline: var(--token-focus-outline);
-      outline-offset: var(--token-focus-offset-lg);
-      border-radius: var(--token-radius-sm);
+      outline: var(--token-theme-focus-outline);
+      outline-offset: var(--token-theme-focus-offset-lg);
+      border-radius: var(--token-reference-radius-sm);
     }
 
     &:hover {
@@ -61,19 +63,19 @@
       transform: translateX(-50%) scale(1.1);
 
       .scroll-mouse {
-        border-color: var(--token-attention-color);
+        border-color: var(--token-theme-color-attention-color);
         box-shadow: var(
           --scroll-indicator-hover-shadow,
-          0 0 var(--token-blur-md) var(--token-attention-glow)
+          0 0 var(--token-reference-blur-md) var(--token-theme-color-attention-glow)
         );
       }
 
       .scroll-wheel {
-        background: var(--token-attention-color);
+        background: var(--token-theme-color-attention-color);
       }
 
       .scroll-arrow {
-        border-block-start-color: var(--token-attention-color);
+        border-block-start-color: var(--token-theme-color-attention-color);
       }
     }
 
@@ -83,32 +85,45 @@
   }
 
   .scroll-mouse {
-    inline-size: var(--token-size-6);
+    inline-size: var(--token-reference-size-6);
     block-size: 1.75rem;
-    border: var(--scroll-indicator-border-width, var(--token-border-size-small)) solid
-      color-mix(in srgb, var(--token-interactive-color) 44%, var(--token-border-color));
-    border-radius: var(--scroll-indicator-radius, var(--token-radius-md));
+    border: var(--scroll-indicator-border-width, var(--token-reference-border-width-small)) solid
+      color-mix(
+        in srgb,
+        var(--token-theme-color-interactive-color) 44%,
+        var(--token-theme-color-border-default)
+      );
+    border-radius: var(--scroll-indicator-radius, var(--token-reference-radius-md));
     position: relative;
-    background: var(--token-surface-glass-medium);
-    backdrop-filter: blur(var(--token-blur-sm));
+    background: var(--token-theme-color-surface-glass-medium);
+    backdrop-filter: blur(var(--token-reference-blur-sm));
     transition:
-      background-color var(--token-motion-duration-normal) var(--token-motion-ease-out),
-      border-color var(--token-motion-duration-normal) var(--token-motion-ease-out),
-      box-shadow var(--token-motion-duration-normal) var(--token-motion-ease-out);
+      background-color var(--token-reference-motion-duration-normal)
+        var(--token-reference-motion-easing-out),
+      border-color var(--token-reference-motion-duration-normal)
+        var(--token-reference-motion-easing-out),
+      box-shadow var(--token-reference-motion-duration-normal)
+        var(--token-reference-motion-easing-out);
   }
 
   .scroll-wheel {
     position: absolute;
     inline-size: 1.5px;
-    block-size: var(--token-size-1);
-    background: color-mix(in srgb, var(--token-interactive-color) 82%, var(--token-text-primary));
+    block-size: var(--token-reference-size-1);
+    background: color-mix(
+      in srgb,
+      var(--token-theme-color-interactive-color) 82%,
+      var(--token-theme-color-text-primary)
+    );
     inset-inline-start: 50%;
     top: 0.375rem;
     transform: translateX(-50%);
-    border-radius: var(--token-radius-full);
-    animation: wheelScroll var(--scroll-indicator-duration, var(--token-motion-duration-pulse))
-      var(--token-motion-ease-out) infinite;
-    transition: background var(--token-motion-duration-normal) var(--token-motion-ease-out);
+    border-radius: var(--token-reference-radius-full);
+    animation: wheelScroll
+      var(--scroll-indicator-duration, var(--token-reference-motion-duration-pulse))
+      var(--token-reference-motion-easing-out) infinite;
+    transition: background var(--token-reference-motion-duration-normal)
+      var(--token-reference-motion-easing-out);
   }
 
   .scroll-arrow {
@@ -117,21 +132,30 @@
     border-inline-start: 0.25rem solid transparent;
     border-inline-end: 0.25rem solid transparent;
     border-block-start: 0.375rem solid
-      color-mix(in srgb, var(--token-interactive-color) 78%, var(--token-text-primary));
-    animation: arrowBounce var(--scroll-indicator-duration, var(--token-motion-duration-pulse))
-      var(--token-motion-ease-out) infinite
-      var(--scroll-indicator-arrow-delay, calc(var(--token-motion-duration-pulse) / 4));
-    transition: border-block-start-color var(--token-motion-duration-normal)
-      var(--token-motion-ease-out);
+      color-mix(
+        in srgb,
+        var(--token-theme-color-interactive-color) 78%,
+        var(--token-theme-color-text-primary)
+      );
+    animation: arrowBounce
+      var(--scroll-indicator-duration, var(--token-reference-motion-duration-pulse))
+      var(--token-reference-motion-easing-out) infinite
+      var(--scroll-indicator-arrow-delay, calc(var(--token-reference-motion-duration-pulse) / 4));
+    transition: border-block-start-color var(--token-reference-motion-duration-normal)
+      var(--token-reference-motion-easing-out);
   }
 
   .scroll-text {
-    font-size: var(--token-font-size-xs);
-    font-weight: var(--token-font-weight-medium);
+    font-size: var(--token-reference-typography-size-xs);
+    font-weight: var(--token-reference-typography-weight-medium);
     text-transform: uppercase;
-    letter-spacing: var(--token-letter-spacing-extra-wide);
-    color: color-mix(in srgb, var(--token-attention-color) 78%, var(--token-text-secondary));
-    line-height: var(--token-line-height-snug);
+    letter-spacing: var(--token-reference-typography-letter-spacing-extra-wide);
+    color: color-mix(
+      in srgb,
+      var(--token-theme-color-attention-color) 78%,
+      var(--token-theme-color-text-secondary)
+    );
+    line-height: var(--token-reference-typography-line-height-snug);
   }
 
   @keyframes scrollFloat {

@@ -20,7 +20,7 @@
 
   let {
     skill,
-    delay = 'var(--token-motion-delay-none)',
+    delay = 'var(--token-reference-motion-delay-none)',
     hovered = false,
     onEngagementChangeRequested,
   }: Props = $props();
@@ -76,14 +76,14 @@
     @include motion.fade-in-up(
       skillCardFadeIn,
       20px,
-      var(--token-motion-duration-slow),
+      var(--token-reference-motion-duration-slow),
       var(--skill-card-delay),
       forwards
     );
   }
 
   :global(.skill-card__button) {
-    --card-padding: var(--token-space-fluid-lg);
+    --card-padding: var(--token-reference-spacing-fluid-lg);
     --card-hover-transform: translateY(-4px) scale(1.02);
 
     cursor: pointer;
@@ -92,11 +92,11 @@
     inline-size: 100%;
 
     @media (min-width: $breakpoint-md) {
-      --card-padding: var(--token-space-fluid-xl);
+      --card-padding: var(--token-reference-spacing-fluid-xl);
     }
 
     @media (min-width: $breakpoint-lg) {
-      --card-padding: var(--token-space-fluid-2xl);
+      --card-padding: var(--token-reference-spacing-fluid-2xl);
     }
   }
 
@@ -121,7 +121,7 @@
     @if list.index(('expert', 'advanced', 'proficient', 'learning'), $skill-tone) {
       :global(.skill-card__button--#{$skill-tone}:hover) {
         --card-hover-border-color: #{map.get($config, color)};
-        --card-hover-shadow: var(--token-shadow-elevated), 0 0 30px #{map.get($config, glow)};
+        --card-hover-shadow: var(--token-theme-shadow-elevated), 0 0 30px #{map.get($config, glow)};
         --card-iridescent-background: linear-gradient(
           135deg,
           #{map.get($config, color)} 0%,
@@ -138,7 +138,7 @@
     --icon-tile-image-size: 2rem;
     --icon-tile-padding: 0;
 
-    margin: 0 auto var(--token-space-fluid-md);
+    margin: 0 auto var(--token-reference-spacing-fluid-md);
 
     @media (min-width: $breakpoint-md) {
       --icon-tile-size: 4rem;
@@ -156,7 +156,8 @@
     inset-block-start: -4px;
     inset-inline-end: -4px;
     --tone-dot-size: 1rem;
-    --tone-dot-border: var(--token-border-size-large) solid var(--token-surface-color);
+    --tone-dot-border: var(--token-reference-border-width-large) solid
+      var(--token-theme-color-surface-color);
 
     @media (min-width: $breakpoint-md) {
       --tone-dot-size: 1.25rem;
@@ -169,18 +170,18 @@
   }
 
   .skill-name {
-    font-size: var(--token-font-size-base);
-    font-weight: var(--token-font-weight-semibold);
-    color: var(--token-text-primary);
-    margin-block-end: var(--token-space-fluid-xs);
-    line-height: var(--token-line-height-snug);
+    font-size: var(--token-reference-typography-size-base);
+    font-weight: var(--token-reference-typography-weight-semibold);
+    color: var(--token-theme-color-text-primary);
+    margin-block-end: var(--token-reference-spacing-fluid-xs);
+    line-height: var(--token-reference-typography-line-height-snug);
 
     @media (min-width: $breakpoint-md) {
-      font-size: var(--token-font-size-lg);
+      font-size: var(--token-reference-typography-size-lg);
     }
 
     @media (min-width: $breakpoint-lg) {
-      font-size: var(--token-font-size-xl);
+      font-size: var(--token-reference-typography-size-xl);
     }
   }
 
@@ -188,33 +189,35 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: var(--token-space-fluid-xs);
-    margin-block-end: var(--token-space-fluid-sm);
+    gap: var(--token-reference-spacing-fluid-xs);
+    margin-block-end: var(--token-reference-spacing-fluid-sm);
     flex-wrap: wrap;
 
     @media (min-width: $breakpoint-md) {
-      gap: var(--token-space-fluid-sm);
+      gap: var(--token-reference-spacing-fluid-sm);
     }
   }
 
   .skill-level {
-    font-size: var(--token-font-size-xs);
-    font-weight: var(--token-font-weight-semibold);
+    font-size: var(--token-reference-typography-size-xs);
+    font-weight: var(--token-reference-typography-weight-semibold);
     text-transform: uppercase;
-    letter-spacing: var(--token-letter-spacing-widest);
-    padding: var(--token-space-1) var(--token-space-2);
-    border-radius: var(--token-radius-sm);
-    background: var(--token-surface-glass-strong);
-    border: var(--token-border-default-small);
-    backdrop-filter: blur(var(--token-blur-sm));
+    letter-spacing: var(--token-reference-typography-letter-spacing-widest);
+    padding: var(--token-reference-spacing-1) var(--token-reference-spacing-2);
+    border-radius: var(--token-reference-radius-sm);
+    background: var(--token-theme-color-surface-glass-strong);
+    border: var(--token-theme-border-default-small);
+    backdrop-filter: blur(var(--token-reference-blur-sm));
     transition:
-      background-color var(--token-motion-duration-normal) var(--token-motion-ease-out),
-      border-color var(--token-motion-duration-normal) var(--token-motion-ease-out),
-      color var(--token-motion-duration-normal) var(--token-motion-ease-out);
+      background-color var(--token-reference-motion-duration-normal)
+        var(--token-reference-motion-easing-out),
+      border-color var(--token-reference-motion-duration-normal)
+        var(--token-reference-motion-easing-out),
+      color var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out);
 
     @media (min-width: $breakpoint-md) {
-      font-size: var(--token-font-size-sm);
-      padding: var(--token-space-2) var(--token-space-3);
+      font-size: var(--token-reference-typography-size-sm);
+      padding: var(--token-reference-spacing-2) var(--token-reference-spacing-3);
     }
   }
 
@@ -227,40 +230,41 @@
 
       :global(.skill-card__button:hover) .skill-level--#{$skill-tone} {
         background: #{map.get($config, color)};
-        color: var(--token-text-dark);
+        color: var(--token-theme-color-text-dark);
       }
     }
   }
 
   .skill-years {
-    font-size: var(--token-font-size-xs);
-    font-weight: var(--token-font-weight-medium);
-    color: var(--token-text-tertiary);
-    background: var(--token-surface-glass-strong);
-    padding: var(--token-space-1) var(--token-space-2);
-    border-radius: var(--token-radius-sm);
-    border: var(--token-border-default-small);
-    backdrop-filter: blur(var(--token-blur-sm));
+    font-size: var(--token-reference-typography-size-xs);
+    font-weight: var(--token-reference-typography-weight-medium);
+    color: var(--token-theme-color-text-tertiary);
+    background: var(--token-theme-color-surface-glass-strong);
+    padding: var(--token-reference-spacing-1) var(--token-reference-spacing-2);
+    border-radius: var(--token-reference-radius-sm);
+    border: var(--token-theme-border-default-small);
+    backdrop-filter: blur(var(--token-reference-blur-sm));
 
     @media (min-width: $breakpoint-md) {
-      font-size: var(--token-font-size-sm);
-      padding: var(--token-space-2) var(--token-space-3);
+      font-size: var(--token-reference-typography-size-sm);
+      padding: var(--token-reference-spacing-2) var(--token-reference-spacing-3);
     }
   }
 
   .skill-description {
-    font-size: var(--token-font-size-xs);
-    line-height: var(--token-line-height-relaxed);
-    color: var(--token-text-secondary);
+    font-size: var(--token-reference-typography-size-xs);
+    line-height: var(--token-reference-typography-line-height-relaxed);
+    color: var(--token-theme-color-text-secondary);
     opacity: 0;
     transform: translateY(8px);
     transition:
-      color var(--token-motion-duration-normal) var(--token-motion-ease-out),
-      opacity var(--token-motion-duration-normal) var(--token-motion-ease-out),
-      transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
+      color var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out),
+      opacity var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out),
+      transform var(--token-reference-motion-duration-normal)
+        var(--token-reference-motion-easing-out);
 
     @media (min-width: $breakpoint-md) {
-      font-size: var(--token-font-size-sm);
+      font-size: var(--token-reference-typography-size-sm);
     }
 
     @media (max-width: calc($breakpoint-md - 1px)) {

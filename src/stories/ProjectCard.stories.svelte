@@ -74,7 +74,7 @@
   .story-card-shell {
     inline-size: min(100%, 56rem);
     min-inline-size: 0;
-    color: var(--token-text-primary);
-    font-family: var(--token-font-family-sans);
+    color: var(--token-theme-color-text-primary);
+    font-family: var(--token-reference-typography-family-sans);
   }
 </style>

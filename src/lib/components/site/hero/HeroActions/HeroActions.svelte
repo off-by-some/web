@@ -93,8 +93,8 @@
     @include motion.fade-in-up(
       heroActionsIn,
       1.5rem,
-      var(--token-motion-duration-slow),
-      var(--token-motion-delay-narrative)
+      var(--token-reference-motion-duration-slow),
+      var(--token-reference-motion-delay-narrative)
     );
 
     @media (min-width: $breakpoint-lg) {
@@ -107,7 +107,7 @@
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
-    gap: var(--token-space-fluid-md) var(--token-space-fluid-lg);
+    gap: var(--token-reference-spacing-fluid-md) var(--token-reference-spacing-fluid-lg);
 
     @media (min-width: $breakpoint-lg) {
       justify-content: flex-start;
@@ -117,30 +117,30 @@
   .hero-actions__explore {
     --explore-link-color: color-mix(
       in srgb,
-      var(--token-interactive-color) 54%,
-      var(--token-text-secondary)
+      var(--token-theme-color-interactive-color) 54%,
+      var(--token-theme-color-text-secondary)
     );
 
     display: inline-flex;
     align-items: center;
-    gap: var(--token-space-fluid-xs);
+    gap: var(--token-reference-spacing-fluid-xs);
     color: var(--explore-link-color);
-    font-weight: var(--token-font-weight-semibold);
+    font-weight: var(--token-reference-typography-weight-semibold);
     text-decoration: none;
     transition:
-      color var(--token-motion-duration-normal) var(--token-motion-ease-out),
-      gap var(--token-motion-duration-normal) var(--token-motion-ease-out);
+      color var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out),
+      gap var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out);
 
     &:hover,
     &:focus-visible {
-      color: var(--token-attention-color);
-      gap: var(--token-space-fluid-sm);
+      color: var(--token-theme-color-attention-color);
+      gap: var(--token-reference-spacing-fluid-sm);
     }
 
     &:focus-visible {
-      outline: var(--token-border-size-large) solid var(--explore-link-color);
-      outline-offset: var(--token-focus-offset-lg);
-      border-radius: var(--token-radius-xs);
+      outline: var(--token-reference-border-width-large) solid var(--explore-link-color);
+      outline-offset: var(--token-theme-focus-offset-lg);
+      border-radius: var(--token-reference-radius-xs);
     }
   }
 
@@ -148,10 +148,10 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: var(--token-space-fluid-md);
+    gap: var(--token-reference-spacing-fluid-md);
 
     @media (max-width: $breakpoint-sm) {
-      gap: var(--token-space-fluid-sm);
+      gap: var(--token-reference-spacing-fluid-sm);
     }
   }
 

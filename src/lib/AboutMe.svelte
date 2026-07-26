@@ -86,10 +86,10 @@
     position: relative;
     min-height: 100vh;
     min-height: 100svh;
-    background: var(--token-gradients-hero);
+    background: var(--token-feature-hero-background);
     overflow: hidden;
     padding: clamp(2.75rem, 5vh, 5.5rem) 0 clamp(5rem, 8vh, 7rem);
-    font-family: var(--token-font-family-sans);
+    font-family: var(--token-reference-typography-family-sans);
     font-feature-settings:
       'kern' 1,
       'liga' 1,
@@ -105,15 +105,16 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: var(--token-gradients-hero-glow);
+      background: var(--token-feature-hero-glow);
       opacity: 0;
-      animation: backgroundGlow var(--token-motion-duration-background) var(--token-motion-ease-out)
-        var(--token-motion-delay-background) both;
+      animation: backgroundGlow var(--token-reference-motion-duration-background)
+        var(--token-reference-motion-easing-out) var(--token-reference-motion-delay-background) both;
       pointer-events: none;
     }
 
     @media (max-height: 600px) {
-      padding: var(--token-space-fluid-lg) 0 calc(var(--token-space-fluid-3xl) + 2rem);
+      padding: var(--token-reference-spacing-fluid-lg) 0
+        calc(var(--token-reference-spacing-fluid-3xl) + 2rem);
     }
   }
 
@@ -123,17 +124,17 @@
     flex: 1;
     display: flex;
     align-items: center;
-    max-width: min(var(--token-container-max), 118rem);
+    max-width: min(var(--token-reference-container-max), 118rem);
     margin: 0 auto;
-    padding: 0 var(--token-space-fluid-lg);
+    padding: 0 var(--token-reference-spacing-fluid-lg);
     width: 100%;
 
     @media (min-width: $breakpoint-md) {
-      padding: 0 var(--token-space-fluid-xl);
+      padding: 0 var(--token-reference-spacing-fluid-xl);
     }
 
     @media (min-width: $breakpoint-lg) {
-      padding: 0 var(--token-space-fluid-2xl);
+      padding: 0 var(--token-reference-spacing-fluid-2xl);
     }
   }
 
@@ -152,8 +153,8 @@
     @include motion.fade-in-up(
       heroEntrance,
       2rem,
-      var(--token-motion-duration-hero),
-      var(--token-motion-delay-none),
+      var(--token-reference-motion-duration-hero),
+      var(--token-reference-motion-delay-none),
       both,
       0.98
     );
@@ -175,8 +176,8 @@
     }
 
     @media (max-height: 600px) {
-      max-height: calc(100vh - var(--token-space-fluid-2xl));
-      gap: var(--token-space-fluid-lg);
+      max-height: calc(100vh - var(--token-reference-spacing-fluid-2xl));
+      gap: var(--token-reference-spacing-fluid-lg);
     }
   }
 
@@ -230,16 +231,16 @@
       max-height: none;
       background: Canvas;
       color: CanvasText;
-      padding: var(--token-space-fluid-lg);
+      padding: var(--token-reference-spacing-fluid-lg);
     }
 
     .hero-grid {
       flex-direction: column;
-      gap: var(--token-space-fluid-lg);
+      gap: var(--token-reference-spacing-fluid-lg);
     }
 
     .hero-grid__content {
-      gap: var(--token-space-fluid-lg);
+      gap: var(--token-reference-spacing-fluid-lg);
     }
   }
 </style>

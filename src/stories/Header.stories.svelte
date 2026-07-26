@@ -42,20 +42,20 @@
 
 <style lang="scss">
   :global(.story-header) {
-    color: var(--token-text-primary);
-    font-family: var(--token-font-family-sans);
+    color: var(--token-theme-color-text-primary);
+    font-family: var(--token-reference-typography-family-sans);
   }
 
   h2 {
-    color: var(--token-text-heading);
-    font-size: var(--token-font-size-3xl);
+    color: var(--token-theme-color-text-heading);
+    font-size: var(--token-reference-typography-size-3xl);
     margin: 0;
-    margin-block-end: var(--token-space-fluid-sm);
+    margin-block-end: var(--token-reference-spacing-fluid-sm);
   }
 
   p {
-    color: var(--token-text-secondary);
-    font-size: var(--token-font-size-lg);
+    color: var(--token-theme-color-text-secondary);
+    font-size: var(--token-reference-typography-size-lg);
     margin: 0;
   }
 </style>

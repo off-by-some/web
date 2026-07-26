@@ -65,34 +65,44 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: var(--button-gap, var(--token-space-fluid-sm));
-    padding: var(--button-padding, var(--token-space-fluid-lg) var(--token-space-fluid-xl));
+    gap: var(--button-gap, var(--token-reference-spacing-fluid-sm));
+    padding: var(
+      --button-padding,
+      var(--token-reference-spacing-fluid-lg) var(--token-reference-spacing-fluid-xl)
+    );
     min-block-size: var(--button-min-height, auto);
     inline-size: var(--button-width, auto);
-    font-size: var(--button-font-size, var(--token-font-size-base));
-    font-weight: var(--button-font-weight, var(--token-font-weight-medium));
+    font-size: var(--button-font-size, var(--token-reference-typography-size-base));
+    font-weight: var(--button-font-weight, var(--token-reference-typography-weight-medium));
     border: var(--button-border, none);
-    border-radius: var(--button-radius, var(--token-radius-full));
+    border-radius: var(--button-radius, var(--token-reference-radius-full));
     cursor: pointer;
     text-decoration: none;
     transition:
-      transform var(--token-motion-duration-fast) var(--token-motion-ease-out),
-      border-color var(--token-motion-duration-fast) var(--token-motion-ease-out),
-      box-shadow var(--token-motion-duration-fast) var(--token-motion-ease-out),
-      color var(--token-motion-duration-fast) var(--token-motion-ease-out),
-      background var(--token-motion-duration-fast) var(--token-motion-ease-out);
+      transform var(--token-reference-motion-duration-fast) var(--token-reference-motion-easing-out),
+      border-color var(--token-reference-motion-duration-fast)
+        var(--token-reference-motion-easing-out),
+      box-shadow var(--token-reference-motion-duration-fast)
+        var(--token-reference-motion-easing-out),
+      color var(--token-reference-motion-duration-fast) var(--token-reference-motion-easing-out),
+      background var(--token-reference-motion-duration-fast)
+        var(--token-reference-motion-easing-out);
     overflow: var(--button-overflow, hidden);
-    letter-spacing: var(--token-letter-spacing-wide);
-    line-height: var(--token-line-height-snug);
+    letter-spacing: var(--token-reference-typography-letter-spacing-wide);
+    line-height: var(--token-reference-typography-line-height-snug);
 
     &::before {
       box-sizing: border-box;
       content: '';
       position: absolute;
       inset: 0;
-      background: var(--button-iridescent-background, var(--token-surface-glass-iridescent));
+      background: var(
+        --button-iridescent-background,
+        var(--token-theme-color-surface-glass-iridescent)
+      );
       opacity: 0;
-      transition: opacity var(--token-motion-duration-fast) var(--token-motion-ease-out);
+      transition: opacity var(--token-reference-motion-duration-fast)
+        var(--token-reference-motion-easing-out);
       border-radius: inherit;
       pointer-events: none;
       z-index: 0;
@@ -100,19 +110,22 @@
 
     &:focus,
     &:focus-visible {
-      outline: var(--token-focus-outline);
-      outline-offset: var(--button-focus-outline-offset, var(--token-focus-offset-sm));
+      outline: var(--token-theme-focus-outline);
+      outline-offset: var(--button-focus-outline-offset, var(--token-theme-focus-offset-sm));
     }
 
     &:disabled,
     &[aria-disabled='true'] {
       cursor: not-allowed;
-      opacity: var(--token-opacity-default);
+      opacity: var(--token-reference-opacity-default);
     }
 
     @media (min-width: $breakpoint-md) {
-      font-size: var(--button-font-size-md, var(--token-font-size-lg));
-      padding: var(--button-padding-md, var(--token-space-fluid-lg) var(--token-space-fluid-2xl));
+      font-size: var(--button-font-size-md, var(--token-reference-typography-size-lg));
+      padding: var(
+        --button-padding-md,
+        var(--token-reference-spacing-fluid-lg) var(--token-reference-spacing-fluid-2xl)
+      );
     }
   }
 
@@ -127,20 +140,21 @@
   }
 
   .button--primary {
-    background: var(--button-primary-background, var(--token-interactive-color));
-    color: var(--button-primary-color, var(--token-text-dark));
+    background: var(--button-primary-background, var(--token-theme-color-interactive-color));
+    color: var(--button-primary-color, var(--token-theme-color-text-dark));
     box-shadow: var(
       --button-primary-shadow,
-      var(--token-shadow-elevated),
-      0 0 var(--token-blur-md) var(--token-interactive-glow)
+      var(--token-theme-shadow-elevated),
+      0 0 var(--token-reference-blur-md) var(--token-theme-color-interactive-glow)
     );
 
     &:hover:not(:disabled):not([aria-disabled='true']) {
       transform: translateY(-4px) scale(1.02);
       box-shadow: var(
         --button-primary-hover-shadow,
-        var(--token-shadow-elevated),
-        0 0 calc(var(--token-blur-md) + var(--token-blur-sm)) var(--token-interactive-glow)
+        var(--token-theme-shadow-elevated),
+        0 0 calc(var(--token-reference-blur-md) + var(--token-reference-blur-sm))
+          var(--token-theme-color-interactive-glow)
       );
 
       &::before {
@@ -154,17 +168,17 @@
   }
 
   .button--secondary {
-    background: var(--button-secondary-background, var(--token-surface-glass-strong));
-    color: var(--button-secondary-color, var(--token-text-overlay));
-    border: var(--button-border, var(--token-border-default-small));
-    backdrop-filter: blur(var(--token-blur-lg));
-    box-shadow: var(--button-secondary-shadow, var(--token-shadow-light));
+    background: var(--button-secondary-background, var(--token-theme-color-surface-glass-strong));
+    color: var(--button-secondary-color, var(--token-theme-color-text-overlay));
+    border: var(--button-border, var(--token-theme-border-default-small));
+    backdrop-filter: blur(var(--token-reference-blur-lg));
+    box-shadow: var(--button-secondary-shadow, var(--token-theme-shadow-light));
 
     &:hover:not(:disabled):not([aria-disabled='true']) {
       transform: var(--button-secondary-hover-transform, translateY(-3px) scale(1.02));
-      border-color: var(--token-border-color-hover);
-      color: var(--token-text-primary);
-      box-shadow: var(--button-secondary-hover-shadow, var(--token-shadow-elevated));
+      border-color: var(--token-theme-color-border-hover);
+      color: var(--token-theme-color-text-primary);
+      box-shadow: var(--button-secondary-hover-shadow, var(--token-theme-shadow-elevated));
 
       &::before {
         opacity: var(--button-secondary-hover-iridescent-opacity, 0.8);

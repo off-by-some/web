@@ -27,7 +27,7 @@
 
 /* Document/root */
 html {
-  font-size: var(--token-scale-root, 85%);
+  font-size: var(--token-reference-scale-root, 85%);
   scroll-behavior: smooth;
   text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
@@ -43,12 +43,12 @@ html {
 body {
   margin: 0;
   padding: 0;
-  font-family: var(--token-font-family-sans);
-  font-size: var(--token-font-size-base);
-  font-weight: var(--token-font-weight-normal);
-  line-height: var(--token-line-height-normal);
-  color: var(--token-text-primary);
-  background: var(--token-surface-color);
+  font-family: var(--token-reference-typography-family-sans);
+  font-size: var(--token-reference-typography-size-base);
+  font-weight: var(--token-reference-typography-weight-normal);
+  line-height: var(--token-reference-typography-line-height-normal);
+  color: var(--token-theme-color-text-primary);
+  background: var(--token-theme-color-surface-color);
   min-height: 100vh;
   min-height: 100dvh;
   overflow-x: hidden;
@@ -65,11 +65,11 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--token-font-family-sans);
-  font-weight: var(--token-font-weight-semibold);
-  line-height: var(--token-line-height-tight);
-  letter-spacing: var(--token-letter-spacing-tight);
-  color: var(--token-text-primary);
+  font-family: var(--token-reference-typography-family-sans);
+  font-weight: var(--token-reference-typography-weight-semibold);
+  line-height: var(--token-reference-typography-line-height-tight);
+  letter-spacing: var(--token-reference-typography-letter-spacing-tight);
+  color: var(--token-theme-color-text-primary);
   margin-bottom: 0.5em;
   word-wrap: break-word;
   overflow-wrap: break-word;
@@ -113,7 +113,7 @@ a {
   text-decoration: none;
 }
 a:focus-visible {
-  outline: 2px solid var(--token-state-focus-ring);
+  outline: 2px solid var(--token-theme-state-focus-ring);
   outline-offset: 2px;
 }
 

@@ -178,31 +178,35 @@
   @use 'lib/components/primitives/motion' as motion;
 
   :global(.project-card) {
-    --card-padding: var(--token-space-fluid-xl);
+    --card-padding: var(--token-reference-spacing-fluid-xl);
     --card-hover-transform: none;
 
     display: flex;
     flex-direction: column;
-    gap: var(--token-space-fluid-xl);
+    gap: var(--token-reference-spacing-fluid-xl);
     inline-size: 100%;
     min-inline-size: 0;
     text-align: start;
     container-type: inline-size;
 
-    @include motion.fade-in-up(projectCardEnter, 14px, var(--token-motion-duration-emphasis));
+    @include motion.fade-in-up(
+      projectCardEnter,
+      14px,
+      var(--token-reference-motion-duration-emphasis)
+    );
 
     @media (min-width: $breakpoint-md) {
-      --card-padding: var(--token-space-fluid-2xl);
+      --card-padding: var(--token-reference-spacing-fluid-2xl);
     }
 
     @media (min-width: $breakpoint-lg) {
-      --card-padding: var(--token-space-fluid-3xl);
+      --card-padding: var(--token-reference-spacing-fluid-3xl);
     }
   }
 
   :global(.project-card__banner) {
-    --card-background: var(--token-surface-glass-medium);
-    --card-padding: var(--token-space-fluid-xl);
+    --card-background: var(--token-theme-color-surface-glass-medium);
+    --card-padding: var(--token-reference-spacing-fluid-xl);
     --card-hover-transform: scale(1.008);
     --card-hover-iridescent-opacity: 0.6;
 
@@ -213,7 +217,7 @@
     min-block-size: var(--project-card-banner-min-block-size, 11rem);
 
     @container (inline-size >= 36rem) {
-      --card-padding: var(--token-space-fluid-2xl);
+      --card-padding: var(--token-reference-spacing-fluid-2xl);
       --project-card-banner-min-block-size: 14rem;
     }
 
@@ -243,21 +247,22 @@
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: var(--token-space-2) var(--token-space-3);
+    gap: var(--token-reference-spacing-2) var(--token-reference-spacing-3);
   }
 
   .project-card__badge-link {
     display: flex;
-    transition: transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
+    transition: transform var(--token-reference-motion-duration-normal)
+      var(--token-reference-motion-easing-out);
 
     &:hover {
       transform: translateY(-2px);
     }
 
     &:focus-visible {
-      outline: var(--token-focus-outline);
-      outline-offset: var(--token-focus-offset-sm);
-      border-radius: var(--token-radius-xs);
+      outline: var(--token-theme-focus-outline);
+      outline-offset: var(--token-theme-focus-offset-sm);
+      border-radius: var(--token-reference-radius-xs);
     }
   }
 
@@ -273,103 +278,103 @@
   }
 
   .project-card__title {
-    margin: 0 0 var(--token-space-fluid-xs);
+    margin: 0 0 var(--token-reference-spacing-fluid-xs);
     overflow-wrap: anywhere;
-    color: var(--token-text-primary);
-    font-size: var(--token-font-size-2xl);
-    font-weight: var(--token-font-weight-semibold);
-    line-height: var(--token-line-height-snug);
+    color: var(--token-theme-color-text-primary);
+    font-size: var(--token-reference-typography-size-2xl);
+    font-weight: var(--token-reference-typography-weight-semibold);
+    line-height: var(--token-reference-typography-line-height-snug);
 
     @container (inline-size >= 56rem) {
-      font-size: var(--token-font-size-3xl);
+      font-size: var(--token-reference-typography-size-3xl);
     }
   }
 
   .project-card__tagline {
-    margin: 0 0 var(--token-space-fluid-lg);
-    color: var(--token-text-emphasis-default);
-    font-size: var(--token-font-size-base);
-    font-weight: var(--token-font-weight-medium);
+    margin: 0 0 var(--token-reference-spacing-fluid-lg);
+    color: var(--token-theme-color-text-emphasis-default);
+    font-size: var(--token-reference-typography-size-base);
+    font-weight: var(--token-reference-typography-weight-medium);
 
     @container (inline-size >= 36rem) {
-      font-size: var(--token-font-size-lg);
+      font-size: var(--token-reference-typography-size-lg);
     }
   }
 
   .project-card__description {
-    margin: 0 0 var(--token-space-fluid-lg);
-    color: var(--token-text-secondary);
-    font-size: var(--token-font-size-base);
-    line-height: var(--token-line-height-relaxed);
+    margin: 0 0 var(--token-reference-spacing-fluid-lg);
+    color: var(--token-theme-color-text-secondary);
+    font-size: var(--token-reference-typography-size-base);
+    line-height: var(--token-reference-typography-line-height-relaxed);
 
     @container (inline-size >= 36rem) {
-      font-size: var(--token-font-size-lg);
+      font-size: var(--token-reference-typography-size-lg);
     }
   }
 
   :global(.project-card__highlights) {
-    --card-background: var(--token-surface-glass-strong);
-    --card-radius: var(--token-radius-lg);
-    --card-padding: var(--token-space-fluid-lg);
+    --card-background: var(--token-theme-color-surface-glass-strong);
+    --card-radius: var(--token-reference-radius-lg);
+    --card-padding: var(--token-reference-spacing-fluid-lg);
     --card-hover-transform: none;
     --card-hover-iridescent-opacity: 0.3;
 
-    margin-block-end: var(--token-space-fluid-lg);
+    margin-block-end: var(--token-reference-spacing-fluid-lg);
   }
 
   .project-card__highlight-list {
     display: flex;
     flex-direction: column;
-    gap: var(--token-space-fluid-sm);
+    gap: var(--token-reference-spacing-fluid-sm);
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
   .project-card__highlight-item {
-    color: var(--token-text-secondary);
-    font-size: var(--token-font-size-sm);
-    line-height: var(--token-line-height-relaxed);
+    color: var(--token-theme-color-text-secondary);
+    font-size: var(--token-reference-typography-size-sm);
+    line-height: var(--token-reference-typography-line-height-relaxed);
 
     @container (inline-size >= 36rem) {
-      font-size: var(--token-font-size-base);
+      font-size: var(--token-reference-typography-size-base);
     }
   }
 
   .project-card__highlight-label {
-    margin-inline-end: var(--token-space-2);
-    color: var(--token-text-primary);
-    font-family: var(--token-font-family-mono, monospace);
-    font-weight: var(--token-font-weight-semibold);
+    margin-inline-end: var(--token-reference-spacing-2);
+    color: var(--token-theme-color-text-primary);
+    font-family: var(--token-reference-typography-family-mono, monospace);
+    font-weight: var(--token-reference-typography-weight-semibold);
   }
 
   .project-card__tags {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--token-space-2);
-    margin: 0 0 var(--token-space-fluid-xl);
+    gap: var(--token-reference-spacing-2);
+    margin: 0 0 var(--token-reference-spacing-fluid-xl);
     padding: 0;
     list-style: none;
   }
 
   .project-card__tag {
-    padding: var(--token-space-1) var(--token-space-3);
-    border: var(--token-border-default-small);
-    border-radius: var(--token-radius-full);
-    background: var(--token-surface-glass-strong);
-    color: var(--token-text-secondary);
-    font-size: var(--token-font-size-xs);
-    font-weight: var(--token-font-weight-medium);
+    padding: var(--token-reference-spacing-1) var(--token-reference-spacing-3);
+    border: var(--token-theme-border-default-small);
+    border-radius: var(--token-reference-radius-full);
+    background: var(--token-theme-color-surface-glass-strong);
+    color: var(--token-theme-color-text-secondary);
+    font-size: var(--token-reference-typography-size-xs);
+    font-weight: var(--token-reference-typography-weight-medium);
 
     @container (inline-size >= 36rem) {
-      font-size: var(--token-font-size-sm);
+      font-size: var(--token-reference-typography-size-sm);
     }
   }
 
   .project-card__actions {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--token-space-fluid-md);
+    gap: var(--token-reference-spacing-fluid-md);
   }
 
   .project-card__action-icon {
@@ -392,7 +397,7 @@
     :global(.project-card__banner),
     :global(.project-card__highlights) {
       border-color: CanvasText;
-      border-width: var(--token-border-size-large);
+      border-width: var(--token-reference-border-width-large);
     }
   }
 </style>

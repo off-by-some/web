@@ -62,18 +62,18 @@
 
 <style lang="scss">
   .story-surface {
-    color: var(--token-text-primary);
-    font-family: var(--token-font-family-sans);
+    color: var(--token-theme-color-text-primary);
+    font-family: var(--token-reference-typography-family-sans);
     inline-size: min(100%, 24rem);
     min-block-size: 12rem;
 
     h3 {
       margin: 0;
-      margin-block-end: var(--token-space-fluid-sm);
+      margin-block-end: var(--token-reference-spacing-fluid-sm);
     }
 
     p {
-      color: var(--token-text-secondary);
+      color: var(--token-theme-color-text-secondary);
       margin: 0;
     }
   }

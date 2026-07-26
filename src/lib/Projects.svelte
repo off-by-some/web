@@ -212,9 +212,9 @@
   .projects {
     position: relative;
     overflow: hidden;
-    padding-block: var(--token-space-fluid-6xl);
-    background: var(--token-gradients-projects);
-    font-family: var(--token-font-family-sans);
+    padding-block: var(--token-reference-spacing-fluid-6xl);
+    background: var(--token-feature-projects-background);
+    font-family: var(--token-reference-typography-family-sans);
     font-feature-settings:
       'kern' 1,
       'liga' 1,
@@ -228,7 +228,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: var(--token-gradients-hero-glow);
+      background: var(--token-feature-hero-glow);
       opacity: 0.3;
       pointer-events: none;
     }
@@ -238,39 +238,39 @@
     position: relative;
     z-index: 1;
     margin-inline: auto;
-    padding-inline: var(--token-space-fluid-lg);
+    padding-inline: var(--token-reference-spacing-fluid-lg);
 
     @media (min-width: $breakpoint-md) {
-      padding-inline: var(--token-space-fluid-xl);
+      padding-inline: var(--token-reference-spacing-fluid-xl);
     }
 
     @media (min-width: $breakpoint-lg) {
-      padding-inline: var(--token-space-fluid-2xl);
+      padding-inline: var(--token-reference-spacing-fluid-2xl);
     }
   }
 
   .projects__layout {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: var(--token-space-fluid-xl);
+    gap: var(--token-reference-spacing-fluid-xl);
     overflow: visible;
 
     @include motion.fade-in-up(
       projectsSectionEnter,
       30px,
-      var(--token-motion-duration-entrance),
-      var(--token-motion-delay-short)
+      var(--token-reference-motion-duration-entrance),
+      var(--token-reference-motion-delay-short)
     );
 
     @media (min-width: $breakpoint-lg) {
       grid-template-columns: minmax(16rem, 24%) minmax(0, 1fr);
       align-items: start;
-      gap: var(--token-space-fluid-3xl);
+      gap: var(--token-reference-spacing-fluid-3xl);
     }
   }
 
   .projects__header {
-    margin-block-end: var(--token-space-fluid-5xl);
+    margin-block-end: var(--token-reference-spacing-fluid-5xl);
   }
 
   .projects__nav {
@@ -278,7 +278,7 @@
 
     @media (min-width: $breakpoint-lg) {
       position: sticky;
-      inset-block-start: var(--token-space-fluid-2xl);
+      inset-block-start: var(--token-reference-spacing-fluid-2xl);
       display: block;
       min-inline-size: 0;
       overflow: visible;
@@ -289,9 +289,9 @@
     min-inline-size: 0;
 
     &:focus-visible {
-      outline: var(--token-focus-outline);
-      outline-offset: var(--token-focus-offset-lg);
-      border-radius: var(--token-radius-xl);
+      outline: var(--token-theme-focus-outline);
+      outline-offset: var(--token-theme-focus-offset-lg);
+      border-radius: var(--token-reference-radius-xl);
     }
   }
 
@@ -306,13 +306,13 @@
 
   .projects__dot-rail--top {
     @media (max-width: calc($breakpoint-lg - 1px)) {
-      margin-block-end: var(--token-space-fluid-xl);
+      margin-block-end: var(--token-reference-spacing-fluid-xl);
     }
   }
 
   .projects__dot-rail--bottom {
     @media (max-width: calc($breakpoint-lg - 1px)) {
-      margin-block-start: var(--token-space-fluid-xl);
+      margin-block-start: var(--token-reference-spacing-fluid-xl);
     }
   }
 
@@ -326,7 +326,7 @@
 
   @media print {
     .projects {
-      padding: var(--token-space-fluid-lg);
+      padding: var(--token-reference-spacing-fluid-lg);
       background: Canvas;
       color: CanvasText;
     }

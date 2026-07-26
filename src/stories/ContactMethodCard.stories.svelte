@@ -74,8 +74,8 @@
 
 <style lang="scss">
   .story-width {
-    color: var(--token-text-primary);
-    font-family: var(--token-font-family-sans);
+    color: var(--token-theme-color-text-primary);
+    font-family: var(--token-reference-typography-family-sans);
     max-inline-size: 34rem;
   }
 </style>

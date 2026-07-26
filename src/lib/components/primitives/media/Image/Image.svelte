@@ -293,11 +293,12 @@ TROUBLESHOOTING 🔧
   }
 
   .image__error {
-    color: var(--image-error-color, var(--token-status-danger-fg));
+    color: var(--image-error-color, var(--token-theme-color-status-danger-fg));
     font:
-      var(--image-error-font-size, var(--token-font-size-xs)) / var(--token-line-height-snug)
-        var(--token-font-family-mono, ui-monospace),
+      var(--image-error-font-size, var(--token-reference-typography-size-xs)) /
+        var(--token-reference-typography-line-height-snug)
+        var(--token-reference-typography-family-mono, ui-monospace),
       ui-monospace;
-    margin-block-start: var(--token-space-3);
+    margin-block-start: var(--token-reference-spacing-3);
   }
 </style>

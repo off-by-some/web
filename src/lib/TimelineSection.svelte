@@ -311,10 +311,10 @@
 
   .timeline {
     position: relative;
-    background: var(--token-gradients-timeline);
-    padding: var(--token-space-fluid-6xl) 0;
+    background: var(--token-feature-timeline-background);
+    padding: var(--token-reference-spacing-fluid-6xl) 0;
     overflow: hidden;
-    font-family: var(--token-font-family-sans);
+    font-family: var(--token-reference-typography-family-sans);
     font-feature-settings:
       'kern' 1,
       'liga' 1,
@@ -328,7 +328,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: var(--token-gradients-hero-glow);
+      background: var(--token-feature-hero-glow);
       opacity: 0.4;
       pointer-events: none;
     }
@@ -338,25 +338,25 @@
     position: relative;
     z-index: 1;
     margin: 0 auto;
-    padding: 0 var(--token-space-fluid-lg);
+    padding: 0 var(--token-reference-spacing-fluid-lg);
 
     @media (min-width: $breakpoint-md) {
-      padding: 0 var(--token-space-fluid-xl);
+      padding: 0 var(--token-reference-spacing-fluid-xl);
     }
 
     @media (min-width: $breakpoint-lg) {
-      padding: 0 var(--token-space-fluid-2xl);
+      padding: 0 var(--token-reference-spacing-fluid-2xl);
     }
   }
 
   .timeline__header {
-    margin-block-end: var(--token-space-fluid-5xl);
+    margin-block-end: var(--token-reference-spacing-fluid-5xl);
   }
 
   .timeline-content {
     position: relative;
-    animation: fadeInUp var(--token-motion-duration-entrance) var(--token-motion-ease-out)
-      var(--token-motion-delay-normal) both;
+    animation: fadeInUp var(--token-reference-motion-duration-entrance)
+      var(--token-reference-motion-easing-out) var(--token-reference-motion-delay-normal) both;
   }
 
   .timeline-line {
@@ -364,13 +364,13 @@
     inset-block-start: 0;
     inset-block-end: 0;
     inline-size: 2px;
-    inset-inline-start: var(--token-space-fluid-2xl);
-    background: var(--token-surface-glass-strong);
-    border-radius: var(--token-radius-full);
+    inset-inline-start: var(--token-reference-spacing-fluid-2xl);
+    background: var(--token-theme-color-surface-glass-strong);
+    border-radius: var(--token-reference-radius-full);
     opacity: 0.3;
 
     @media (min-width: $breakpoint-md) {
-      inset-inline-start: var(--token-space-fluid-3xl);
+      inset-inline-start: var(--token-reference-spacing-fluid-3xl);
       inline-size: 3px;
     }
 
@@ -387,15 +387,16 @@
     background: linear-gradient(
       to bottom,
       transparent 0%,
-      var(--token-interactive-color) 10%,
-      var(--token-interactive-color) 90%,
+      var(--token-theme-color-interactive-color) 10%,
+      var(--token-theme-color-interactive-color) 90%,
       transparent 100%
     );
     border-radius: inherit;
     transform: scaleY(0);
     transform-origin: top;
-    transition: transform var(--token-motion-duration-slow) var(--token-motion-ease-out);
-    box-shadow: 0 0 var(--token-blur-sm) var(--token-interactive-glow);
+    transition: transform var(--token-reference-motion-duration-slow)
+      var(--token-reference-motion-easing-out);
+    box-shadow: 0 0 var(--token-reference-blur-sm) var(--token-theme-color-interactive-glow);
   }
 
   .timeline-items {
@@ -405,14 +406,16 @@
   // Floating navigation
   .floating-nav {
     position: fixed;
-    inset-block-end: var(--token-space-fluid-2xl);
+    inset-block-end: var(--token-reference-spacing-fluid-2xl);
     inset-inline-start: 50%;
     transform: translateX(-50%) translateY(100px);
     opacity: 0;
     pointer-events: none;
     transition:
-      opacity var(--token-motion-duration-emphasis) var(--token-motion-ease-out),
-      transform var(--token-motion-duration-emphasis) var(--token-motion-ease-out);
+      opacity var(--token-reference-motion-duration-emphasis)
+        var(--token-reference-motion-easing-out),
+      transform var(--token-reference-motion-duration-emphasis)
+        var(--token-reference-motion-easing-out);
     z-index: 50;
 
     &--visible {
@@ -429,15 +432,15 @@
   .floating-nav__content {
     display: flex;
     align-items: center;
-    gap: var(--token-space-fluid-md);
-    background: var(--token-surface-glass-stronger);
-    border: var(--token-border-default-small);
-    border-radius: var(--token-radius-xl);
-    padding: var(--token-space-fluid-md);
-    backdrop-filter: blur(var(--token-blur-xl));
+    gap: var(--token-reference-spacing-fluid-md);
+    background: var(--token-theme-color-surface-glass-stronger);
+    border: var(--token-theme-border-default-small);
+    border-radius: var(--token-reference-radius-xl);
+    padding: var(--token-reference-spacing-fluid-md);
+    backdrop-filter: blur(var(--token-reference-blur-xl));
     box-shadow:
-      var(--token-shadow-elevated),
-      0 0 40px var(--token-shadow-glow-subtle);
+      var(--token-theme-shadow-elevated),
+      0 0 40px var(--token-theme-shadow-glow-subtle);
     position: relative;
     overflow: hidden;
 
@@ -445,7 +448,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: var(--token-surface-glass-iridescent);
+      background: var(--token-theme-color-surface-glass-iridescent);
       opacity: 0.3;
       border-radius: inherit;
       pointer-events: none;
@@ -457,9 +460,9 @@
     --button-min-height: 2.5rem;
     --button-padding: 0;
     --button-padding-md: 0;
-    --button-radius: var(--token-radius-lg);
-    --button-secondary-background: var(--token-surface-glass-medium);
-    --button-secondary-color: var(--token-text-secondary);
+    --button-radius: var(--token-reference-radius-lg);
+    --button-secondary-background: var(--token-theme-color-surface-glass-medium);
+    --button-secondary-color: var(--token-theme-color-text-secondary);
     --button-secondary-hover-transform: scale(1.1);
     --button-secondary-hover-shadow: none;
 
@@ -467,8 +470,8 @@
     z-index: 1;
 
     &:hover:not(:disabled):not([aria-disabled='true']) {
-      --button-secondary-background: var(--token-interactive-color);
-      --button-secondary-color: var(--token-text-dark);
+      --button-secondary-background: var(--token-theme-color-interactive-color);
+      --button-secondary-color: var(--token-theme-color-text-dark);
     }
 
     &:disabled {
@@ -479,7 +482,7 @@
   .floating-nav__progress {
     display: flex;
     align-items: center;
-    gap: var(--token-space-fluid-md);
+    gap: var(--token-reference-spacing-fluid-md);
     flex: 1;
     position: relative;
     z-index: 1;
@@ -488,8 +491,8 @@
   .floating-nav__track {
     inline-size: 4px;
     block-size: 3rem;
-    background: var(--token-surface-glass-strong);
-    border-radius: var(--token-radius-full);
+    background: var(--token-theme-color-surface-glass-strong);
+    border-radius: var(--token-reference-radius-full);
     overflow: hidden;
     position: relative;
   }
@@ -499,25 +502,26 @@
     block-size: var(--timeline-progress);
     background: linear-gradient(
       to top,
-      var(--token-interactive-color),
-      var(--token-interactive-hover)
+      var(--token-theme-color-interactive-color),
+      var(--token-theme-color-interactive-hover)
     );
     border-radius: inherit;
-    transition: block-size var(--token-motion-duration-slow) var(--token-motion-ease-out);
+    transition: block-size var(--token-reference-motion-duration-slow)
+      var(--token-reference-motion-easing-out);
     transform-origin: bottom;
   }
 
   .floating-nav__counter {
-    font-size: var(--token-font-size-sm);
-    font-weight: var(--token-font-weight-medium);
-    color: var(--token-text-brand);
+    font-size: var(--token-reference-typography-size-sm);
+    font-weight: var(--token-reference-typography-weight-medium);
+    color: var(--token-theme-color-text-brand);
     white-space: nowrap;
   }
 
   // Mobile responsive adjustments for smallest screens
   @media (max-width: calc($breakpoint-sm - 1px)) {
     .timeline {
-      padding: var(--token-space-fluid-4xl) 0;
+      padding: var(--token-reference-spacing-fluid-4xl) 0;
     }
 
     .timeline-line {
@@ -557,7 +561,7 @@
     .timeline {
       background: Canvas;
       color: CanvasText;
-      padding: var(--token-space-fluid-lg);
+      padding: var(--token-reference-spacing-fluid-lg);
     }
 
     .floating-nav {

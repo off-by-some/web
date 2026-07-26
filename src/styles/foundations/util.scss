@@ -1,0 +1,97 @@
+@use 'sass:list';
+@use 'sass:map';
+@use 'sass:meta';
+
+@function theme-color-names($theme-config) {
+  $names: ();
+
+  @if meta.type-of($theme-config) != 'map' or not map.has-key($theme-config, reference) {
+    @return $names;
+  }
+
+  $reference-tokens: map.get($theme-config, reference);
+
+  @if meta.type-of($reference-tokens) != 'map' or not map.has-key($reference-tokens, color) {
+    @return $names;
+  }
+
+  $color-tokens: map.get($reference-tokens, color);
+
+  @if meta.type-of($color-tokens) != 'map' or not map.has-key($color-tokens, brand) {
+    @return $names;
+  }
+
+  @each $name, $color in map.get($color-tokens, brand) {
+    $names: list.append($names, $name);
+  }
+
+  @return $names;
+}
+
+@function append-theme-color-names($names, $theme-config) {
+  @each $name in theme-color-names($theme-config) {
+    @if list.index($names, $name) == null {
+      $names: list.append($names, $name);
+    }
+  }
+
+  @return $names;
+}
+
+@function is-semantic-color-leaf($value, $color-names) {
+  @if meta.type-of($value) != 'map' {
+    @return false;
+  }
+
+  $length: list.length($value);
+
+  @if $length == 1 {
+    $key: list.nth(map.keys($value), 1);
+    @return list.index($color-names, $key) != null and meta.type-of(map.get($value, $key)) ==
+      'number';
+  }
+
+  @if $length == 2 and map.has-key($value, 'alpha') {
+    @each $key, $entry in $value {
+      @if $key != 'alpha' {
+        @return list.index($color-names, $key) != null and meta.type-of($entry) == 'number';
+      }
+    }
+  }
+
+  @return false;
+}
+
+@function merge-theme($defaults, $overrides, $color-names: ()) {
+  @if $overrides == () {
+    @return $defaults;
+  }
+
+  @if meta.type-of($defaults) != 'map' or meta.type-of($overrides) != 'map' {
+    @return $overrides;
+  }
+
+  @if is-semantic-color-leaf($defaults, $color-names) {
+    @return $overrides;
+  }
+
+  $merged: $defaults;
+
+  @each $key, $override-value in $overrides {
+    $default-value: map.get($defaults, $key);
+    $merged-value: $override-value;
+
+    @if map.has-key($defaults, $key) {
+      $merged-value: merge-theme($default-value, $override-value, $color-names);
+    }
+
+    $merged: map.merge(
+      $merged,
+      (
+        $key: $merged-value,
+      )
+    );
+  }
+
+  @return $merged;
+}

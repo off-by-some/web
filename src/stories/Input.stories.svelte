@@ -85,7 +85,7 @@
 <style lang="scss">
   .story-stack {
     display: grid;
-    gap: var(--token-space-fluid-lg);
+    gap: var(--token-reference-spacing-fluid-lg);
     max-inline-size: 34rem;
   }
 </style>

@@ -41,46 +41,50 @@
   .card {
     @include root.interactive-root;
 
-    background: var(--card-background, var(--token-surface-glass-medium));
-    border: var(--card-border, var(--token-border-default-small));
-    border-radius: var(--card-radius, var(--token-radius-xl));
-    padding: var(--card-padding, var(--token-space-fluid-xl));
+    background: var(--card-background, var(--token-theme-color-surface-glass-medium));
+    border: var(--card-border, var(--token-theme-border-default-small));
+    border-radius: var(--card-radius, var(--token-reference-radius-xl));
+    padding: var(--card-padding, var(--token-reference-spacing-fluid-xl));
     backdrop-filter: var(--card-backdrop-filter, none);
     -webkit-backdrop-filter: var(--card-backdrop-filter, none);
-    box-shadow: var(--card-shadow, var(--token-shadow-default));
+    box-shadow: var(--card-shadow, var(--token-theme-shadow-default));
     color: inherit;
     isolation: isolate;
     position: relative;
     overflow: var(--card-overflow, hidden);
     transition:
-      transform var(--card-transition-duration, var(--token-motion-duration-emphasis))
-        var(--token-motion-ease-out),
-      border-color var(--card-transition-duration, var(--token-motion-duration-emphasis))
-        var(--token-motion-ease-out),
-      box-shadow var(--card-transition-duration, var(--token-motion-duration-emphasis))
-        var(--token-motion-ease-out),
-      color var(--card-transition-duration, var(--token-motion-duration-emphasis))
-        var(--token-motion-ease-out),
-      background var(--card-transition-duration, var(--token-motion-duration-emphasis))
-        var(--token-motion-ease-out);
+      transform var(--card-transition-duration, var(--token-reference-motion-duration-emphasis))
+        var(--token-reference-motion-easing-out),
+      border-color var(--card-transition-duration, var(--token-reference-motion-duration-emphasis))
+        var(--token-reference-motion-easing-out),
+      box-shadow var(--card-transition-duration, var(--token-reference-motion-duration-emphasis))
+        var(--token-reference-motion-easing-out),
+      color var(--card-transition-duration, var(--token-reference-motion-duration-emphasis))
+        var(--token-reference-motion-easing-out),
+      background var(--card-transition-duration, var(--token-reference-motion-duration-emphasis))
+        var(--token-reference-motion-easing-out);
 
     &::before {
       box-sizing: border-box;
       content: '';
       position: absolute;
       inset: 0;
-      background: var(--card-iridescent-background, var(--token-surface-glass-iridescent));
+      background: var(
+        --card-iridescent-background,
+        var(--token-theme-color-surface-glass-iridescent)
+      );
       opacity: var(--card-iridescent-opacity, 0);
-      transition: opacity var(--card-transition-duration, var(--token-motion-duration-emphasis))
-        var(--token-motion-ease-out);
+      transition: opacity
+        var(--card-transition-duration, var(--token-reference-motion-duration-emphasis))
+        var(--token-reference-motion-easing-out);
       border-radius: inherit;
       pointer-events: none;
     }
 
     &:hover {
       transform: var(--card-hover-transform, translateY(-4px) scale(1.01));
-      border-color: var(--card-hover-border-color, var(--token-border-color-hover));
-      box-shadow: var(--card-hover-shadow, var(--token-shadow-elevated));
+      border-color: var(--card-hover-border-color, var(--token-theme-color-border-hover));
+      box-shadow: var(--card-hover-shadow, var(--token-theme-shadow-elevated));
 
       &::before {
         opacity: var(--card-hover-iridescent-opacity, 0.8);
@@ -89,13 +93,16 @@
 
     &:active {
       transform: var(--card-active-transform, translateY(-2px) scale(1));
-      transition-duration: var(--card-active-duration, var(--token-motion-duration-press));
+      transition-duration: var(
+        --card-active-duration,
+        var(--token-reference-motion-duration-press)
+      );
     }
 
     &:focus,
     &:focus-visible {
-      outline: var(--card-focus-outline, var(--token-focus-outline));
-      outline-offset: var(--card-focus-outline-offset, var(--token-focus-offset-sm));
+      outline: var(--card-focus-outline, var(--token-theme-focus-outline));
+      outline-offset: var(--card-focus-outline-offset, var(--token-theme-focus-offset-sm));
     }
   }
 

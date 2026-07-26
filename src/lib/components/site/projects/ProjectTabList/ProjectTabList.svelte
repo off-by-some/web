@@ -89,13 +89,13 @@
 
 <style lang="scss">
   .project-tab-list {
-    --project-tab-list-paint-bleed: var(--token-space-2);
+    --project-tab-list-paint-bleed: var(--token-reference-spacing-2);
     --project-tab-accent-color: transparent;
     --project-tab-shadow: 0 0 0 transparent;
 
     display: flex;
     flex-direction: column;
-    gap: var(--token-space-fluid-sm);
+    gap: var(--token-reference-spacing-fluid-sm);
     inline-size: 100%;
     min-inline-size: 0;
     margin: calc(var(--project-tab-list-paint-bleed) * -1);
@@ -106,13 +106,13 @@
   .project-tab-list__item {
     display: flex;
     align-items: center;
-    gap: var(--token-space-fluid-md);
+    gap: var(--token-reference-spacing-fluid-md);
     inline-size: 100%;
     min-inline-size: 0;
-    padding: var(--token-space-fluid-md) var(--token-space-fluid-lg);
-    border: var(--token-border-default-small);
-    border-radius: var(--token-radius-lg);
-    background: var(--token-surface-glass-subtle);
+    padding: var(--token-reference-spacing-fluid-md) var(--token-reference-spacing-fluid-lg);
+    border: var(--token-theme-border-default-small);
+    border-radius: var(--token-reference-radius-lg);
+    background: var(--token-theme-color-surface-glass-subtle);
     box-shadow:
       inset 2px 0 0 var(--project-tab-accent-color),
       var(--project-tab-shadow);
@@ -120,34 +120,35 @@
     cursor: pointer;
     text-align: start;
     transition:
-      background var(--token-motion-delay-normal) var(--token-motion-ease-out),
-      border-color var(--token-motion-delay-normal) var(--token-motion-ease-out),
-      box-shadow var(--token-motion-delay-normal) var(--token-motion-ease-out),
-      transform var(--token-motion-delay-normal) var(--token-motion-ease-out);
+      background var(--token-reference-motion-delay-normal) var(--token-reference-motion-easing-out),
+      border-color var(--token-reference-motion-delay-normal)
+        var(--token-reference-motion-easing-out),
+      box-shadow var(--token-reference-motion-delay-normal) var(--token-reference-motion-easing-out),
+      transform var(--token-reference-motion-delay-normal) var(--token-reference-motion-easing-out);
 
     &:hover {
-      background: var(--token-surface-glass-light);
+      background: var(--token-theme-color-surface-glass-light);
       transform: translateX(2px);
     }
 
     &:focus-visible {
-      outline: var(--token-focus-outline);
-      outline-offset: var(--token-focus-offset-sm);
+      outline: var(--token-theme-focus-outline);
+      outline-offset: var(--token-theme-focus-offset-sm);
     }
   }
 
   .project-tab-list__item[data-state='selected'] {
-    --project-tab-accent-color: var(--token-interactive-color);
+    --project-tab-accent-color: var(--token-theme-color-interactive-color);
     --project-tab-shadow: var(
       --project-tab-selected-shadow,
-      0 0 var(--token-blur-md) var(--token-interactive-glow)
+      0 0 var(--token-reference-blur-md) var(--token-theme-color-interactive-glow)
     );
 
-    border-color: var(--token-interactive-color);
-    background: var(--token-surface-glass-medium);
+    border-color: var(--token-theme-color-interactive-color);
+    background: var(--token-theme-color-surface-glass-medium);
 
     .project-tab-list__name {
-      color: var(--token-text-heading);
+      color: var(--token-theme-color-text-heading);
     }
   }
 
@@ -156,17 +157,19 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    inline-size: var(--token-size-3);
+    inline-size: var(--token-reference-size-3);
   }
 
   :global(.project-tab-list__dot) {
-    --tone-dot-size: var(--token-size-3);
+    --tone-dot-size: var(--token-reference-size-3);
     --tone-dot-glow-size: 6px;
 
     transition:
-      opacity var(--token-motion-duration-normal) var(--token-motion-ease-out),
-      transform var(--token-motion-duration-normal) var(--token-motion-ease-out),
-      box-shadow var(--token-motion-duration-normal) var(--token-motion-ease-out);
+      opacity var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out),
+      transform var(--token-reference-motion-duration-normal)
+        var(--token-reference-motion-easing-out),
+      box-shadow var(--token-reference-motion-duration-normal)
+        var(--token-reference-motion-easing-out);
   }
 
   :global(.project-tab-list__dot--idle) {
@@ -177,21 +180,22 @@
     display: flex;
     min-inline-size: 0;
     flex-direction: column;
-    gap: var(--token-space-1);
+    gap: var(--token-reference-spacing-1);
   }
 
   .project-tab-list__name {
     overflow-wrap: anywhere;
-    color: var(--token-text-primary);
-    font-size: var(--token-font-size-base);
-    font-weight: var(--token-font-weight-semibold);
-    transition: color var(--token-motion-duration-normal) var(--token-motion-ease-out);
+    color: var(--token-theme-color-text-primary);
+    font-size: var(--token-reference-typography-size-base);
+    font-weight: var(--token-reference-typography-weight-semibold);
+    transition: color var(--token-reference-motion-duration-normal)
+      var(--token-reference-motion-easing-out);
   }
 
   .project-tab-list__tagline {
-    color: var(--token-text-tertiary);
-    font-size: var(--token-font-size-sm);
-    line-height: var(--token-line-height-snug);
+    color: var(--token-theme-color-text-tertiary);
+    font-size: var(--token-reference-typography-size-sm);
+    line-height: var(--token-reference-typography-line-height-snug);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -205,7 +209,7 @@
   @media (forced-colors: active) {
     .project-tab-list__item {
       border-color: CanvasText;
-      border-width: var(--token-border-size-large);
+      border-width: var(--token-reference-border-width-large);
     }
   }
 </style>

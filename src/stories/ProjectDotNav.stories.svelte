@@ -82,7 +82,7 @@
 <style lang="scss">
   .story-dot-shell {
     inline-size: min(100%, 40rem);
-    color: var(--token-text-primary);
-    font-family: var(--token-font-family-sans);
+    color: var(--token-theme-color-text-primary);
+    font-family: var(--token-reference-typography-family-sans);
   }
 </style>

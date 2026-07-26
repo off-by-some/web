@@ -248,6 +248,6 @@
 <style lang="scss">
   main {
     min-height: 100vh;
-    background: var(--token-surface-color, #0a0a0a);
+    background: var(--token-theme-color-surface-color, #0a0a0a);
   }
 </style>

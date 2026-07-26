@@ -64,13 +64,13 @@
 <style lang="scss">
   .story-image {
     align-items: center;
-    background: var(--token-surface-glass-medium);
-    border-radius: var(--token-radius-xl);
+    background: var(--token-theme-color-surface-glass-medium);
+    border-radius: var(--token-reference-radius-xl);
     display: flex;
     block-size: 12rem;
     justify-content: center;
     overflow: hidden;
-    padding: var(--token-space-fluid-md);
+    padding: var(--token-reference-spacing-fluid-md);
     inline-size: 12rem;
 
     :global(img),
@@ -81,7 +81,7 @@
   }
 
   .story-image--portrait {
-    border-radius: var(--token-radius-full);
+    border-radius: var(--token-reference-radius-full);
     padding: 0;
 
     :global(img) {
@@ -94,6 +94,6 @@
   .story-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--token-space-fluid-lg);
+    gap: var(--token-reference-spacing-fluid-lg);
   }
 </style>

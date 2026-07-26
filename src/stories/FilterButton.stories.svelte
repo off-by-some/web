@@ -58,10 +58,10 @@
 <style lang="scss">
   .story-row {
     align-items: center;
-    color: var(--token-text-primary);
+    color: var(--token-theme-color-text-primary);
     display: flex;
     flex-wrap: wrap;
-    font-family: var(--token-font-family-sans);
-    gap: var(--token-space-fluid-lg);
+    font-family: var(--token-reference-typography-family-sans);
+    gap: var(--token-reference-spacing-fluid-lg);
   }
 </style>

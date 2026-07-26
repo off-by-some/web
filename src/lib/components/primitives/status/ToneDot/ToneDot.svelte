@@ -18,21 +18,23 @@
   .tone-dot {
     @include root.component-root;
 
-    --tone-dot-size: var(--token-size-4);
+    --tone-dot-size: var(--token-reference-size-4);
     --tone-dot-border: none;
-    --tone-dot-glow-size: var(--token-space-2);
+    --tone-dot-glow-size: var(--token-reference-spacing-2);
 
     display: inline-block;
     inline-size: var(--tone-dot-size);
     block-size: var(--tone-dot-size);
     background: var(--tone-color);
     border: var(--tone-dot-border);
-    border-radius: var(--token-radius-full);
+    border-radius: var(--token-reference-radius-full);
     box-shadow: 0 0 var(--tone-dot-glow-size) var(--tone-glow);
     flex-shrink: 0;
     transition:
-      transform var(--token-motion-duration-normal) var(--token-motion-ease-out),
-      box-shadow var(--token-motion-duration-normal) var(--token-motion-ease-out);
+      transform var(--token-reference-motion-duration-normal)
+        var(--token-reference-motion-easing-out),
+      box-shadow var(--token-reference-motion-duration-normal)
+        var(--token-reference-motion-easing-out);
   }
 
   @each $tone-name, $config in tone.$tones {
@@ -42,8 +44,9 @@
   }
 
   .tone-dot--pulse {
-    animation: toneDotPulse var(--tone-dot-pulse-duration, var(--token-motion-duration-pulse))
-      var(--token-motion-ease-out) infinite;
+    animation: toneDotPulse
+      var(--tone-dot-pulse-duration, var(--token-reference-motion-duration-pulse))
+      var(--token-reference-motion-easing-out) infinite;
   }
 
   @keyframes toneDotPulse {

@@ -258,10 +258,10 @@
 
   .skills {
     position: relative;
-    background: var(--token-gradients-skills);
-    padding: var(--token-space-fluid-6xl) 0;
+    background: var(--token-feature-skills-background);
+    padding: var(--token-reference-spacing-fluid-6xl) 0;
     overflow: hidden;
-    font-family: var(--token-font-family-sans);
+    font-family: var(--token-reference-typography-family-sans);
     font-feature-settings:
       'kern' 1,
       'liga' 1,
@@ -275,7 +275,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: var(--token-gradients-hero-glow);
+      background: var(--token-feature-hero-glow);
       opacity: 0.3;
       pointer-events: none;
     }
@@ -284,38 +284,38 @@
   :global(.skills__container) {
     position: relative;
     z-index: 1;
-    max-inline-size: var(--token-container-max);
+    max-inline-size: var(--token-reference-container-max);
     margin: 0 auto;
-    padding: 0 var(--token-space-fluid-lg);
+    padding: 0 var(--token-reference-spacing-fluid-lg);
 
     @media (min-width: $breakpoint-md) {
-      padding: 0 var(--token-space-fluid-xl);
+      padding: 0 var(--token-reference-spacing-fluid-xl);
     }
 
     @media (min-width: $breakpoint-lg) {
-      padding: 0 var(--token-space-fluid-2xl);
+      padding: 0 var(--token-reference-spacing-fluid-2xl);
     }
   }
 
   .skills__header {
-    margin-block-end: var(--token-space-fluid-5xl);
+    margin-block-end: var(--token-reference-spacing-fluid-5xl);
   }
 
   .filters {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: var(--token-space-fluid-sm);
-    margin-block-end: var(--token-space-fluid-5xl);
-    animation: fadeInUp var(--token-motion-duration-entrance) var(--token-motion-ease-out)
-      var(--token-motion-delay-short) both;
+    gap: var(--token-reference-spacing-fluid-sm);
+    margin-block-end: var(--token-reference-spacing-fluid-5xl);
+    animation: fadeInUp var(--token-reference-motion-duration-entrance)
+      var(--token-reference-motion-easing-out) var(--token-reference-motion-delay-short) both;
 
     @media (min-width: $breakpoint-md) {
-      gap: var(--token-space-fluid-md);
+      gap: var(--token-reference-spacing-fluid-md);
     }
 
     @media (min-width: $breakpoint-lg) {
-      gap: var(--token-space-fluid-lg);
+      gap: var(--token-reference-spacing-fluid-lg);
     }
   }
 
@@ -323,60 +323,61 @@
   .skills-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--token-space-fluid-lg);
-    margin-block-end: var(--token-space-fluid-5xl);
-    animation: fadeInUp var(--token-motion-duration-entrance) var(--token-motion-ease-out)
-      var(--token-motion-delay-emphasis) both;
+    gap: var(--token-reference-spacing-fluid-lg);
+    margin-block-end: var(--token-reference-spacing-fluid-5xl);
+    animation: fadeInUp var(--token-reference-motion-duration-entrance)
+      var(--token-reference-motion-easing-out) var(--token-reference-motion-delay-emphasis) both;
 
     @media (min-width: $breakpoint-sm) {
       grid-template-columns: repeat(3, 1fr);
-      gap: var(--token-space-fluid-xl);
+      gap: var(--token-reference-spacing-fluid-xl);
     }
 
     @media (min-width: $breakpoint-md) {
       grid-template-columns: repeat(4, 1fr);
-      gap: var(--token-space-fluid-2xl);
+      gap: var(--token-reference-spacing-fluid-2xl);
     }
 
     @media (min-width: $breakpoint-lg) {
       grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
-      gap: var(--token-space-fluid-3xl);
+      gap: var(--token-reference-spacing-fluid-3xl);
     }
   }
 
   // Legend
   .legend {
     text-align: center;
-    animation: fadeInUp var(--token-motion-duration-entrance) var(--token-motion-ease-out)
-      var(--token-motion-delay-slow) both;
+    animation: fadeInUp var(--token-reference-motion-duration-entrance)
+      var(--token-reference-motion-easing-out) var(--token-reference-motion-delay-slow) both;
   }
 
   .legend-items {
     display: flex;
     justify-content: center;
-    gap: var(--token-space-fluid-xl);
+    gap: var(--token-reference-spacing-fluid-xl);
     flex-wrap: wrap;
 
     @media (min-width: $breakpoint-md) {
-      gap: var(--token-space-fluid-2xl);
+      gap: var(--token-reference-spacing-fluid-2xl);
     }
   }
 
   .legend-item {
     display: flex;
     align-items: center;
-    gap: var(--token-space-fluid-sm);
-    font-size: var(--token-font-size-sm);
-    font-weight: var(--token-font-weight-medium);
-    color: var(--token-text-tertiary);
+    gap: var(--token-reference-spacing-fluid-sm);
+    font-size: var(--token-reference-typography-size-sm);
+    font-weight: var(--token-reference-typography-weight-medium);
+    color: var(--token-theme-color-text-tertiary);
     transition:
-      color var(--token-motion-duration-normal) var(--token-motion-ease-out),
-      transform var(--token-motion-duration-normal) var(--token-motion-ease-out);
-    padding: var(--token-space-fluid-xs) var(--token-space-fluid-sm);
-    border-radius: var(--token-radius-sm);
+      color var(--token-reference-motion-duration-normal) var(--token-reference-motion-easing-out),
+      transform var(--token-reference-motion-duration-normal)
+        var(--token-reference-motion-easing-out);
+    padding: var(--token-reference-spacing-fluid-xs) var(--token-reference-spacing-fluid-sm);
+    border-radius: var(--token-reference-radius-sm);
 
     &:hover {
-      color: var(--token-text-primary);
+      color: var(--token-theme-color-text-primary);
       transform: translateY(-2px);
 
       :global(.legend-dot) {
@@ -385,7 +386,7 @@
     }
 
     @media (min-width: $breakpoint-md) {
-      font-size: var(--token-font-size-base);
+      font-size: var(--token-reference-typography-size-base);
     }
   }
 
@@ -399,14 +400,14 @@
   }
 
   .legend-count {
-    background: var(--token-surface-glass-strong);
-    border: var(--token-border-default-small);
-    border-radius: var(--token-radius-sm);
-    padding: var(--token-space-1) var(--token-space-2);
-    font-size: var(--token-font-size-xs);
-    font-weight: var(--token-font-weight-semibold);
-    color: var(--token-text-brand);
-    backdrop-filter: blur(var(--token-blur-sm));
+    background: var(--token-theme-color-surface-glass-strong);
+    border: var(--token-theme-border-default-small);
+    border-radius: var(--token-reference-radius-sm);
+    padding: var(--token-reference-spacing-1) var(--token-reference-spacing-2);
+    font-size: var(--token-reference-typography-size-xs);
+    font-weight: var(--token-reference-typography-weight-semibold);
+    color: var(--token-theme-color-text-brand);
+    backdrop-filter: blur(var(--token-reference-blur-sm));
   }
 
   // Animations
@@ -446,7 +447,7 @@
     .skills {
       background: Canvas;
       color: CanvasText;
-      padding: var(--token-space-fluid-lg);
+      padding: var(--token-reference-spacing-fluid-lg);
     }
 
     .filters {

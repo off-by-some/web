@@ -71,44 +71,44 @@
 
   .field__label {
     display: block;
-    font-size: var(--field-label-font-size, var(--token-font-size-sm));
-    font-weight: var(--field-label-font-weight, var(--token-font-weight-medium));
-    color: var(--field-label-color, var(--token-text-overlay));
-    margin-block-end: var(--field-label-margin-bottom, var(--token-space-fluid-sm));
-    letter-spacing: var(--token-letter-spacing-wide);
-    line-height: var(--token-line-height-snug);
+    font-size: var(--field-label-font-size, var(--token-reference-typography-size-sm));
+    font-weight: var(--field-label-font-weight, var(--token-reference-typography-weight-medium));
+    color: var(--field-label-color, var(--token-theme-color-text-overlay));
+    margin-block-end: var(--field-label-margin-bottom, var(--token-reference-spacing-fluid-sm));
+    letter-spacing: var(--token-reference-typography-letter-spacing-wide);
+    line-height: var(--token-reference-typography-line-height-snug);
 
     @media (min-width: $breakpoint-md) {
-      font-size: var(--field-label-font-size-md, var(--token-font-size-base));
+      font-size: var(--field-label-font-size-md, var(--token-reference-typography-size-base));
     }
   }
 
   .field__error {
     position: absolute;
-    inset-block-end: calc(-1 * var(--token-space-fluid-lg));
+    inset-block-end: calc(-1 * var(--token-reference-spacing-fluid-lg));
     inset-inline-start: 0;
-    font-size: var(--field-meta-font-size, var(--token-font-size-xs));
-    font-weight: var(--token-font-weight-medium);
-    color: var(--field-error-color, var(--token-status-danger-color));
+    font-size: var(--field-meta-font-size, var(--token-reference-typography-size-xs));
+    font-weight: var(--token-reference-typography-weight-medium);
+    color: var(--field-error-color, var(--token-theme-color-status-danger-color));
     display: flex;
     align-items: center;
-    gap: var(--token-space-2);
-    letter-spacing: var(--token-letter-spacing-normal);
-    line-height: var(--token-line-height-snug);
+    gap: var(--token-reference-spacing-2);
+    letter-spacing: var(--token-reference-typography-letter-spacing-normal);
+    line-height: var(--token-reference-typography-line-height-snug);
 
     &::before {
       content: '⚠';
-      font-size: var(--token-font-size-sm);
+      font-size: var(--token-reference-typography-size-sm);
     }
   }
 
   .field__counter {
     position: absolute;
-    inset-block-end: calc(-1 * var(--token-space-fluid-lg));
+    inset-block-end: calc(-1 * var(--token-reference-spacing-fluid-lg));
     inset-inline-end: 0;
-    font-size: var(--field-meta-font-size, var(--token-font-size-xs));
-    color: var(--field-counter-color, var(--token-text-tertiary));
-    letter-spacing: var(--token-letter-spacing-normal);
-    line-height: var(--token-line-height-snug);
+    font-size: var(--field-meta-font-size, var(--token-reference-typography-size-xs));
+    color: var(--field-counter-color, var(--token-theme-color-text-tertiary));
+    letter-spacing: var(--token-reference-typography-letter-spacing-normal);
+    line-height: var(--token-reference-typography-line-height-snug);
   }
 </style>

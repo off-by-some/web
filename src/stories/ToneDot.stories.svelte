@@ -62,23 +62,23 @@
   .story-row,
   .tone-item {
     align-items: center;
-    color: var(--token-text-primary);
+    color: var(--token-theme-color-text-primary);
     display: flex;
-    gap: var(--token-space-fluid-sm);
+    gap: var(--token-reference-spacing-fluid-sm);
   }
 
   .tone-grid {
     display: grid;
-    gap: var(--token-space-fluid-md);
+    gap: var(--token-reference-spacing-fluid-md);
     grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
     max-inline-size: 42rem;
   }
 
   .tone-item {
-    background: var(--token-surface-glass-medium);
-    border: var(--token-border-default-small);
-    border-radius: var(--token-radius-lg);
-    padding: var(--token-space-fluid-md);
+    background: var(--token-theme-color-surface-glass-medium);
+    border: var(--token-theme-border-default-small);
+    border-radius: var(--token-reference-radius-lg);
+    padding: var(--token-reference-spacing-fluid-md);
     text-transform: capitalize;
   }
 </style>

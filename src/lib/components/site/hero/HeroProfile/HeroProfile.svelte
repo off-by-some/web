@@ -32,8 +32,8 @@
     @include motion.fade-in-up(
       heroProfileIn,
       1.5rem,
-      var(--token-motion-duration-entrance),
-      var(--token-motion-delay-normal)
+      var(--token-reference-motion-duration-entrance),
+      var(--token-reference-motion-delay-normal)
     );
 
     @media (min-width: $breakpoint-lg) {
@@ -45,48 +45,49 @@
   .profile-greeting {
     display: inline-flex;
     align-items: center;
-    gap: var(--token-space-fluid-xs);
-    font-size: var(--token-font-size-sm);
-    font-weight: var(--token-font-weight-semibold);
+    gap: var(--token-reference-spacing-fluid-xs);
+    font-size: var(--token-reference-typography-size-sm);
+    font-weight: var(--token-reference-typography-weight-semibold);
     text-transform: uppercase;
-    letter-spacing: var(--token-letter-spacing-widest);
-    color: var(--token-text-tertiary);
+    letter-spacing: var(--token-reference-typography-letter-spacing-widest);
+    color: var(--token-theme-color-text-tertiary);
     margin-block-end: clamp(0.85rem, 2vh, 1.35rem);
 
     @include motion.fade-in-up(
       heroGreetingIn,
       1.5rem,
-      var(--token-motion-duration-slow),
-      var(--token-motion-delay-tiny)
+      var(--token-reference-motion-duration-slow),
+      var(--token-reference-motion-delay-tiny)
     );
   }
 
   .profile-greeting__wave {
-    font-size: var(--token-font-size-lg);
+    font-size: var(--token-reference-typography-size-lg);
     line-height: 1;
-    animation: wave var(--hero-profile-wave-duration, var(--token-motion-duration-gesture))
-      var(--token-motion-ease-out) var(--hero-profile-wave-delay, var(--token-motion-duration-slow))
-      infinite;
+    animation: wave
+      var(--hero-profile-wave-duration, var(--token-reference-motion-duration-gesture))
+      var(--token-reference-motion-easing-out)
+      var(--hero-profile-wave-delay, var(--token-reference-motion-duration-slow)) infinite;
     transform-origin: 70% 70%;
   }
 
   .profile-name {
     display: block;
     font-size: clamp(3.6rem, 16vw, 6.25rem);
-    font-weight: var(--token-font-weight-bold);
+    font-weight: var(--token-reference-typography-weight-bold);
     line-height: 1;
     margin-block-end: clamp(0.9rem, 1.8vh, 1.45rem);
     padding-block-end: 0.08em;
-    color: var(--token-text-heading);
-    letter-spacing: var(--token-letter-spacing-tight);
-    background: var(--token-gradients-heading);
+    color: var(--token-theme-color-text-heading);
+    letter-spacing: var(--token-reference-typography-letter-spacing-tight);
+    background: var(--token-theme-gradient-heading);
     background-size: 200% 200%;
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: textShimmer
-      var(--hero-profile-shimmer-duration, var(--token-motion-duration-ambient))
-      var(--token-motion-ease-out) infinite;
+      var(--hero-profile-shimmer-duration, var(--token-reference-motion-duration-ambient))
+      var(--token-reference-motion-easing-out) infinite;
 
     @media (min-width: $breakpoint-md) {
       font-size: clamp(5.25rem, 9vw, 8rem);
@@ -107,42 +108,54 @@
   }
 
   .profile-role {
-    font-size: clamp(var(--token-font-size-lg), 4vw, var(--token-font-size-xl));
-    font-weight: var(--token-font-weight-medium);
-    color: var(--token-text-secondary);
-    letter-spacing: var(--token-letter-spacing-normal);
-    line-height: var(--token-line-height-snug);
+    font-size: clamp(
+      var(--token-reference-typography-size-lg),
+      4vw,
+      var(--token-reference-typography-size-xl)
+    );
+    font-weight: var(--token-reference-typography-weight-medium);
+    color: var(--token-theme-color-text-secondary);
+    letter-spacing: var(--token-reference-typography-letter-spacing-normal);
+    line-height: var(--token-reference-typography-line-height-snug);
     margin-block-end: 0;
 
     @include motion.fade-in-up(
       heroRoleIn,
       1.5rem,
-      var(--token-motion-duration-slow),
-      var(--token-motion-delay-hero)
+      var(--token-reference-motion-duration-slow),
+      var(--token-reference-motion-delay-hero)
     );
 
     @media (min-width: $breakpoint-md) {
-      font-size: clamp(var(--token-font-size-xl), 3vw, var(--token-font-size-2xl));
+      font-size: clamp(
+        var(--token-reference-typography-size-xl),
+        3vw,
+        var(--token-reference-typography-size-2xl)
+      );
     }
 
     @media (min-width: $breakpoint-lg) {
-      font-size: clamp(var(--token-font-size-2xl), 1.75vw, var(--token-font-size-3xl));
-      font-weight: var(--token-font-weight-normal);
+      font-size: clamp(
+        var(--token-reference-typography-size-2xl),
+        1.75vw,
+        var(--token-reference-typography-size-3xl)
+      );
+      font-weight: var(--token-reference-typography-weight-normal);
     }
   }
 
   .profile-accent {
     inline-size: clamp(2.35rem, 1.9rem + 1.6vw, 3.35rem);
     block-size: 3px;
-    background: var(--token-emphasis-color);
-    border-radius: var(--token-radius-full);
-    margin-block-start: var(--token-space-fluid-md);
+    background: var(--token-theme-color-emphasis-color);
+    border-radius: var(--token-reference-radius-full);
+    margin-block-start: var(--token-reference-spacing-fluid-md);
     margin-inline: auto;
     transform-origin: left center;
     animation: accentExpand
-      var(--hero-profile-accent-duration, var(--token-motion-duration-ornament))
-      var(--token-motion-ease-out)
-      var(--hero-profile-accent-delay, var(--token-motion-duration-normal)) both;
+      var(--hero-profile-accent-duration, var(--token-reference-motion-duration-ornament))
+      var(--token-reference-motion-easing-out)
+      var(--hero-profile-accent-delay, var(--token-reference-motion-duration-normal)) both;
 
     @media (min-width: $breakpoint-lg) {
       margin-inline: 0;
@@ -209,9 +222,9 @@
   @media (prefers-contrast: high) {
     .profile-name {
       text-shadow: none;
-      font-weight: var(--token-font-weight-bold);
-      color: var(--token-text-primary);
-      -webkit-text-fill-color: var(--token-text-primary);
+      font-weight: var(--token-reference-typography-weight-bold);
+      color: var(--token-theme-color-text-primary);
+      -webkit-text-fill-color: var(--token-theme-color-text-primary);
     }
   }
 

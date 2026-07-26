@@ -418,70 +418,70 @@
   :global(.contact-form-card) {
     --card-background: linear-gradient(
       135deg,
-      var(--token-surface-glass-medium) 0%,
-      var(--token-surface-glass-strong) 100%
+      var(--token-theme-color-surface-glass-medium) 0%,
+      var(--token-theme-color-surface-glass-strong) 100%
     );
-    --card-radius: var(--token-radius-lg);
-    --card-padding: var(--token-space-fluid-2xl);
+    --card-radius: var(--token-reference-radius-lg);
+    --card-padding: var(--token-reference-spacing-fluid-2xl);
     --card-hover-transform: none;
-    --card-hover-shadow: var(--token-shadow-elevated);
+    --card-hover-shadow: var(--token-theme-shadow-elevated);
     --card-hover-iridescent-opacity: 1;
 
     position: relative;
     @include motion.fade-in-up(
       contactFormSlideInUp,
-      var(--token-space-fluid-2xl),
-      var(--token-motion-duration-slow),
-      var(--token-motion-delay-emphasis),
+      var(--token-reference-spacing-fluid-2xl),
+      var(--token-reference-motion-duration-slow),
+      var(--token-reference-motion-delay-emphasis),
       both,
       0.95
     );
 
     @media (min-width: $breakpoint-md) {
-      --card-padding: var(--token-space-fluid-3xl);
-      --card-radius: var(--token-radius-xl);
+      --card-padding: var(--token-reference-spacing-fluid-3xl);
+      --card-radius: var(--token-reference-radius-xl);
     }
   }
 
   .contact-form__header {
     text-align: center;
-    margin-bottom: var(--token-space-fluid-2xl);
+    margin-bottom: var(--token-reference-spacing-fluid-2xl);
     position: relative;
     z-index: 2;
 
     h3 {
-      font-size: var(--token-font-size-xl);
-      font-weight: var(--token-font-weight-semibold);
-      color: var(--token-text-primary);
-      margin-bottom: var(--token-space-fluid-sm);
-      letter-spacing: var(--token-letter-spacing-normal);
-      line-height: var(--token-line-height-snug);
+      font-size: var(--token-reference-typography-size-xl);
+      font-weight: var(--token-reference-typography-weight-semibold);
+      color: var(--token-theme-color-text-primary);
+      margin-bottom: var(--token-reference-spacing-fluid-sm);
+      letter-spacing: var(--token-reference-typography-letter-spacing-normal);
+      line-height: var(--token-reference-typography-line-height-snug);
 
       @media (min-width: $breakpoint-md) {
-        font-size: var(--token-font-size-2xl);
-        line-height: var(--token-line-height-normal);
+        font-size: var(--token-reference-typography-size-2xl);
+        line-height: var(--token-reference-typography-line-height-normal);
       }
 
       @media (min-width: $breakpoint-lg) {
-        font-size: var(--token-font-size-3xl);
-        letter-spacing: var(--token-letter-spacing-tight);
+        font-size: var(--token-reference-typography-size-3xl);
+        letter-spacing: var(--token-reference-typography-letter-spacing-tight);
       }
     }
 
     p {
-      font-size: var(--token-font-size-sm);
-      color: var(--token-text-overlay);
-      line-height: var(--token-line-height-relaxed);
-      letter-spacing: var(--token-letter-spacing-normal);
+      font-size: var(--token-reference-typography-size-sm);
+      color: var(--token-theme-color-text-overlay);
+      line-height: var(--token-reference-typography-line-height-relaxed);
+      letter-spacing: var(--token-reference-typography-letter-spacing-normal);
 
       @media (min-width: $breakpoint-md) {
-        font-size: var(--token-font-size-base);
-        line-height: var(--token-line-height-loose);
+        font-size: var(--token-reference-typography-size-base);
+        line-height: var(--token-reference-typography-line-height-loose);
       }
 
       @media (min-width: $breakpoint-lg) {
-        font-size: var(--token-font-size-lg);
-        letter-spacing: var(--token-letter-spacing-wide);
+        font-size: var(--token-reference-typography-size-lg);
+        letter-spacing: var(--token-reference-typography-letter-spacing-wide);
       }
     }
   }
@@ -489,14 +489,14 @@
   .contact-form {
     display: flex;
     flex-direction: column;
-    gap: var(--token-space-fluid-xl);
+    gap: var(--token-reference-spacing-fluid-xl);
     position: relative;
     z-index: 2;
   }
 
   .contact-form__row {
     display: grid;
-    gap: var(--token-space-fluid-lg);
+    gap: var(--token-reference-spacing-fluid-lg);
 
     @media (min-width: $breakpoint-sm) {
       grid-template-columns: 1fr 1fr;
@@ -505,36 +505,39 @@
 
   :global(.contact-form__submit) {
     --button-width: 100%;
-    --button-min-height: var(--token-size-12);
-    --button-padding: var(--token-space-fluid-lg) var(--token-space-fluid-2xl);
-    --button-padding-md: var(--token-space-fluid-xl) var(--token-space-fluid-3xl);
-    --button-font-size: var(--token-font-size-base);
-    --button-font-size-md: var(--token-font-size-lg);
+    --button-min-height: var(--token-reference-size-12);
+    --button-padding: var(--token-reference-spacing-fluid-lg)
+      var(--token-reference-spacing-fluid-2xl);
+    --button-padding-md: var(--token-reference-spacing-fluid-xl)
+      var(--token-reference-spacing-fluid-3xl);
+    --button-font-size: var(--token-reference-typography-size-base);
+    --button-font-size-md: var(--token-reference-typography-size-lg);
 
-    margin-top: var(--token-space-fluid-lg);
+    margin-top: var(--token-reference-spacing-fluid-lg);
   }
 
   :global(.contact-form__submit--loading) {
-    --button-primary-background: var(--token-status-warning-color);
+    --button-primary-background: var(--token-theme-color-status-warning-color);
   }
 
   :global(.contact-form__submit--success) {
-    --button-primary-background: var(--token-status-success-color);
-    animation: successPulse var(--token-motion-duration-slow) ease-in-out;
+    --button-primary-background: var(--token-theme-color-status-success-color);
+    animation: successPulse var(--token-reference-motion-duration-slow) ease-in-out;
   }
 
   .submit__spinner {
-    width: var(--token-size-4);
-    height: var(--token-size-4);
-    border: var(--token-border-size-large) solid transparent;
-    border-top: var(--token-border-size-large) solid var(--token-text-dark);
-    border-radius: var(--token-radius-full);
-    animation: spin var(--token-motion-duration-slow) linear infinite;
+    width: var(--token-reference-size-4);
+    height: var(--token-reference-size-4);
+    border: var(--token-reference-border-width-large) solid transparent;
+    border-top: var(--token-reference-border-width-large) solid var(--token-theme-color-text-dark);
+    border-radius: var(--token-reference-radius-full);
+    animation: spin var(--token-reference-motion-duration-slow) linear infinite;
   }
 
   .submit__check {
-    font-size: var(--token-font-size-lg);
-    animation: bounceIn var(--token-motion-duration-slow) var(--token-motion-ease-bounce);
+    font-size: var(--token-reference-typography-size-lg);
+    animation: bounceIn var(--token-reference-motion-duration-slow)
+      var(--token-reference-motion-easing-bounce);
   }
 
   @keyframes spin {
@@ -580,7 +583,7 @@
 
   @media (max-width: #{$breakpoint-md}) {
     :global(.contact-form-card) {
-      --card-padding: var(--token-space-fluid-xl);
+      --card-padding: var(--token-reference-spacing-fluid-xl);
     }
 
     .contact-form__row {
@@ -590,7 +593,7 @@
 
   @media (max-width: #{$breakpoint-sm}) {
     :global(.contact-form-card) {
-      --card-padding: var(--token-space-fluid-lg);
+      --card-padding: var(--token-reference-spacing-fluid-lg);
     }
 
     :global(.contact-form__submit:hover) {
@@ -610,14 +613,14 @@
   @media (prefers-contrast: high) {
     .contact-form :global(.input),
     :global(.contact-form-card) {
-      border-width: var(--token-size-2);
+      border-width: var(--token-reference-size-2);
       border-color: currentColor;
     }
   }
 
   @media print {
     :global(.contact-form-card) {
-      border: var(--token-border-default-small);
+      border: var(--token-theme-border-default-small);
       background: Canvas;
       break-inside: avoid;
       box-shadow: none;

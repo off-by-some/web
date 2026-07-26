@@ -115,8 +115,8 @@
     @include motion.fade-in-up(
       heroValueIn,
       1.5rem,
-      var(--token-motion-duration-entrance),
-      var(--token-motion-delay-slow)
+      var(--token-reference-motion-duration-entrance),
+      var(--token-reference-motion-delay-slow)
     );
 
     @media (min-width: $breakpoint-lg) {
@@ -126,37 +126,53 @@
 
   .value-headline {
     max-inline-size: 16ch;
-    font-size: clamp(var(--token-font-size-2xl), 7vw, var(--token-font-size-4xl));
-    font-weight: var(--token-font-weight-medium);
+    font-size: clamp(
+      var(--token-reference-typography-size-2xl),
+      7vw,
+      var(--token-reference-typography-size-4xl)
+    );
+    font-weight: var(--token-reference-typography-weight-medium);
     line-height: 1.14;
-    color: var(--token-text-secondary);
-    letter-spacing: var(--token-letter-spacing-tight);
+    color: var(--token-theme-color-text-secondary);
+    letter-spacing: var(--token-reference-typography-letter-spacing-tight);
     margin: 0 auto;
 
     @media (min-width: $breakpoint-md) {
       max-inline-size: 21ch;
-      font-size: clamp(var(--token-font-size-3xl), 5.2vw, var(--token-font-size-5xl));
+      font-size: clamp(
+        var(--token-reference-typography-size-3xl),
+        5.2vw,
+        var(--token-reference-typography-size-5xl)
+      );
       line-height: 1.12;
       margin-inline: auto;
     }
 
     @media (min-width: $breakpoint-lg) {
       max-inline-size: 22ch;
-      font-size: clamp(var(--token-font-size-3xl), 2.65vw, var(--token-font-size-5xl));
-      letter-spacing: var(--token-letter-spacing-normal);
+      font-size: clamp(
+        var(--token-reference-typography-size-3xl),
+        2.65vw,
+        var(--token-reference-typography-size-5xl)
+      );
+      letter-spacing: var(--token-reference-typography-letter-spacing-normal);
       margin-inline: 0;
     }
 
     @media (min-width: $breakpoint-xlg) {
-      font-size: clamp(var(--token-font-size-4xl), 2.45vw, var(--token-font-size-6xl));
+      font-size: clamp(
+        var(--token-reference-typography-size-4xl),
+        2.45vw,
+        var(--token-reference-typography-size-6xl)
+      );
     }
   }
 
   .value-headline__hl {
     position: relative;
     background: none;
-    font-weight: var(--token-font-weight-semibold);
-    color: var(--token-interactive-color);
+    font-weight: var(--token-reference-typography-weight-semibold);
+    color: var(--token-theme-color-interactive-color);
   }
 
   .value-headline__underline {
@@ -165,27 +181,27 @@
     block-size: 0.32em;
     inline-size: calc(100% - 0.1em);
     inset-block-end: -0.3em;
-    color: var(--token-emphasis-color);
+    color: var(--token-theme-color-emphasis-color);
     overflow: visible;
   }
 
   .value-description {
     max-inline-size: 41rem;
-    font-size: var(--token-font-size-base);
-    line-height: var(--token-line-height-relaxed);
-    color: var(--token-text-secondary);
+    font-size: var(--token-reference-typography-size-base);
+    line-height: var(--token-reference-typography-line-height-relaxed);
+    color: var(--token-theme-color-text-secondary);
     margin: 0 auto;
 
     @media (min-width: $breakpoint-md) {
-      font-size: var(--token-font-size-lg);
-      line-height: var(--token-line-height-loose);
+      font-size: var(--token-reference-typography-size-lg);
+      line-height: var(--token-reference-typography-line-height-loose);
       max-inline-size: 44rem;
       margin-inline: auto;
     }
 
     @media (min-width: $breakpoint-lg) {
-      font-size: var(--token-font-size-xl);
-      letter-spacing: var(--token-letter-spacing-wide);
+      font-size: var(--token-reference-typography-size-xl);
+      letter-spacing: var(--token-reference-typography-letter-spacing-wide);
       max-inline-size: 41rem;
       margin-inline: 0;
     }
@@ -196,8 +212,8 @@
   @media (prefers-contrast: high) {
     .value-headline {
       text-shadow: none;
-      font-weight: var(--token-font-weight-bold);
-      color: var(--token-text-primary);
+      font-weight: var(--token-reference-typography-weight-bold);
+      color: var(--token-theme-color-text-primary);
     }
   }
 </style>

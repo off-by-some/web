@@ -56,10 +56,10 @@
 
 <style lang="scss">
   .story-grid {
-    color: var(--token-text-primary);
+    color: var(--token-theme-color-text-primary);
     display: grid;
-    font-family: var(--token-font-family-sans);
-    gap: var(--token-space-fluid-lg);
+    font-family: var(--token-reference-typography-family-sans);
+    gap: var(--token-reference-spacing-fluid-lg);
     grid-template-columns: minmax(12rem, 1fr);
     max-inline-size: 34rem;
   }

@@ -1386,6 +1386,30 @@ $reference-end: ')' !default;
   @return $expanded;
 }
 
+@function schema-brand-colors($schema) {
+  @if map.has-key($schema, 'brand') {
+    @return map.get($schema, 'brand');
+  }
+
+  @if not map.has-key($schema, 'reference') {
+    @return ();
+  }
+
+  $reference: map.get($schema, 'reference');
+
+  @if not is-valid-type($reference, 'map') or not map.has-key($reference, 'color') {
+    @return ();
+  }
+
+  $color: map.get($reference, 'color');
+
+  @if is-valid-type($color, 'map') and map.has-key($color, 'brand') {
+    @return map.get($color, 'brand');
+  }
+
+  @return ();
+}
+
 @function interpolate($color-name, $step, $alpha: 1) {
   @return 'var(#{$color-name}, #{$step}, #{$alpha}):';
 }
@@ -1416,10 +1440,7 @@ $reference-end: ')' !default;
 @function process-semantic-schema($schema, $primitives: null, $prefix: 'semantic') {
   $valid-schema: validate-map($schema, 'semantic schema');
 
-  $brand-colors: ();
-  @if map.has-key($schema, 'brand') {
-    $brand-colors: map.get($schema, 'brand');
-  }
+  $brand-colors: schema-brand-colors($schema);
 
   @if $primitives == null {
     @if list.length($brand-colors) == 0 {

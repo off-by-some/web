@@ -44,68 +44,68 @@
   :global(.contact-methods-panel) {
     --card-background: linear-gradient(
       135deg,
-      var(--token-surface-glass-medium) 0%,
-      var(--token-surface-glass-strong) 100%
+      var(--token-theme-color-surface-glass-medium) 0%,
+      var(--token-theme-color-surface-glass-strong) 100%
     );
-    --card-radius: var(--token-radius-lg);
-    --card-padding: var(--token-space-fluid-2xl);
+    --card-radius: var(--token-reference-radius-lg);
+    --card-padding: var(--token-reference-spacing-fluid-2xl);
     --card-hover-transform: none;
-    --card-hover-shadow: var(--token-shadow-elevated);
+    --card-hover-shadow: var(--token-theme-shadow-elevated);
     --card-hover-iridescent-opacity: 1;
 
     position: relative;
     @include motion.fade-in-up(
       contactMethodsSlideInUp,
-      var(--token-space-fluid-2xl),
-      var(--token-motion-duration-slow),
-      var(--token-motion-delay-slow),
+      var(--token-reference-spacing-fluid-2xl),
+      var(--token-reference-motion-duration-slow),
+      var(--token-reference-motion-delay-slow),
       both,
       0.95
     );
 
     @media (min-width: $breakpoint-md) {
-      --card-padding: var(--token-space-fluid-3xl);
-      --card-radius: var(--token-radius-xl);
+      --card-padding: var(--token-reference-spacing-fluid-3xl);
+      --card-radius: var(--token-reference-radius-xl);
     }
 
     h3 {
-      font-size: var(--token-font-size-lg);
-      font-weight: var(--token-font-weight-semibold);
-      color: var(--token-text-primary);
-      margin-block-end: var(--token-space-fluid-sm);
-      letter-spacing: var(--token-letter-spacing-normal);
-      line-height: var(--token-line-height-snug);
+      font-size: var(--token-reference-typography-size-lg);
+      font-weight: var(--token-reference-typography-weight-semibold);
+      color: var(--token-theme-color-text-primary);
+      margin-block-end: var(--token-reference-spacing-fluid-sm);
+      letter-spacing: var(--token-reference-typography-letter-spacing-normal);
+      line-height: var(--token-reference-typography-line-height-snug);
       position: relative;
       z-index: 2;
 
       @media (min-width: $breakpoint-md) {
-        font-size: var(--token-font-size-xl);
-        line-height: var(--token-line-height-normal);
+        font-size: var(--token-reference-typography-size-xl);
+        line-height: var(--token-reference-typography-line-height-normal);
       }
 
       @media (min-width: $breakpoint-lg) {
-        font-size: var(--token-font-size-2xl);
-        letter-spacing: var(--token-letter-spacing-tight);
+        font-size: var(--token-reference-typography-size-2xl);
+        letter-spacing: var(--token-reference-typography-letter-spacing-tight);
       }
     }
 
     p {
-      font-size: var(--token-font-size-sm);
-      color: var(--token-text-overlay);
-      line-height: var(--token-line-height-relaxed);
-      margin-block-end: var(--token-space-fluid-xl);
-      letter-spacing: var(--token-letter-spacing-normal);
+      font-size: var(--token-reference-typography-size-sm);
+      color: var(--token-theme-color-text-overlay);
+      line-height: var(--token-reference-typography-line-height-relaxed);
+      margin-block-end: var(--token-reference-spacing-fluid-xl);
+      letter-spacing: var(--token-reference-typography-letter-spacing-normal);
       position: relative;
       z-index: 2;
 
       @media (min-width: $breakpoint-md) {
-        font-size: var(--token-font-size-base);
-        line-height: var(--token-line-height-loose);
+        font-size: var(--token-reference-typography-size-base);
+        line-height: var(--token-reference-typography-line-height-loose);
       }
 
       @media (min-width: $breakpoint-lg) {
-        font-size: var(--token-font-size-lg);
-        letter-spacing: var(--token-letter-spacing-wide);
+        font-size: var(--token-reference-typography-size-lg);
+        letter-spacing: var(--token-reference-typography-letter-spacing-wide);
       }
     }
   }
@@ -113,24 +113,24 @@
   .methods__grid {
     display: flex;
     flex-direction: column;
-    gap: var(--token-space-fluid-lg);
+    gap: var(--token-reference-spacing-fluid-lg);
     position: relative;
     z-index: 2;
 
     @media (min-width: $breakpoint-md) {
-      gap: var(--token-space-fluid-xl);
+      gap: var(--token-reference-spacing-fluid-xl);
     }
   }
 
   @media (max-width: #{$breakpoint-md}) {
     :global(.contact-methods-panel) {
-      --card-padding: var(--token-space-fluid-xl);
+      --card-padding: var(--token-reference-spacing-fluid-xl);
     }
   }
 
   @media (max-width: #{$breakpoint-sm}) {
     :global(.contact-methods-panel) {
-      --card-padding: var(--token-space-fluid-lg);
+      --card-padding: var(--token-reference-spacing-fluid-lg);
     }
   }
 
@@ -144,14 +144,14 @@
 
   @media (prefers-contrast: high) {
     :global(.contact-methods-panel) {
-      border-width: var(--token-size-2);
+      border-width: var(--token-reference-size-2);
       border-color: currentColor;
     }
   }
 
   @media print {
     :global(.contact-methods-panel) {
-      border: var(--token-border-default-small);
+      border: var(--token-theme-border-default-small);
       background: Canvas;
       break-inside: avoid;
       box-shadow: none;

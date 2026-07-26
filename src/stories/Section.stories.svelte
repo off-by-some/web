@@ -58,7 +58,7 @@
 
 <style lang="scss">
   :global(.story-section) {
-    color: var(--token-text-secondary);
-    font-family: var(--token-font-family-sans);
+    color: var(--token-theme-color-text-secondary);
+    font-family: var(--token-reference-typography-family-sans);
   }
 </style>

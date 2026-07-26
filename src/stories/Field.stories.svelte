@@ -104,10 +104,10 @@
 
 <style lang="scss">
   .story-stack {
-    color: var(--token-text-primary);
+    color: var(--token-theme-color-text-primary);
     display: grid;
-    font-family: var(--token-font-family-sans);
-    gap: var(--token-space-fluid-2xl);
+    font-family: var(--token-reference-typography-family-sans);
+    gap: var(--token-reference-spacing-fluid-2xl);
     max-inline-size: 34rem;
   }
 </style>

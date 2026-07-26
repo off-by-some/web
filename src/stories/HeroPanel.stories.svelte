@@ -52,7 +52,7 @@
 
   .story-grid {
     display: grid;
-    gap: var(--token-space-fluid-md);
+    gap: var(--token-reference-spacing-fluid-md);
     grid-template-columns: repeat(2, minmax(10rem, 1fr));
   }
 </style>

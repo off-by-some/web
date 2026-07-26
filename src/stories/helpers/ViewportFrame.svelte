@@ -50,7 +50,7 @@
     overflow-y: visible;
     display: block;
     padding: 0;
-    background: var(--token-gradients-hero, #080a18);
+    background: var(--token-feature-hero-background, #080a18);
   }
 
   .viewport-frame__surface {
@@ -58,8 +58,8 @@
     min-block-size: var(--viewport-frame-block-size);
     margin-inline: auto;
     overflow: visible;
-    background: var(--token-gradients-hero, #080a18);
-    border: 1px solid var(--token-surface-glass-border, rgba(255, 255, 255, 0.1));
-    border-radius: var(--token-radius-md, 0.75rem);
+    background: var(--token-feature-hero-background, #080a18);
+    border: 1px solid var(--token-theme-color-surface-glass-border, rgba(255, 255, 255, 0.1));
+    border-radius: var(--token-reference-radius-md, 0.75rem);
   }
 </style>

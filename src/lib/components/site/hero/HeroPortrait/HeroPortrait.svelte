@@ -63,8 +63,8 @@
     @include motion.fade-in-up(
       heroPortraitIn,
       1.5rem,
-      var(--token-motion-duration-entrance),
-      var(--token-motion-delay-normal)
+      var(--token-reference-motion-duration-entrance),
+      var(--token-reference-motion-delay-normal)
     );
   }
 
@@ -114,18 +114,18 @@
     inset-inline-start: 50%;
     inset-block-start: 8%;
     transform: translateX(-39%);
-    border-radius: var(--token-radius-full);
+    border-radius: var(--token-reference-radius-full);
     background: conic-gradient(
       from 310deg,
-      var(--token-interactive-color) 0deg,
-      var(--token-hero-portrait-halo-blue) 70deg,
-      var(--token-hero-portrait-halo-violet) 170deg,
-      var(--token-emphasis-color) 255deg,
-      var(--token-interactive-color) 360deg
+      var(--token-theme-color-interactive-color) 0deg,
+      var(--token-feature-hero-portrait-halo-blue) 70deg,
+      var(--token-feature-hero-portrait-halo-violet) 170deg,
+      var(--token-theme-color-emphasis-color) 255deg,
+      var(--token-theme-color-interactive-color) 360deg
     );
     box-shadow:
-      0 0 2.75rem var(--token-hero-portrait-halo-shadow-primary),
-      0 0 4.75rem var(--token-hero-portrait-halo-shadow-secondary);
+      0 0 2.75rem var(--token-feature-hero-portrait-halo-shadow-primary),
+      0 0 4.75rem var(--token-feature-hero-portrait-halo-shadow-secondary);
     opacity: 0.84;
     mask-image:
       radial-gradient(farthest-side, transparent calc(100% - 0.32rem), black calc(100% - 0.24rem)),
@@ -188,9 +188,9 @@
       background: linear-gradient(
         to bottom,
         transparent 0%,
-        var(--token-hero-portrait-veil-light) 40%,
-        var(--token-hero-portrait-veil-medium) 76%,
-        var(--token-hero-portrait-veil-strong) 100%
+        var(--token-feature-hero-portrait-veil-light) 40%,
+        var(--token-feature-hero-portrait-veil-medium) 76%,
+        var(--token-feature-hero-portrait-veil-strong) 100%
       );
       filter: blur(0.9rem);
     }
@@ -234,7 +234,7 @@
     grid-template-columns: 8.75rem max-content;
     align-items: center;
     gap: clamp(0.35rem, 0.6vw, 0.65rem);
-    color: var(--token-text-secondary);
+    color: var(--token-theme-color-text-secondary);
     opacity: 0.9;
   }
 
@@ -264,15 +264,19 @@
   .annotation__label {
     font-family: 'Bradley Hand', 'Segoe Print', 'Marker Felt', 'Comic Sans MS', cursive;
     font-style: italic;
-    font-size: clamp(var(--token-font-size-lg), 0.65rem + 0.65vw, var(--token-font-size-2xl));
-    font-weight: var(--token-font-weight-normal);
+    font-size: clamp(
+      var(--token-reference-typography-size-lg),
+      0.65rem + 0.65vw,
+      var(--token-reference-typography-size-2xl)
+    );
+    font-weight: var(--token-reference-typography-weight-normal);
     line-height: 1;
     color: currentColor;
-    letter-spacing: var(--token-letter-spacing-normal);
+    letter-spacing: var(--token-reference-typography-letter-spacing-normal);
     white-space: nowrap;
     text-shadow:
-      0 1px 0 var(--token-hero-portrait-annotation-shadow-rest),
-      0 0 1.35rem var(--token-hero-portrait-annotation-shadow-glow);
+      0 1px 0 var(--token-feature-hero-portrait-annotation-shadow-rest),
+      0 0 1.35rem var(--token-feature-hero-portrait-annotation-shadow-glow);
 
     transform: rotate(-1deg);
   }

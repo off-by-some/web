@@ -77,10 +77,10 @@
 
   .contact {
     position: relative;
-    background: var(--token-gradients-contact);
-    padding: var(--token-space-fluid-5xl) 0;
+    background: var(--token-feature-contact-background);
+    padding: var(--token-reference-spacing-fluid-5xl) 0;
     overflow: hidden;
-    font-family: var(--token-font-family-sans);
+    font-family: var(--token-reference-typography-family-sans);
     font-feature-settings:
       'kern' 1,
       'liga' 1,
@@ -93,43 +93,44 @@
 
   :global(.contact__content) {
     position: relative;
-    max-width: var(--token-container-7xl);
+    max-width: var(--token-reference-container-7xl);
     margin: 0 auto;
-    padding: 0 var(--token-space-fluid-md);
+    padding: 0 var(--token-reference-spacing-fluid-md);
 
     @media (min-width: $breakpoint-md) {
-      padding: 0 var(--token-space-fluid-lg);
+      padding: 0 var(--token-reference-spacing-fluid-lg);
     }
 
     @media (min-width: $breakpoint-lg) {
-      padding: 0 var(--token-space-fluid-xl);
-      max-width: var(--token-container-max);
+      padding: 0 var(--token-reference-spacing-fluid-xl);
+      max-width: var(--token-reference-container-max);
     }
   }
 
   .contact__container {
-    animation: fadeInUp var(--token-motion-duration-slow) var(--token-motion-ease-out) both;
+    animation: fadeInUp var(--token-reference-motion-duration-slow)
+      var(--token-reference-motion-easing-out) both;
   }
 
   .contact__header {
     text-align: center;
-    margin-bottom: var(--token-space-fluid-5xl);
-    animation: fadeInUp var(--token-motion-duration-slow) var(--token-motion-ease-out)
-      var(--token-motion-delay-short) both;
+    margin-bottom: var(--token-reference-spacing-fluid-5xl);
+    animation: fadeInUp var(--token-reference-motion-duration-slow)
+      var(--token-reference-motion-easing-out) var(--token-reference-motion-delay-short) both;
   }
 
   :global(.contact__heading) {
-    margin-block-end: var(--token-space-fluid-lg);
+    margin-block-end: var(--token-reference-spacing-fluid-lg);
   }
 
   .contact__main {
     display: grid;
-    gap: var(--token-space-fluid-4xl);
-    margin-bottom: var(--token-space-fluid-5xl);
+    gap: var(--token-reference-spacing-fluid-4xl);
+    margin-bottom: var(--token-reference-spacing-fluid-5xl);
 
     @media (min-width: $breakpoint-lg) {
       grid-template-columns: 1.2fr 0.8fr;
-      gap: var(--token-space-fluid-3xl);
+      gap: var(--token-reference-spacing-fluid-3xl);
       align-items: start;
     }
   }
@@ -137,7 +138,7 @@
   @keyframes fadeInUp {
     from {
       opacity: 0;
-      transform: translateY(var(--token-space-fluid-xl));
+      transform: translateY(var(--token-reference-spacing-fluid-xl));
     }
 
     to {
@@ -154,21 +155,21 @@
 
   @media (max-width: #{$breakpoint-md}) {
     .contact {
-      padding: var(--token-space-fluid-4xl) 0;
+      padding: var(--token-reference-spacing-fluid-4xl) 0;
     }
 
     :global(.contact__content) {
-      padding: 0 var(--token-space-fluid-sm);
+      padding: 0 var(--token-reference-spacing-fluid-sm);
     }
 
     .contact__header {
-      margin-bottom: var(--token-space-fluid-4xl);
+      margin-bottom: var(--token-reference-spacing-fluid-4xl);
     }
   }
 
   @media (max-width: #{$breakpoint-sm}) {
     .contact {
-      padding: var(--token-space-fluid-3xl) 0;
+      padding: var(--token-reference-spacing-fluid-3xl) 0;
     }
   }
 
@@ -185,12 +186,12 @@
     .contact {
       background: Canvas;
       color: CanvasText;
-      padding: var(--token-space-fluid-lg);
+      padding: var(--token-reference-spacing-fluid-lg);
     }
 
     .contact__main {
       grid-template-columns: 1fr;
-      gap: var(--token-space-fluid-lg);
+      gap: var(--token-reference-spacing-fluid-lg);
     }
   }
 </style>
