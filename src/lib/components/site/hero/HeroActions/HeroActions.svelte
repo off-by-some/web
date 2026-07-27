@@ -73,7 +73,7 @@
           label={link.label}
           icon={link.icon}
           target={link.external ? '_blank' : '_self'}
-          rel={link.external ? 'noopener noreferrer' : undefined}
+          rel={link.external ? 'noopener noreferrer external' : undefined}
           download={link.download}
         />
       {/each}
