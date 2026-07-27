@@ -1,4 +1,5 @@
 <script lang="ts">
+  import '@fontsource/caveat/400.css';
   import Image from '$lib/components/primitives/media/Image';
   import type { HeroPortraitAnnotation } from '$lib/components/site/hero/types';
   import productArrow from './assets/annotation-arrow-product.svg?url';
@@ -253,8 +254,7 @@
   }
 
   .annotation__label {
-    font-family: 'Bradley Hand', 'Segoe Print', 'Marker Felt', 'Comic Sans MS', cursive;
-    font-style: italic;
+    font-family: 'Caveat', cursive;
     font-size: clamp(
       var(--token-reference-typography-size-lg),
       0.65rem + 0.65vw,
