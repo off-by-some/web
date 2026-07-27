@@ -50,6 +50,66 @@ jobs:
 
       - run: npm run lighthouse:run
 
+      - name: Show Lighthouse diagnostics
+        if: always()
+        shell: bash
+        run: |
+          echo "=== Lighthouse environment ==="
+
+          find metrics/lhci \
+            -type f \
+            -name '*.json' \
+            -print0 |
+          xargs -0 -r -n1 jq -r '
+            select(type == "object" and .lighthouseVersion and .audits)
+            | [
+                (.fetchTime // "unknown"),
+                .lighthouseVersion,
+                .userAgent,
+                (.environment.benchmarkIndex // "unknown" | tostring),
+                .finalUrl
+              ]
+            | @tsv
+          ' |
+          sort -u
+
+          echo
+          echo "=== Render-blocking resources ==="
+
+          find metrics/lhci \
+            -type f \
+            -name '*.json' \
+            -print0 |
+          xargs -0 -r -n1 jq -r '
+            select(type == "object" and .audits)
+            | . as $report
+            | .audits
+            | to_entries[]
+            | select(.key | test("render-blocking"))
+            | .key as $audit
+            | .value.details
+            | ..
+            | objects
+            | select(.url?)
+            | [
+                ($report.fetchTime // "unknown"),
+                $audit,
+                .url,
+                ((.wastedMs // .duration // 0) | tostring),
+                ((.totalBytes // 0) | tostring)
+              ]
+            | @tsv
+          ' |
+          sort -u
+
+      - name: Upload Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: lighthouse-reports
+          path: metrics/lhci
+          retention-days: 7
+
   deploy:
     name: Deploy to GitHub Pages
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'

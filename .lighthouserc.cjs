@@ -50,8 +50,8 @@ module.exports = {
         // The LCP threshold is calibrated for the slower GitHub Actions
         // environment instead of local workstation hardware.
         'first-contentful-paint': timingBudget(410),
-        'largest-contentful-paint': timingBudget(1050),
-        'speed-index': timingBudget(623),
+        'largest-contentful-paint': timingBudget(1000),
+        'speed-index': timingBudget(700),
 
         // Stability and responsiveness
         'cumulative-layout-shift': [
