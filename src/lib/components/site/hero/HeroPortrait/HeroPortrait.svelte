@@ -1,10 +1,16 @@
 <script lang="ts">
-  import '@fontsource/caveat/400.css';
+  import { onMount } from 'svelte';
   import Image from '$lib/components/primitives/media/Image';
   import type { HeroPortraitAnnotation } from '$lib/components/site/hero/types';
   import productArrow from './assets/annotation-arrow-product.svg?url';
   import systemsArrow from './assets/annotation-arrow-systems.svg?url';
   import teamArrow from './assets/annotation-arrow-team.svg?url';
+
+  // Loaded lazily so this decorative, lg+-only font never lands in the
+  // critical-path CSS bundle (it regressed LCP when statically imported).
+  onMount(() => {
+    import('@fontsource/caveat/400.css');
+  });
 
   type Props = {
     avatarSrc: string;
