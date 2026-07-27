@@ -397,7 +397,7 @@
     border-end-start-radius: var(--token-reference-radius-lg);
     border-end-end-radius: var(--token-reference-radius-lg);
 
-    max-block-size: var(--dropdown-menu-max-block-size, var(--token-reference-spacing-20));
+    max-block-size: var(--dropdown-menu-max-block-size, 20rem);
     overflow-block: auto;
 
     box-shadow: var(--token-theme-shadow-elevated);

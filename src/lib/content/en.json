@@ -856,13 +856,13 @@
 
   "contactMe": {
     "title": "Let's Build Something Amazing",
-    "subtitle": "Ready to turn your vision into reality? I'd love to hear about your project.",
+    "subtitle": "Hiring, or have a role in mind? I'd love to hear from you.",
     "availabilityText": "Open to new opportunities",
     "emailAddress": "cassidybridges@gmail.com",
 
     "contactForm": {
       "title": "Send a Message",
-      "subtitle": "Share what you're working on, and let's explore how we can build something great together.",
+      "subtitle": "Tell me about the role or team, and let's see if it's the right fit.",
       "formAriaLabel": "Contact form",
 
       "fields": {
@@ -872,16 +872,16 @@
         "emailPlaceholder": "your@email.com",
         "companyLabel": "Company",
         "companyPlaceholder": "Your company",
-        "budgetLabel": "Budget Range",
-        "budgetPlaceholder": "Select budget range",
-        "budgetAriaLabel": "Select your project budget range",
+        "budgetLabel": "Opportunity Type",
+        "budgetPlaceholder": "Select opportunity type",
+        "budgetAriaLabel": "Select the type of opportunity",
         "subjectLabel": "Subject",
-        "subjectPlaceholder": "What's your project about?",
-        "timelineLabel": "Timeline",
-        "timelinePlaceholder": "When do you need this completed?",
-        "timelineAriaLabel": "Select your project timeline",
+        "subjectPlaceholder": "What's this regarding?",
+        "timelineLabel": "Hiring Timeline",
+        "timelinePlaceholder": "When are you looking to hire?",
+        "timelineAriaLabel": "Select your hiring timeline",
         "messageLabel": "Message",
-        "messagePlaceholder": "Tell me about your project, goals, and any specific requirements..."
+        "messagePlaceholder": "Tell me about the role, the team, and what you're looking for..."
       },
 
       "validation": {
@@ -911,50 +911,44 @@
       },
 
       "budgetOptions": [
+        { "value": "full-time", "label": "Full-time", "description": "Permanent, salaried role" },
         {
-          "value": "under-10k",
-          "label": "Under $10K",
-          "description": "Small projects and quick fixes"
+          "value": "contract",
+          "label": "Contract",
+          "description": "Fixed-term or contract-to-hire"
         },
-        { "value": "10k-25k", "label": "$10K - $25K", "description": "Medium-sized applications" },
-        { "value": "25k-50k", "label": "$25K - $50K", "description": "Complex web applications" },
-        { "value": "50k-100k", "label": "$50K - $100K", "description": "Enterprise solutions" },
-        { "value": "100k-150k", "label": "$100K - $150K", "description": "Large-scale platforms" },
         {
-          "value": "150k-200k",
-          "label": "$150K - $200K",
-          "description": "Complex enterprise systems"
+          "value": "fractional",
+          "label": "Fractional / Advisory",
+          "description": "Part-time or advisory engagement"
         },
-        { "value": "200k-plus", "label": "$200K+", "description": "Major digital transformations" },
         {
-          "value": "discuss",
-          "label": "Let's discuss",
-          "description": "Custom pricing for unique projects"
+          "value": "not-sure",
+          "label": "Not sure yet",
+          "description": "Happy to discuss what fits"
         }
       ],
 
       "timelineOptions": [
-        { "value": "asap", "label": "ASAP", "description": "Rush project, immediate start" },
-        { "value": "1-month", "label": "Within 1 month", "description": "Quick turnaround needed" },
         {
-          "value": "2-3-months",
-          "label": "2-3 months",
-          "description": "Standard project timeline"
+          "value": "immediately",
+          "label": "Immediately",
+          "description": "Ready to move quickly"
         },
         {
-          "value": "3-6-months",
-          "label": "3-6 months",
-          "description": "Complex project development"
+          "value": "1-month",
+          "label": "Within 1 month",
+          "description": "Actively interviewing"
         },
         {
-          "value": "6-plus-months",
-          "label": "6+ months",
-          "description": "Long-term strategic project"
+          "value": "1-3-months",
+          "label": "1-3 months",
+          "description": "Building a pipeline"
         },
         {
-          "value": "flexible",
-          "label": "Timeline is flexible",
-          "description": "No rush, quality focused"
+          "value": "exploring",
+          "label": "Just exploring",
+          "description": "No rush, open to a conversation"
         }
       ],
 
@@ -964,8 +958,8 @@
         "nameLine": "Name: {name}",
         "emailLine": "Email: {email}",
         "companyLine": "Company: {company}",
-        "budgetLine": "Budget: {budget}",
-        "timelineLine": "Timeline: {timeline}",
+        "budgetLine": "Opportunity Type: {budget}",
+        "timelineLine": "Hiring Timeline: {timeline}",
         "signoff": "Best regards,\n{name}"
       }
     },
