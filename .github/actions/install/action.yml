@@ -1,5 +1,5 @@
 name: Install dependencies
-description: Set up Node.js and install npm dependencies, restoring dependency and build caches where possible.
+description: Set up Node.js and install npm dependencies, restoring the dependency cache where possible.
 
 runs:
   using: composite
@@ -24,13 +24,3 @@ runs:
       if: steps.deps-cache.outputs.cache-hit != 'true'
       shell: bash
       run: npm ci
-
-    # Best-effort warm start for svelte-kit sync; safe to fall back to a
-    # stale entry since svelte-kit regenerates this from source either way.
-    - name: Cache SvelteKit build cache
-      uses: actions/cache@v5
-      with:
-        path: .svelte-kit
-        key: build-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-        restore-keys: |
-          build-cache-${{ runner.os }}-
