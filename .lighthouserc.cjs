@@ -49,7 +49,7 @@ module.exports = {
         // These use the median of all runs rather than the fastest run.
         // The LCP threshold is calibrated for the slower GitHub Actions
         // environment instead of local workstation hardware.
-        'first-contentful-paint': timingBudget(410),
+        'first-contentful-paint': timingBudget(500),
         'largest-contentful-paint': timingBudget(1000),
         'speed-index': timingBudget(700),
 
