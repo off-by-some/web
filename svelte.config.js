@@ -17,6 +17,10 @@ const config = {
     inlineStyleThreshold: 150000,
     paths: {
       base: process.env.NODE_ENV === 'production' ? '/web' : '',
+      relative: false,
+    },
+    output: {
+      bundleStrategy: 'inline',
     },
     prerender: {
       entries: ['*'],

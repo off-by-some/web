@@ -1,4 +1,7 @@
 $breakpoint-sm: 30rem;
 $breakpoint-md: 48rem;
+// Tablet landscape (iPad and similar, ~1024-1366px) - wide enough for a
+// side-by-side layout but tighter than the desktop-oriented $breakpoint-lg.
+$breakpoint-md-lg: 64rem;
 $breakpoint-lg: 86rem;
 $breakpoint-xlg: 160rem;
