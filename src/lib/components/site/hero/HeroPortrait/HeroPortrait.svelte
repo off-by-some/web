@@ -50,8 +50,11 @@
           src={avatarSrc}
           alt={avatarAlt}
           className="hero-portrait__cutout"
-          width={775}
-          height={1000}
+          style="max-inline-size: 115%;"
+          placeholderSrc="inline/cassidy-cutout-placeholder.webp"
+          width={1200}
+          height={1548}
+          sizes="(min-width: 1376px) 60vw, (min-width: 1024px) 42vw, (min-width: 768px) 70vw, 90vw"
           priority
         />
       </div>
@@ -97,7 +100,7 @@
     position: relative;
     isolation: isolate;
     inline-size: var(--portrait-w);
-    max-inline-size: 100%;
+    max-inline-size: 115%;
     min-block-size: calc(var(--portrait-w) * 1.18);
     overflow: visible;
 
@@ -217,13 +220,12 @@
   :global(.hero-portrait__cutout) {
     position: absolute;
     z-index: 1;
-    inset: 0;
-    inline-size: 100%;
-    block-size: 100%;
+    inset-block-start: 0;
+    inset-inline-start: -7.5%;
+    inline-size: 115%;
+    block-size: 115%;
     object-fit: contain;
     object-position: bottom center;
-    transform: scale(1.2);
-    transform-origin: 50% 0;
   }
 
   .hero-portrait__annotations {

@@ -64,7 +64,7 @@
 
     const run = () => {
       if (cancelled) return;
-      void preloadImageSources(bannerSources, 800);
+      void preloadImageSources(bannerSources);
     };
 
     const schedule = () => {

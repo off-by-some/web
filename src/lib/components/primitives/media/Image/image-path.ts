@@ -6,12 +6,15 @@ export interface ImageLoaderResult {
   sources: Record<string, string>; // e.g. { avif: "url 25w, ...", webp: "...", jpeg: "..." }
 }
 
+export type ImageSource = string | ImageLoaderResult;
+
 export interface PictureSourceSet {
   src: string;
   width?: number;
   height?: number;
   srcset?: string;
   sources?: { type: string; srcset: string }[];
+  isInline?: boolean;
   // Indicates a vector image like SVG which doesn't use responsive sources
   isVector?: boolean;
 }
@@ -71,7 +74,18 @@ const bannerRasterModules = import.meta.glob(
   },
 ) as RasterModuleLoaderMap;
 
-const eagerRasterModules: RasterModuleMap = {};
+const criticalRasterModules = import.meta.glob('/assets/images/cassidy-cutout.webp', {
+  import: 'default',
+  eager: true,
+  query: {
+    enhanced: true,
+    imgSizes: '100vw',
+  },
+}) as RasterModuleMap;
+
+const eagerRasterModules: RasterModuleMap = {
+  ...criticalRasterModules,
+};
 
 const lazyRasterModules = {
   ...iconRasterModules,
@@ -103,10 +117,22 @@ const eagerVectorModules = import.meta.glob('/assets/images/*.svg', {
   query: '?url',
 }) as Partial<Record<string, string>>;
 
+// Inline only explicitly opted-in critical rasters. Keeping this registry narrow
+// prevents large responsive masters from entering the startup bundle.
+const catalogInlineImageModules = import.meta.glob('/assets/images/inline/*.{webp,avif}', {
+  import: 'default',
+  eager: true,
+  query: '?inline',
+}) as Partial<Record<string, string>>;
+
+const inlineImageModules = {
+  ...catalogInlineImageModules,
+};
+
 // Configuration constants
 const PRIMARY_FORMAT = 'jpeg';
 const VECTOR_EXTENSIONS = ['.svg'];
-const isStorybook = Boolean((import.meta.env as ImportMetaEnvWithStorybook).STORYBOOK);
+const isStorybook = (import.meta.env as ImportMetaEnvWithStorybook).STORYBOOK === 'true';
 const storybookBaseUrl = import.meta.env.BASE_URL || '/';
 
 // Image cache for better performance with priority loading
@@ -114,8 +140,13 @@ const imageCache = new Map<string, Promise<PictureSourceSet | undefined>>();
 const externalImageCache = new Map<string, Promise<void>>();
 
 // URL utilities - optimized for performance
-const isExternalOrDataUrl = (url: string): boolean =>
-  !url || /^https?:\/\//i.test(url) || url.startsWith('data:');
+const ABSOLUTE_SCHEME_PATTERN = /^[a-z][a-z0-9+.-]*:/i;
+
+export const isEnhancedImageSource = (source: ImageSource): source is ImageLoaderResult =>
+  typeof source !== 'string';
+
+export const isExternalOrDataUrl = (url: string): boolean =>
+  !url || url.startsWith('//') || ABSOLUTE_SCHEME_PATTERN.test(url);
 
 const isFilesystemPath = (url: string): boolean =>
   /^[A-Za-z]:[\\/]/.test(url) || url.startsWith('/Users/') || url.startsWith('/private/');
@@ -148,7 +179,7 @@ function prefixSrcset(srcset: string | undefined): string | undefined {
 }
 
 // Enhanced image processing with better error handling
-function toPictureSourceSet(enhanced: ImageLoaderResult): PictureSourceSet {
+export function toPictureSourceSet(enhanced: ImageLoaderResult): PictureSourceSet {
   const sourcesByFormat = enhanced.sources;
   let primaryCandidate = sourcesByFormat[PRIMARY_FORMAT];
   if (!primaryCandidate) primaryCandidate = sourcesByFormat.webp;
@@ -217,6 +248,20 @@ function loadEagerVectorImage(name: string): PictureSourceSet | undefined {
   };
 }
 
+export function getInlineImage(name: string): PictureSourceSet | undefined {
+  if (!name || isStorybook) return undefined;
+
+  const key = `/assets/images/${name}`;
+  const dataUrl = inlineImageModules[key];
+
+  if (!dataUrl) return undefined;
+  return {
+    src: dataUrl,
+    isInline: true,
+    isVector: isVectorImage(name),
+  };
+}
+
 function loadRasterImage(name: string): PictureSourceSet | undefined {
   const key = `/assets/images/${name}`;
   const enhanced = eagerRasterModules[key];
@@ -236,6 +281,11 @@ async function loadLazyRasterImage(name: string): Promise<PictureSourceSet | und
 function imageNameFromSource(source: string): string | undefined {
   if (!source || isExternalOrDataUrl(source)) return undefined;
   return source.replace(/^\/?assets\/images\//, '').replace(/^\/+/, '');
+}
+
+export function getImageNameFromSource(source: ImageSource): string | undefined {
+  if (isEnhancedImageSource(source)) return undefined;
+  return imageNameFromSource(source);
 }
 
 function preloadExternalImage(source: string): Promise<void> {
@@ -286,87 +336,64 @@ export function getImage(name: string): PictureSourceSet | undefined {
   return isVectorImage(name) ? loadEagerVectorImage(name) : loadRasterImage(name);
 }
 
-// Main loader with intelligent caching. `targetWidth` is retained for API
-// compatibility; source tiers are now selected by image folder so SSR can render
-// final URLs without waiting for browser-only effects.
-export async function loadImage(
-  name: string,
-  targetWidth?: number,
-): Promise<PictureSourceSet | undefined> {
+// Main loader with intelligent caching. Source tiers are selected by image
+// folder, so one catalog image has one metadata cache entry.
+export async function loadImage(name: string): Promise<PictureSourceSet | undefined> {
   if (!name) return undefined;
 
-  const cacheKey = targetWidth ? `${String(targetWidth)}:${name}` : `default:${name}`;
-
   // Check cache first
-  if (imageCache.has(cacheKey)) {
-    const cached = imageCache.get(cacheKey);
+  if (imageCache.has(name)) {
+    const cached = imageCache.get(name);
     if (cached) return await cached;
   }
 
   // Load and cache the promise (not just the result)
   const loadPromise = loadImageUncached(name);
-  imageCache.set(cacheKey, loadPromise);
+  imageCache.set(name, loadPromise);
 
   try {
     const result = await loadPromise;
     // Keep successful results cached, remove failures to allow retries
     if (!result) {
-      imageCache.delete(cacheKey);
+      imageCache.delete(name);
     }
     return result;
   } catch (error) {
     // Remove failed loads from cache to allow retries
-    imageCache.delete(cacheKey);
+    imageCache.delete(name);
     throw error;
   }
 }
 
-// Priority loading for above-the-fold images
-export async function loadImageWithPriority(
-  name: string,
-  targetWidth?: number,
-): Promise<PictureSourceSet | undefined> {
-  // For priority images, we can add additional optimizations here
-  // Currently uses the same loader but could be enhanced with:
-  // - Preconnect hints
-  // - Higher priority fetch
-  // - Immediate loading without skeleton delay
-  return loadImage(name, targetWidth);
+export function warmImageMetadata(name: string): Promise<PictureSourceSet | undefined> {
+  return loadImage(name);
 }
 
-// Preload utility for critical images
-export function preloadImage(
-  name: string,
-  targetWidth?: number,
-): Promise<PictureSourceSet | undefined> {
-  // Immediately start loading without waiting for component mount
-  return loadImage(name, targetWidth);
+export function warmImageMetadataBatch(names: string[]): Promise<(PictureSourceSet | undefined)[]> {
+  return Promise.all(names.map((name) => warmImageMetadata(name)));
 }
 
-// Batch preload for multiple images
-export function preloadImages(names: string[]): Promise<(PictureSourceSet | undefined)[]> {
-  return Promise.all(names.map((name) => preloadImage(name)));
-}
-
-export async function preloadImageSource(source: string, targetWidth?: number): Promise<void> {
+export async function preloadImageSource(source: string): Promise<void> {
   if (!source) return;
 
-  if (/^https?:\/\//i.test(source)) {
+  if (isExternalOrDataUrl(source)) {
     await preloadExternalImage(source);
     return;
   }
 
   const name = imageNameFromSource(source);
   if (name) {
-    await preloadImage(name, targetWidth);
+    await warmImageMetadata(name);
   }
 }
 
-export async function preloadImageSources(sources: string[], targetWidth?: number): Promise<void> {
-  await Promise.all(
-    Array.from(new Set(sources)).map((source) => preloadImageSource(source, targetWidth)),
-  );
+export async function preloadImageSources(sources: string[]): Promise<void> {
+  await Promise.all(Array.from(new Set(sources)).map((source) => preloadImageSource(source)));
 }
+
+export const loadImageWithPriority = loadImage;
+export const preloadImage = warmImageMetadata;
+export const preloadImages = warmImageMetadataBatch;
 
 // Type guards and utilities
 export const isEnhancedImage = (sourceSet: PictureSourceSet): boolean =>

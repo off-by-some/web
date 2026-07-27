@@ -1,17 +1,18 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────╮
-│ <Image/> — Lazy, responsive image loader with skeleton & animations          │
+│ <Image/> — responsive catalog image renderer                                 │
 ╰──────────────────────────────────────────────────────────────────────────────╯
 
 TL;DR
 • Pass a src like "company_logos/concordus-applications.jpg".
+• Pass a statically imported enhanced asset for critical SSR-first images.
 • Files must exist under /assets/images/** at build time.
 • Outputs <picture> props (src, srcset, sources, width, height).
 • URLs are prefixed with SvelteKit {base} → safe for GitHub Pages.
-• Beautiful skeleton loader and smooth load-in animations.
 
 USAGE
   <Image src="company_logos/concordus-applications.jpg" alt="Concordus" />
+  <Image src={heroImage} alt="Hero" priority />
 
 REQUIREMENTS ✅
   [ ] Images live in /assets/images/** (project root)
@@ -20,12 +21,11 @@ REQUIREMENTS ✅
 
 HOW IT WORKS 🧠
   1) import.meta.glob(...) creates a lazy registry.
-  2) Shows skeleton loader while loading.
+  2) Reserves explicit width/height while loading when callers provide them.
   3) On first use of a src:
        – loads a tiny manifest chunk
        – returns { src, width, height, srcset, sources[] }
-  4) Animates in smoothly when loaded.
-  5) All URLs get {base} prefix for subpath deploys.
+  4) All URLs get {base} prefix for subpath deploys.
 
 PERFORMANCE 📦
   • Initial JS: small registry + dynamic import stubs.
@@ -35,11 +35,7 @@ PERFORMANCE 📦
 
 OPTIONS
   • priority: true → eager load + fetchpriority="high".
-  • showFallback: true → renders <img> placeholder if missing.
-  • skeletonAspectRatio: string → custom aspect ratio for skeleton (default: "16/9")
-  • width: number → also picks the generated source-width tier, not just the
-      <img width> hint. Omit it or pass <=150 for the icon tier; pass <=300 for
-      avatar/inline media; pass larger values for banners and hero art.
+  • width/height: intrinsic layout hints for stable placeholders and rendered images.
 
 ACCESSIBILITY ♿
   • alt=""  → decorative (component adds aria-hidden/role).
@@ -54,11 +50,27 @@ TROUBLESHOOTING 🔧
 <!-- src/lib/components/primitives/media/Image/Image.svelte -->
 <script lang="ts">
   import type { HTMLImgAttributes } from 'svelte/elements';
-  import type { PictureSourceSet } from '$lib/components/primitives/media/Image/image-path';
-  import { getImage, loadImage } from '$lib/components/primitives/media/Image/image-path';
+  import type {
+    ImageSource,
+    PictureSourceSet,
+  } from '$lib/components/primitives/media/Image/image-path';
+  import {
+    getImageNameFromSource,
+    getImage,
+    getInlineImage,
+    isEnhancedImageSource,
+    isExternalOrDataUrl,
+    loadImage,
+    toPictureSourceSet,
+  } from '$lib/components/primitives/media/Image/image-path';
+
+  type ResolvedImage = {
+    key: string;
+    data: PictureSourceSet | undefined;
+  };
 
   type Props = {
-    src: string; // acts like <img src="">
+    src: ImageSource; // string catalog/external src or statically imported ?enhanced asset
     alt?: string;
     sizes?: string; // browser hint; default computed below
     loading?: HTMLImgAttributes['loading'];
@@ -66,8 +78,11 @@ TROUBLESHOOTING 🔧
     fetchpriority?: HTMLImgAttributes['fetchpriority'];
     priority?: boolean; // set to true for LCP images
     preload?: boolean; // emits <link rel="preload" as="image"> when metadata is available
+    inline?: boolean; // embeds catalog asset bytes into the img src for tiny critical images
+    placeholderSrc?: string; // optional inline placeholder shown under the final image
     className?: string;
-    width?: number; // also picks the generated source-width tier — see loadImage
+    style?: HTMLImgAttributes['style'];
+    width?: number;
     height?: number;
     [key: string]: unknown;
   };
@@ -81,56 +96,97 @@ TROUBLESHOOTING 🔧
     fetchpriority,
     priority = false,
     preload = priority,
+    inline = false,
+    placeholderSrc,
     className = '',
+    style,
     width,
     height,
     ...rest
   }: Props = $props();
 
   // Internal state
-  function imageDataFor(currentSrc: string | undefined): PictureSourceSet | undefined {
-    const name = toName(currentSrc ?? '');
+  function imageDataFor(
+    currentSrc: ImageSource | undefined,
+    shouldInline: boolean,
+  ): PictureSourceSet | undefined {
+    if (!currentSrc) return;
+    if (isEnhancedImageSource(currentSrc)) return toPictureSourceSet(currentSrc);
+
+    const name = getImageNameFromSource(currentSrc);
     if (!name) return;
-    return getImage(name);
+    return (shouldInline ? getInlineImage(name) : undefined) ?? getImage(name);
   }
 
-  let loadedData = $state<PictureSourceSet | undefined>(undefined);
-  const data = $derived(loadedData ?? imageDataFor(src));
+  function inlineImageDataFor(currentSrc: string | undefined): PictureSourceSet | undefined {
+    if (!currentSrc) return;
+
+    const name = getImageNameFromSource(currentSrc);
+    return name ? getInlineImage(name) : undefined;
+  }
+
+  function keyFor(currentSrc: ImageSource | undefined, shouldInline: boolean): string {
+    if (!currentSrc) return '';
+    if (isEnhancedImageSource(currentSrc)) return `enhanced\0${currentSrc.img.src}`;
+    return `string\0${currentSrc}\0${shouldInline ? 'inline' : 'url'}`;
+  }
+
+  let resolved = $state<ResolvedImage | undefined>(undefined);
+  const requestKey = $derived(keyFor(src, inline));
+  const data = $derived(resolved?.key === requestKey ? resolved.data : imageDataFor(src, inline));
   let err = $state<string | null>(null);
   let lazyElement: HTMLElement | undefined = $state();
+  let finalImageElement: HTMLImageElement | undefined = $state();
+  let finalImageLoaded = $state(false);
   let shouldLoad = $state(false);
   let requestSequence = 0;
+  const placeholderData = $derived(inlineImageDataFor(placeholderSrc));
 
-  async function startLoadFor(currentSrc: string | undefined, currentWidth: number | undefined) {
+  function markFinalImageLoaded() {
+    finalImageLoaded = true;
+  }
+
+  async function startLoadFor(currentSrc: ImageSource | undefined) {
     const myId = ++requestSequence;
-    const name = toName(currentSrc ?? '');
+    const key = keyFor(currentSrc, inline);
+    const name = currentSrc ? getImageNameFromSource(currentSrc) : undefined;
+
     if (!name) {
-      loadedData = undefined;
+      resolved = { key, data: imageDataFor(currentSrc, inline) };
       err = null;
       return;
     }
-    loadedData = imageDataFor(currentSrc);
+
+    resolved = { key, data: imageDataFor(currentSrc, inline) };
     try {
-      const result = await loadImage(name, currentWidth);
+      const result = await loadImage(name);
       if (myId !== requestSequence) return; // stale
-      loadedData = result ?? undefined;
+      resolved = { key, data: result ?? undefined };
       err = result ? null : `Image not found: ${name}`;
     } catch {
       if (myId !== requestSequence) return; // stale
-      loadedData = undefined;
+      resolved = { key, data: undefined };
       err = 'Failed to load image';
     }
   }
 
-  // Helper: turn a src string into a catalog "name" under /assets/images/**
-  function toName(s: string): string | undefined {
-    if (!s) return;
-    if (/^https?:\/\//i.test(s) || s.startsWith('data:')) return; // external: render plain <img>
-    // Accept "/assets/images/foo.png", "assets/images/foo.png", "/foo.png", or "foo.png"
-    return s.replace(/^\/?assets\/images\//, '').replace(/^\/+/, '');
-  }
+  const isExternalSrc = $derived(typeof src === 'string' && isExternalOrDataUrl(src));
 
-  const isExternalSrc = $derived(/^https?:\/\//i.test(src) || src?.startsWith('data:'));
+  $effect(() => {
+    requestKey;
+    requestSequence += 1;
+    resolved = undefined;
+    err = null;
+    finalImageLoaded = false;
+    shouldLoad = false;
+  });
+
+  $effect(() => {
+    if (!placeholderData || !finalImageElement) return;
+    if (finalImageElement.complete && finalImageElement.naturalWidth > 0) {
+      finalImageLoaded = true;
+    }
+  });
 
   // Defer below-the-fold catalog resolution until the component is close enough
   // for the browser to need it.
@@ -140,14 +196,13 @@ TROUBLESHOOTING 🔧
       return;
     }
 
-    const eagerData = imageDataFor(src);
+    const eagerData = imageDataFor(src, inline);
     if (eagerData) {
       shouldLoad = true;
       return;
     }
 
     shouldLoad = false;
-    loadedData = undefined;
     err = null;
   });
 
@@ -176,8 +231,8 @@ TROUBLESHOOTING 🔧
   $effect(() => {
     if (!shouldLoad) return;
     if (isExternalSrc) return;
-    if (imageDataFor(src)) return;
-    void startLoadFor(src, width);
+    if (imageDataFor(src, inline)) return;
+    void startLoadFor(src);
   });
 
   // If user passes a numeric width (like <Image width={48} …>), default sizes => "48px"
@@ -189,7 +244,7 @@ TROUBLESHOOTING 🔧
 </script>
 
 <svelte:head>
-  {#if data && preload}
+  {#if data && preload && !data.isInline}
     <link
       rel="preload"
       as="image"
@@ -209,6 +264,7 @@ TROUBLESHOOTING 🔧
       {alt}
       class={className}
       class:image={true}
+      {style}
       loading={priority ? 'eager' : loading}
       {decoding}
       fetchpriority={priority ? 'high' : fetchpriority}
@@ -221,6 +277,22 @@ TROUBLESHOOTING 🔧
   {:else}
     <!-- Raster: responsive <picture>. Width/height provide intrinsic size (no CLS);
          CSS/containers still control display size (e.g., img { max-width:100%; height:auto }) -->
+    {#if placeholderData}
+      <img
+        src={placeholderData.src}
+        alt=""
+        class={className}
+        class:image={true}
+        class:image__preview={true}
+        {style}
+        loading="eager"
+        decoding="async"
+        width={width ?? data.width}
+        height={height ?? data.height}
+        aria-hidden="true"
+        role="presentation"
+      />
+    {/if}
     <picture class="image__picture">
       {#each data.sources ?? [] as s (s.type)}
         <source type={s.type} srcset={s.srcset} sizes={effectiveSizes} />
@@ -232,6 +304,9 @@ TROUBLESHOOTING 🔧
         {alt}
         class={className}
         class:image={true}
+        class:image__final={Boolean(placeholderData)}
+        class:image__final--loaded={finalImageLoaded}
+        {style}
         loading={priority ? 'eager' : loading}
         {decoding}
         fetchpriority={priority ? 'high' : fetchpriority}
@@ -239,6 +314,8 @@ TROUBLESHOOTING 🔧
         height={height ?? data.height}
         aria-hidden={ariaHidden === 'true' ? 'true' : undefined}
         {role}
+        bind:this={finalImageElement}
+        onload={markFinalImageLoaded}
         {...rest}
       />
     </picture>
@@ -246,10 +323,11 @@ TROUBLESHOOTING 🔧
 {:else if isExternalSrc}
   <!-- Fallback: external/data URLs render as a normal image while catalog images load. -->
   <img
-    {src}
+    src={typeof src === 'string' ? src : ''}
     {alt}
     class={className}
     class:image={true}
+    {style}
     loading={priority ? 'eager' : loading}
     {decoding}
     fetchpriority={priority ? 'high' : fetchpriority}
@@ -284,6 +362,23 @@ TROUBLESHOOTING 🔧
     display: contents;
   }
 
+  .image__preview {
+    pointer-events: none;
+    transition: opacity 160ms ease;
+    user-select: none;
+  }
+
+  .image__final {
+    color: transparent;
+    font-size: 0;
+    opacity: 0;
+    transition: opacity 160ms ease;
+  }
+
+  .image__final--loaded {
+    opacity: 1;
+  }
+
   .image__placeholder {
     block-size: 100%;
     display: block;
@@ -300,5 +395,12 @@ TROUBLESHOOTING 🔧
         var(--token-reference-typography-family-mono, ui-monospace),
       ui-monospace;
     margin-block-start: var(--token-reference-spacing-3);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .image__preview,
+    .image__final {
+      transition: none;
+    }
   }
 </style>

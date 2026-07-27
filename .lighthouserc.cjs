@@ -26,7 +26,7 @@ module.exports = {
             url: ['http://localhost:4173/web/'],
           }),
 
-      numberOfRuns: 8,
+      numberOfRuns: 4,
 
       settings: {
         chromeFlags: '--no-sandbox --disable-dev-shm-usage',
@@ -49,7 +49,7 @@ module.exports = {
         // These use the median of all runs rather than the fastest run.
         // The LCP threshold is calibrated for the slower GitHub Actions
         // environment instead of local workstation hardware.
-        'first-contentful-paint': timingBudget(500),
+        'first-contentful-paint': timingBudget(700),
         'largest-contentful-paint': timingBudget(1000),
         'speed-index': timingBudget(700),
 

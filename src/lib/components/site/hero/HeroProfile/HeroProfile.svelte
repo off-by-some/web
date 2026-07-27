@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { HeroProfileModel } from '$lib/components/site/hero/types';
+  import Image from '$lib/components/primitives/media/Image/Image.svelte';
 
   type Props = HeroProfileModel;
 
@@ -9,7 +10,9 @@
 <div class="profile-section">
   {#if greeting}
     <p class="profile-greeting" aria-hidden="true">
-      <span class="profile-greeting__wave">👋</span>
+      <span class="profile-greeting__wave">
+        <Image src="svg/apple-wave-emoji.svg" alt="" width={18} height={18} />
+      </span>
       {greeting}
     </p>
   {/if}
@@ -62,12 +65,18 @@
   }
 
   .profile-greeting__wave {
-    font-size: var(--token-reference-typography-size-lg);
-    line-height: 1;
+    display: inline-flex;
+    inline-size: var(--token-reference-typography-size-lg);
+    block-size: var(--token-reference-typography-size-lg);
     animation: wave var(--hero-profile-wave-duration, var(--token-feature-hero-motion-gesture))
       var(--token-reference-motion-easing-standard)
       var(--hero-profile-wave-delay, var(--token-theme-motion-feedback-slow)) infinite;
     transform-origin: 70% 70%;
+
+    :global(img) {
+      inline-size: 100%;
+      block-size: 100%;
+    }
   }
 
   .profile-name {
