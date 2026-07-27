@@ -2,12 +2,17 @@
   import { onMount } from 'svelte';
   import Image from '$lib/components/primitives/media/Image';
   import type { HeroPortraitAnnotation } from '$lib/components/site/hero/types';
+  import caveatLatinWoff2 from '@fontsource/caveat/files/caveat-latin-400-normal.woff2?url';
   import productArrow from './assets/annotation-arrow-product.svg?url';
   import systemsArrow from './assets/annotation-arrow-systems.svg?url';
   import teamArrow from './assets/annotation-arrow-team.svg?url';
 
-  // Loaded lazily so this decorative, lg+-only font never lands in the
-  // critical-path CSS bundle (it regressed LCP when statically imported).
+  // The @font-face CSS is loaded lazily so this decorative, lg+-only font
+  // never lands in the critical-path CSS bundle (it regressed LCP when
+  // statically imported). The preload below starts fetching the font bytes
+  // immediately in parallel, so by the time that CSS chunk arrives, the
+  // browser already has the file cached and can apply it without a second
+  // round trip. Scoped to lg+ since annotations are hidden below that.
   onMount(() => {
     import('@fontsource/caveat/400.css');
   });
@@ -23,6 +28,17 @@
   const annotationArrows = [systemsArrow, teamArrow, productArrow];
   const annotationSlots = ['systems', 'team', 'product'];
 </script>
+
+<svelte:head>
+  <link
+    rel="preload"
+    href={caveatLatinWoff2}
+    as="font"
+    type="font/woff2"
+    crossorigin="anonymous"
+    media="(min-width: 1170px)"
+  />
+</svelte:head>
 
 <div class="hero-portrait">
   <div class="hero-portrait__composition">
