@@ -11,7 +11,7 @@
   {#if greeting}
     <p class="profile-greeting" aria-hidden="true">
       <span class="profile-greeting__wave">
-        <Image src="svg/apple-wave-emoji.svg" alt="" width={18} height={18} />
+        <Image src="svg/apple-wave-emoji.svg" alt="" width={18} height={18} priority />
       </span>
       {greeting}
     </p>

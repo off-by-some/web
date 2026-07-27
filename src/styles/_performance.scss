@@ -1,0 +1,54 @@
+/*
+ * Scroll performance guardrails.
+ *
+ * Firefox on Linux can spend most of a scroll profile in WebRender when large
+ * translucent gradients, backdrop filters, and blurred shadows overlap. Keep
+ * the visual language, but avoid asking Firefox to recomposite live glass
+ * effects across the whole page while scrolling.
+ */
+
+@supports (-moz-appearance: none) {
+  .card,
+  .button--secondary,
+  .expand-button,
+  .filter-button,
+  .filter-button__count,
+  .floating-nav,
+  .floating-nav__dots,
+  .floating-nav__progress,
+  .legend-count,
+  .mastery-chip,
+  .project-dot-nav,
+  .quote-panel,
+  .skill-tag,
+  .timeline-date,
+  .timeline-dot,
+  .floating-nav__content,
+  .nav-item {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  .card,
+  .button--secondary,
+  .floating-nav,
+  .floating-nav__dot,
+  .project-dot-nav,
+  .floating-nav__content,
+  .nav-item {
+    box-shadow: var(--token-theme-shadow-light) !important;
+  }
+
+  .hero::before,
+  .timeline::before,
+  .skills::before,
+  .projects::before,
+  .testimonials::before {
+    opacity: 0.22 !important;
+  }
+
+  .hero-portrait__halo::after {
+    filter: none !important;
+    opacity: 0.2 !important;
+  }
+}

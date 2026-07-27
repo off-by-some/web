@@ -248,8 +248,8 @@ TROUBLESHOOTING 🔧
     <link
       rel="preload"
       as="image"
-      href={data.src}
-      imagesrcset={data.srcset}
+      href={data.preloadSrc ?? data.src}
+      imagesrcset={data.preloadSrcset ?? data.srcset}
       imagesizes={effectiveSizes}
       fetchpriority={priority ? 'high' : fetchpriority}
     />

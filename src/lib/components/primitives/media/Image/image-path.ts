@@ -14,6 +14,8 @@ export interface PictureSourceSet {
   height?: number;
   srcset?: string;
   sources?: { type: string; srcset: string }[];
+  preloadSrc?: string;
+  preloadSrcset?: string;
   isInline?: boolean;
   // Indicates a vector image like SVG which doesn't use responsive sources
   isVector?: boolean;
@@ -94,10 +96,10 @@ const lazyRasterModules = {
   ...bannerRasterModules,
 };
 
-// SVGs are below-the-fold site assets, so keep their URL modules out of the
-// first page chunk and resolve them only when the Image instance needs them.
-// Use a file-relative glob so Storybook's /assets/images static route cannot
-// shadow Vite's `?url` module request in dev.
+// Most SVGs are below-the-fold site assets, so keep their URL modules out of
+// the first page chunk and resolve them only when the Image instance needs
+// them. Use a file-relative glob so Storybook's /assets/images static route
+// cannot shadow Vite's `?url` module request in dev.
 const SVG_ASSET_PREFIX = '../../../../../../assets/images/';
 
 const svgModules = import.meta.glob('../../../../../../assets/images/**/*.svg', {
@@ -105,17 +107,25 @@ const svgModules = import.meta.glob('../../../../../../assets/images/**/*.svg', 
   query: '?url',
 }) as VectorModuleLoaderMap;
 
-// Root-level SVGs (currently just the hero avatar) are resolved eagerly so
-// `priority` instances get a real <img src> in the SSR/prerendered HTML
-// instead of only a placeholder that depends on a client-side dynamic import
-// resolving after hydration - the async-only path let the avatar sometimes
-// fail to appear at all. `?url` imports are just a hashed string, not the
-// file bytes, so this costs nothing meaningful even at 797kb+ source size.
-const eagerVectorModules = import.meta.glob('/assets/images/*.svg', {
+// Critical first-viewport SVGs are resolved eagerly so they render as stable
+// <img> nodes in the SSR/prerendered HTML instead of placeholder nodes that get
+// replaced after hydration. `?url` imports are hashed strings, not file bytes.
+const rootVectorModules = import.meta.glob('/assets/images/*.svg', {
   import: 'default',
   eager: true,
   query: '?url',
 }) as Partial<Record<string, string>>;
+
+const criticalVectorModules = import.meta.glob('/assets/images/svg/apple-wave-emoji.svg', {
+  import: 'default',
+  eager: true,
+  query: '?url',
+}) as Partial<Record<string, string>>;
+
+const eagerVectorModules = {
+  ...rootVectorModules,
+  ...criticalVectorModules,
+};
 
 // Inline only explicitly opted-in critical rasters. Keeping this registry narrow
 // prevents large responsive masters from entering the startup bundle.
@@ -131,6 +141,7 @@ const inlineImageModules = {
 
 // Configuration constants
 const PRIMARY_FORMAT = 'jpeg';
+const PRELOAD_FORMATS = ['avif', 'webp', PRIMARY_FORMAT, 'png'] as const;
 const VECTOR_EXTENSIONS = ['.svg'];
 const isStorybook = (import.meta.env as ImportMetaEnvWithStorybook).STORYBOOK === 'true';
 const storybookBaseUrl = import.meta.env.BASE_URL || '/';
@@ -178,6 +189,11 @@ function prefixSrcset(srcset: string | undefined): string | undefined {
   return mapped.filter(Boolean).join(', ');
 }
 
+function firstUrlFromSrcset(srcset: string | undefined): string | undefined {
+  const firstCandidate = srcset?.split(',')[0]?.trim();
+  return firstCandidate?.split(/\s+/)[0];
+}
+
 // Enhanced image processing with better error handling
 export function toPictureSourceSet(enhanced: ImageLoaderResult): PictureSourceSet {
   const sourcesByFormat = enhanced.sources;
@@ -185,6 +201,9 @@ export function toPictureSourceSet(enhanced: ImageLoaderResult): PictureSourceSe
   if (!primaryCandidate) primaryCandidate = sourcesByFormat.webp;
   if (!primaryCandidate) primaryCandidate = sourcesByFormat.avif;
   if (!primaryCandidate) primaryCandidate = Object.values(sourcesByFormat)[0];
+  const preloadCandidate = PRELOAD_FORMATS.map((format) => sourcesByFormat[format]).find(Boolean);
+  const preparedPreloadSrcset = prefixSrcset(preloadCandidate);
+  const preparedPrimarySrcset = prefixSrcset(primaryCandidate);
 
   const preparedSources = Object.entries(sourcesByFormat)
     .filter(([format]) => format !== PRIMARY_FORMAT)
@@ -198,8 +217,10 @@ export function toPictureSourceSet(enhanced: ImageLoaderResult): PictureSourceSe
     src: prefix(enhanced.img.src),
     width: enhanced.img.w,
     height: enhanced.img.h,
-    srcset: prefixSrcset(primaryCandidate),
+    srcset: preparedPrimarySrcset,
     sources: preparedSources.length > 0 ? preparedSources : undefined,
+    preloadSrc: firstUrlFromSrcset(preparedPreloadSrcset),
+    preloadSrcset: preparedPreloadSrcset,
   };
 }
 
