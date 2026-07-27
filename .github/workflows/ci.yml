@@ -37,16 +37,18 @@ jobs:
 
   lighthouse:
     name: Lighthouse CI
-    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/install
 
-      - uses: actions/download-artifact@v7
-        with:
-          name: site-build
-          path: build
+      # Builds fresh in this job rather than reusing another job's build/
+      # artifact - vite preview (via SvelteKit's plugin) also needs
+      # .svelte-kit/output/server, which isn't part of that static artifact
+      # and was previously only available here through a cache that turned
+      # out to serve stale content. Storybook is skipped since Lighthouse
+      # only tests the main app.
+      - run: npm run clean && npm run setup:static && npm run build:app
 
       - run: npm run lighthouse:run
 
