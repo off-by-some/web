@@ -132,6 +132,16 @@ Site components compose those primitives into portfolio-specific units: `HeroPro
 
 This keeps the larger page sections mostly orchestration. They provide content and layout intent, while the components own their CSS, interaction behavior, and visual consistency.
 
+A few defaults shape how components here are built:
+
+- **One job per component.** If you can't state its purpose in a sentence, it's either doing too much or nothing distinct at all.
+- **Explicit contracts.** Props describe meaning (`tone="warning"`), not implementation (`yellow thickBorder`). No component silently depends on state a caller can't see in its signature.
+- **One owner per piece of state.** Nothing keeps a duplicate copy "in sync" with something else — that's how UI state drifts and disagrees with itself.
+- **Native behavior first.** Real interactive elements and ARIA semantics over reimplementing keyboard/focus handling on a styled `<div>`.
+- **Styles stop at the component's own DOM.** A component owns its internal CSS; placement and spacing between components belongs to the parent (`gap` on the parent, not `margin` baked into the child), and a component doesn't reach into content a caller projected into it.
+- **Layouts adapt, not assume.** Components respond to their container, their content, and user preferences (motion, color scheme) rather than one ideal screen size.
+- **Rigor scales with reuse.** Primitives (`Button`, `Image`, `Section`) hold these defaults strictly since dozens of unrelated callers depend on them; a one-off section component can be more pragmatic.
+
 ## Accessibility and Interaction
 
 Once styling decisions are centralized, interaction behavior can follow the same model. The repository keeps common behavior in primitives rather than rediscovering it inside each section.
