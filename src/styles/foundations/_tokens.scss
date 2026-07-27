@@ -259,7 +259,6 @@ $theme-defaults: (
               dark: themes.reference('theme.color.background.color'),
               brand: themes.reference('theme.color.interactive.color'),
               emphasis: (
-                default: themes.reference('theme.color.emphasis.color', $step: 250),
                 heading: themes.reference('theme.color.emphasis.color', $step: 300, $alpha: 100%),
               ),
 

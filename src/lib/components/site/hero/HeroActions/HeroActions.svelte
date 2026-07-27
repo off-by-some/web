@@ -99,7 +99,7 @@
       var(--token-reference-motion-delay-800)
     );
 
-    @media (min-width: $breakpoint-lg) {
+    @media (min-width: $breakpoint-md-lg) {
       align-items: flex-start;
     }
   }
@@ -111,7 +111,7 @@
     flex-wrap: wrap;
     gap: var(--token-reference-spacing-fluid-md) var(--token-reference-spacing-fluid-lg);
 
-    @media (min-width: $breakpoint-lg) {
+    @media (min-width: $breakpoint-md-lg) {
       justify-content: flex-start;
     }
   }

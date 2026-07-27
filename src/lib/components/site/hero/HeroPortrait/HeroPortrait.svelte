@@ -105,6 +105,10 @@
       --portrait-w: min(100%, clamp(29rem, 60vw, 42rem));
     }
 
+    @media (min-width: $breakpoint-md-lg) {
+      --portrait-w: min(100%, clamp(20rem, 38vw, 34rem));
+    }
+
     @media (min-width: $breakpoint-lg) {
       --portrait-w: min(100%, clamp(48rem, 47vw, 66rem));
       min-block-size: calc(var(--portrait-w) * 1.08);
@@ -112,6 +116,15 @@
 
     @media (min-width: $breakpoint-xlg) {
       --portrait-w: min(100%, clamp(52rem, 43vw, 72rem));
+    }
+
+    // Width-driven sizing alone can make the portrait too tall for short
+    // viewports (landscape phones especially, which are often wider than
+    // $breakpoint-md but only a few hundred px tall). Cap it against the
+    // viewport height directly once height is the tighter constraint.
+    @media (max-height: 600px) {
+      --portrait-w: min(58vh, 20rem);
+      min-block-size: calc(var(--portrait-w) * 1.15);
     }
   }
 

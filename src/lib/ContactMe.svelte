@@ -113,6 +113,10 @@
   }
 
   .contact__header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--token-reference-spacing-fluid-lg);
     text-align: center;
     margin-bottom: var(--token-reference-spacing-fluid-5xl);
     animation: fadeInUp var(--token-theme-motion-feedback-slow)

@@ -288,7 +288,7 @@
 
   .project-card__tagline {
     margin: 0 0 var(--token-reference-spacing-fluid-lg);
-    color: var(--token-theme-color-text-emphasis-default);
+    color: var(--token-theme-color-emphasis-color);
     font-size: var(--token-reference-typography-size-base);
     font-weight: var(--token-reference-typography-weight-medium);
 

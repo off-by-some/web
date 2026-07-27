@@ -119,7 +119,7 @@
       var(--token-reference-motion-delay-600)
     );
 
-    @media (min-width: $breakpoint-lg) {
+    @media (min-width: $breakpoint-md-lg) {
       text-align: left;
     }
   }
@@ -146,6 +146,17 @@
       );
       line-height: 1.12;
       margin-inline: auto;
+    }
+
+    @media (min-width: $breakpoint-md-lg) {
+      max-inline-size: 20ch;
+      font-size: clamp(
+        var(--token-reference-typography-size-2xl),
+        2.8vw,
+        var(--token-reference-typography-size-3xl)
+      );
+      line-height: 1.16;
+      margin-inline: 0;
     }
 
     @media (min-width: $breakpoint-lg) {
@@ -197,6 +208,12 @@
       line-height: var(--token-reference-typography-line-height-loose);
       max-inline-size: 44rem;
       margin-inline: auto;
+    }
+
+    @media (min-width: $breakpoint-md-lg) {
+      font-size: var(--token-reference-typography-size-lg);
+      max-inline-size: 34rem;
+      margin-inline: 0;
     }
 
     @media (min-width: $breakpoint-lg) {

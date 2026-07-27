@@ -36,7 +36,7 @@
       var(--token-reference-motion-delay-300)
     );
 
-    @media (min-width: $breakpoint-lg) {
+    @media (min-width: $breakpoint-md-lg) {
       align-items: flex-start;
       text-align: left;
     }
@@ -94,6 +94,19 @@
       padding-block-end: 0.07em;
     }
 
+    // Content sits in a much narrower side-by-side column from here up, not
+    // the full-width mobile measure the $breakpoint-md size assumes - needs
+    // its own, smaller-and-vw-driven size rather than inheriting that jump.
+    // The vw coefficient is tuned to grow across the whole tablet-landscape
+    // range and land close to $breakpoint-lg's own floor size, instead of
+    // plateauing early and looking undersized by the top of the range.
+    @media (min-width: $breakpoint-md-lg) {
+      font-size: clamp(3.25rem, 5vw, 4.5rem);
+      line-height: 1;
+      padding-block-end: 0.06em;
+      white-space: nowrap;
+    }
+
     @media (min-width: $breakpoint-lg) {
       font-size: clamp(5rem, 5.15vw, 7.2rem);
       line-height: 0.96;
@@ -133,6 +146,14 @@
       );
     }
 
+    @media (min-width: $breakpoint-md-lg) {
+      font-size: clamp(
+        var(--token-reference-typography-size-xl),
+        2.4vw,
+        var(--token-reference-typography-size-2xl)
+      );
+    }
+
     @media (min-width: $breakpoint-lg) {
       font-size: clamp(
         var(--token-reference-typography-size-2xl),
@@ -156,7 +177,7 @@
       var(--token-reference-motion-easing-standard)
       var(--hero-profile-accent-delay, var(--token-theme-motion-feedback-default)) both;
 
-    @media (min-width: $breakpoint-lg) {
+    @media (min-width: $breakpoint-md-lg) {
       margin-inline: 0;
     }
   }

@@ -120,7 +120,6 @@
     flex: 1;
     display: flex;
     align-items: center;
-    max-width: min(var(--token-reference-container-max), 118rem);
     margin: 0 auto;
     padding: 0 var(--token-reference-spacing-fluid-lg);
     width: 100%;
@@ -159,10 +158,18 @@
       gap: clamp(2rem, 4.25vh, 3.75rem);
     }
 
-    @media (min-width: $breakpoint-lg) {
-      grid-template-columns: minmax(44rem, 1.02fr) minmax(38rem, 0.98fr);
+    // Tablet landscape gets its own side-by-side treatment rather than
+    // waiting for the desktop-oriented $breakpoint-lg - otherwise every
+    // iPad, in any orientation, was stuck with the stacked mobile layout.
+    @media (min-width: $breakpoint-md-lg) {
+      grid-template-columns: minmax(22rem, 0.92fr) minmax(20rem, 1.08fr);
       grid-template-areas: 'content portrait';
       justify-items: stretch;
+      gap: clamp(2rem, 3.5vw, 3.5rem);
+    }
+
+    @media (min-width: $breakpoint-lg) {
+      grid-template-columns: minmax(44rem, 1.02fr) minmax(38rem, 0.98fr);
       gap: clamp(2.75rem, 4.6vw, 6.25rem);
     }
 
@@ -171,8 +178,10 @@
       gap: clamp(4rem, 6vw, 8rem);
     }
 
+    // No max-height cap here: on short viewports the section should grow
+    // taller than 100vh and let the page scroll, rather than silently
+    // clipping content against .hero's overflow: hidden.
     @media (max-height: 600px) {
-      max-height: calc(100vh - var(--token-reference-spacing-fluid-2xl));
       gap: var(--token-reference-spacing-fluid-lg);
     }
   }
@@ -185,7 +194,7 @@
     min-width: 0;
     width: 100%;
 
-    @media (min-width: $breakpoint-lg) {
+    @media (min-width: $breakpoint-md-lg) {
       justify-content: flex-start;
     }
   }
@@ -202,8 +211,12 @@
       gap: clamp(1.85rem, 3.5vh, 3rem);
     }
 
-    @media (min-width: $breakpoint-lg) {
+    @media (min-width: $breakpoint-md-lg) {
       width: 100%;
+      gap: clamp(2rem, 3.5vh, 3.25rem);
+    }
+
+    @media (min-width: $breakpoint-lg) {
       max-width: 66rem;
       gap: clamp(2.25rem, 4vh, 3.75rem);
     }

@@ -855,7 +855,7 @@
   },
 
   "contactMe": {
-    "title": "Let's Build Something Amazing",
+    "title": "Let's Build Something",
     "subtitle": "Hiring, or have a role in mind? I'd love to hear from you.",
     "availabilityText": "Open to new opportunities",
     "emailAddress": "cassidybridges@gmail.com",
@@ -982,6 +982,14 @@
         "href": "mailto:cassidybridges@gmail.com",
         "imagePath": "svg/email_brand_icon.svg",
         "description": "Direct message"
+      },
+      {
+        "type": "calendar",
+        "label": "Calendly",
+        "value": "15-minute call",
+        "href": "https://calendly.com/cassidybridges/15min",
+        "imagePath": "svg/calendly_brand_icon.svg",
+        "description": "Schedule time with me"
       },
       {
         "type": "linkedin",
