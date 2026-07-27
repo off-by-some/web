@@ -13,6 +13,7 @@
     primaryHref,
     exploreLabel,
     exploreHref,
+    exploreDownload,
     iconLinks = [],
     iconLinksLabel = 'Profile links',
     onPrimaryAction,
@@ -45,12 +46,13 @@
       <a
         class="hero-actions__explore"
         href={withBasePath(exploreHref)}
+        download={exploreDownload}
         onclick={handleExploreClick}
       >
         {exploreLabel}
         <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
           <path
-            d="M12 5v14M6 13l6 6 6-6"
+            d="M12 3v12M7 10l5 5 5-5M5 21h14"
             fill="none"
             stroke="currentColor"
             stroke-width="2.25"

@@ -687,12 +687,6 @@ $theme-defaults: (
             shadow-primary: themes.reference('theme.color.interactive.color', $alpha: 22%),
             shadow-secondary: #8b5cf633,
           ),
-          veil: (
-            surface: #0d1427,
-            light: rgba(13, 20, 39, 0.26),
-            medium: rgba(13, 20, 39, 0.7),
-            strong: rgba(13, 20, 39, 0.95),
-          ),
           annotation: (
             shadow-rest: rgba(5, 7, 24, 0.35),
             shadow-glow: rgba(5, 7, 24, 0.8),

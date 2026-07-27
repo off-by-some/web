@@ -56,6 +56,11 @@
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   };
 
+  // "Expert" reads as a self-declared claim, so the top tier is spoken/labeled
+  // as "Fluent" everywhere it surfaces as text (legend, announcements).
+  const levelLabel = (level: SkillLevel): string =>
+    level === 'expert' ? 'Fluent' : toTitleCase(level);
+
   // Function to calculate proficiency level based on years of experience
   const calculateProficiencyLevel = (years?: number): SkillLevel => {
     if (!years || years <= 2) return 'learning';
@@ -144,7 +149,7 @@
     if (isActive) {
       onSkillSelectionRequested?.({ skill, category: skill.categoryInfo });
 
-      let announcement = `Selected ${skill.name}, ${toTitleCase(skill.level)} level skill`;
+      let announcement = `Selected ${skill.name}, ${levelLabel(skill.level)} level skill`;
       if (skill.years) announcement += ` with ${skill.years} years experience`;
       if (skill.description) announcement += `. ${skill.description}`;
 
@@ -244,7 +249,7 @@
         {#each skillLevels as level (level)}
           <div class="legend-item legend-item--{level}">
             <ToneDot tone={level} className="legend-dot" />
-            <span class="legend-label">{toTitleCase(level)}</span>
+            <span class="legend-label">{levelLabel(level)}</span>
             <span class="legend-count">{skillsByLevel[level] || 0}</span>
           </div>
         {/each}

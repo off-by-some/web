@@ -26,7 +26,7 @@ export interface HeroPortraitModel {
   annotations?: HeroPortraitAnnotation[];
 }
 
-export type HeroActionIcon = 'github' | 'linkedin' | 'download' | 'arrow' | 'star';
+export type HeroActionIcon = 'github' | 'linkedin' | 'download' | 'arrow' | 'star' | 'storybook';
 export type HeroActionShape = 'circle' | 'label';
 
 export interface HeroIconAction {
@@ -42,6 +42,7 @@ export interface HeroActionsModel {
   primaryHref: string;
   exploreLabel?: string;
   exploreHref?: string;
+  exploreDownload?: string;
   iconLinks?: HeroIconAction[];
   iconLinksLabel?: string;
 }

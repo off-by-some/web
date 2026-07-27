@@ -28,7 +28,7 @@
     "avatarSrc": "cassidy-cutout.svg",
     "avatarAlt": "Cassidy Bridges",
     "primaryButtonText": "Let's build something great",
-    "exploreLinkText": "Explore my work",
+    "exploreLinkText": "Download my resume",
     "scrollText": "Scroll to explore",
     "profileAriaLabel": "View profile details for {name}",
     "scrollIndicatorAriaLabel": "Scroll to next section",
@@ -442,14 +442,14 @@
         "date": "Apr 2023 – Dec 2024",
         "dateValue": "Apr 2023",
         "location": "Remote",
-        "summary": "At Scribe, I dove head-first into Scribe's messiest code and turned it into a well-oiled machine, eliminating CPU spikes, squashing memory leaks, and building next-gen AI tooling so the team could finally focus on shipping instead of firefighting.",
+        "summary": "At Scribe, I rebuilt the performance-critical core of the codebase—resolving the CPU and memory issues that had been slowing the team down—and shipped new AI-powered tooling to speed up how engineers found and fixed bugs.",
         "highlights": [
-          "Led performance overhaul that knocked CPU peaks from 99% to 15% and cut memory use by 83%, dramatically boosting developer velocity and enabling enterprise-scale workloads.",
-          "Built \"Bug Buddy,\" an AI-powered triage assistant that slashed manual triage time by 72% and cut downstream bug volume by 90%.",
-          "Architected and executed a multi-team refactor—wiped out 15,000+ lines of legacy code and migrated the entire front end to TypeScript.",
-          "Rebuilt the front-end API layer, cutting API calls by 80% and speeding time-to-render by 53%—all without pausing active feature work.",
+          "Led a performance overhaul that brought sustained CPU peaks down from 99% to 15% and substantially cut memory use, unlocking enterprise-scale workloads without new hardware.",
+          "Built \"Bug Buddy,\" an AI-powered triage assistant that cut manual triage time by roughly three-quarters and meaningfully reduced downstream bug volume.",
+          "Architected and led a multi-team refactor that retired over 15,000 lines of legacy code and moved the entire front end to TypeScript.",
+          "Rebuilt the front-end API layer to eliminate redundant calls and noticeably speed up rendering—without pausing active feature work.",
           "Designed democratic decision processes and living documentation so engineering teams could ship and review features faster together.",
-          "Overhauled image processing and error-reporting pipelines—introduced WebP, eliminated data-integrity issues, and sliced load times by 20%.",
+          "Overhauled image processing and error-reporting pipelines—introduced WebP, resolved data-integrity issues, and reduced load times by 20%.",
           "Prototyped an LLM-driven migration tool that automated 80% of our Redux→React Query conversion, saving the team dozens of hours."
         ],
         "skills": [
@@ -470,15 +470,15 @@
         "date": "Apr 2017 – Dec 2022",
         "dateValue": "Apr 2017",
         "location": "Remote",
-        "summary": "At Green Bits (acquired by Dutchie), I architected solutions to sustain 99.9% uptime under 400% traffic surges, built our first white-labeled React dispensary menu that cut clients' manual work by over 40 hours a week, and managed the company's DevEx pipeline.",
+        "summary": "At Green Bits (acquired by Dutchie), I built our first white-labeled React dispensary menu—saving clients dozens of hours of manual work each week—architected the systems that kept the platform reliable through major traffic spikes, and managed the company's DevEx pipeline.",
         "highlights": [
-          "Built the first white-labeled React dispensary menu, cutting manual inventory updates and custom branding chores by 40+ hours/week.",
-          "Performed Load Testing, Complex Query Analysis, & Chaos Engineering to ensure the company's systems were resilient to 400% traffic surges.",
+          "Built the first white-labeled React dispensary menu, cutting manual inventory updates and custom branding work by 40+ hours a week.",
+          "Ran load testing, complex query analysis, and chaos engineering to keep systems resilient through traffic surges of up to 400%.",
           "Implemented redundant data storage and replication alongside failover strategies, ensuring data integrity and reliability across multiple data centers.",
-          "Owned the DevEx team's Product Roadmap, working with other teams to distill criteria into actionable items, and ensure the team was always shipping high-value features.",
-          "Engineered pre-production & staging environments with feature-branches & Kubernetes—eliminating QA environment wait times and accelerating inefficient test cycles by over 80% ",
-          "Prototyped \"Brick\", an offline-first data persistence layer (TypeScript/React Native → later Dart) to guarantee seamless UX and government reporting when networks hiccup.",
-          "Maintained & responsible for the company's CI/CD pipeline, implementing containerization, and parallelized testing, cutting test execution time with reliable deployments."
+          "Owned the DevEx team's product roadmap, working with other teams to translate criteria into actionable items and keep the team shipping high-value features.",
+          "Engineered pre-production and staging environments with feature branches and Kubernetes, eliminating QA wait times and cutting test cycle time by more than 80%.",
+          "Prototyped \"Brick\", an offline-first data persistence layer (TypeScript/React Native → later Dart) to guarantee seamless UX and reliable government reporting when connectivity drops.",
+          "Owned the company's CI/CD pipeline, implementing containerization and parallelized testing to speed up test execution and keep deployments reliable."
         ],
         "skills": [
           "AWS",
@@ -496,17 +496,17 @@
         "title": "Front-End Engineer",
         "company": "Import.io",
         "logo": "company_logos/import_io_logo.jpg",
-        "date": "Aug 2016 – Apr 2017",
-        "dateValue": "Aug 2016",
+        "date": "Jan 2017 – Apr 2017",
+        "dateValue": "Jan 2017",
         "location": "Los Gatos, California",
-        "summary": "At Import.io, I delivered a React-powered, Excel-style spreadsheet UI that automated large-dataset cleaning—saving customers hundreds of hours—and led a full Angular 1→React rewrite that cut bundle size by 45% and load times by 60%.",
+        "summary": "At Import.io, I delivered a React-powered, Excel-style spreadsheet UI that automated large-dataset cleaning and saved customers hundreds of hours, and led a full Angular 1→React rewrite that meaningfully cut bundle size and load times.",
         "highlights": [
           "Established foundational engineering workflows—unit/E2E tests, structured ticketing, and sprint estimates—to transform a fragile codebase into a maintainable, predictable system.",
-          "Architected a high-performance spreadsheet engine with live formulas, and virtual rendering, eliminating manual scripts and saving users hundreds of hours",
+          "Architected a high-performance spreadsheet engine with live formulas and virtual rendering, eliminating manual scripts and saving users hundreds of hours.",
           "Created solutions for complex problems, such as a number system to efficiently generate combinatorial slices on-the-fly in O(n) time, enabling advanced generation features.",
-          "Designed and implemented the full Angular 1→React migration, reducing the JS bundle by 45% and cutting initial load times by 60%, all without a single customer-facing regression ",
+          "Designed and led the full Angular 1→React migration, cutting the JS bundle by 45% and noticeably speeding up initial load times—without a single customer-facing regression.",
           "Mentored junior developers through pair programming and code reviews, embedding React best practices and lifting the entire team's frontend expertise.",
-          "Process collaboration: Partnered with Product & Design to shape requirements, ran regular design-dev syncs, and delivered iterative UI improvements based on real user feedback."
+          "Partnered with Product & Design to shape requirements, ran regular design-dev syncs, and delivered iterative UI improvements based on real user feedback."
         ],
         "skills": [
           "React",
@@ -526,10 +526,10 @@
         "title": "Software Engineer",
         "company": "UpGuard",
         "logo": "company_logos/upguard_logo.jpg",
-        "date": "Oct 2016 – Sep 2017",
+        "date": "Oct 2016 – Jan 2017",
         "dateValue": "Oct 2016",
         "location": "Mountain View, California",
-        "summary": "At UpGuard, I initiated the migration of our front-end by migrating key modules from Angular 1 to React—streamlining the component architecture and boosting developer velocity—then revamped and rewrote our E2E test suite, slicing six hours off nightly runs.",
+        "summary": "At UpGuard, I initiated the migration of our front-end by migrating key modules from Angular 1 to React—streamlining the component architecture and boosting developer velocity—then revamped and rewrote our E2E test suite, cutting six hours off nightly runs.",
         "highlights": [
           "Contributed to our vulnerability-scanning engine—adding support for diverse machine environments—to broaden security coverage and strengthen proactive detection.",
           "Prototyped the phased migration from Angular 1 to React, replacing monolithic controllers with modular & isolated components, improving maintainability.",
@@ -546,10 +546,10 @@
         "date": "Feb 2015 – Sep 2016",
         "dateValue": "Feb 2015",
         "location": "Sacramento, California Area",
-        "summary": "I drove end-to-end delivery of LaunchBadge's full-stack platform—powering $1.2M+ in annual revenue—and stepped in as interim CTO to break down silos, align our technical roadmap with business goals, and smooth out collaboration.",
+        "summary": "I drove end-to-end delivery of LaunchBadge's full-stack platform—which went on to generate $1.2M+ in bookings—and stepped in as interim CTO to break down silos, align our technical roadmap with business goals, and smooth out collaboration.",
         "highlights": [
-          "Built the React Native mobile app alongside Go, Python, and Node.js backends, laying the foundation for a product that generated $1.2M+ in bookings.",
-          "For six weeks, facilitated cross-functional standups, set OKRs, and prioritized features—cutting project defects and ramping up team alignment.",
+          "Built the React Native mobile app alongside Go, Python, and Node.js backends, laying the foundation for the product's $1.2M+ in bookings.",
+          "For six weeks, facilitated cross-functional standups, set OKRs, and prioritized features—cutting project defects and improving team alignment.",
           "Owned the product roadmap, balanced feature priorities against resource and budget constraints, and kept multiple projects on time and on budget.",
           "Introduced agile practices—sprint planning, backlog grooming, retrospectives—that improved predictability and boosted delivery velocity.",
           "Onboarded new engineers with clear documentation and paired sessions, established coding standards, and coached teammates on full-stack best practices to scale the team without friction."

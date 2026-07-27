@@ -27,7 +27,7 @@
       label: { control: { type: 'text' } },
       icon: {
         control: { type: 'select' },
-        options: ['github', 'linkedin', 'download', 'arrow', 'star'],
+        options: ['github', 'linkedin', 'download', 'arrow', 'star', 'storybook'],
       },
       shape: { control: { type: 'select' }, options: ['circle', 'label'] },
     },

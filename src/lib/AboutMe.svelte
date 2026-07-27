@@ -54,11 +54,7 @@
 
         <HeroValue {...value} />
 
-        <HeroActions
-          {...actions}
-          onPrimaryAction={onContactRequested}
-          onExploreAction={onExploreRequested}
-        />
+        <HeroActions {...actions} onPrimaryAction={onContactRequested} />
       </div>
 
       <div class="hero-grid__portrait">

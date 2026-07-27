@@ -100,7 +100,7 @@
     isolation: isolate;
 
     @media (min-width: $breakpoint-lg) {
-      inline-size: calc(var(--portrait-w) * 0.84);
+      inline-size: calc(var(--portrait-w) * 0.87);
       margin-inline: -1.75rem auto;
       transform: translateY(1.35rem);
     }
@@ -176,24 +176,6 @@
     );
     -webkit-mask-repeat: no-repeat;
     -webkit-mask-size: 100% 100%;
-
-    &::after {
-      content: '';
-      position: absolute;
-      z-index: 2;
-      inset-inline: -6%;
-      inset-block-end: -1%;
-      block-size: 15%;
-      pointer-events: none;
-      background: linear-gradient(
-        to bottom,
-        transparent 0%,
-        var(--token-feature-hero-portrait-veil-light) 40%,
-        var(--token-feature-hero-portrait-veil-medium) 76%,
-        var(--token-feature-hero-portrait-veil-strong) 100%
-      );
-      filter: blur(0.9rem);
-    }
   }
 
   :global(.hero-portrait__cutout) {
@@ -226,6 +208,9 @@
   .annotation {
     --annotation-x: 58.5%;
     --annotation-y: 17%;
+    --annotation-connector-y: 0.2rem;
+    --annotation-label-x: 0;
+    --annotation-label-y: 0;
 
     position: absolute;
     inset-inline-start: var(--annotation-x);
@@ -238,9 +223,15 @@
     opacity: 0.9;
   }
 
+  .annotation--systems {
+    --annotation-connector-y: 0.55rem;
+    --annotation-label-y: -2rem;
+  }
+
   .annotation--team {
-    --annotation-x: 61.5%;
+    --annotation-x: 71%;
     --annotation-y: 38.5%;
+    --annotation-label-x: 1.45rem;
   }
 
   .annotation--product {
@@ -250,13 +241,13 @@
 
   .annotation__connector {
     display: block;
-    inline-size: 8.75rem;
+    inline-size: 9.5rem;
     aspect-ratio: 240 / 128;
     flex-shrink: 0;
     background: currentColor;
     color: currentColor;
     opacity: 0.56;
-    transform: translateY(0.1rem);
+    transform: translateY(var(--annotation-connector-y));
     mask: var(--annotation-arrow) center / contain no-repeat;
     -webkit-mask: var(--annotation-arrow) center / contain no-repeat;
   }
@@ -278,7 +269,7 @@
       0 1px 0 var(--token-feature-hero-portrait-annotation-shadow-rest),
       0 0 1.35rem var(--token-feature-hero-portrait-annotation-shadow-glow);
 
-    transform: rotate(-1deg);
+    transform: translate(var(--annotation-label-x), var(--annotation-label-y)) rotate(-1deg);
   }
 
   @include motion.reduced-motion-reset('.hero-portrait');

@@ -141,7 +141,8 @@
     primaryLabel: t.aboutMe.primaryButtonText,
     primaryHref: '#contact',
     exploreLabel: t.aboutMe.exploreLinkText,
-    exploreHref: '#experience',
+    exploreHref: resumeHref,
+    exploreDownload: 'Cassidy-Bridges-Software-Engineering.pdf',
     iconLinksLabel: 'Profile links',
     iconLinks: [
       ...(linkedinUrl
@@ -165,16 +166,16 @@
           ]
         : []),
       {
+        label: 'Open Storybook',
+        href: '/web/storybook',
+        icon: 'storybook',
+        external: true,
+      },
+      {
         label: 'Star this project on GitHub',
         href: 'https://github.com/off-by-some/web',
         icon: 'star',
         external: true,
-      },
-      {
-        label: 'Download resume',
-        href: resumeHref,
-        icon: 'download',
-        download: 'Cassidy-Bridges-Software-Engineering.pdf',
       },
     ],
   };
