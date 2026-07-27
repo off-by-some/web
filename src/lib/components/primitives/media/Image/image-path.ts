@@ -91,6 +91,18 @@ const svgModules = import.meta.glob('../../../../../../assets/images/**/*.svg', 
   query: '?url',
 }) as VectorModuleLoaderMap;
 
+// Root-level SVGs (currently just the hero avatar) are resolved eagerly so
+// `priority` instances get a real <img src> in the SSR/prerendered HTML
+// instead of only a placeholder that depends on a client-side dynamic import
+// resolving after hydration - the async-only path let the avatar sometimes
+// fail to appear at all. `?url` imports are just a hashed string, not the
+// file bytes, so this costs nothing meaningful even at 797kb+ source size.
+const eagerVectorModules = import.meta.glob('/assets/images/*.svg', {
+  import: 'default',
+  eager: true,
+  query: '?url',
+}) as Partial<Record<string, string>>;
+
 // Configuration constants
 const PRIMARY_FORMAT = 'jpeg';
 const VECTOR_EXTENSIONS = ['.svg'];
@@ -194,6 +206,17 @@ async function loadVectorImage(name: string): Promise<PictureSourceSet | undefin
   };
 }
 
+function loadEagerVectorImage(name: string): PictureSourceSet | undefined {
+  const key = `/assets/images/${name}`;
+  const url = eagerVectorModules[key];
+
+  if (!url) return undefined;
+  return {
+    src: isFilesystemPath(url) ? prefix(`/assets/images/${name}`) : prefix(url),
+    isVector: true,
+  };
+}
+
 function loadRasterImage(name: string): PictureSourceSet | undefined {
   const key = `/assets/images/${name}`;
   const enhanced = eagerRasterModules[key];
@@ -260,7 +283,7 @@ function loadImageUncached(name: string): Promise<PictureSourceSet | undefined> 
 export function getImage(name: string): PictureSourceSet | undefined {
   if (!name) return undefined;
   if (isStorybook) return loadStaticCatalogImage(name);
-  return isVectorImage(name) ? undefined : loadRasterImage(name);
+  return isVectorImage(name) ? loadEagerVectorImage(name) : loadRasterImage(name);
 }
 
 // Main loader with intelligent caching. `targetWidth` is retained for API
