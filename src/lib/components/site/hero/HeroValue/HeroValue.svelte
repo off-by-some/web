@@ -109,7 +109,7 @@
   .value-section {
     display: flex;
     flex-direction: column;
-    gap: clamp(1.35rem, 2.7vh, 2.15rem);
+    gap: clamp(1.05rem, 4svw, 1.75rem);
     text-align: center;
 
     @include motion.fade-in-up(
@@ -125,10 +125,10 @@
   }
 
   .value-headline {
-    max-inline-size: 16ch;
+    max-inline-size: 17ch;
     font-size: clamp(
       var(--token-reference-typography-size-2xl),
-      7vw,
+      6.65vw,
       var(--token-reference-typography-size-4xl)
     );
     font-weight: var(--token-reference-typography-weight-medium);
@@ -136,26 +136,23 @@
     color: var(--token-theme-color-text-secondary);
     letter-spacing: var(--token-reference-typography-letter-spacing-tight);
     margin: 0 auto;
+    text-wrap: balance;
 
     @media (min-width: $breakpoint-md) {
       max-inline-size: 21ch;
       font-size: clamp(
         var(--token-reference-typography-size-3xl),
-        5.2vw,
-        var(--token-reference-typography-size-5xl)
+        4.6vw,
+        var(--token-reference-typography-size-4xl)
       );
       line-height: 1.12;
       margin-inline: auto;
     }
 
     @media (min-width: $breakpoint-md-lg) {
-      max-inline-size: 20ch;
-      font-size: clamp(
-        var(--token-reference-typography-size-2xl),
-        2.8vw,
-        var(--token-reference-typography-size-3xl)
-      );
-      line-height: 1.16;
+      max-inline-size: 23.5ch;
+      font-size: clamp(2.15rem, 3vw, 2.85rem);
+      line-height: 1.11;
       margin-inline: 0;
     }
 
@@ -197,22 +194,23 @@
   }
 
   .value-description {
-    max-inline-size: 41rem;
+    max-inline-size: 36rem;
     font-size: var(--token-reference-typography-size-base);
     line-height: var(--token-reference-typography-line-height-relaxed);
     color: var(--token-theme-color-text-secondary);
     margin: 0 auto;
+    text-wrap: pretty;
 
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-reference-typography-size-lg);
       line-height: var(--token-reference-typography-line-height-loose);
-      max-inline-size: 44rem;
+      max-inline-size: 47rem;
       margin-inline: auto;
     }
 
     @media (min-width: $breakpoint-md-lg) {
       font-size: var(--token-reference-typography-size-lg);
-      max-inline-size: 34rem;
+      max-inline-size: 39rem;
       margin-inline: 0;
     }
 

@@ -30,7 +30,7 @@
 
   .scroll-indicator {
     position: absolute;
-    inset-block-end: var(--token-reference-spacing-fluid-2xl);
+    inset-block-end: calc(var(--token-reference-spacing-fluid-2xl) + env(safe-area-inset-bottom));
     inset-inline-start: 50%;
     transform: translateX(-50%);
     display: flex;

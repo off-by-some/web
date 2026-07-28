@@ -38,6 +38,7 @@
       label={primaryLabel}
       icon="arrow"
       shape="label"
+      className="hero-actions__primary"
       onclick={handlePrimaryClick}
     />
 
@@ -89,7 +90,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: clamp(0.95rem, 2vh, 1.55rem);
+    gap: clamp(0.85rem, 3.6svw, 1.35rem);
     flex-direction: column;
 
     @include motion.fade-in-up(
@@ -109,10 +110,38 @@
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
-    gap: var(--token-reference-spacing-fluid-md) var(--token-reference-spacing-fluid-lg);
+    gap: var(--token-reference-spacing-fluid-md)
+      clamp(1rem, 1.8vw, var(--token-reference-spacing-fluid-lg));
+    inline-size: 100%;
+
+    :global(.hero-action-link--label) {
+      inline-size: min(100%, 24rem);
+      justify-content: center;
+      white-space: nowrap;
+    }
 
     @media (min-width: $breakpoint-md-lg) {
       justify-content: flex-start;
+      inline-size: auto;
+
+      :global(.hero-action-link--label) {
+        inline-size: auto;
+      }
+
+      :global(.hero-actions__primary) {
+        --button-font-size-md: var(--token-reference-typography-size-base);
+        --button-gap: clamp(0.45rem, 0.7vw, 0.6rem);
+        --button-padding-md: var(--token-reference-spacing-fluid-sm) clamp(1.2rem, 1.4vw, 1.45rem);
+      }
+    }
+
+    @media (min-width: $breakpoint-lg) {
+      :global(.hero-actions__primary) {
+        --button-font-size-md: var(--token-reference-typography-size-lg);
+        --button-gap: var(--token-reference-spacing-fluid-sm);
+        --button-padding-md: var(--token-reference-spacing-fluid-sm)
+          clamp(1.55rem, 1.2rem + 1vw, 2.25rem);
+      }
     }
   }
 
@@ -125,9 +154,11 @@
 
     display: inline-flex;
     align-items: center;
+    flex-shrink: 0;
     gap: var(--token-reference-spacing-fluid-xs);
     color: var(--explore-link-color);
     font-weight: var(--token-reference-typography-weight-semibold);
+    white-space: nowrap;
     text-decoration: none;
     transition:
       color var(--token-theme-motion-feedback-default) var(--token-reference-motion-easing-standard),
@@ -150,7 +181,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: var(--token-reference-spacing-fluid-md);
+    gap: clamp(0.65rem, 3svw, var(--token-reference-spacing-fluid-md));
 
     @media (max-width: $breakpoint-sm) {
       gap: var(--token-reference-spacing-fluid-sm);

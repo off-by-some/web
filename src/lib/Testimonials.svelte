@@ -49,6 +49,7 @@
   let sectionElement: HTMLElement | undefined = $state();
   let announcementText = $state('');
   let showFloatingNav = $state(false);
+  let scrollTrackingEnabled = false;
   let scrollFrame: number | undefined;
 
   // Reactive values
@@ -127,15 +128,35 @@
   };
 
   onMount(() => {
-    window.addEventListener('keydown', handleKeydown);
-    window.addEventListener('scroll', scheduleScrollLayout, { passive: true });
+    const scrollOptions = { passive: true };
+    let sectionObserver: IntersectionObserver | undefined;
 
-    // Initial scroll check
-    requestAnimationFrame(scheduleScrollLayout);
+    const enableScrollTracking = () => {
+      if (scrollTrackingEnabled) return;
+      scrollTrackingEnabled = true;
+      window.addEventListener('scroll', scheduleScrollLayout, scrollOptions);
+    };
+
+    window.addEventListener('keydown', handleKeydown);
+
+    if (sectionElement && 'IntersectionObserver' in window) {
+      sectionObserver = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) return;
+          enableScrollTracking();
+          sectionObserver?.disconnect();
+        },
+        { rootMargin: '0px' },
+      );
+      sectionObserver.observe(sectionElement);
+    } else {
+      enableScrollTracking();
+    }
 
     return () => {
       window.removeEventListener('keydown', handleKeydown);
-      window.removeEventListener('scroll', scheduleScrollLayout);
+      if (scrollTrackingEnabled) window.removeEventListener('scroll', scheduleScrollLayout);
+      sectionObserver?.disconnect();
       if (scrollFrame) cancelAnimationFrame(scrollFrame);
     };
   });

@@ -54,7 +54,7 @@
     text-transform: uppercase;
     letter-spacing: var(--token-reference-typography-letter-spacing-widest);
     color: var(--token-theme-color-text-tertiary);
-    margin-block-end: clamp(0.85rem, 2vh, 1.35rem);
+    margin-block-end: clamp(0.65rem, 2.6svw, 1.15rem);
 
     @include motion.fade-in-up(
       heroGreetingIn,
@@ -81,10 +81,11 @@
 
   .profile-name {
     display: block;
-    font-size: clamp(3.6rem, 16vw, 6.25rem);
+    max-inline-size: 9ch;
+    font-size: clamp(3.75rem, 15.5vw, 5.85rem);
     font-weight: var(--token-reference-typography-weight-bold);
     line-height: 1;
-    margin-block-end: clamp(0.9rem, 1.8vh, 1.45rem);
+    margin-block-end: clamp(0.75rem, 2.8svw, 1.2rem);
     padding-block-end: 0.08em;
     color: var(--token-theme-color-text-heading);
     letter-spacing: var(--token-reference-typography-letter-spacing-tight);
@@ -96,9 +97,11 @@
     animation: textShimmer
       var(--hero-profile-shimmer-duration, var(--token-component-shimmer-text-motion-duration))
       var(--token-reference-motion-easing-standard) infinite;
+    text-wrap: balance;
 
     @media (min-width: $breakpoint-md) {
-      font-size: clamp(5.25rem, 9vw, 8rem);
+      max-inline-size: none;
+      font-size: clamp(5rem, 8.4vw, 7.2rem);
       line-height: 0.98;
       padding-block-end: 0.07em;
     }
@@ -139,6 +142,7 @@
     letter-spacing: var(--token-reference-typography-letter-spacing-slightly-tight);
     line-height: var(--token-reference-typography-line-height-snug);
     margin-block-end: 0;
+    text-wrap: balance;
 
     @include motion.fade-in-up(
       heroRoleIn,
@@ -178,7 +182,7 @@
     block-size: 3px;
     background: var(--token-theme-color-emphasis-color);
     border-radius: var(--token-reference-radius-full);
-    margin-block-start: var(--token-reference-spacing-fluid-md);
+    margin-block-start: clamp(0.75rem, 2.4svw, var(--token-reference-spacing-fluid-md));
     margin-inline: auto;
     transform-origin: left center;
     animation: accentExpand

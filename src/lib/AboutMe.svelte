@@ -79,12 +79,18 @@
   @use 'lib/components/primitives/motion' as motion;
 
   .hero {
+    --hero-padding-block-start: max(
+      calc(env(safe-area-inset-top) + clamp(2.15rem, 5svh, 3rem)),
+      clamp(2.15rem, 5svh, 3rem)
+    );
+    --hero-padding-block-end: calc(clamp(4.5rem, 9svh, 6.5rem) + env(safe-area-inset-bottom));
+
     position: relative;
     min-height: 100vh;
     min-height: 100svh;
     background: var(--token-feature-hero-background);
     overflow: hidden;
-    padding: clamp(2.75rem, 5vh, 5.5rem) 0 clamp(5rem, 8vh, 7rem);
+    padding: var(--hero-padding-block-start) 0 var(--hero-padding-block-end);
     font-family: var(--token-reference-typography-family-sans);
     font-feature-settings:
       'kern' 1,
@@ -96,6 +102,7 @@
     -moz-osx-font-smoothing: grayscale;
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
 
     &::before {
       content: '';
@@ -109,8 +116,25 @@
     }
 
     @media (max-height: 600px) {
-      padding: var(--token-reference-spacing-fluid-lg) 0
-        calc(var(--token-reference-spacing-fluid-3xl) + 2rem);
+      --hero-padding-block-start: max(
+        calc(env(safe-area-inset-top) + var(--token-reference-spacing-fluid-lg)),
+        var(--token-reference-spacing-fluid-lg)
+      );
+      --hero-padding-block-end: calc(
+        var(--token-reference-spacing-fluid-3xl) + 2rem + env(safe-area-inset-bottom)
+      );
+    }
+
+    @media (min-width: $breakpoint-md) {
+      --hero-padding-block-start: max(
+        calc(env(safe-area-inset-top) + clamp(3rem, 7svh, 5rem)),
+        clamp(3rem, 7svh, 5rem)
+      );
+      --hero-padding-block-end: calc(clamp(4.75rem, 8svh, 6.75rem) + env(safe-area-inset-bottom));
+    }
+
+    @media (min-width: $breakpoint-md-lg) {
+      justify-content: center;
     }
   }
 
@@ -119,13 +143,17 @@
     z-index: 1;
     flex: 1;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     margin: 0 auto;
-    padding: 0 var(--token-reference-spacing-fluid-lg);
+    padding: 0 clamp(1.25rem, 5vw, var(--token-reference-spacing-fluid-xl));
     width: 100%;
 
     @media (min-width: $breakpoint-md) {
       padding: 0 var(--token-reference-spacing-fluid-xl);
+    }
+
+    @media (min-width: $breakpoint-md-lg) {
+      align-items: center;
     }
 
     @media (min-width: $breakpoint-lg) {
@@ -141,7 +169,7 @@
       'portrait';
     align-items: center;
     justify-items: center;
-    gap: clamp(1.75rem, 5vh, 3.25rem);
+    gap: clamp(1.45rem, 5.5svw, 2.65rem);
     width: 100%;
     overflow: visible;
 
@@ -155,22 +183,27 @@
     );
 
     @media (min-width: $breakpoint-md) {
-      gap: clamp(2rem, 4.25vh, 3.75rem);
+      gap: clamp(2rem, 4.75svw, 3.45rem);
+      max-inline-size: 66rem;
+      margin-inline: auto;
     }
 
     // Tablet landscape gets its own side-by-side treatment rather than
     // waiting for the desktop-oriented $breakpoint-lg - otherwise every
     // iPad, in any orientation, was stuck with the stacked mobile layout.
     @media (min-width: $breakpoint-md-lg) {
-      grid-template-columns: minmax(22rem, 0.92fr) minmax(20rem, 1.08fr);
+      grid-template-columns: minmax(30rem, 1.03fr) minmax(28rem, 0.97fr);
       grid-template-areas: 'content portrait';
       justify-items: stretch;
-      gap: clamp(2rem, 3.5vw, 3.5rem);
+      gap: clamp(1rem, 2vw, 1.5rem);
+      max-inline-size: none;
+      transform: translateY(-1.5rem);
     }
 
     @media (min-width: $breakpoint-lg) {
       grid-template-columns: minmax(44rem, 1.02fr) minmax(38rem, 0.98fr);
       gap: clamp(2.75rem, 4.6vw, 6.25rem);
+      transform: none;
     }
 
     @media (min-width: $breakpoint-xlg) {
@@ -193,9 +226,14 @@
     align-self: center;
     min-width: 0;
     width: 100%;
+    margin-block-start: clamp(0.75rem, 4svw, 1.4rem);
+
+    @media (min-width: $breakpoint-md) {
+      margin-block-start: 0;
+    }
 
     @media (min-width: $breakpoint-md-lg) {
-      justify-content: flex-start;
+      justify-content: center;
     }
   }
 
@@ -204,21 +242,23 @@
     display: flex;
     flex-direction: column;
     gap: clamp(1.75rem, 4vh, 3rem);
+    gap: clamp(1.35rem, 4.8svw, 2.35rem);
     min-width: 0;
     width: min(100%, 52rem);
 
     @media (min-width: $breakpoint-md) {
-      gap: clamp(1.85rem, 3.5vh, 3rem);
+      gap: clamp(1.65rem, 3.8svw, 2.65rem);
+      width: min(100%, 58rem);
     }
 
     @media (min-width: $breakpoint-md-lg) {
       width: 100%;
-      gap: clamp(2rem, 3.5vh, 3.25rem);
+      gap: clamp(2rem, 3.5svh, 3.25rem);
     }
 
     @media (min-width: $breakpoint-lg) {
       max-width: 66rem;
-      gap: clamp(2.25rem, 4vh, 3.75rem);
+      gap: clamp(2.25rem, 4svh, 3.75rem);
     }
 
     @media (min-width: $breakpoint-xlg) {

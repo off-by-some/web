@@ -95,7 +95,7 @@
   }
 
   .hero-portrait__composition {
-    --portrait-w: min(100%, clamp(19rem, 84vw, 34rem));
+    --portrait-w: min(100%, clamp(18rem, 78vw, 31rem));
 
     position: relative;
     isolation: isolate;
@@ -105,11 +105,13 @@
     overflow: visible;
 
     @media (min-width: $breakpoint-md) {
-      --portrait-w: min(100%, clamp(29rem, 60vw, 42rem));
+      --portrait-w: min(100%, clamp(30rem, 56vw, 39rem));
+      min-block-size: calc(var(--portrait-w) * 1.14);
     }
 
     @media (min-width: $breakpoint-md-lg) {
-      --portrait-w: min(100%, clamp(20rem, 38vw, 34rem));
+      --portrait-w: min(100%, clamp(24rem, 40vw, 34rem));
+      min-block-size: calc(var(--portrait-w) * 1.12);
     }
 
     @media (min-width: $breakpoint-lg) {
@@ -137,6 +139,10 @@
     aspect-ratio: 645 / 819;
     margin-inline: auto;
     isolation: isolate;
+
+    @media (min-width: $breakpoint-md-lg) {
+      inline-size: min(100%, calc(var(--portrait-w) * 0.94));
+    }
 
     @media (min-width: $breakpoint-lg) {
       inline-size: calc(var(--portrait-w) * 0.87);
@@ -238,7 +244,7 @@
     z-index: 2;
     pointer-events: none;
 
-    @media (min-width: $breakpoint-lg) {
+    @media (min-width: $breakpoint-md-lg) {
       display: block;
     }
   }
@@ -254,22 +260,35 @@
     inset-inline-start: var(--annotation-x);
     inset-block-start: var(--annotation-y);
     display: grid;
-    grid-template-columns: 8.75rem max-content;
+    grid-template-columns: var(--annotation-connector-width, 6.75rem) max-content;
     align-items: center;
     gap: clamp(0.35rem, 0.6vw, 0.65rem);
     color: var(--token-theme-color-text-secondary);
     opacity: 0.9;
+
+    @media (min-width: $breakpoint-lg) {
+      --annotation-connector-width: 8.75rem;
+    }
   }
 
   .annotation--systems {
     --annotation-connector-y: 0.55rem;
-    --annotation-label-y: -2rem;
+    --annotation-label-y: -1.45rem;
+
+    @media (min-width: $breakpoint-lg) {
+      --annotation-label-y: -2rem;
+    }
   }
 
   .annotation--team {
-    --annotation-x: 71%;
+    --annotation-x: 68.5%;
     --annotation-y: 38.5%;
-    --annotation-label-x: 1.45rem;
+    --annotation-label-x: 0.8rem;
+
+    @media (min-width: $breakpoint-lg) {
+      --annotation-x: 71%;
+      --annotation-label-x: 1.45rem;
+    }
   }
 
   .annotation--product {
@@ -279,7 +298,7 @@
 
   .annotation__connector {
     display: block;
-    inline-size: 9.5rem;
+    inline-size: var(--annotation-connector-width, 6.75rem);
     aspect-ratio: 240 / 128;
     flex-shrink: 0;
     background: currentColor;
@@ -293,9 +312,9 @@
   .annotation__label {
     font-family: 'Caveat', cursive;
     font-size: clamp(
-      var(--token-reference-typography-size-lg),
-      0.65rem + 0.65vw,
-      var(--token-reference-typography-size-2xl)
+      var(--token-reference-typography-size-base),
+      0.7rem + 0.55vw,
+      var(--token-reference-typography-size-xl)
     );
     font-weight: var(--token-reference-typography-weight-normal);
     line-height: 1;
@@ -307,6 +326,14 @@
       0 0 1.35rem var(--token-feature-hero-portrait-annotation-shadow-glow);
 
     transform: translate(var(--annotation-label-x), var(--annotation-label-y)) rotate(-1deg);
+
+    @media (min-width: $breakpoint-lg) {
+      font-size: clamp(
+        var(--token-reference-typography-size-lg),
+        0.65rem + 0.65vw,
+        var(--token-reference-typography-size-2xl)
+      );
+    }
   }
 
   @include motion.reduced-motion-reset('.hero-portrait');

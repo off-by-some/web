@@ -47,6 +47,7 @@
   let announcementText = $state('');
   let showFloatingNav = $state(false);
   let isDesktop = $state(false);
+  let scrollTrackingEnabled = false;
   let scrollFrame: number | undefined;
   let progressFrame: number | undefined;
 
@@ -59,7 +60,7 @@
     isDesktop = window.innerWidth >= 1376; // $breakpoint-lg
 
     // Update floating nav visibility when switching views
-    scheduleScrollLayout();
+    if (scrollTrackingEnabled) scheduleScrollLayout();
   };
 
   // Navigation
@@ -186,25 +187,38 @@
 
     // Event listeners
     const scrollOptions = { passive: true };
+    let timelineObserver: IntersectionObserver | undefined;
 
-    // Add scroll listener for both desktop and mobile
-    window.addEventListener('scroll', scheduleScrollLayout, scrollOptions);
-
-    // Update floating nav visibility on mount
-    scheduleScrollLayout();
+    const enableScrollTracking = () => {
+      if (scrollTrackingEnabled) return;
+      scrollTrackingEnabled = true;
+      window.addEventListener('scroll', scheduleScrollLayout, scrollOptions);
+    };
 
     window.addEventListener('keydown', handleKeydown);
     window.addEventListener('resize', checkDesktop);
 
     checkDesktop(); // Set initial desktop state
 
-    // Initial scroll check to set active index
-    requestAnimationFrame(scheduleScrollLayout);
+    if (timelineElement && 'IntersectionObserver' in window) {
+      timelineObserver = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) return;
+          enableScrollTracking();
+          timelineObserver?.disconnect();
+        },
+        { rootMargin: '0px' },
+      );
+      timelineObserver.observe(timelineElement);
+    } else {
+      enableScrollTracking();
+    }
 
     return () => {
-      window.removeEventListener('scroll', scheduleScrollLayout);
+      if (scrollTrackingEnabled) window.removeEventListener('scroll', scheduleScrollLayout);
       window.removeEventListener('keydown', handleKeydown);
       window.removeEventListener('resize', checkDesktop);
+      timelineObserver?.disconnect();
       if (scrollFrame) cancelAnimationFrame(scrollFrame);
       if (progressFrame) cancelAnimationFrame(progressFrame);
     };
