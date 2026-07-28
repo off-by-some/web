@@ -139,6 +139,8 @@
   }
 
   :global(.hero__container) {
+    --section-max-inline-size: clamp(66rem, 90vw, 152rem);
+
     position: relative;
     z-index: 1;
     flex: 1;
@@ -188,27 +190,20 @@
       margin-inline: auto;
     }
 
-    // Tablet landscape gets its own side-by-side treatment rather than
-    // waiting for the desktop-oriented $breakpoint-lg - otherwise every
-    // iPad, in any orientation, was stuck with the stacked mobile layout.
-    @media (min-width: $breakpoint-md-lg) {
-      grid-template-columns: minmax(30rem, 1.03fr) minmax(28rem, 0.97fr);
+    // Side-by-side is a shape decision, not only a width decision. Square and
+    // tall desktop windows keep the stacked editorial layout even when they
+    // are technically wider than the tablet-landscape breakpoint.
+    @media (min-width: $breakpoint-md-lg) and (min-aspect-ratio: 4 / 3) {
+      grid-template-columns: minmax(30rem, 0.98fr) minmax(28rem, 1.02fr);
       grid-template-areas: 'content portrait';
       justify-items: stretch;
-      gap: clamp(1rem, 2vw, 1.5rem);
+      gap: clamp(1.5rem, 3.2vw, 7rem);
       max-inline-size: none;
       transform: translateY(-1.5rem);
     }
 
-    @media (min-width: $breakpoint-lg) {
-      grid-template-columns: minmax(44rem, 1.02fr) minmax(38rem, 0.98fr);
-      gap: clamp(2.75rem, 4.6vw, 6.25rem);
+    @media (min-width: $breakpoint-lg) and (min-aspect-ratio: 4 / 3) {
       transform: none;
-    }
-
-    @media (min-width: $breakpoint-xlg) {
-      grid-template-columns: minmax(56rem, 1fr) minmax(44rem, 1fr);
-      gap: clamp(4rem, 6vw, 8rem);
     }
 
     // No max-height cap here: on short viewports the section should grow
@@ -257,12 +252,8 @@
     }
 
     @media (min-width: $breakpoint-lg) {
-      max-width: 66rem;
+      max-width: clamp(66rem, 36vw, 78rem);
       gap: clamp(2.25rem, 4svh, 3.75rem);
-    }
-
-    @media (min-width: $breakpoint-xlg) {
-      max-width: 78rem;
     }
   }
 

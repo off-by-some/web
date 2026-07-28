@@ -111,6 +111,7 @@
     flex-direction: column;
     gap: clamp(1.05rem, 4svw, 1.75rem);
     text-align: center;
+    container-type: inline-size;
 
     @include motion.fade-in-up(
       heroValueIn,
@@ -119,7 +120,7 @@
       var(--token-reference-motion-delay-600)
     );
 
-    @media (min-width: $breakpoint-md-lg) {
+    @media (min-width: $breakpoint-md-lg) and (min-aspect-ratio: 4 / 3) {
       text-align: left;
     }
   }
@@ -149,30 +150,12 @@
       margin-inline: auto;
     }
 
-    @media (min-width: $breakpoint-md-lg) {
-      max-inline-size: 23.5ch;
-      font-size: clamp(2.15rem, 3vw, 2.85rem);
+    @media (min-width: $breakpoint-md-lg) and (min-aspect-ratio: 4 / 3) {
+      max-inline-size: 24ch;
+      font-size: clamp(2.7rem, 5.8cqw, 4.6rem);
       line-height: 1.11;
-      margin-inline: 0;
-    }
-
-    @media (min-width: $breakpoint-lg) {
-      max-inline-size: 22ch;
-      font-size: clamp(
-        var(--token-reference-typography-size-3xl),
-        2.65vw,
-        var(--token-reference-typography-size-5xl)
-      );
       letter-spacing: var(--token-reference-typography-letter-spacing-slightly-tight);
       margin-inline: 0;
-    }
-
-    @media (min-width: $breakpoint-xlg) {
-      font-size: clamp(
-        var(--token-reference-typography-size-4xl),
-        2.45vw,
-        var(--token-reference-typography-size-6xl)
-      );
     }
   }
 
@@ -208,16 +191,14 @@
       margin-inline: auto;
     }
 
-    @media (min-width: $breakpoint-md-lg) {
-      font-size: var(--token-reference-typography-size-lg);
-      max-inline-size: 39rem;
-      margin-inline: 0;
-    }
-
-    @media (min-width: $breakpoint-lg) {
-      font-size: var(--token-reference-typography-size-xl);
+    @media (min-width: $breakpoint-md-lg) and (min-aspect-ratio: 4 / 3) {
+      font-size: clamp(
+        var(--token-reference-typography-size-lg),
+        2.5cqw,
+        var(--token-reference-typography-size-xl)
+      );
       letter-spacing: var(--token-reference-typography-letter-spacing-wide);
-      max-inline-size: 41rem;
+      max-inline-size: clamp(39rem, 88cqw, 41rem);
       margin-inline: 0;
     }
   }

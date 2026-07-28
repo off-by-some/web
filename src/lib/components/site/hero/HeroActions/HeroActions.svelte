@@ -92,6 +92,7 @@
     justify-content: center;
     gap: clamp(0.85rem, 3.6svw, 1.35rem);
     flex-direction: column;
+    container-type: inline-size;
 
     @include motion.fade-in-up(
       heroActionsIn,
@@ -100,7 +101,7 @@
       var(--token-reference-motion-delay-800)
     );
 
-    @media (min-width: $breakpoint-md-lg) {
+    @media (min-width: $breakpoint-md-lg) and (min-aspect-ratio: 4 / 3) {
       align-items: flex-start;
     }
   }
@@ -120,7 +121,7 @@
       white-space: nowrap;
     }
 
-    @media (min-width: $breakpoint-md-lg) {
+    @media (min-width: $breakpoint-md-lg) and (min-aspect-ratio: 4 / 3) {
       justify-content: flex-start;
       inline-size: auto;
 
@@ -129,18 +130,13 @@
       }
 
       :global(.hero-actions__primary) {
-        --button-font-size-md: var(--token-reference-typography-size-base);
-        --button-gap: clamp(0.45rem, 0.7vw, 0.6rem);
-        --button-padding-md: var(--token-reference-spacing-fluid-sm) clamp(1.2rem, 1.4vw, 1.45rem);
-      }
-    }
-
-    @media (min-width: $breakpoint-lg) {
-      :global(.hero-actions__primary) {
-        --button-font-size-md: var(--token-reference-typography-size-lg);
-        --button-gap: var(--token-reference-spacing-fluid-sm);
-        --button-padding-md: var(--token-reference-spacing-fluid-sm)
-          clamp(1.55rem, 1.2rem + 1vw, 2.25rem);
+        --button-font-size-md: clamp(
+          var(--token-reference-typography-size-base),
+          2.05cqw,
+          var(--token-reference-typography-size-lg)
+        );
+        --button-gap: clamp(0.45rem, 0.85cqw, var(--token-reference-spacing-fluid-sm));
+        --button-padding-md: var(--token-reference-spacing-fluid-sm) clamp(1.2rem, 3.5cqw, 2.25rem);
       }
     }
   }

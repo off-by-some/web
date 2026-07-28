@@ -3,19 +3,97 @@
   import Image from '$lib/components/primitives/media/Image';
   import type { HeroPortraitAnnotation } from '$lib/components/site/hero/types';
   import caveatLatinWoff2 from '@fontsource/caveat/files/caveat-latin-400-normal.woff2?url';
-  import productArrow from './assets/annotation-arrow-product.svg?url';
-  import systemsArrow from './assets/annotation-arrow-systems.svg?url';
-  import teamArrow from './assets/annotation-arrow-team.svg?url';
+
+  const ANNOTATION_VISIBILITY_QUERY = '(min-width: 64rem) and (min-aspect-ratio: 4/3)';
+
+  let annotationFontPromise: Promise<unknown> | undefined;
+
+  function loadAnnotationFont() {
+    annotationFontPromise ??= import('@fontsource/caveat/latin-400.css');
+    return annotationFontPromise;
+  }
 
   // The @font-face CSS is loaded lazily so this decorative, lg+-only font
   // never lands in the critical-path CSS bundle (it regressed LCP when
   // statically imported). The preload below starts fetching the font bytes
   // immediately in parallel, so by the time that CSS chunk arrives, the
   // browser already has the file cached and can apply it without a second
-  // round trip. Scoped to lg+ since annotations are hidden below that.
+  // round trip. Scoped to the same query that reveals annotations.
   onMount(() => {
-    import('@fontsource/caveat/400.css');
+    const media = window.matchMedia(ANNOTATION_VISIBILITY_QUERY);
+
+    if (media.matches) {
+      void loadAnnotationFont();
+      return;
+    }
+
+    const handleChange = () => {
+      if (!media.matches) return;
+
+      void loadAnnotationFont();
+      media.removeEventListener('change', handleChange);
+    };
+
+    media.addEventListener('change', handleChange);
+
+    return () => {
+      media.removeEventListener('change', handleChange);
+    };
   });
+
+  type AnnotationSlot = {
+    name: string;
+    arrowTransform: string;
+    labelX: number;
+    labelY: number;
+    labelSize: number;
+    labelRotate: number;
+    shadowPath: string;
+    linePath: string;
+    headPath: string;
+  };
+
+  const annotationSlots: AnnotationSlot[] = [
+    {
+      name: 'systems',
+      arrowTransform: 'translate(486 70) scale(0.48)',
+      labelX: 602,
+      labelY: 84,
+      labelSize: 27,
+      labelRotate: -3,
+      shadowPath: 'M222 18C176 16 136 27 100 52C68 74 43 82 18 88',
+      linePath: 'M220 20C175 19 137 30 101 53C70 73 45 82 19 88',
+      headPath: 'M37 76L18 88L39 98',
+    },
+    {
+      name: 'team',
+      arrowTransform: 'translate(518 284) scale(0.5)',
+      labelX: 652,
+      labelY: 330,
+      labelSize: 27,
+      labelRotate: -2,
+      shadowPath: 'M222 58C180 52 142 54 105 66C73 76 47 76 18 67',
+      linePath: 'M221 60C179 55 143 57 106 68C74 77 47 76 19 68',
+      headPath: 'M39 57L18 68L38 80',
+    },
+    {
+      name: 'product',
+      arrowTransform: 'translate(482 522) scale(0.5)',
+      labelX: 620,
+      labelY: 578,
+      labelSize: 27,
+      labelRotate: -2,
+      shadowPath: 'M222 110C178 112 140 101 105 77C75 56 48 45 18 42',
+      linePath: 'M221 108C178 109 141 98 106 75C76 56 48 46 19 43',
+      headPath: 'M40 34L18 43L36 58',
+    },
+  ];
+
+  const fallbackAnnotationSlot = annotationSlots[annotationSlots.length - 1];
+
+  function getAnnotationSlot(index: number) {
+    return annotationSlots[index] ?? fallbackAnnotationSlot;
+  }
 
   type Props = {
     avatarSrc: string;
@@ -25,8 +103,7 @@
 
   let { avatarSrc, avatarAlt, annotations = [] }: Props = $props();
 
-  const annotationArrows = [systemsArrow, teamArrow, productArrow];
-  const annotationSlots = ['systems', 'team', 'product'];
+  const annotationSummary = $derived(annotations.map((annotation) => annotation.label).join(', '));
 </script>
 
 <svelte:head>
@@ -36,7 +113,7 @@
     as="font"
     type="font/woff2"
     crossorigin="anonymous"
-    media="(min-width: 1170px)"
+    media={ANNOTATION_VISIBILITY_QUERY}
   />
 </svelte:head>
 
@@ -58,22 +135,37 @@
           priority
         />
       </div>
-    </div>
 
-    {#if annotations.length}
-      <ul class="hero-portrait__annotations" aria-label="Highlights">
-        {#each annotations as annotation, index (annotation.label)}
-          <li class="annotation annotation--{annotationSlots[index] ?? 'default'}">
-            <span
-              class="annotation__connector"
-              style:--annotation-arrow={`url("${annotationArrows[index % annotationArrows.length]}")`}
-              aria-hidden="true"
-            ></span>
-            <span class="annotation__label">{annotation.label}</span>
-          </li>
-        {/each}
-      </ul>
-    {/if}
+      {#if annotations.length}
+        <svg
+          class="hero-portrait__annotations"
+          viewBox="0 0 645 819"
+          preserveAspectRatio="xMidYMid meet"
+          role="img"
+          aria-label={`Highlights: ${annotationSummary}`}
+        >
+          {#each annotations as annotation, index (annotation.label)}
+            {@const slot = getAnnotationSlot(index)}
+            <g class="annotation annotation--{slot.name}">
+              <g class="annotation__connector" transform={slot.arrowTransform} aria-hidden="true">
+                <path class="annotation__connector-shadow" d={slot.shadowPath} />
+                <path class="annotation__connector-line" d={slot.linePath} />
+                <path class="annotation__connector-head" d={slot.headPath} />
+              </g>
+              <text
+                class="annotation__label"
+                x={slot.labelX}
+                y={slot.labelY}
+                font-size={slot.labelSize}
+                transform={`rotate(${slot.labelRotate} ${slot.labelX} ${slot.labelY})`}
+              >
+                {annotation.label}
+              </text>
+            </g>
+          {/each}
+        </svg>
+      {/if}
+    </div>
   </div>
 </div>
 
@@ -109,18 +201,9 @@
       min-block-size: calc(var(--portrait-w) * 1.14);
     }
 
-    @media (min-width: $breakpoint-md-lg) {
-      --portrait-w: min(100%, clamp(24rem, 40vw, 34rem));
-      min-block-size: calc(var(--portrait-w) * 1.12);
-    }
-
-    @media (min-width: $breakpoint-lg) {
-      --portrait-w: min(100%, clamp(48rem, 47vw, 66rem));
-      min-block-size: calc(var(--portrait-w) * 1.08);
-    }
-
-    @media (min-width: $breakpoint-xlg) {
-      --portrait-w: min(100%, clamp(52rem, 43vw, 72rem));
+    @media (min-width: $breakpoint-md-lg) and (min-aspect-ratio: 4 / 3) {
+      --portrait-w: min(100%, clamp(24rem, 40vw, 70rem), 80svh);
+      min-block-size: calc(var(--portrait-w) * 1.1);
     }
 
     // Width-driven sizing alone can make the portrait too tall for short
@@ -139,16 +222,6 @@
     aspect-ratio: 645 / 819;
     margin-inline: auto;
     isolation: isolate;
-
-    @media (min-width: $breakpoint-md-lg) {
-      inline-size: min(100%, calc(var(--portrait-w) * 0.94));
-    }
-
-    @media (min-width: $breakpoint-lg) {
-      inline-size: calc(var(--portrait-w) * 0.87);
-      margin-inline: -1.75rem auto;
-      transform: translateY(1.35rem);
-    }
   }
 
   .hero-portrait__halo {
@@ -236,104 +309,56 @@
 
   .hero-portrait__annotations {
     display: none;
-    list-style: none;
-    margin: 0;
-    padding: 0;
     position: absolute;
     inset: 0;
-    z-index: 2;
+    z-index: 3;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: visible;
     pointer-events: none;
+    color: var(--token-theme-color-text-secondary);
 
-    @media (min-width: $breakpoint-md-lg) {
+    @media (min-width: $breakpoint-md-lg) and (min-aspect-ratio: 4 / 3) {
       display: block;
     }
   }
 
   .annotation {
-    --annotation-x: 58.5%;
-    --annotation-y: 17%;
-    --annotation-connector-y: 0.2rem;
-    --annotation-label-x: 0;
-    --annotation-label-y: 0;
-
-    position: absolute;
-    inset-inline-start: var(--annotation-x);
-    inset-block-start: var(--annotation-y);
-    display: grid;
-    grid-template-columns: var(--annotation-connector-width, 6.75rem) max-content;
-    align-items: center;
-    gap: clamp(0.35rem, 0.6vw, 0.65rem);
-    color: var(--token-theme-color-text-secondary);
     opacity: 0.9;
-
-    @media (min-width: $breakpoint-lg) {
-      --annotation-connector-width: 8.75rem;
-    }
-  }
-
-  .annotation--systems {
-    --annotation-connector-y: 0.55rem;
-    --annotation-label-y: -1.45rem;
-
-    @media (min-width: $breakpoint-lg) {
-      --annotation-label-y: -2rem;
-    }
-  }
-
-  .annotation--team {
-    --annotation-x: 68.5%;
-    --annotation-y: 38.5%;
-    --annotation-label-x: 0.8rem;
-
-    @media (min-width: $breakpoint-lg) {
-      --annotation-x: 71%;
-      --annotation-label-x: 1.45rem;
-    }
-  }
-
-  .annotation--product {
-    --annotation-x: 59.5%;
-    --annotation-y: 62%;
   }
 
   .annotation__connector {
-    display: block;
-    inline-size: var(--annotation-connector-width, 6.75rem);
-    aspect-ratio: 240 / 128;
-    flex-shrink: 0;
-    background: currentColor;
-    color: currentColor;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+  }
+
+  .annotation__connector-shadow {
+    opacity: 0.18;
+    stroke-width: 3.8;
+  }
+
+  .annotation__connector-line {
     opacity: 0.56;
-    transform: translateY(var(--annotation-connector-y));
-    mask: var(--annotation-arrow) center / contain no-repeat;
-    -webkit-mask: var(--annotation-arrow) center / contain no-repeat;
+    stroke-width: 2.2;
+  }
+
+  .annotation__connector-head {
+    opacity: 0.52;
+    stroke-linejoin: round;
+    stroke-width: 2.5;
   }
 
   .annotation__label {
     font-family: 'Caveat', cursive;
-    font-size: clamp(
-      var(--token-reference-typography-size-base),
-      0.7rem + 0.55vw,
-      var(--token-reference-typography-size-xl)
-    );
     font-weight: var(--token-reference-typography-weight-normal);
     line-height: 1;
-    color: currentColor;
+    fill: currentColor;
     letter-spacing: var(--token-reference-typography-letter-spacing-slightly-tight);
     white-space: nowrap;
     text-shadow:
       0 1px 0 var(--token-feature-hero-portrait-annotation-shadow-rest),
       0 0 1.35rem var(--token-feature-hero-portrait-annotation-shadow-glow);
-
-    transform: translate(var(--annotation-label-x), var(--annotation-label-y)) rotate(-1deg);
-
-    @media (min-width: $breakpoint-lg) {
-      font-size: clamp(
-        var(--token-reference-typography-size-lg),
-        0.65rem + 0.65vw,
-        var(--token-reference-typography-size-2xl)
-      );
-    }
   }
 
   @include motion.reduced-motion-reset('.hero-portrait');
