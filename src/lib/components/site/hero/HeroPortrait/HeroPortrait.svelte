@@ -1,45 +1,9 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
   import Image from '$lib/components/primitives/media/Image';
   import type { HeroPortraitAnnotation } from '$lib/components/site/hero/types';
   import caveatLatinWoff2 from '@fontsource/caveat/files/caveat-latin-400-normal.woff2?url';
 
   const ANNOTATION_VISIBILITY_QUERY = '(min-width: 64rem) and (min-aspect-ratio: 4/3)';
-
-  let annotationFontPromise: Promise<unknown> | undefined;
-
-  function loadAnnotationFont() {
-    annotationFontPromise ??= import('@fontsource/caveat/latin-400.css');
-    return annotationFontPromise;
-  }
-
-  // The @font-face CSS is loaded lazily so this decorative, lg+-only font
-  // never lands in the critical-path CSS bundle (it regressed LCP when
-  // statically imported). The preload below starts fetching the font bytes
-  // immediately in parallel, so by the time that CSS chunk arrives, the
-  // browser already has the file cached and can apply it without a second
-  // round trip. Scoped to the same query that reveals annotations.
-  onMount(() => {
-    const media = window.matchMedia(ANNOTATION_VISIBILITY_QUERY);
-
-    if (media.matches) {
-      void loadAnnotationFont();
-      return;
-    }
-
-    const handleChange = () => {
-      if (!media.matches) return;
-
-      void loadAnnotationFont();
-      media.removeEventListener('change', handleChange);
-    };
-
-    media.addEventListener('change', handleChange);
-
-    return () => {
-      media.removeEventListener('change', handleChange);
-    };
-  });
 
   type AnnotationSlot = {
     name: string;
@@ -172,6 +136,14 @@
 <style lang="scss">
   @use 'styles/breakpoints' as *;
   @use 'lib/components/primitives/motion' as motion;
+
+  @font-face {
+    font-family: 'Hero Annotation';
+    font-style: normal;
+    font-weight: 400;
+    font-display: block;
+    src: url('@fontsource/caveat/files/caveat-latin-400-normal.woff2') format('woff2');
+  }
 
   .hero-portrait {
     display: flex;
@@ -350,7 +322,7 @@
   }
 
   .annotation__label {
-    font-family: 'Caveat', cursive;
+    font-family: 'Hero Annotation', cursive;
     font-weight: var(--token-reference-typography-weight-normal);
     line-height: 1;
     fill: currentColor;

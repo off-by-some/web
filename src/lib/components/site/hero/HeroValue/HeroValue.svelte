@@ -152,7 +152,7 @@
 
     @media (min-width: $breakpoint-md-lg) and (min-aspect-ratio: 4 / 3) {
       max-inline-size: 24ch;
-      font-size: clamp(2.7rem, 5.8cqw, 4.6rem);
+      font-size: clamp(2.25rem, 5.8cqw, 4.6rem);
       line-height: 1.11;
       letter-spacing: var(--token-reference-typography-letter-spacing-slightly-tight);
       margin-inline: 0;
