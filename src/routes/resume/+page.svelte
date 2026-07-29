@@ -1,19 +1,20 @@
 <script lang="ts">
-  import { t } from '$lib/content';
+  import { ResumeToolbar } from '$lib/components/site';
+  import { resumeContent, t } from '$lib/content';
+  import { ResumeDocument } from '$lib/pdf/site';
+  import type { ResumeData } from '$lib/pdf/site';
 
-  import ResumeDocument from './ResumeDocument.svelte';
-  import ResumeToolbar from './ResumeToolbar.svelte';
-  import { downloadResumePdf } from './resume-pdf';
-  import { resume } from './resume-model';
+  const resume = resumeContent as ResumeData;
 
+  let downloadResume: (() => Promise<void>) | undefined = $state();
   let generating = $state(false);
 
   async function handleDownloadRequested() {
-    if (generating) return;
+    if (generating || !downloadResume) return;
     generating = true;
 
     try {
-      await downloadResumePdf();
+      await downloadResume();
     } finally {
       generating = false;
     }
@@ -29,11 +30,12 @@
   <ResumeToolbar
     title={`${resume.name} — Resume`}
     {generating}
+    downloadReady={Boolean(downloadResume)}
     onDownloadRequested={handleDownloadRequested}
   />
 
   <main class="sheet-wrap">
-    <ResumeDocument {resume} />
+    <ResumeDocument bind:download={downloadResume} {resume} />
   </main>
 </div>
 
@@ -63,10 +65,14 @@
   }
 
   .sheet-wrap {
-    padding: 2.5rem 1rem 6rem;
+    padding-block-start: 2.5rem;
+    padding-inline: 1rem;
+    padding-block-end: 6rem;
 
     @media (min-width: $breakpoint-md) {
-      padding: 3rem 2rem 8rem;
+      padding-block-start: 3rem;
+      padding-inline: 2rem;
+      padding-block-end: 8rem;
     }
   }
 </style>

@@ -1,6 +1,8 @@
 import en from './en.json';
+import resume from './resume.json';
 
 export const t = en;
+export const resumeContent = resume;
 
 export type ContactFormContent = typeof en.contactMe.contactForm;
 

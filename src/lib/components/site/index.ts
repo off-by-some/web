@@ -30,6 +30,7 @@ export type {
   ProjectSecondaryLinkIcon,
   ProjectSelectMetadata,
 } from './projects';
+export { ResumeToolbar } from './resume';
 export { SectionAccentHeader, SectionHeader } from './section-headings';
 export { FilterButton, SkillCard, TechCategoryCard } from './skills';
 export { StatusPill } from './status';

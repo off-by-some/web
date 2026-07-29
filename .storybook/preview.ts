@@ -86,15 +86,39 @@ const preview: Preview = {
     options: {
       storySort: {
         order: [
-          'Library',
+          'Component Library',
           [
             'Primitives',
             ['Actions', 'Forms', 'Layout', 'Media', 'Status', 'Surfaces', 'Typography'],
             'Site',
-            ['Status', 'Section Headings', 'Hero', 'Metrics', 'Skills', 'Timeline', 'Contact'],
+            [
+              'Status',
+              'Section Headings',
+              'Hero',
+              'Metrics',
+              'Skills',
+              'Timeline',
+              'Contact',
+              'Resume',
+            ],
+          ],
+          'PDF',
+          [
+            'Primitives',
+            ['Pdf Document', 'Pdf Page', 'Pdf Rule', 'Pdf Flow Text'],
+            'Site',
+            [
+              'Resume Document',
+              'Resume Header',
+              'Resume Section',
+              'Resume Experience',
+              'Resume Project',
+              'Resume Skills',
+              'Resume Contact Icon',
+            ],
           ],
           'Page Sections',
-          ['About Me', 'Skills', 'Timeline', 'Projects', 'Contact'],
+          ['About Me', 'Skills', 'Timeline', 'Projects', 'Testimonials', 'Contact'],
         ],
       },
     },

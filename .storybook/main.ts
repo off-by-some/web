@@ -3,7 +3,7 @@ import type { InlineConfig } from 'vite';
 import { mergeConfig } from 'vite';
 
 const staticDirs: StorybookConfig['staticDirs'] = [
-  { from: '../assets/images', to: '/assets/images' },
+  { from: '../assets/images', to: '/storybook-assets/images' },
 ];
 
 const storybookBase = process.env.STORYBOOK_BASE;

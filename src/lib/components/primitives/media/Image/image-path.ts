@@ -28,20 +28,29 @@ type ImportMetaEnvWithStorybook = ImportMetaEnv & {
   STORYBOOK?: boolean | string;
 };
 
+// Keep module requests file-relative. Storybook serves the catalog from a
+// separate static namespace so Vite remains free to handle /assets/images
+// module imports that include enhanced-img query parameters.
+const IMAGE_ASSET_PREFIX = '../../../../../../assets/images/';
+const STORYBOOK_IMAGE_ASSET_PREFIX = '/storybook-assets/images/';
+
 // Vite's import.meta.glob requires imagetools options to be static. Instead of
 // one giant all-purpose registry, paths choose their natural source tier:
 // icons/logos stay compact, avatars keep retina room, banners get wide sources.
-const iconRasterModules = import.meta.glob('/assets/images/icons/**/*.{jpg,jpeg,png,webp,avif}', {
-  import: 'default',
-  query: {
-    enhanced: true,
-    w: '64;128;192',
-    format: 'webp',
+const iconRasterModules = import.meta.glob(
+  '../../../../../../assets/images/icons/**/*.{jpg,jpeg,png,webp,avif}',
+  {
+    import: 'default',
+    query: {
+      enhanced: true,
+      w: '64;128;192',
+      format: 'webp',
+    },
   },
-}) as RasterModuleLoaderMap;
+) as RasterModuleLoaderMap;
 
 const companyLogoRasterModules = import.meta.glob(
-  '/assets/images/company_logos/**/*.{jpg,jpeg,png,webp,avif}',
+  '../../../../../../assets/images/company_logos/**/*.{jpg,jpeg,png,webp,avif}',
   {
     import: 'default',
     query: {
@@ -53,7 +62,7 @@ const companyLogoRasterModules = import.meta.glob(
 ) as RasterModuleLoaderMap;
 
 const employeeRasterModules = import.meta.glob(
-  '/assets/images/employees/**/*.{jpg,jpeg,png,webp,avif}',
+  '../../../../../../assets/images/employees/**/*.{jpg,jpeg,png,webp,avif}',
   {
     import: 'default',
     query: {
@@ -65,7 +74,7 @@ const employeeRasterModules = import.meta.glob(
 ) as RasterModuleLoaderMap;
 
 const bannerRasterModules = import.meta.glob(
-  '/assets/images/banners/**/*.{jpg,jpeg,png,webp,avif}',
+  '../../../../../../assets/images/banners/**/*.{jpg,jpeg,png,webp,avif}',
   {
     import: 'default',
     query: {
@@ -76,14 +85,17 @@ const bannerRasterModules = import.meta.glob(
   },
 ) as RasterModuleLoaderMap;
 
-const criticalRasterModules = import.meta.glob('/assets/images/cassidy-cutout.webp', {
-  import: 'default',
-  eager: true,
-  query: {
-    enhanced: true,
-    imgSizes: '100vw',
+const criticalRasterModules = import.meta.glob(
+  '../../../../../../assets/images/cassidy-cutout.webp',
+  {
+    import: 'default',
+    eager: true,
+    query: {
+      enhanced: true,
+      imgSizes: '100vw',
+    },
   },
-}) as RasterModuleMap;
+) as RasterModuleMap;
 
 const eagerRasterModules: RasterModuleMap = {
   ...criticalRasterModules,
@@ -96,12 +108,6 @@ const lazyRasterModules = {
   ...bannerRasterModules,
 };
 
-// Most SVGs are below-the-fold site assets, so keep their URL modules out of
-// the first page chunk and resolve them only when the Image instance needs
-// them. Use a file-relative glob so Storybook's /assets/images static route
-// cannot shadow Vite's `?url` module request in dev.
-const SVG_ASSET_PREFIX = '../../../../../../assets/images/';
-
 const svgModules = import.meta.glob('../../../../../../assets/images/**/*.svg', {
   import: 'default',
   query: '?url',
@@ -110,17 +116,20 @@ const svgModules = import.meta.glob('../../../../../../assets/images/**/*.svg', 
 // Critical first-viewport SVGs are resolved eagerly so they render as stable
 // <img> nodes in the SSR/prerendered HTML instead of placeholder nodes that get
 // replaced after hydration. `?url` imports are hashed strings, not file bytes.
-const rootVectorModules = import.meta.glob('/assets/images/*.svg', {
+const rootVectorModules = import.meta.glob('../../../../../../assets/images/*.svg', {
   import: 'default',
   eager: true,
   query: '?url',
 }) as Partial<Record<string, string>>;
 
-const criticalVectorModules = import.meta.glob('/assets/images/svg/apple-wave-emoji.svg', {
-  import: 'default',
-  eager: true,
-  query: '?url',
-}) as Partial<Record<string, string>>;
+const criticalVectorModules = import.meta.glob(
+  '../../../../../../assets/images/svg/apple-wave-emoji.svg',
+  {
+    import: 'default',
+    eager: true,
+    query: '?url',
+  },
+) as Partial<Record<string, string>>;
 
 const eagerVectorModules = {
   ...rootVectorModules,
@@ -129,11 +138,14 @@ const eagerVectorModules = {
 
 // Inline only explicitly opted-in critical rasters. Keeping this registry narrow
 // prevents large responsive masters from entering the startup bundle.
-const catalogInlineImageModules = import.meta.glob('/assets/images/inline/*.{webp,avif}', {
-  import: 'default',
-  eager: true,
-  query: '?inline',
-}) as Partial<Record<string, string>>;
+const catalogInlineImageModules = import.meta.glob(
+  '../../../../../../assets/images/inline/*.{webp,avif}',
+  {
+    import: 'default',
+    eager: true,
+    query: '?inline',
+  },
+) as Partial<Record<string, string>>;
 
 const inlineImageModules = {
   ...catalogInlineImageModules,
@@ -143,7 +155,8 @@ const inlineImageModules = {
 const PRIMARY_FORMAT = 'jpeg';
 const PRELOAD_FORMATS = ['avif', 'webp', PRIMARY_FORMAT, 'png'] as const;
 const VECTOR_EXTENSIONS = ['.svg'];
-const isStorybook = (import.meta.env as ImportMetaEnvWithStorybook).STORYBOOK === 'true';
+const storybookEnv = (import.meta.env as ImportMetaEnvWithStorybook).STORYBOOK;
+const isStorybook = storybookEnv === true || storybookEnv === 'true';
 const storybookBaseUrl = import.meta.env.BASE_URL || '/';
 
 // Image cache for better performance with priority loading
@@ -234,7 +247,7 @@ function loadStaticCatalogImage(name: string): PictureSourceSet | undefined {
   if (!name) return undefined;
 
   return {
-    src: prefixStorybookAsset(`/assets/images/${name}`),
+    src: prefixStorybookAsset(`${STORYBOOK_IMAGE_ASSET_PREFIX}${name}`),
     isVector: isVectorImage(name),
   };
 }
@@ -246,7 +259,7 @@ function warnInDev(message: string, error: unknown): void {
 }
 
 async function loadVectorImage(name: string): Promise<PictureSourceSet | undefined> {
-  const key = `${SVG_ASSET_PREFIX}${name}`;
+  const key = `${IMAGE_ASSET_PREFIX}${name}`;
   const load = svgModules[key];
 
   if (!load) return undefined;
@@ -259,7 +272,7 @@ async function loadVectorImage(name: string): Promise<PictureSourceSet | undefin
 }
 
 function loadEagerVectorImage(name: string): PictureSourceSet | undefined {
-  const key = `/assets/images/${name}`;
+  const key = `${IMAGE_ASSET_PREFIX}${name}`;
   const url = eagerVectorModules[key];
 
   if (!url) return undefined;
@@ -272,7 +285,7 @@ function loadEagerVectorImage(name: string): PictureSourceSet | undefined {
 export function getInlineImage(name: string): PictureSourceSet | undefined {
   if (!name || isStorybook) return undefined;
 
-  const key = `/assets/images/${name}`;
+  const key = `${IMAGE_ASSET_PREFIX}${name}`;
   const dataUrl = inlineImageModules[key];
 
   if (!dataUrl) return undefined;
@@ -284,7 +297,7 @@ export function getInlineImage(name: string): PictureSourceSet | undefined {
 }
 
 function loadRasterImage(name: string): PictureSourceSet | undefined {
-  const key = `/assets/images/${name}`;
+  const key = `${IMAGE_ASSET_PREFIX}${name}`;
   const enhanced = eagerRasterModules[key];
 
   if (!enhanced) return undefined;
@@ -292,7 +305,7 @@ function loadRasterImage(name: string): PictureSourceSet | undefined {
 }
 
 async function loadLazyRasterImage(name: string): Promise<PictureSourceSet | undefined> {
-  const key = `/assets/images/${name}`;
+  const key = `${IMAGE_ASSET_PREFIX}${name}`;
   const load = lazyRasterModules[key];
 
   if (!load) return undefined;
