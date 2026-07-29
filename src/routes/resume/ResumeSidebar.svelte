@@ -1,7 +1,8 @@
 <script lang="ts">
   import { Card } from '$lib/components/primitives/surfaces';
   import { StatusPill } from '$lib/components/site/status';
-  import type { ResumeContact, ResumeContactKind } from './resume-model';
+  import type { ResumeContact } from './resume-model';
+  import { resolveResumeContactKind } from './resume-model';
   import ResumeContactIcon from './ResumeContactIcon.svelte';
 
   interface Props {
@@ -9,15 +10,6 @@
   }
 
   const { contacts }: Props = $props();
-
-  function resolvedKind(contact: ResumeContact): ResumeContactKind {
-    if (contact.kind) return contact.kind;
-    if (!contact.href) return 'location';
-    if (contact.href.startsWith('mailto:')) return 'email';
-    if (contact.href.includes('linkedin')) return 'linkedin';
-    if (contact.href.includes('github')) return 'github';
-    return 'link';
-  }
 </script>
 
 <aside class="sidebar" aria-label="Contact information">
@@ -29,7 +21,7 @@
       {#each contacts as contact (contact.label)}
         <li class="sidebar__contact">
           <span class="sidebar__icon">
-            <ResumeContactIcon kind={resolvedKind(contact)} size={13} />
+            <ResumeContactIcon kind={resolveResumeContactKind(contact)} size={13} />
           </span>
           {#if contact.href}
             <!-- eslint-disable svelte/no-navigation-without-resolve -->

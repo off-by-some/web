@@ -1,32 +1,24 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
+  import { RESUME_PDF_NODE } from './resume-pdf-contract';
 
   interface Props {
     children: Snippet;
-    last?: boolean;
     title: string;
   }
 
-  const { children, last = false, title }: Props = $props();
+  const { children, title }: Props = $props();
 </script>
 
-<section class="rs" class:rs--last={last}>
+<section class="rs">
   <h2 class="rs__heading">
     <span>{title}</span>
-    <span class="rs__rule" data-pdf-rule aria-hidden="true"></span>
+    <span class="rs__rule" data-resume-pdf={RESUME_PDF_NODE.rule} aria-hidden="true"></span>
   </h2>
   {@render children()}
 </section>
 
 <style lang="scss">
-  .rs {
-    margin-block-end: 1rem;
-  }
-
-  .rs--last {
-    margin-block-end: 0;
-  }
-
   .rs__heading {
     display: flex;
     align-items: center;

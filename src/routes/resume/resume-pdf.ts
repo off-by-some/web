@@ -1,9 +1,11 @@
 import { RESUME_PDF_FILENAME } from './resume-model';
+import { RESUME_PDF_NODE, RESUME_PDF_TEXT, resumePdfNodeSelector } from './resume-pdf-contract';
 
 import { SVGPathData } from 'svg-pathdata';
 
 import type { jsPDF as JsPdf } from 'jspdf';
 import type { SVGCommand } from 'svg-pathdata';
+import type { ResumePdfTextMode } from './resume-pdf-contract';
 
 type PdfFontStyle = 'normal' | 'bold' | 'italic' | 'bolditalic';
 
@@ -45,18 +47,22 @@ const PDF_PAGE = {
 };
 
 function assertResumeDocument() {
-  const documentElement = document.querySelector<HTMLElement>('[data-resume-document]');
+  const documentElement = document.querySelector<HTMLElement>(
+    resumePdfNodeSelector(RESUME_PDF_NODE.document),
+  );
   if (!documentElement) {
-    throw new Error('Resume PDF export requires a [data-resume-document] element.');
+    throw new Error('Resume PDF export requires a resume PDF document node.');
   }
 
   return documentElement;
 }
 
 function assertResumePages(root: ParentNode) {
-  const pages = Array.from(root.querySelectorAll<HTMLElement>('[data-resume-page]'));
+  const pages = Array.from(
+    root.querySelectorAll<HTMLElement>(resumePdfNodeSelector(RESUME_PDF_NODE.page)),
+  );
   if (pages.length === 0) {
-    throw new Error('Resume PDF export requires at least one [data-resume-page] element.');
+    throw new Error('Resume PDF export requires at least one resume PDF page node.');
   }
 
   return pages;
@@ -125,6 +131,10 @@ function pdfNumber(value: number) {
   return Number(value.toFixed(4)).toString();
 }
 
+function pdfColorOperand(value: number) {
+  return pdfNumber(value / 255);
+}
+
 function escapePdfString(value: string) {
   return value
     .replace(/\\/g, '\\\\')
@@ -134,7 +144,18 @@ function escapePdfString(value: string) {
     .replace(/\n/g, '\\n');
 }
 
-function writePdfTextLine(pdf: JsPdf, text: string, x: number, y: number) {
+function pdfFillColorCommand(color: string) {
+  const value = color.replace('#', '');
+  const channels = [0, 2, 4].map((start) => Number.parseInt(value.slice(start, start + 2), 16));
+
+  if (!channels.every(Number.isFinite)) {
+    throw new Error(`Unsupported PDF text color value: ${color}`);
+  }
+
+  return `${channels.map(pdfColorOperand).join(' ')} rg`;
+}
+
+function writePdfTextLine(pdf: JsPdf, text: string, x: number, y: number, color: string) {
   const writer = pdf as unknown as PdfTextWriter;
   const font = writer.getFont();
   const fontSize = writer.getFontSize();
@@ -142,6 +163,7 @@ function writePdfTextLine(pdf: JsPdf, text: string, x: number, y: number) {
 
   writer.internal.write('BT');
   writer.internal.write(`/${font.id} ${pdfNumber(fontSize)} Tf`);
+  writer.internal.write(pdfFillColorCommand(color));
   writer.internal.write(`1 0 0 1 ${pdfNumber(x)} ${pdfNumber(baselineY)} Tm`);
   writer.internal.write(`(${escapePdfString(text)}) Tj`);
   writer.internal.write('ET');
@@ -176,6 +198,21 @@ function parsePixelValue(value: string) {
   }
 
   return parsed;
+}
+
+function parseLineHeight(style: CSSStyleDeclaration, fontSize: number, space: PdfPageSpace) {
+  if (style.lineHeight === 'normal') return fontSize * 1.4;
+
+  const parsed = Number.parseFloat(style.lineHeight);
+  if (!Number.isFinite(parsed)) return fontSize * 1.4;
+
+  return style.lineHeight.trim().endsWith('px') ? parsed * space.yScale : parsed * fontSize;
+}
+
+function pdfTextMode(element: HTMLElement): ResumePdfTextMode {
+  return element.dataset.pdfText === RESUME_PDF_TEXT.flow
+    ? RESUME_PDF_TEXT.flow
+    : RESUME_PDF_TEXT.dom;
 }
 
 function parseColor(value: string) {
@@ -322,10 +359,25 @@ function renderTextNode(pdf: JsPdf, space: PdfPageSpace, node: Text) {
   const style = getComputedStyle(element);
   const fontSize = parsePixelValue(style.fontSize) * space.yScale;
   const link = element.closest<HTMLAnchorElement>('a[href]');
+  const color = parseColor(style.color);
 
   pdf.setFont('helvetica', pdfFontStyle(style));
   pdf.setFontSize(fontSize);
-  pdf.setTextColor(parseColor(style.color));
+  pdf.setTextColor(color);
+
+  if (pdfTextMode(element) === RESUME_PDF_TEXT.flow) {
+    const rect = element.getBoundingClientRect();
+    const text = transformCssText(normalizeCssText(node.data).trim(), style);
+    const lineHeight = parseLineHeight(style, fontSize, space);
+    const firstLineY = toPdfY(space, rect.top) + fontSize * 0.82;
+    const lines = pdf.splitTextToSize(text, toPdfWidth(space, rect.width)) as string[];
+
+    lines.forEach((line, index) => {
+      writePdfTextLine(pdf, line, toPdfX(space, rect.left), firstLineY + lineHeight * index, color);
+    });
+
+    return;
+  }
 
   for (const line of collectTextLines(node)) {
     const text = line.text.trim();
@@ -336,7 +388,7 @@ function renderTextNode(pdf: JsPdf, space: PdfPageSpace, node: Text) {
     const y = toPdfY(space, line.bottom) - fontSize * 0.18;
     const width = toPdfWidth(space, line.right - line.left);
 
-    writePdfTextLine(pdf, transformedText, x, y);
+    writePdfTextLine(pdf, transformedText, x, y, color);
 
     if (link) {
       pdf.link(x, toPdfY(space, line.top), width, toPdfHeight(space, line.bottom - line.top), {
@@ -347,7 +399,9 @@ function renderTextNode(pdf: JsPdf, space: PdfPageSpace, node: Text) {
 }
 
 function renderPdfRules(pdf: JsPdf, space: PdfPageSpace) {
-  const rules = Array.from(space.element.querySelectorAll<HTMLElement>('[data-pdf-rule]'));
+  const rules = Array.from(
+    space.element.querySelectorAll<HTMLElement>(resumePdfNodeSelector(RESUME_PDF_NODE.rule)),
+  );
 
   for (const rule of rules) {
     const rect = rule.getBoundingClientRect();

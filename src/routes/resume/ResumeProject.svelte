@@ -24,13 +24,8 @@
 
 <style lang="scss">
   .proj {
-    margin-block-end: 0.58rem;
     break-inside: avoid;
     page-break-inside: avoid;
-
-    &:last-child {
-      margin-block-end: 0;
-    }
   }
 
   .proj__title-row {

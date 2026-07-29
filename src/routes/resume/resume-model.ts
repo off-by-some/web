@@ -76,3 +76,12 @@ export interface ResumeData {
 
 export const resume = resumeContent as ResumeData;
 export const RESUME_PDF_FILENAME = resume.filename;
+
+export function resolveResumeContactKind(contact: ResumeContact): ResumeContactKind {
+  if (contact.kind) return contact.kind;
+  if (!contact.href) return 'location';
+  if (contact.href.startsWith('mailto:')) return 'email';
+  if (contact.href.includes('linkedin')) return 'linkedin';
+  if (contact.href.includes('github')) return 'github';
+  return 'link';
+}

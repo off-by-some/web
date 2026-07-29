@@ -1,16 +1,16 @@
 <script lang="ts">
   import type { Experience } from './resume-model';
+  import { RESUME_PDF_TEXT } from './resume-pdf-contract';
 
   interface Props {
     density?: 'primary' | 'compact';
     experience: Experience;
-    index: number;
   }
 
-  const { density = 'primary', experience, index }: Props = $props();
+  const { density = 'primary', experience }: Props = $props();
 </script>
 
-<div class="exp" class:exp--compact={density === 'compact'} data-index={index}>
+<div class="exp" class:exp--compact={density === 'compact'}>
   <div class="exp__header">
     <div class="exp__left">
       <span class="exp__title">{experience.title}</span>
@@ -23,9 +23,9 @@
   </div>
   <ul class="exp__list">
     {#each experience.highlights as bullet, bi (`${bi}:${bullet}`)}
-      <li class="exp__bullet" data-bi={bi}>
+      <li class="exp__bullet">
         <span class="exp__marker">-</span>
-        <span class="exp__bullet-text">{bullet}</span>
+        <span class="exp__bullet-text" data-pdf-text={RESUME_PDF_TEXT.flow}>{bullet}</span>
       </li>
     {/each}
   </ul>
@@ -33,17 +33,8 @@
 
 <style lang="scss">
   .exp {
-    margin-block-end: 0.95rem;
     break-inside: avoid;
     page-break-inside: avoid;
-
-    &:last-child {
-      margin-block-end: 0;
-    }
-  }
-
-  .exp--compact {
-    margin-block-end: 0.72rem;
   }
 
   .exp__header {

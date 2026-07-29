@@ -1,5 +1,6 @@
 <script lang="ts">
-  import type { ResumeContact, ResumeContactKind, ResumeData } from './resume-model';
+  import type { ResumeData } from './resume-model';
+  import { resolveResumeContactKind } from './resume-model';
   import ResumeContactIcon from './ResumeContactIcon.svelte';
 
   interface Props {
@@ -9,15 +10,6 @@
   }
 
   const { name, role, contacts }: Props = $props();
-
-  function resolvedKind(contact: ResumeContact): ResumeContactKind {
-    if (contact.kind) return contact.kind;
-    if (!contact.href) return 'location';
-    if (contact.href.startsWith('mailto:')) return 'email';
-    if (contact.href.includes('linkedin')) return 'linkedin';
-    if (contact.href.includes('github')) return 'github';
-    return 'link';
-  }
 </script>
 
 <header class="rh">
@@ -30,7 +22,7 @@
       {/if}
       <span class="rh__contact">
         <span class="rh__icon" aria-hidden="true">
-          <ResumeContactIcon kind={resolvedKind(contact)} />
+          <ResumeContactIcon kind={resolveResumeContactKind(contact)} />
         </span>
         {#if contact.href}
           <!-- eslint-disable svelte/no-navigation-without-resolve -->
@@ -53,7 +45,6 @@
 <style lang="scss">
   .rh {
     text-align: center;
-    margin-block-end: 1.1rem;
   }
 
   .rh__name {

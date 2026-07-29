@@ -1,47 +1,59 @@
 <script lang="ts">
-  import type { ResumeData, ResumeSection as ResumeSectionData } from './resume-model';
+  import type { ResumeData } from './resume-model';
   import ResumeExperience from './ResumeExperience.svelte';
   import ResumeHeader from './ResumeHeader.svelte';
   import ResumeProject from './ResumeProject.svelte';
   import ResumeSection from './ResumeSection.svelte';
   import ResumeSkills from './ResumeSkills.svelte';
+  import { RESUME_PDF_NODE } from './resume-pdf-contract';
 
   interface Props {
     resume: ResumeData;
   }
 
   const { resume }: Props = $props();
-
-  function sectionIsLast(sections: ResumeSectionData[], index: number) {
-    return index === sections.length - 1;
-  }
 </script>
 
-<div class="sheet" data-resume-document>
+<div class="sheet" data-resume-pdf={RESUME_PDF_NODE.document}>
   {#each resume.pages as page, pi (page.id)}
     <div class="page-stage">
-      <article class="resume-page" data-resume-page aria-label={page.ariaLabel}>
+      <article
+        class="resume-page"
+        data-resume-pdf={RESUME_PDF_NODE.page}
+        aria-label={page.ariaLabel}
+      >
         {#if page.showHeader}
-          <ResumeHeader name={resume.name} role={resume.role} contacts={resume.contacts} />
+          <div class="resume-page__header">
+            <ResumeHeader name={resume.name} role={resume.role} contacts={resume.contacts} />
+          </div>
         {/if}
 
-        {#each page.sections as section, i (section.id)}
-          <ResumeSection title={section.title} last={sectionIsLast(page.sections, i)}>
-            {#if section.kind === 'summary'}
-              <p class="rs__body">{section.body}</p>
-            {:else if section.kind === 'experience'}
-              {#each section.entries as exp, ei (`${section.id}:${exp.company}:${exp.title}:${exp.date}`)}
-                <ResumeExperience density={section.density} experience={exp} index={ei} />
-              {/each}
-            {:else if section.kind === 'projects'}
-              {#each section.entries as project (project.href)}
-                <ResumeProject {project} />
-              {/each}
-            {:else if section.kind === 'skills'}
-              <ResumeSkills categories={section.categories} />
-            {/if}
-          </ResumeSection>
-        {/each}
+        <div class="resume-page__sections">
+          {#each page.sections as section (section.id)}
+            <ResumeSection title={section.title}>
+              {#if section.kind === 'summary'}
+                <p class="rs__body">{section.body}</p>
+              {:else if section.kind === 'experience'}
+                <div
+                  class="resume-section-stack resume-section-stack--experience"
+                  class:resume-section-stack--compact={section.density === 'compact'}
+                >
+                  {#each section.entries as exp (`${section.id}:${exp.company}:${exp.title}:${exp.date}`)}
+                    <ResumeExperience density={section.density} experience={exp} />
+                  {/each}
+                </div>
+              {:else if section.kind === 'projects'}
+                <div class="resume-section-stack resume-section-stack--projects">
+                  {#each section.entries as project (project.href)}
+                    <ResumeProject {project} />
+                  {/each}
+                </div>
+              {:else if section.kind === 'skills'}
+                <ResumeSkills categories={section.categories} />
+              {/if}
+            </ResumeSection>
+          {/each}
+        </div>
       </article>
 
       <div class="page-label" aria-hidden="true">
@@ -101,6 +113,8 @@
     border-radius: var(--token-reference-radius-xs, 0.375rem);
     box-shadow: var(--resume-shadow-page);
     padding: 2.85rem 3.35rem 3rem;
+    display: flex;
+    flex-direction: column;
 
     &::before {
       content: '';
@@ -116,6 +130,33 @@
       border-radius: 0.375rem 0 0 0.375rem;
       pointer-events: none;
     }
+  }
+
+  .resume-page__header {
+    margin-block-end: 1.1rem;
+  }
+
+  .resume-page__sections {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .resume-section-stack {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .resume-section-stack--experience {
+    gap: 0.95rem;
+  }
+
+  .resume-section-stack--compact {
+    gap: 0.72rem;
+  }
+
+  .resume-section-stack--projects {
+    gap: 0.58rem;
   }
 
   .page-label {
