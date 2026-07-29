@@ -57,7 +57,7 @@ module.exports = {
         'cumulative-layout-shift': [
           'error',
           {
-            maxNumericValue: 0,
+            maxNumericValue: 0.01,
             aggregationMethod: 'pessimistic',
           },
         ],

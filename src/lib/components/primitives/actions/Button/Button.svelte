@@ -7,6 +7,7 @@
     variant?: 'primary' | 'secondary';
     type?: 'button' | 'submit' | 'reset';
     disabled?: boolean;
+    class?: string;
     className?: string;
     onclick?: (event: MouseEvent) => void;
     children?: Snippet;
@@ -18,13 +19,16 @@
     variant = 'primary',
     type = 'button',
     disabled = false,
+    class: classProp = '',
     className = '',
     onclick,
     children,
     ...rest
   }: Props = $props();
 
-  const classes = $derived(['button', `button--${variant}`, className].filter(Boolean).join(' '));
+  const classes = $derived(
+    ['button', `button--${variant}`, classProp, className].filter(Boolean).join(' '),
+  );
 
   // `disabled` isn't a real attribute on <a>/<div> — this makes it behave
   // like one is regardless of what `as` renders to.

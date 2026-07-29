@@ -20,9 +20,9 @@
   const annotationSlots: AnnotationSlot[] = [
     {
       name: 'systems',
-      arrowTransform: 'translate(438 102) scale(0.43)',
+      arrowTransform: 'translate(438 122) scale(0.43)',
       labelX: 536,
-      labelY: 116,
+      labelY: 136,
       labelSize: 22,
       labelRotate: -5,
       shadowPath: 'M222 19C180 15 142 23 108 43C76 61 52 67 24 68',

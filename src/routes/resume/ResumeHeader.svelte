@@ -66,10 +66,13 @@
   }
 
   .rh__role {
+    display: block;
+    inline-size: 100%;
     font-size: 0.72rem;
     font-weight: var(--token-reference-typography-weight-semibold, 600);
     color: var(--resume-color-section);
     letter-spacing: 0.12em;
+    text-align: center;
     text-transform: uppercase;
     margin: 0 0 0.6rem;
   }
