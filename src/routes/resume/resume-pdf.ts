@@ -190,6 +190,32 @@ function pdfFontStyle(style: CSSStyleDeclaration): PdfFontStyle {
   return 'normal';
 }
 
+function pdfLetterSpacing(style: CSSStyleDeclaration, space: PdfPageSpace) {
+  if (style.letterSpacing === 'normal') return 0;
+
+  const spacing = Number.parseFloat(style.letterSpacing);
+  return Number.isFinite(spacing) ? spacing * space.xScale : 0;
+}
+
+function alignedPdfX(
+  pdf: JsPdf,
+  space: PdfPageSpace,
+  line: TextLine,
+  text: string,
+  charSpace: number,
+  style: CSSStyleDeclaration,
+) {
+  const lineLeft = toPdfX(space, line.left);
+  const lineWidth = toPdfWidth(space, line.right - line.left);
+  const textWidth = pdf.getTextWidth(text) + Math.max(0, text.length - 1) * charSpace;
+
+  if (style.textAlign === 'center') return lineLeft + (lineWidth - textWidth) / 2;
+  if (style.textAlign === 'right' || style.textAlign === 'end')
+    return lineLeft + lineWidth - textWidth;
+
+  return lineLeft;
+}
+
 function isVisibleElement(element: Element) {
   const style = getComputedStyle(element);
   return style.display !== 'none' && style.visibility !== 'hidden';
@@ -275,12 +301,15 @@ function renderTextNode(pdf: JsPdf, space: PdfPageSpace, node: Text) {
     const text = line.text.trim();
     if (!text) continue;
     const transformedText = transformCssText(text, style);
+    const charSpace = pdfLetterSpacing(style, space);
 
-    const x = toPdfX(space, line.left);
+    const x = alignedPdfX(pdf, space, line, transformedText, charSpace, style);
     const y = toPdfY(space, line.bottom) - fontSize * 0.18;
     const width = toPdfWidth(space, line.right - line.left);
 
+    pdf.setCharSpace(charSpace);
     pdf.text(transformedText, x, y);
+    pdf.setCharSpace(0);
 
     if (link) {
       pdf.link(x, toPdfY(space, line.top), width, toPdfHeight(space, line.bottom - line.top), {

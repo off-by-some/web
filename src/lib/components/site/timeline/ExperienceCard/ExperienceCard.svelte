@@ -397,6 +397,7 @@
     color: var(--token-theme-color-text-primary);
     margin-block-end: var(--token-reference-spacing-fluid-xs);
     line-height: var(--token-reference-typography-line-height-snug);
+    overflow-wrap: anywhere;
 
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-reference-typography-size-xl);
@@ -412,6 +413,7 @@
     font-weight: var(--token-reference-typography-weight-medium);
     color: var(--token-theme-color-emphasis-color);
     margin-block-end: var(--token-reference-spacing-fluid-xs);
+    overflow-wrap: anywhere;
 
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-reference-typography-size-lg);
@@ -422,6 +424,7 @@
     font-size: var(--token-reference-typography-size-sm);
     color: var(--token-theme-color-text-tertiary);
     line-height: var(--token-reference-typography-line-height-relaxed);
+    overflow-wrap: anywhere;
 
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-reference-typography-size-base);
@@ -498,6 +501,7 @@
     margin-block-end: var(--token-reference-spacing-fluid-lg);
     position: relative;
     z-index: 1;
+    overflow-wrap: anywhere;
 
     @media (min-width: $breakpoint-md) {
       font-size: var(--token-reference-typography-size-lg);
@@ -579,6 +583,7 @@
     line-height: var(--token-reference-typography-line-height-relaxed);
     color: var(--token-theme-color-text-secondary);
     font-size: var(--token-reference-typography-size-sm);
+    overflow-wrap: anywhere;
 
     &::before {
       content: '✓';
@@ -657,12 +662,24 @@
     }
 
     .card-header {
+      display: grid;
+      grid-template-columns: 3rem minmax(0, 1fr) 3rem;
+      align-items: flex-start;
       gap: var(--token-reference-spacing-fluid-md);
       margin-block-end: var(--token-reference-spacing-fluid-md);
     }
 
     .card-header :global(.card-logo) {
       --icon-tile-size: 3rem;
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .card-meta {
+      grid-column: 2;
+      grid-row: 1;
+      text-align: center;
+      align-self: center;
     }
 
     .card-title {
@@ -685,6 +702,9 @@
     }
 
     .expand-button {
+      grid-column: 3;
+      grid-row: 1;
+      justify-self: end;
       padding: var(--token-reference-spacing-2);
       border-radius: var(--token-reference-radius-full);
       min-inline-size: 2.5rem;

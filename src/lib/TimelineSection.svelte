@@ -269,6 +269,7 @@
     <div
       class="floating-nav"
       class:floating-nav--visible={showFloatingNav}
+      class:floating-nav--suppressed={expandedItems.size > 0}
       aria-label="Timeline navigation"
     >
       <div class="floating-nav__content">
@@ -436,6 +437,12 @@
       opacity: 1;
       transform: translateX(-50%) translateY(0);
       pointer-events: all;
+    }
+
+    &--suppressed {
+      opacity: 0;
+      transform: translateX(-50%) translateY(100px);
+      pointer-events: none;
     }
 
     @media (min-width: $breakpoint-lg) {

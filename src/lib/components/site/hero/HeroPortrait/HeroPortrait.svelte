@@ -20,36 +20,36 @@
   const annotationSlots: AnnotationSlot[] = [
     {
       name: 'systems',
-      arrowTransform: 'translate(486 70) scale(0.48)',
-      labelX: 602,
-      labelY: 84,
-      labelSize: 27,
-      labelRotate: -3,
-      shadowPath: 'M222 18C176 16 136 27 100 52C68 74 43 82 18 88',
-      linePath: 'M220 20C175 19 137 30 101 53C70 73 45 82 19 88',
-      headPath: 'M37 76L18 88L39 98',
+      arrowTransform: 'translate(438 102) scale(0.43)',
+      labelX: 536,
+      labelY: 116,
+      labelSize: 22,
+      labelRotate: -5,
+      shadowPath: 'M222 19C180 15 142 23 108 43C76 61 52 67 24 68',
+      linePath: 'M220 20C181 18 144 26 109 45C78 61 53 67 25 69',
+      headPath: 'M42 58L25 69L44 78',
     },
     {
       name: 'team',
-      arrowTransform: 'translate(518 284) scale(0.5)',
-      labelX: 652,
-      labelY: 330,
-      labelSize: 27,
+      arrowTransform: 'translate(460 284) scale(0.45)',
+      labelX: 570,
+      labelY: 323,
+      labelSize: 22,
       labelRotate: -2,
-      shadowPath: 'M222 58C180 52 142 54 105 66C73 76 47 76 18 67',
-      linePath: 'M221 60C179 55 143 57 106 68C74 77 47 76 19 68',
-      headPath: 'M39 57L18 68L38 80',
+      shadowPath: 'M222 58C183 52 149 54 116 64C85 74 56 73 27 66',
+      linePath: 'M221 60C184 56 150 57 117 66C86 75 57 74 28 67',
+      headPath: 'M48 58L28 67L47 78',
     },
     {
       name: 'product',
-      arrowTransform: 'translate(482 522) scale(0.5)',
-      labelX: 620,
-      labelY: 578,
-      labelSize: 27,
-      labelRotate: -2,
-      shadowPath: 'M222 110C178 112 140 101 105 77C75 56 48 45 18 42',
-      linePath: 'M221 108C178 109 141 98 106 75C76 56 48 46 19 43',
-      headPath: 'M40 34L18 43L36 58',
+      arrowTransform: 'translate(440 500) scale(0.45)',
+      labelX: 548,
+      labelY: 548,
+      labelSize: 22,
+      labelRotate: -4,
+      shadowPath: 'M222 106C184 109 149 99 116 78C86 58 58 47 27 45',
+      linePath: 'M221 104C185 106 150 97 117 76C87 59 58 49 28 47',
+      headPath: 'M49 38L28 47L47 60',
     },
   ];
 
@@ -288,7 +288,12 @@
     block-size: 100%;
     overflow: visible;
     pointer-events: none;
-    color: var(--token-theme-color-text-secondary);
+    color: color-mix(
+      in srgb,
+      var(--token-theme-color-text-secondary) 72%,
+      var(--token-theme-color-interactive-color) 28%
+    );
+    filter: saturate(0.85);
 
     @media (min-width: $breakpoint-md-lg) and (min-aspect-ratio: 4 / 3) {
       display: block;
@@ -296,29 +301,31 @@
   }
 
   .annotation {
-    opacity: 0.9;
+    opacity: 0.78;
   }
 
   .annotation__connector {
     fill: none;
     stroke: currentColor;
     stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
   }
 
   .annotation__connector-shadow {
-    opacity: 0.18;
-    stroke-width: 3.8;
+    opacity: 0.12;
+    stroke-width: 2.75;
   }
 
   .annotation__connector-line {
-    opacity: 0.56;
-    stroke-width: 2.2;
+    opacity: 0.5;
+    stroke-width: 1.45;
   }
 
   .annotation__connector-head {
-    opacity: 0.52;
+    opacity: 0.42;
     stroke-linejoin: round;
-    stroke-width: 2.5;
+    stroke-width: 1.55;
   }
 
   .annotation__label {
@@ -326,11 +333,39 @@
     font-weight: var(--token-reference-typography-weight-normal);
     line-height: 1;
     fill: currentColor;
-    letter-spacing: var(--token-reference-typography-letter-spacing-slightly-tight);
+    letter-spacing: 0;
     white-space: nowrap;
+    paint-order: stroke fill;
+    stroke: color-mix(in srgb, var(--token-theme-color-surface-color) 38%, transparent);
+    stroke-width: 0.85px;
+    stroke-linejoin: round;
     text-shadow:
-      0 1px 0 var(--token-feature-hero-portrait-annotation-shadow-rest),
-      0 0 1.35rem var(--token-feature-hero-portrait-annotation-shadow-glow);
+      0 0 0.75rem var(--token-feature-hero-portrait-annotation-shadow-glow),
+      0 1px 0 var(--token-feature-hero-portrait-annotation-shadow-rest);
+  }
+
+  .annotation--systems {
+    color: color-mix(
+      in srgb,
+      var(--token-feature-hero-portrait-halo-blue) 38%,
+      var(--token-theme-color-text-secondary)
+    );
+  }
+
+  .annotation--team {
+    color: color-mix(
+      in srgb,
+      var(--token-theme-color-text-secondary) 82%,
+      var(--token-feature-hero-portrait-halo-violet)
+    );
+  }
+
+  .annotation--product {
+    color: color-mix(
+      in srgb,
+      var(--token-theme-color-interactive-color) 22%,
+      var(--token-theme-color-text-secondary)
+    );
   }
 
   @include motion.reduced-motion-reset('.hero-portrait');
