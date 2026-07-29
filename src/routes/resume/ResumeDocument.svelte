@@ -52,8 +52,6 @@
 </div>
 
 <style lang="scss">
-  @use 'styles/breakpoints' as *;
-
   .sheet {
     --resume-font-family: Helvetica, 'Nimbus Sans', Arial, sans-serif;
     --resume-color-paper: #fff;
@@ -102,11 +100,7 @@
     color: var(--resume-color-body);
     border-radius: var(--token-reference-radius-xs, 0.375rem);
     box-shadow: var(--resume-shadow-page);
-    padding: 2.35rem 2.75rem 2.5rem;
-
-    @media (min-width: $breakpoint-md) {
-      padding: 2.85rem 3.35rem 3rem;
-    }
+    padding: 2.85rem 3.35rem 3rem;
 
     &::before {
       content: '';

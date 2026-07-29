@@ -32,13 +32,60 @@ const PDF_PAGE = {
   width: 612,
 };
 
-function assertResumePages() {
-  const pages = Array.from(document.querySelectorAll<HTMLElement>('[data-resume-page]'));
+function assertResumeDocument() {
+  const documentElement = document.querySelector<HTMLElement>('[data-resume-document]');
+  if (!documentElement) {
+    throw new Error('Resume PDF export requires a [data-resume-document] element.');
+  }
+
+  return documentElement;
+}
+
+function assertResumePages(root: ParentNode) {
+  const pages = Array.from(root.querySelectorAll<HTMLElement>('[data-resume-page]'));
   if (pages.length === 0) {
     throw new Error('Resume PDF export requires at least one [data-resume-page] element.');
   }
 
   return pages;
+}
+
+function nextAnimationFrame() {
+  return new Promise<void>((resolve) => {
+    requestAnimationFrame(() => {
+      resolve();
+    });
+  });
+}
+
+async function createPdfSourcePages() {
+  const source = assertResumeDocument();
+  const host = document.createElement('div');
+  const clone = source.cloneNode(true) as HTMLElement;
+
+  host.setAttribute('data-resume-pdf-host', '');
+  host.style.position = 'fixed';
+  host.style.insetBlockStart = '0';
+  host.style.insetInlineStart = '-10000px';
+  host.style.inlineSize = '52rem';
+  host.style.maxInlineSize = 'none';
+  host.style.pointerEvents = 'none';
+  host.style.zIndex = '-1';
+
+  clone.style.inlineSize = '52rem';
+  clone.style.maxInlineSize = 'none';
+
+  host.append(clone);
+  document.body.append(host);
+
+  await nextAnimationFrame();
+
+  return {
+    cleanup: () => {
+      host.remove();
+    },
+    pages: assertResumePages(clone),
+  };
 }
 
 function normalizePdfText(value: string) {
@@ -232,13 +279,8 @@ function renderTextNode(pdf: JsPdf, space: PdfPageSpace, node: Text) {
     const x = toPdfX(space, line.left);
     const y = toPdfY(space, line.bottom) - fontSize * 0.18;
     const width = toPdfWidth(space, line.right - line.left);
-    const pdfWidth = pdf.getTextWidth(transformedText);
-    const charSpace =
-      transformedText.length > 1 ? (width - pdfWidth) / (transformedText.length - 1) : 0;
 
-    pdf.setCharSpace(charSpace);
     pdf.text(transformedText, x, y);
-    pdf.setCharSpace(0);
 
     if (link) {
       pdf.link(x, toPdfY(space, line.top), width, toPdfHeight(space, line.bottom - line.top), {
@@ -510,17 +552,21 @@ export async function downloadResumePdf() {
   await document.fonts.ready;
 
   const { jsPDF } = await import('jspdf');
-  const pages = assertResumePages();
   const pdf = new jsPDF({ format: 'letter', orientation: 'portrait', unit: 'pt' });
+  const { cleanup, pages } = await createPdfSourcePages();
 
-  pages.forEach((page, index) => {
-    if (index > 0) pdf.addPage();
+  try {
+    pages.forEach((page, index) => {
+      if (index > 0) pdf.addPage();
 
-    const space = pageSpace(page);
-    renderPdfRules(pdf, space);
-    renderPdfSvgs(pdf, space);
-    renderPdfText(pdf, space);
-  });
+      const space = pageSpace(page);
+      renderPdfRules(pdf, space);
+      renderPdfSvgs(pdf, space);
+      renderPdfText(pdf, space);
+    });
+  } finally {
+    cleanup();
+  }
 
   pdf.save(RESUME_PDF_FILENAME);
 }

@@ -57,7 +57,7 @@
   }
 
   .rh__name {
-    font-size: clamp(2rem, 4.5vw, 2.7rem);
+    font-size: 2.7rem;
     font-weight: var(--token-reference-typography-weight-bold, 700);
     letter-spacing: var(--token-reference-typography-letter-spacing-tight, -0.015em);
     color: var(--resume-color-ink);
