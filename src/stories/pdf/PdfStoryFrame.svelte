@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { PdfDocument, PdfPage } from '$lib/pdf/primitives';
+  import { Document, Page } from '$lib/pdf/primitives';
+  import type { DocumentFont } from '$lib/pdf/primitives';
   import type { Snippet } from 'svelte';
 
   import PdfStoryDownload from './PdfStoryDownload.svelte';
@@ -8,6 +9,7 @@
     children?: Snippet;
     documentClass?: string;
     filename: string;
+    fonts?: readonly DocumentFont[];
     label?: string;
     pageClass?: string;
     renderWidth: string;
@@ -18,6 +20,7 @@
     children,
     documentClass = '',
     filename,
+    fonts = [],
     label = 'Download PDF',
     pageClass = '',
     renderWidth,
@@ -30,20 +33,21 @@
 <div class="pdf-story-frame">
   <PdfStoryDownload {download} {label} />
 
-  <PdfDocument
+  <Document
     bind:download
     {filename}
+    {fonts}
     {renderWidth}
     class="pdf-story-frame__document {documentClass}"
   >
     {#if wrapPage}
-      <PdfPage class="pdf-story-frame__page {pageClass}">
+      <Page class="pdf-story-frame__page {pageClass}">
         {@render children?.()}
-      </PdfPage>
+      </Page>
     {:else}
       {@render children?.()}
     {/if}
-  </PdfDocument>
+  </Document>
 </div>
 
 <style lang="scss">

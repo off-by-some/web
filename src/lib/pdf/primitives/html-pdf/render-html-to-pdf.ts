@@ -4,13 +4,22 @@ import type { jsPDF as JsPdf } from 'jspdf';
 import type { SVGCommand } from 'svg-pathdata';
 
 type PdfFontStyle = 'normal' | 'bold' | 'italic' | 'bolditalic';
-type PdfTextMode = 'dom' | 'flow';
+type PdfTextMode = 'dom' | 'flow' | 'pre';
+
+export interface HtmlPdfFont {
+  data: string;
+  family: string;
+  fileName: string;
+  style?: PdfFontStyle;
+  weight?: number;
+}
 
 export interface HtmlPdfOptions {
+  fonts?: readonly HtmlPdfFont[];
   pageSize?: 'letter' | 'a4';
 }
 
-interface PdfPageSpace {
+interface PageSpace {
   element: HTMLElement;
   pageHeight: number;
   rect: DOMRect;
@@ -31,16 +40,24 @@ interface SvgPathOperation {
   op: 'm' | 'l' | 'c' | 'h';
 }
 
-interface PdfFontState {
-  id: string;
+interface PdfOutlineItem {
+  children: PdfOutlineItem[];
+  options: unknown;
+  title: string;
 }
 
-interface PdfTextWriter {
-  getFont: () => PdfFontState;
-  getFontSize: () => number;
-  internal: {
-    write: (value: string) => void;
-  };
+interface CssColor {
+  alpha: number;
+  blue: number;
+  green: number;
+  red: number;
+}
+
+interface RegisteredPdfFont {
+  family: string;
+  normalizedFamily: string;
+  style: PdfFontStyle;
+  weight: number;
 }
 
 function assertPages(pages: HTMLElement[]) {
@@ -63,7 +80,7 @@ function normalizePdfText(value: string) {
   return Array.from(normalized)
     .filter((character) => {
       const code = character.charCodeAt(0);
-      return code === 9 || code === 10 || code === 13 || (code >= 32 && code <= 126);
+      return code === 9 || code === 10 || code === 13 || code >= 32;
     })
     .join('');
 }
@@ -72,53 +89,8 @@ function normalizeCssText(value: string) {
   return normalizePdfText(value.replace(/\s+/g, ' '));
 }
 
-function pdfNumber(value: number) {
-  return Number(value.toFixed(4)).toString();
-}
-
-function pdfColorOperand(value: number) {
-  return pdfNumber(value / 255);
-}
-
-function escapePdfString(value: string) {
-  return value
-    .replace(/\\/g, '\\\\')
-    .replace(/\(/g, '\\(')
-    .replace(/\)/g, '\\)')
-    .replace(/\r/g, '\\r')
-    .replace(/\n/g, '\\n');
-}
-
-function pdfFillColorCommand(color: string) {
-  const value = color.replace('#', '');
-  const channels = [0, 2, 4].map((start) => Number.parseInt(value.slice(start, start + 2), 16));
-
-  if (!channels.every(Number.isFinite)) {
-    throw new Error(`Unsupported PDF text color value: ${color}`);
-  }
-
-  return `${channels.map(pdfColorOperand).join(' ')} rg`;
-}
-
-function writePdfTextLine(
-  pdf: JsPdf,
-  space: PdfPageSpace,
-  text: string,
-  x: number,
-  y: number,
-  color: string,
-) {
-  const writer = pdf as unknown as PdfTextWriter;
-  const font = writer.getFont();
-  const fontSize = writer.getFontSize();
-  const baselineY = space.pageHeight - y;
-
-  writer.internal.write('BT');
-  writer.internal.write(`/${font.id} ${pdfNumber(fontSize)} Tf`);
-  writer.internal.write(pdfFillColorCommand(color));
-  writer.internal.write(`1 0 0 1 ${pdfNumber(x)} ${pdfNumber(baselineY)} Tm`);
-  writer.internal.write(`(${escapePdfString(text)}) Tj`);
-  writer.internal.write('ET');
+function writePdfTextLine(pdf: JsPdf, text: string, x: number, y: number) {
+  pdf.text(text, x, y);
 }
 
 function transformCssText(text: string, style: CSSStyleDeclaration) {
@@ -127,19 +99,19 @@ function transformCssText(text: string, style: CSSStyleDeclaration) {
   return text;
 }
 
-function toPdfX(space: PdfPageSpace, x: number) {
+function toPdfX(space: PageSpace, x: number) {
   return (x - space.rect.left) * space.xScale;
 }
 
-function toPdfY(space: PdfPageSpace, y: number) {
+function toPdfY(space: PageSpace, y: number) {
   return (y - space.rect.top) * space.yScale;
 }
 
-function toPdfWidth(space: PdfPageSpace, width: number) {
+function toPdfWidth(space: PageSpace, width: number) {
   return width * space.xScale;
 }
 
-function toPdfHeight(space: PdfPageSpace, height: number) {
+function toPdfHeight(space: PageSpace, height: number) {
   return height * space.yScale;
 }
 
@@ -152,7 +124,7 @@ function parsePixelValue(value: string) {
   return parsed;
 }
 
-function parseLineHeight(style: CSSStyleDeclaration, fontSize: number, space: PdfPageSpace) {
+function parseLineHeight(style: CSSStyleDeclaration, fontSize: number, space: PageSpace) {
   if (style.lineHeight === 'normal') return fontSize * 1.4;
 
   const parsed = Number.parseFloat(style.lineHeight);
@@ -161,47 +133,107 @@ function parseLineHeight(style: CSSStyleDeclaration, fontSize: number, space: Pd
   return style.lineHeight.trim().endsWith('px') ? parsed * space.yScale : parsed * fontSize;
 }
 
-function pdfTextMode(element: HTMLElement): PdfTextMode {
-  return element.dataset.pdfText === 'flow' ? 'flow' : 'dom';
+function parseLength(value: string) {
+  const parsed = Number.parseFloat(value);
+  return Number.isFinite(parsed) ? parsed : 0;
 }
 
-function parseColor(value: string) {
-  const trimmed = value.trim();
-  if (/^#[\da-f]{3}$/i.test(trimmed)) {
-    return `#${trimmed
-      .slice(1)
-      .split('')
-      .map((character) => `${character}${character}`)
-      .join('')}`;
-  }
+function closestPdfTextElement(element: HTMLElement) {
+  return element.closest<HTMLElement>('[data-pdf-text]');
+}
 
-  if (/^#[\da-f]{6}$/i.test(trimmed)) return trimmed;
+function pdfTextMode(element: HTMLElement): PdfTextMode {
+  const pdfText = closestPdfTextElement(element)?.dataset.pdfText;
 
-  const srgb = /^color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*[\d.]+)?\)$/i.exec(value);
-  const rgbChannels =
-    value.startsWith('rgb(') || value.startsWith('rgba(')
-      ? value
-          .slice(value.indexOf('(') + 1, value.lastIndexOf(')'))
-          .split(/[,\s/]+/)
-          .filter(Boolean)
-          .slice(0, 3)
-          .map(Number)
-      : undefined;
-  const channels = srgb
-    ? srgb.slice(1, 4).map((channel) => Number.parseFloat(channel) * 255)
-    : rgbChannels;
+  if (pdfText === 'pre') return 'pre';
+  return pdfText === 'flow' ? 'flow' : 'dom';
+}
 
-  if (!channels || channels.length < 3) {
-    throw new Error(`Unsupported PDF color value: ${value}`);
-  }
+function pdfHeadingLevel(element: HTMLElement) {
+  const level = Number.parseInt(element.dataset.pdfHeading ?? '', 10);
+  return Number.isInteger(level) && level >= 1 && level <= 4 ? level : undefined;
+}
 
-  return `#${channels
+function cssColorToHex(color: CssColor) {
+  return `#${[color.red, color.green, color.blue]
     .map((channel) =>
       Math.max(0, Math.min(255, Math.round(channel)))
         .toString(16)
         .padStart(2, '0'),
     )
     .join('')}`;
+}
+
+function mixCssColorOver(
+  color: CssColor,
+  background: CssColor = { alpha: 1, blue: 255, green: 255, red: 255 },
+) {
+  if (color.alpha >= 1) return color;
+
+  return {
+    alpha: 1,
+    blue: color.blue * color.alpha + background.blue * (1 - color.alpha),
+    green: color.green * color.alpha + background.green * (1 - color.alpha),
+    red: color.red * color.alpha + background.red * (1 - color.alpha),
+  };
+}
+
+function parseCssColor(value: string): CssColor | undefined {
+  const trimmed = value.trim();
+  if (!trimmed || trimmed === 'transparent') return undefined;
+
+  if (/^#[\da-f]{3}$/i.test(trimmed)) {
+    const [red, green, blue] = trimmed
+      .slice(1)
+      .split('')
+      .map((character) => Number.parseInt(`${character}${character}`, 16));
+    return { alpha: 1, blue, green, red };
+  }
+
+  if (/^#[\da-f]{6}$/i.test(trimmed)) {
+    return {
+      alpha: 1,
+      blue: Number.parseInt(trimmed.slice(5, 7), 16),
+      green: Number.parseInt(trimmed.slice(3, 5), 16),
+      red: Number.parseInt(trimmed.slice(1, 3), 16),
+    };
+  }
+
+  const srgb = /^color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\)$/i.exec(value);
+  const rgbChannels =
+    value.startsWith('rgb(') || value.startsWith('rgba(')
+      ? value
+          .slice(value.indexOf('(') + 1, value.lastIndexOf(')'))
+          .split(/[,\s/]+/)
+          .filter(Boolean)
+          .map((channel) =>
+            channel.endsWith('%') ? (Number.parseFloat(channel) / 100) * 255 : Number(channel),
+          )
+      : undefined;
+  const channels = srgb
+    ? srgb.slice(1, 4).map((channel) => Number.parseFloat(channel) * 255)
+    : rgbChannels;
+  const alpha = srgb ? Number.parseFloat(srgb[4]) : (rgbChannels?.[3] ?? 1);
+
+  if (!channels || channels.length < 3) {
+    return undefined;
+  }
+
+  return {
+    alpha: Number.isFinite(alpha) ? Math.max(0, Math.min(1, alpha)) : 1,
+    blue: channels[2],
+    green: channels[1],
+    red: channels[0],
+  };
+}
+
+function parseColor(value: string) {
+  const color = parseCssColor(value);
+  if (!color) {
+    throw new Error(`Unsupported PDF color value: ${value}`);
+  }
+
+  return cssColorToHex(mixCssColorOver(color));
 }
 
 function pdfFontStyle(style: CSSStyleDeclaration): PdfFontStyle {
@@ -215,9 +247,106 @@ function pdfFontStyle(style: CSSStyleDeclaration): PdfFontStyle {
   return 'normal';
 }
 
+function cssFontWeight(style: CSSStyleDeclaration) {
+  if (style.fontWeight === 'normal') return 400;
+  if (style.fontWeight === 'bold') return 700;
+
+  const weight = Number.parseInt(style.fontWeight, 10);
+  return Number.isFinite(weight) ? weight : 400;
+}
+
+function cssFontFamilies(style: CSSStyleDeclaration) {
+  return style.fontFamily
+    .split(',')
+    .map((family) =>
+      family
+        .trim()
+        .replace(/^["']|["']$/g, '')
+        .toLowerCase(),
+    )
+    .filter(Boolean);
+}
+
+function registerPdfFonts(pdf: JsPdf, fonts: readonly HtmlPdfFont[] = []) {
+  return fonts.map((font): RegisteredPdfFont => {
+    const style = font.style ?? 'normal';
+    const weight = font.weight ?? (style === 'bold' || style === 'bolditalic' ? 700 : 400);
+
+    pdf.addFileToVFS(font.fileName, font.data);
+    pdf.addFont(font.fileName, font.family, style, weight, 'Identity-H');
+
+    return {
+      family: font.family,
+      normalizedFamily: font.family.toLowerCase(),
+      style,
+      weight,
+    };
+  });
+}
+
+function fontMatchScore(
+  font: RegisteredPdfFont,
+  preferredStyle: PdfFontStyle,
+  preferredWeight: number,
+) {
+  const stylePenalty = font.style === preferredStyle ? 0 : 1000;
+  const weightPenalty = Math.abs(font.weight - preferredWeight);
+
+  return stylePenalty + weightPenalty;
+}
+
+function pdfFontForStyle(style: CSSStyleDeclaration, fonts: RegisteredPdfFont[]) {
+  const families = cssFontFamilies(style);
+  const preferredStyle = pdfFontStyle(style);
+  const preferredWeight = cssFontWeight(style);
+
+  for (const family of families) {
+    const matches = fonts
+      .filter((font) => font.normalizedFamily === family)
+      .sort(
+        (a, b) =>
+          fontMatchScore(a, preferredStyle, preferredWeight) -
+          fontMatchScore(b, preferredStyle, preferredWeight),
+      );
+
+    if (matches.length > 0) return matches[0];
+  }
+
+  return undefined;
+}
+
+const BUILTIN_PDF_FAMILIES: Record<string, string> = {
+  courier: 'courier',
+  'courier new': 'courier',
+  monospace: 'courier',
+  times: 'times',
+  'times new roman': 'times',
+  serif: 'times',
+};
+
+function builtinPdfFamily(style: CSSStyleDeclaration) {
+  for (const family of cssFontFamilies(style)) {
+    const builtin = BUILTIN_PDF_FAMILIES[family];
+    if (builtin) return builtin;
+  }
+
+  return 'helvetica';
+}
+
+function setPdfFontForStyle(pdf: JsPdf, style: CSSStyleDeclaration, fonts: RegisteredPdfFont[]) {
+  const customFont = pdfFontForStyle(style, fonts);
+
+  if (customFont) {
+    pdf.setFont(customFont.family, customFont.style, customFont.weight);
+    return;
+  }
+
+  pdf.setFont(builtinPdfFamily(style), pdfFontStyle(style));
+}
+
 function alignedPdfX(
   pdf: JsPdf,
-  space: PdfPageSpace,
+  space: PageSpace,
   line: TextLine,
   text: string,
   style: CSSStyleDeclaration,
@@ -233,9 +362,195 @@ function alignedPdfX(
   return lineLeft;
 }
 
+function renderTextDecoration(
+  pdf: JsPdf,
+  style: CSSStyleDeclaration,
+  textX: number,
+  textY: number,
+  textWidth: number,
+  fontSize: number,
+) {
+  const line = style.textDecorationLine;
+  if (!line.includes('line-through') && !line.includes('underline')) return;
+
+  const color = parseColor(
+    style.textDecorationColor === 'currentcolor' ? style.color : style.textDecorationColor,
+  );
+  const thickness = Math.max(0.45, fontSize * 0.065);
+
+  pdf.setDrawColor(color);
+  pdf.setLineWidth(thickness);
+
+  if (line.includes('line-through')) {
+    const y = textY - fontSize * 0.32;
+    pdf.line(textX, y, textX + textWidth, y);
+  }
+
+  if (line.includes('underline')) {
+    const y = textY + fontSize * 0.12;
+    pdf.line(textX, y, textX + textWidth, y);
+  }
+}
+
 function isVisibleElement(element: Element) {
   const style = getComputedStyle(element);
   return style.display !== 'none' && style.visibility !== 'hidden';
+}
+
+function hasVisiblePaint(color: CssColor | undefined): color is CssColor {
+  return Boolean(color && color.alpha > 0);
+}
+
+function withOpacity(color: CssColor, opacityValue: string) {
+  const opacity = Number.parseFloat(opacityValue);
+  if (!Number.isFinite(opacity)) return color;
+
+  return {
+    ...color,
+    alpha: color.alpha * Math.max(0, Math.min(1, opacity)),
+  };
+}
+
+function setPdfFillColor(pdf: JsPdf, color: CssColor) {
+  pdf.setFillColor(cssColorToHex(mixCssColorOver(color)));
+}
+
+function setPdfDrawColor(pdf: JsPdf, color: CssColor) {
+  pdf.setDrawColor(cssColorToHex(mixCssColorOver(color)));
+}
+
+function renderBackground(pdf: JsPdf, space: PageSpace, element: HTMLElement) {
+  const style = getComputedStyle(element);
+  const backgroundColor = parseCssColor(style.backgroundColor);
+  const background = backgroundColor ? withOpacity(backgroundColor, style.opacity) : undefined;
+  if (!hasVisiblePaint(background)) return;
+
+  setPdfFillColor(pdf, background);
+
+  for (const rect of Array.from(element.getClientRects())) {
+    if (rect.width <= 0 || rect.height <= 0) continue;
+
+    const x = toPdfX(space, rect.left);
+    const y = toPdfY(space, rect.top);
+    const width = toPdfWidth(space, rect.width);
+    const height = toPdfHeight(space, rect.height);
+    const radius = Math.min(
+      width / 2,
+      height / 2,
+      Math.max(
+        parseLength(style.borderTopLeftRadius),
+        parseLength(style.borderTopRightRadius),
+        parseLength(style.borderBottomRightRadius),
+        parseLength(style.borderBottomLeftRadius),
+      ) * Math.min(space.xScale, space.yScale),
+    );
+
+    if (radius > 0) {
+      pdf.roundedRect(x, y, width, height, radius, radius, 'F');
+    } else {
+      pdf.rect(x, y, width, height, 'F');
+    }
+  }
+}
+
+function renderBorderLine(
+  pdf: JsPdf,
+  space: PageSpace,
+  rect: DOMRect,
+  colorValue: string,
+  opacityValue: string,
+  styleValue: string,
+  widthValue: string,
+  side: 'block-end' | 'block-start' | 'inline-end' | 'inline-start',
+) {
+  if (styleValue === 'none' || styleValue === 'hidden') return;
+
+  const width = Number.parseFloat(widthValue);
+  const rawColor = parseCssColor(colorValue);
+  const color = rawColor ? withOpacity(rawColor, opacityValue) : undefined;
+  if (!Number.isFinite(width) || width <= 0 || !hasVisiblePaint(color)) return;
+
+  const lineWidth =
+    side === 'inline-start' || side === 'inline-end'
+      ? Math.max(0.5, toPdfWidth(space, width))
+      : Math.max(0.5, toPdfHeight(space, width));
+
+  setPdfDrawColor(pdf, color);
+  pdf.setLineWidth(lineWidth);
+
+  if (side === 'block-start') {
+    const y = toPdfY(space, rect.top + width / 2);
+    pdf.line(toPdfX(space, rect.left), y, toPdfX(space, rect.right), y);
+  } else if (side === 'block-end') {
+    const y = toPdfY(space, rect.bottom - width / 2);
+    pdf.line(toPdfX(space, rect.left), y, toPdfX(space, rect.right), y);
+  } else if (side === 'inline-start') {
+    const x = toPdfX(space, rect.left + width / 2);
+    pdf.line(x, toPdfY(space, rect.top), x, toPdfY(space, rect.bottom));
+  } else {
+    const x = toPdfX(space, rect.right - width / 2);
+    pdf.line(x, toPdfY(space, rect.top), x, toPdfY(space, rect.bottom));
+  }
+}
+
+function renderBorders(pdf: JsPdf, space: PageSpace, element: HTMLElement) {
+  const style = getComputedStyle(element);
+
+  for (const rect of Array.from(element.getClientRects())) {
+    if (rect.width <= 0 || rect.height <= 0) continue;
+
+    renderBorderLine(
+      pdf,
+      space,
+      rect,
+      style.borderTopColor,
+      style.opacity,
+      style.borderTopStyle,
+      style.borderTopWidth,
+      'block-start',
+    );
+    renderBorderLine(
+      pdf,
+      space,
+      rect,
+      style.borderRightColor,
+      style.opacity,
+      style.borderRightStyle,
+      style.borderRightWidth,
+      'inline-end',
+    );
+    renderBorderLine(
+      pdf,
+      space,
+      rect,
+      style.borderBottomColor,
+      style.opacity,
+      style.borderBottomStyle,
+      style.borderBottomWidth,
+      'block-end',
+    );
+    renderBorderLine(
+      pdf,
+      space,
+      rect,
+      style.borderLeftColor,
+      style.opacity,
+      style.borderLeftStyle,
+      style.borderLeftWidth,
+      'inline-start',
+    );
+  }
+}
+
+function renderElementBoxes(pdf: JsPdf, space: PageSpace) {
+  const elements = Array.from(space.element.querySelectorAll<HTMLElement>('*')).filter(
+    isVisibleElement,
+  );
+
+  for (const element of elements) {
+    renderBackground(pdf, space, element);
+    renderBorders(pdf, space, element);
+  }
 }
 
 function textNodeFilter(node: Node) {
@@ -296,61 +611,92 @@ function collectTextLines(node: Text) {
   return lines.sort((a, b) => a.top - b.top || a.left - b.left);
 }
 
-function renderTextNode(pdf: JsPdf, space: PdfPageSpace, node: Text) {
-  const element = node.parentElement;
-  if (!element) return;
+function renderPreTextNode(
+  pdf: JsPdf,
+  space: PageSpace,
+  node: Text,
+  element: HTMLElement,
+  style: CSSStyleDeclaration,
+  flowElement: Element | null,
+  fontSize: number,
+  link: HTMLAnchorElement | null,
+) {
+  const rect = (flowElement ?? element).getBoundingClientRect();
+  const text = normalizePdfText(node.data).replace(/\t/g, '  ');
+  const containerStyle = flowElement ? getComputedStyle(flowElement) : style;
+  const paddingInlineStart = parseLength(containerStyle.paddingLeft);
+  const paddingInlineEnd = parseLength(containerStyle.paddingRight);
+  const paddingBlockStart = parseLength(containerStyle.paddingTop);
+  const contentLeft = rect.left + paddingInlineStart;
+  const contentTop = rect.top + paddingBlockStart;
+  const contentWidth = Math.max(1, rect.width - paddingInlineStart - paddingInlineEnd);
+  const lineHeight = parseLineHeight(style, fontSize, space);
+  const firstLineY = toPdfY(space, contentTop) + fontSize * 0.82;
+  const lines = text
+    .split('\n')
+    .flatMap(
+      (line): string[] =>
+        pdf.splitTextToSize(line || ' ', toPdfWidth(space, contentWidth)) as string[],
+    );
 
-  const style = getComputedStyle(element);
-  const fontSize = parsePixelValue(style.fontSize) * space.yScale;
-  const link = element.closest<HTMLAnchorElement>('a[href]');
-  const color = parseColor(style.color);
-
-  pdf.setFont('helvetica', pdfFontStyle(style));
-  pdf.setFontSize(fontSize);
-  pdf.setTextColor(color);
-
-  if (pdfTextMode(element) === 'flow') {
-    const rect = element.getBoundingClientRect();
-    const text = transformCssText(normalizeCssText(node.data).trim(), style);
-    const lineHeight = parseLineHeight(style, fontSize, space);
-    const firstLineY = toPdfY(space, rect.top) + fontSize * 0.82;
-    const lines = pdf.splitTextToSize(text, toPdfWidth(space, rect.width)) as string[];
-
-    lines.forEach((line, index) => {
-      writePdfTextLine(
-        pdf,
-        space,
-        line,
-        toPdfX(space, rect.left),
-        firstLineY + lineHeight * index,
-        color,
-      );
-    });
-
-    return;
-  }
-
-  for (const line of collectTextLines(node)) {
-    const text = line.text.trim();
-    if (!text) continue;
-    const transformedText = transformCssText(text, style);
-
-    const x = alignedPdfX(pdf, space, line, transformedText, style);
-    const y = toPdfY(space, line.bottom) - fontSize * 0.18;
-    const width = toPdfWidth(space, line.right - line.left);
-
-    writePdfTextLine(pdf, space, transformedText, x, y, color);
-
+  lines.forEach((line, index) => {
+    const x = toPdfX(space, contentLeft);
+    const y = firstLineY + lineHeight * index;
+    writePdfTextLine(pdf, line, x, y);
+    renderTextDecoration(pdf, style, x, y, pdf.getTextWidth(line), fontSize);
     if (link) {
-      pdf.link(x, toPdfY(space, line.top), width, toPdfHeight(space, line.bottom - line.top), {
+      pdf.link(x, y - fontSize, pdf.getTextWidth(line), lineHeight, { url: link.href });
+    }
+  });
+}
+
+function renderDefaultTextNode(
+  pdf: JsPdf,
+  space: PageSpace,
+  node: Text,
+  style: CSSStyleDeclaration,
+  fontSize: number,
+  link: HTMLAnchorElement | null,
+) {
+  for (const line of collectTextLines(node)) {
+    const text = transformCssText(line.text.trim(), style);
+    if (!text) continue;
+    const x = alignedPdfX(pdf, space, line, text, style);
+    const y = toPdfY(space, line.bottom) - fontSize * 0.18;
+    const textWidth = pdf.getTextWidth(text);
+    writePdfTextLine(pdf, text, x, y);
+    renderTextDecoration(pdf, style, x, y, textWidth, fontSize);
+    if (link) {
+      pdf.link(x, toPdfY(space, line.top), textWidth, toPdfHeight(space, line.bottom - line.top), {
         url: link.href,
       });
     }
   }
 }
 
-function renderPdfRules(pdf: JsPdf, space: PdfPageSpace) {
-  const rules = Array.from(space.element.querySelectorAll<HTMLElement>('[data-pdf-rule]'));
+function renderTextNode(pdf: JsPdf, space: PageSpace, node: Text, fonts: RegisteredPdfFont[]) {
+  const element = node.parentElement;
+  if (!element) return;
+
+  const style = getComputedStyle(element);
+  const fontSize = parsePixelValue(style.fontSize) * space.yScale;
+  const link = element.closest<HTMLAnchorElement>('a[href]');
+  const flowElement = closestPdfTextElement(element);
+
+  setPdfFontForStyle(pdf, style, fonts);
+  pdf.setFontSize(fontSize);
+  pdf.setTextColor(parseColor(style.color));
+
+  if (pdfTextMode(element) === 'pre') {
+    renderPreTextNode(pdf, space, node, element, style, flowElement, fontSize, link);
+    return;
+  }
+
+  renderDefaultTextNode(pdf, space, node, style, fontSize, link);
+}
+
+function renderHorizontalRules(pdf: JsPdf, space: PageSpace) {
+  const rules = Array.from(space.element.querySelectorAll<HTMLElement>('[data-horizontal-rule]'));
 
   for (const rule of rules) {
     const rect = rule.getBoundingClientRect();
@@ -361,6 +707,54 @@ function renderPdfRules(pdf: JsPdf, space: PdfPageSpace) {
     pdf.setDrawColor(parseColor(style.backgroundColor));
     pdf.setLineWidth(blockSize);
     pdf.line(toPdfX(space, rect.left), y, toPdfX(space, rect.right), y);
+  }
+}
+
+function isVectorImageSource(src: string) {
+  return src.startsWith('data:image/svg+xml') || /\.svg(?:[?#]|$)/i.test(src);
+}
+
+function imageDataUrl(image: HTMLImageElement) {
+  const canvas = document.createElement('canvas');
+  const rect = image.getBoundingClientRect();
+  const source = image.currentSrc || image.src;
+  const scale = isVectorImageSource(source) ? 4 : 1;
+  const width = Math.max(1, image.naturalWidth || Math.round(rect.width * scale));
+  const height = Math.max(1, image.naturalHeight || Math.round(rect.height * scale));
+  const exportWidth = Math.max(width, Math.round(rect.width * scale));
+  const exportHeight = Math.max(height, Math.round(rect.height * scale));
+  const context = canvas.getContext('2d');
+
+  if (!context) {
+    throw new Error('HTML PDF export could not create an image canvas.');
+  }
+
+  canvas.width = exportWidth;
+  canvas.height = exportHeight;
+  context.imageSmoothingEnabled = true;
+  context.imageSmoothingQuality = 'high';
+  context.drawImage(image, 0, 0, exportWidth, exportHeight);
+
+  return canvas.toDataURL('image/png');
+}
+
+function renderPdfImages(pdf: JsPdf, space: PageSpace) {
+  const images = Array.from(space.element.querySelectorAll<HTMLImageElement>('img'));
+
+  for (const image of images) {
+    if (!isVisibleElement(image)) continue;
+
+    const rect = image.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) continue;
+
+    pdf.addImage(
+      imageDataUrl(image),
+      'PNG',
+      toPdfX(space, rect.left),
+      toPdfY(space, rect.top),
+      toPdfWidth(space, rect.width),
+      toPdfHeight(space, rect.height),
+    );
   }
 }
 
@@ -440,7 +834,7 @@ function svgViewBox(svg: SVGSVGElement) {
   return { height: Math.max(rect.height, 1), minX: 0, minY: 0, width: Math.max(rect.width, 1) };
 }
 
-function svgCoordinateMapper(space: PdfPageSpace, svg: SVGSVGElement) {
+function svgCoordinateMapper(space: PageSpace, svg: SVGSVGElement) {
   const rect = svg.getBoundingClientRect();
   const viewBox = svgViewBox(svg);
   const xRatio = rect.width / viewBox.width;
@@ -483,7 +877,7 @@ function resolveSvgPaint(element: SVGElement, name: 'fill' | 'stroke') {
   return parseColor(value);
 }
 
-function renderSvgPath(pdf: JsPdf, space: PdfPageSpace, svg: SVGSVGElement, path: SVGPathElement) {
+function renderSvgPath(pdf: JsPdf, space: PageSpace, svg: SVGSVGElement, path: SVGPathElement) {
   if (!isVisibleElement(path)) return;
 
   const pathData = path.getAttribute('d');
@@ -509,7 +903,7 @@ function renderSvgPath(pdf: JsPdf, space: PdfPageSpace, svg: SVGSVGElement, path
   pdf.restoreGraphicsState();
 }
 
-function renderSvgLine(pdf: JsPdf, space: PdfPageSpace, svg: SVGSVGElement, line: SVGLineElement) {
+function renderSvgLine(pdf: JsPdf, space: PageSpace, svg: SVGSVGElement, line: SVGLineElement) {
   const stroke = resolveSvgPaint(line, 'stroke');
   if (!stroke || !isVisibleElement(line)) return;
 
@@ -533,7 +927,7 @@ function renderSvgLine(pdf: JsPdf, space: PdfPageSpace, svg: SVGSVGElement, line
 
 function renderSvgPolyline(
   pdf: JsPdf,
-  space: PdfPageSpace,
+  space: PageSpace,
   svg: SVGSVGElement,
   polyline: SVGPolylineElement,
 ) {
@@ -564,7 +958,7 @@ function renderSvgPolyline(
   }
 }
 
-function renderPdfSvgs(pdf: JsPdf, space: PdfPageSpace) {
+function renderPdfSvgs(pdf: JsPdf, space: PageSpace) {
   const svgs = Array.from(space.element.querySelectorAll<SVGSVGElement>('svg'));
 
   for (const svg of svgs) {
@@ -584,19 +978,43 @@ function renderPdfSvgs(pdf: JsPdf, space: PdfPageSpace) {
   }
 }
 
-function renderPdfText(pdf: JsPdf, space: PdfPageSpace) {
+function renderPdfText(pdf: JsPdf, space: PageSpace, fonts: RegisteredPdfFont[]) {
   const walker = document.createTreeWalker(space.element, NodeFilter.SHOW_TEXT, {
     acceptNode: textNodeFilter,
   });
 
   let node = walker.nextNode();
   while (node) {
-    renderTextNode(pdf, space, node as Text);
+    renderTextNode(pdf, space, node as Text, fonts);
     node = walker.nextNode();
   }
 }
 
-function pageSpace(pdf: JsPdf, element: HTMLElement): PdfPageSpace {
+function renderPdfOutline(pdf: JsPdf, pages: HTMLElement[]) {
+  const stack: { item: PdfOutlineItem | null; level: number }[] = [{ item: null, level: 0 }];
+
+  pages.forEach((page, pageIndex) => {
+    const headings = Array.from(page.querySelectorAll<HTMLElement>('[data-pdf-heading]'));
+
+    for (const heading of headings) {
+      if (!isVisibleElement(heading)) continue;
+
+      const level = pdfHeadingLevel(heading);
+      const title = normalizeCssText(heading.textContent).trim();
+      if (!level || !title) continue;
+
+      while (stack.length > 1 && stack[stack.length - 1].level >= level) {
+        stack.pop();
+      }
+
+      const parent = stack[stack.length - 1].item;
+      const item = pdf.outline.add(parent, title, { pageNumber: pageIndex + 1 });
+      stack.push({ item, level });
+    }
+  });
+}
+
+function pageSpace(pdf: JsPdf, element: HTMLElement): PageSpace {
   const rect = element.getBoundingClientRect();
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
@@ -618,15 +1036,20 @@ export async function renderHtmlToPdf(pages: HTMLElement[], options: HtmlPdfOpti
     orientation: 'portrait',
     unit: 'pt',
   });
+  const fonts = registerPdfFonts(pdf, options.fonts);
 
   pdfPages.forEach((page, index) => {
     if (index > 0) pdf.addPage();
 
     const space = pageSpace(pdf, page);
-    renderPdfRules(pdf, space);
+    renderElementBoxes(pdf, space);
+    renderHorizontalRules(pdf, space);
+    renderPdfImages(pdf, space);
     renderPdfSvgs(pdf, space);
-    renderPdfText(pdf, space);
+    renderPdfText(pdf, space, fonts);
   });
+
+  renderPdfOutline(pdf, pdfPages);
 
   return pdf.output('blob');
 }

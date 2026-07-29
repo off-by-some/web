@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { interPdfFonts } from '$lib/pdf/fonts';
   import type { Snippet } from 'svelte';
 
   import PdfStoryFrame from '../PdfStoryFrame.svelte';
@@ -14,6 +15,7 @@
 
 <PdfStoryFrame
   {filename}
+  fonts={interPdfFonts}
   {label}
   renderWidth="52rem"
   documentClass="resume-component-story__document"
@@ -27,7 +29,7 @@
 <style lang="scss">
   :global(.resume-component-story__document) {
     --pdf-story-render-width: 52rem;
-    --resume-font-family: Helvetica, 'Nimbus Sans', Arial, sans-serif;
+    --resume-font-family: Inter, Helvetica, 'Nimbus Sans', Arial, sans-serif;
     --resume-color-paper: #fff;
     --resume-color-ink: var(--token-theme-color-text-dark, #0d1117);
     --resume-color-body: color-mix(in srgb, var(--resume-color-ink) 74%, var(--resume-color-paper));
@@ -54,7 +56,9 @@
   }
 
   :global(.resume-component-story__page) {
-    padding: 2.85rem 3.35rem 3rem;
+    padding-block-start: 2.85rem;
+    padding-block-end: 3rem;
+    padding-inline: 3.35rem;
   }
 
   .resume-component-story__content {

@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { PdfDocument, PdfPage } from '$lib/pdf/primitives';
+  import { Document, Page, Paragraph } from '$lib/pdf/primitives';
+  import { interPdfFonts } from '$lib/pdf/fonts';
 
   import type { ResumeData } from './resume-model';
   import ResumeExperience from './ResumeExperience.svelte';
@@ -16,10 +17,18 @@
   let { download = $bindable(), resume }: Props = $props();
 </script>
 
-<PdfDocument bind:download filename={resume.filename} renderWidth="52rem" class="resume-document">
+<Document
+  bind:download
+  filename={resume.filename}
+  fonts={interPdfFonts}
+  renderWidth="52rem"
+  class="resume-document"
+>
   {#each resume.pages as page, pi (page.id)}
     <div class="resume-document__page-stage">
-      <PdfPage class="resume-page" aria-label={page.ariaLabel}>
+      <Page class="resume-page" aria-label={page.ariaLabel}>
+        <span class="resume-page__accent" aria-hidden="true"></span>
+
         {#if page.showHeader}
           <div class="resume-page__header">
             <ResumeHeader name={resume.name} role={resume.role} contacts={resume.contacts} />
@@ -30,7 +39,7 @@
           {#each page.sections as section (section.id)}
             <ResumeSection title={section.title}>
               {#if section.kind === 'summary'}
-                <p class="resume-section-body">{section.body}</p>
+                <Paragraph class="resume-section-body">{section.body}</Paragraph>
               {:else if section.kind === 'experience'}
                 <div
                   class="resume-section-stack resume-section-stack--experience"
@@ -52,20 +61,21 @@
             </ResumeSection>
           {/each}
         </div>
-      </PdfPage>
+      </Page>
 
       <div class="resume-document__page-label" aria-hidden="true">
         Page {pi + 1} <span class="resume-document__page-count">of {resume.pages.length}</span>
       </div>
     </div>
   {/each}
-</PdfDocument>
+</Document>
 
 <style lang="scss">
   :global(.resume-document) {
-    --resume-font-family: Helvetica, 'Nimbus Sans', Arial, sans-serif;
+    --resume-font-family: Inter, Helvetica, 'Nimbus Sans', Arial, sans-serif;
     --resume-color-paper: #fff;
-    --resume-color-ink: var(--token-theme-color-text-dark, #0d1117);
+    --resume-color-ink: #080a18;
+    --resume-color-name: #000;
     --resume-color-body: color-mix(in srgb, var(--resume-color-ink) 74%, var(--resume-color-paper));
     --resume-color-muted: color-mix(
       in srgb,
@@ -80,11 +90,7 @@
       var(--token-theme-color-interactive-color, #1de9b6) 38%,
       var(--resume-color-ink)
     );
-    --resume-color-highlight: color-mix(
-      in srgb,
-      var(--token-theme-color-interactive-color, #1de9b6) 38%,
-      var(--resume-color-ink)
-    );
+    --resume-color-highlight: var(--resume-color-section);
     --resume-shadow-page:
       0 1px 3px color-mix(in srgb, var(--resume-color-ink) 18%, transparent),
       0 6px 20px color-mix(in srgb, var(--resume-color-ink) 36%, transparent),
@@ -117,32 +123,28 @@
     padding-inline: 3.35rem;
     display: flex;
     flex-direction: column;
+  }
 
-    &::before {
-      content: '';
-      position: absolute;
-      inset-block: 0;
-      inset-inline-start: 0;
-      inline-size: 3px;
-      background: linear-gradient(
-        to bottom,
-        var(--resume-color-accent, #1de9b6),
-        color-mix(in srgb, var(--resume-color-accent, #1de9b6) 20%, transparent)
-      );
-      border-start-start-radius: 0.375rem;
-      border-end-start-radius: 0.375rem;
-      pointer-events: none;
-    }
+  .resume-page__accent {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    inline-size: 3px;
+    background-color: var(--resume-color-accent, #1de9b6);
+    opacity: 0.72;
+    border-start-start-radius: 0.375rem;
+    border-end-start-radius: 0.375rem;
+    pointer-events: none;
   }
 
   .resume-page__header {
-    margin-block-end: 1.1rem;
+    margin-block-end: 1.2rem;
   }
 
   .resume-page__sections {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.08rem;
   }
 
   .resume-section-stack {
@@ -177,9 +179,9 @@
     opacity: 0.55;
   }
 
-  .resume-section-body {
+  :global(.resume-section-body) {
     font-size: 0.86rem;
-    line-height: var(--token-reference-typography-line-height-normal, 1.4);
+    line-height: 1.36;
     color: var(--resume-color-body);
     margin: 0;
   }

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Bold, Paragraph } from '$lib/pdf/primitives';
+
   import type { SkillCategory } from './resume-model';
 
   interface Props {
@@ -11,8 +13,8 @@
 <dl class="resume-skills">
   {#each categories as category (category.name)}
     <div class="resume-skills__category">
-      <dt class="resume-skills__name">{category.name}:</dt>
-      <dd class="resume-skills__items">{category.skills.join(', ')}</dd>
+      <dt class="resume-skills__name"><Bold>{category.name}:</Bold></dt>
+      <dd class="resume-skills__items"><Paragraph>{category.skills.join(', ')}</Paragraph></dd>
     </div>
   {/each}
 </dl>

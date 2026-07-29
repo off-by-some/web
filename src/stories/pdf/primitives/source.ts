@@ -1,17 +1,17 @@
-export const pdfDocumentSource = `<script lang="ts">
-  import { PdfDocument, PdfPage } from '$lib/pdf/primitives';
+export const documentSource = `<script lang="ts">
+  import { Document, Page } from '$lib/pdf/primitives';
 
   let download: (() => Promise<void>) | undefined = $state();
 </script>
 
 <button onclick={() => download?.()}>Download PDF</button>
 
-<PdfDocument bind:download filename="document.pdf" renderWidth="34rem">
-  <PdfPage>
+<Document bind:download filename="document.pdf" renderWidth="34rem">
+  <Page>
     <!-- PDF content -->
-  </PdfPage>
-</PdfDocument>`;
+  </Page>
+</Document>`;
 
-export const pdfPageSource = `<PdfDocument bind:download filename="page.pdf" renderWidth="34rem">
-  <PdfPage class="document-page" aria-label="Blank PDF page" />
-</PdfDocument>`;
+export const pageSource = `<Document bind:download filename="page.pdf" renderWidth="34rem">
+  <Page class="document-page" aria-label="Blank PDF page" />
+</Document>`;

@@ -1,0 +1,1 @@
+export { interPdfFonts } from './inter';

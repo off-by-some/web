@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Heading, Link } from '$lib/pdf/primitives';
+
   import type { ResumeData } from './resume-model';
   import { resolveResumeContactKind } from './resume-model';
   import ResumeContactIcon from './ResumeContactIcon.svelte';
@@ -13,7 +15,7 @@
 </script>
 
 <header class="resume-header">
-  <h1 class="resume-header__name">{name}</h1>
+  <Heading size={1} class="resume-header__name">{name}</Heading>
   <p class="resume-header__role">{role}</p>
   <div class="resume-header__contacts">
     {#each contacts as contact, i (contact.label)}
@@ -26,12 +28,12 @@
         </span>
         {#if contact.href}
           <!-- eslint-disable svelte/no-navigation-without-resolve -->
-          <a
+          <Link
             href={contact.href}
             class="resume-header__link"
             target={contact.href.startsWith('mailto:') ? undefined : '_blank'}
             rel={contact.href.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
-            >{contact.label}</a
+            >{contact.label}</Link
           >
           <!-- eslint-enable svelte/no-navigation-without-resolve -->
         {:else}
@@ -47,11 +49,11 @@
     text-align: center;
   }
 
-  .resume-header__name {
+  :global(.resume-header__name) {
     font-size: 2.7rem;
     font-weight: var(--token-reference-typography-weight-bold, 700);
     letter-spacing: var(--token-reference-typography-letter-spacing-tight, -0.015em);
-    color: var(--resume-color-ink);
+    color: var(--resume-color-name, #000);
     margin: 0;
     margin-block-end: 0.2rem;
     line-height: var(--token-reference-typography-line-height-tight, 1.1);
@@ -93,7 +95,7 @@
     flex-shrink: 0;
   }
 
-  .resume-header__link {
+  :global(.resume-header__link) {
     color: var(--resume-color-link);
     text-decoration: none;
 
