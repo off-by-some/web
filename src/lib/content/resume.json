@@ -73,7 +73,7 @@
               "highlights": [
                 "Built the first white-labeled React dispensary menu, cutting manual inventory updates and custom branding work by 40+ hours per week.",
                 "Ran load testing, complex query analysis, and chaos engineering to keep commerce and reporting systems resilient through traffic reaching 4x normal volume.",
-                "Engineered pre-production and staging environments with feature branches and Kubernetes, eliminating environment-related QA queues and reducing test-cycle time by more than 80%.",
+                "Engineered pre-production and staging environments with feature branches and Kubernetes, eliminating QA environment queues and reducing test-cycle time by more than 80%.",
                 "Implemented redundant data storage, replication, and failover strategies to protect government reporting and customer workflows across multiple data centers."
               ]
             }

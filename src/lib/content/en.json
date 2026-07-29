@@ -476,7 +476,7 @@
           "Ran load testing, complex query analysis, and chaos engineering to keep systems resilient through traffic reaching 4x normal volume.",
           "Implemented redundant data storage and replication alongside failover strategies, ensuring data integrity and reliability across multiple data centers.",
           "Owned the DevEx team's product roadmap, working with other teams to translate criteria into actionable items and keep the team shipping high-value features.",
-          "Engineered pre-production and staging environments with feature branches and Kubernetes, eliminating environment-related QA queues and cutting test-cycle time by more than 80%.",
+          "Engineered pre-production and staging environments with feature branches and Kubernetes, eliminating QA environment queues and cutting test-cycle time by more than 80%.",
           "Prototyped \"Brick\", an offline-first data persistence layer (TypeScript/React Native → later Dart) to guarantee seamless UX and reliable government reporting when connectivity drops.",
           "Owned the company's continuous integration and delivery (CI/CD) pipeline, implementing containerization and parallelized testing to speed up test execution and keep deployments reliable."
         ],
