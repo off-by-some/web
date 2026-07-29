@@ -1,1 +1,0 @@
-import{k as o,c as t,u as e}from"./B1wagoWH.js";function n(n){null===t&&function(){throw new Error("https://svelte.dev/e/lifecycle_outside_component")}(),o(()=>{const o=e(n);if("function"==typeof o)return o})}export{n as o};

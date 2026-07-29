@@ -1,1 +1,0 @@
-function r(e){return e.href||e.name}function n(e){return`project-tab-${t(r(e))}`}function a(e){return`project-panel-${t(r(e))}`}function t(e){return e.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}export{n as a,r as g,a as p};
