@@ -412,7 +412,7 @@
           "Converted an open-ended Python runtime mandate into a dependency-aware modernization program for 90+ AWS Lambda functions across three environments.",
           "Inventoried functions across Development, Test, and Production, mapping source repositories, shared Lambda layers, architectures, aliases, runtime versions, ownership, and invocation paths.",
           "Evaluated Python 3.11, Python 3.12, and Amazon Linux compatibility for a phased Python 3.9 runtime upgrade, including a proposed 12-function pilot.",
-          "Incorporated lessons from a prior rollback affecting roughly 30 functions to define dependency risk tiers, release sequencing, QA scope, acceptance criteria, and Development → Test → Production controls.",
+          "Incorporated lessons from a prior rollback affecting roughly 30 functions to define dependency risk tiers, release sequencing, QA scope, acceptance criteria, and promotion controls across development, test, and production.",
           "Designed release controls using published versions, stable aliases, staged traffic, monitoring, rollback thresholds, and environment promotion.",
           "Diagnosed production failures across distributed AWS integrations by tracing data through databases, API Gateway, Lambda functions, CloudWatch logs, source code, and external dependencies.",
           "Aligned engineering, QA, delivery leadership, and dependent-system stakeholders around migration scope, validation requirements, rollout timing, and operational risk.",
@@ -473,7 +473,7 @@
         "summary": "At Green Bits (acquired by Dutchie), I built our first white-labeled React dispensary menu—saving clients dozens of hours of manual work each week—architected the systems that kept the platform reliable through major traffic spikes, and managed the company's DevEx pipeline.",
         "highlights": [
           "Built the first white-labeled React dispensary menu, cutting manual inventory updates and custom branding work by 40+ hours a week.",
-          "Ran load testing, complex query analysis, and chaos engineering to keep systems resilient through traffic reaching 4× normal volume.",
+          "Ran load testing, complex query analysis, and chaos engineering to keep systems resilient through traffic reaching 4x normal volume.",
           "Implemented redundant data storage and replication alongside failover strategies, ensuring data integrity and reliability across multiple data centers.",
           "Owned the DevEx team's product roadmap, working with other teams to translate criteria into actionable items and keep the team shipping high-value features.",
           "Engineered pre-production and staging environments with feature branches and Kubernetes, eliminating environment-related QA queues and cutting test-cycle time by more than 80%.",

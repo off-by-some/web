@@ -33,7 +33,7 @@
           "id": "summary",
           "kind": "summary",
           "title": "Summary",
-          "body": "Staff-level software engineer and architect with 11+ years of experience turning ambiguous product and infrastructure problems into scalable systems, reliable release paths, and maintainable architecture. Deep background in React, TypeScript, Node.js, Python, Go, AWS Lambda, performance engineering, and technical program leadership."
+          "body": "Staff-level software engineer and architect with 11+ years of experience turning ambiguous product and infrastructure problems into scalable systems, reliable release paths, and maintainable architecture. Deep background in React, TypeScript, Node.js, Python, Go, AWS Lambda, performance engineering, and cross-team technical leadership."
         },
         {
           "id": "experience",
@@ -48,7 +48,7 @@
               "highlights": [
                 "Inventoried 90+ AWS Lambda functions across Development, Test, and Production, mapping source repositories, shared layers, architectures, aliases, runtime versions, ownership, and invocation paths.",
                 "Converted a Python 3.9 runtime-upgrade mandate into a phased modernization plan evaluating Python 3.11, Python 3.12, and Amazon Linux compatibility, including a proposed 12-function pilot.",
-                "Incorporated lessons from a prior rollback affecting roughly 30 functions to define dependency risk tiers, release sequencing, QA scope, acceptance criteria, and Development → Test → Production controls.",
+                "Incorporated lessons from a prior rollback affecting roughly 30 functions to define dependency risk tiers, release sequencing, QA scope, acceptance criteria, and promotion controls across development, test, and production.",
                 "Diagnosed production failures across distributed AWS integrations by tracing data through databases, API Gateway, Lambda functions, CloudWatch logs, source code, and external dependencies.",
                 "Aligned engineering, QA, delivery leadership, and dependent-system stakeholders around migration scope, validation requirements, rollout timing, and operational risk."
               ]
@@ -72,7 +72,7 @@
               "location": "Remote",
               "highlights": [
                 "Built the first white-labeled React dispensary menu, cutting manual inventory updates and custom branding work by 40+ hours per week.",
-                "Ran load testing, complex query analysis, and chaos engineering to keep commerce and reporting systems resilient through traffic reaching 4× normal volume.",
+                "Ran load testing, complex query analysis, and chaos engineering to keep commerce and reporting systems resilient through traffic reaching 4x normal volume.",
                 "Engineered pre-production and staging environments with feature branches and Kubernetes, eliminating environment-related QA queues and reducing test-cycle time by more than 80%.",
                 "Implemented redundant data storage, replication, and failover strategies to protect government reporting and customer workflows across multiple data centers."
               ]
