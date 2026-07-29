@@ -1,9 +1,9 @@
 {
   "meta": {
-    "title": "Cassidy Bridges - Staff-Level Software Engineer & Architect",
-    "description": "Staff-level Software Engineer & Architect with 11+ years of experience building scalable systems, performance-critical products, and reliable cloud delivery paths. Available for new opportunities.",
-    "jsonLdDescription": "Staff-level Software Engineer & Architect with 11+ years of experience across React, TypeScript, Node.js, Python, Go, AWS, performance engineering, and cloud infrastructure. Available for new opportunities.",
-    "dcDescription": "Staff-level Software Engineer & Architect with 11+ years of experience building scalable systems and reliable cloud delivery paths.",
+    "title": "Cassidy Bridges - Software Engineer & Architect",
+    "description": "Software Engineer & Architect with 11+ years of experience building scalable systems, performance-critical products, and reliable cloud delivery paths. Available for new opportunities.",
+    "jsonLdDescription": "Software Engineer & Architect with 11+ years of experience across React, TypeScript, Node.js, Python, Go, AWS, performance engineering, and cloud infrastructure. Available for new opportunities.",
+    "dcDescription": "Software Engineer & Architect with 11+ years of experience building scalable systems and reliable cloud delivery paths.",
     "imageAlt": "Cassidy Bridges - Engineering Resume",
     "siteName": "Cassidy Bridges",
     "dcSubject": "Software Engineering, Software Architecture, Technical Leadership, Technology",
@@ -21,7 +21,7 @@
   "aboutMe": {
     "greeting": "Hi, I'm",
     "name": "Cassidy Bridges",
-    "role": "Staff-Level Software Engineer & Architect",
+    "role": "Software Engineer & Architect",
     "valueHeadline": "I architect systems that scale, lead teams that thrive, and build products that last.",
     "valueHeadlineEmphasis": { "primary": "scale", "accent": "last" },
     "valueDescription": "I turn ambiguous product and infrastructure problems into durable systems, reliable delivery paths, and architecture that teams can keep evolving.",
