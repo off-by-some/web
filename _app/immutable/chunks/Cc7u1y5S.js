@@ -1,0 +1,1 @@
+const b={sources:{webp:"/web/_app/immutable/assets/github_brand_icon.Dx6MP2Nv.webp 64w, /web/_app/immutable/assets/github_brand_icon.QZY_QyqG.webp 128w, /web/_app/immutable/assets/github_brand_icon.D7fyi8Ir.webp 192w"},img:{src:"/web/_app/immutable/assets/github_brand_icon.D7fyi8Ir.webp",w:192,h:192}};export{b as default};

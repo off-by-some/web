@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/_app/immutable/assets/linkedin_brand_icon.hWAbaaJU.webp 64w, /web/_app/immutable/assets/linkedin_brand_icon._cYoFKEI.webp 128w, /web/_app/immutable/assets/linkedin_brand_icon.Ct5snTLI.webp 192w"},img:{src:"/web/_app/immutable/assets/linkedin_brand_icon.Ct5snTLI.webp",w:192,h:192}};export{e as default};

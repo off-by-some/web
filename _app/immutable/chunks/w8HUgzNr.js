@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/_app/immutable/assets/nextjs.BBKGEFb5.webp 64w, /web/_app/immutable/assets/nextjs.DHr4asiS.webp 128w, /web/_app/immutable/assets/nextjs.CUTzH79w.webp 192w"},img:{src:"/web/_app/immutable/assets/nextjs.CUTzH79w.webp",w:192,h:192}};export{e as default};

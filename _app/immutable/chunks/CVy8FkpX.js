@@ -1,0 +1,1 @@
+const s={sources:{webp:"/web/_app/immutable/assets/concordus-applications.Ce9DUUfs.webp 64w, /web/_app/immutable/assets/concordus-applications.Dd5B5drX.webp 100w"},img:{src:"/web/_app/immutable/assets/concordus-applications.Dd5B5drX.webp",w:100,h:100}};export{s as default};

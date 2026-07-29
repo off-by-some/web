@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/_app/immutable/assets/Mentorship.CAtDqFyE.webp 64w, /web/_app/immutable/assets/Mentorship.CeYsPkIc.webp 128w, /web/_app/immutable/assets/Mentorship.CC4nuFfG.webp 192w"},img:{src:"/web/_app/immutable/assets/Mentorship.CC4nuFfG.webp",w:192,h:192}};export{e as default};

@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/_app/immutable/assets/launchbadge_logo.BLNFK2MM.webp 64w, /web/_app/immutable/assets/launchbadge_logo.DUs91i8G.webp 128w, /web/_app/immutable/assets/launchbadge_logo.BmLBRTm2.webp 192w"},img:{src:"/web/_app/immutable/assets/launchbadge_logo.BmLBRTm2.webp",w:192,h:192}};export{e as default};

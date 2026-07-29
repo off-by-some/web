@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/_app/immutable/assets/golang%20logo.BJ77aVlY.webp 64w, /web/_app/immutable/assets/golang%20logo.DvwS4YAv.webp 128w, /web/_app/immutable/assets/golang%20logo.DtdGlS39.webp 192w"},img:{src:"/web/_app/immutable/assets/golang%20logo.DtdGlS39.webp",w:192,h:192}};export{e as default};

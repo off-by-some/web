@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/_app/immutable/assets/Team%20Leadership.CbwZS-nb.webp 64w, /web/_app/immutable/assets/Team%20Leadership.6DktFL49.webp 128w, /web/_app/immutable/assets/Team%20Leadership.CUSnktgu.webp 192w"},img:{src:"/web/_app/immutable/assets/Team%20Leadership.CUSnktgu.webp",w:192,h:192}};export{e as default};

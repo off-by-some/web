@@ -1,0 +1,1 @@
+const s={sources:{webp:"/web/_app/immutable/assets/javascript%20logo.BMOdbMdB.webp 64w, /web/_app/immutable/assets/javascript%20logo.5SGqbMLW.webp 128w, /web/_app/immutable/assets/javascript%20logo.Dts65BLe.webp 192w"},img:{src:"/web/_app/immutable/assets/javascript%20logo.Dts65BLe.webp",w:192,h:192}};export{s as default};

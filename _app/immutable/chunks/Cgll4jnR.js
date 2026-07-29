@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/_app/immutable/assets/Graphql.HQzIziIs.webp 64w, /web/_app/immutable/assets/Graphql.CyMW4Qor.webp 128w, /web/_app/immutable/assets/Graphql.BykZbw08.webp 192w"},img:{src:"/web/_app/immutable/assets/Graphql.BykZbw08.webp",w:192,h:192}};export{e as default};

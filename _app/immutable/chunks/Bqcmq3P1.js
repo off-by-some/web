@@ -1,0 +1,1 @@
+const t={sources:{webp:"/web/_app/immutable/assets/stealth_startup_logo.xtv8o_1I.webp 64w, /web/_app/immutable/assets/stealth_startup_logo.D5kB1TUO.webp 128w, /web/_app/immutable/assets/stealth_startup_logo.BAjp8oZ-.webp 192w"},img:{src:"/web/_app/immutable/assets/stealth_startup_logo.BAjp8oZ-.webp",w:192,h:192}};export{t as default};

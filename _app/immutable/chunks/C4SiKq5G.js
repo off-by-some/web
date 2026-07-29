@@ -1,0 +1,1 @@
+const s={sources:{webp:"/web/_app/immutable/assets/postgresql.CUCBl15L.webp 64w, /web/_app/immutable/assets/postgresql.BNNEQWpk.webp 128w, /web/_app/immutable/assets/postgresql.Dqtk3dkL.webp 192w"},img:{src:"/web/_app/immutable/assets/postgresql.Dqtk3dkL.webp",w:192,h:198}};export{s as default};

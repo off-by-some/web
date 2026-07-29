@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/_app/immutable/assets/CSS-logo.C8iRo2fY.webp 64w, /web/_app/immutable/assets/CSS-logo.Kdrj_LmF.webp 128w, /web/_app/immutable/assets/CSS-logo.D0dX-oq8.webp 192w"},img:{src:"/web/_app/immutable/assets/CSS-logo.D0dX-oq8.webp",w:192,h:158}};export{e as default};

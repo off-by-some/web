@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/_app/immutable/assets/scribehow_logo.CmnsTlM6.webp 64w, /web/_app/immutable/assets/scribehow_logo.Z-M6TxEl.webp 128w, /web/_app/immutable/assets/scribehow_logo.D4iZmteQ.webp 192w"},img:{src:"/web/_app/immutable/assets/scribehow_logo.D4iZmteQ.webp",w:192,h:192}};export{e as default};

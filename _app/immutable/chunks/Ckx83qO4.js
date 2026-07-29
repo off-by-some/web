@@ -1,0 +1,1 @@
+const s={sources:{webp:"/web/_app/immutable/assets/sass-logo.DoBjlZ3x.webp 64w, /web/_app/immutable/assets/sass-logo.DcC17ttM.webp 128w, /web/_app/immutable/assets/sass-logo.CwSd7C3-.webp 192w"},img:{src:"/web/_app/immutable/assets/sass-logo.CwSd7C3-.webp",w:192,h:192}};export{s as default};

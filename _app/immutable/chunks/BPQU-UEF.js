@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/_app/immutable/assets/starry-bg.BT6Aqe2f.webp 64w, /web/_app/immutable/assets/starry-bg.BbIFZPhq.webp 128w, /web/_app/immutable/assets/starry-bg.U-d6pm90.webp 192w"},img:{src:"/web/_app/immutable/assets/starry-bg.U-d6pm90.webp",w:192,h:128}};export{e as default};

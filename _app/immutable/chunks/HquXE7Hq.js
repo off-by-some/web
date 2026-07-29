@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/_app/immutable/assets/favicon.BBpRCQlo.webp 64w, /web/_app/immutable/assets/favicon.L9SxRywl.webp 128w, /web/_app/immutable/assets/favicon.BBT5EnDi.webp 192w"},img:{src:"/web/_app/immutable/assets/favicon.BBT5EnDi.webp",w:192,h:192}};export{e as default};

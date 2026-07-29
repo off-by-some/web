@@ -1,0 +1,1 @@
+const a={sources:{webp:"/web/_app/immutable/assets/java%20logo.DQ-ms5cR.webp 64w, /web/_app/immutable/assets/java%20logo.BKPrk4rA.webp 128w, /web/_app/immutable/assets/java%20logo.BkIuF9QH.webp 192w"},img:{src:"/web/_app/immutable/assets/java%20logo.BkIuF9QH.webp",w:192,h:192}};export{a as default};

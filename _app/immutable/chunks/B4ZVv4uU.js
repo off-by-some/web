@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/_app/immutable/assets/email-icon.Z1KO826M.webp 64w, /web/_app/immutable/assets/email-icon.DJ72blxy.webp 128w, /web/_app/immutable/assets/email-icon.C76C_Yya.webp 192w"},img:{src:"/web/_app/immutable/assets/email-icon.C76C_Yya.webp",w:192,h:192}};export{e as default};

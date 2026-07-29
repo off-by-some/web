@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/_app/immutable/assets/cliff_moon.LOlGOXVo.webp 96w, /web/_app/immutable/assets/cliff_moon.BHjAgN7y.webp 160w, /web/_app/immutable/assets/cliff_moon.B59eDpRs.webp 200w"},img:{src:"/web/_app/immutable/assets/cliff_moon.B59eDpRs.webp",w:200,h:200}};export{e as default};

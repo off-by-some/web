@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/_app/immutable/assets/Jira.DrqBgQAB.webp 64w, /web/_app/immutable/assets/Jira.cAfsYE4c.webp 128w, /web/_app/immutable/assets/Jira.BZ-MjmCD.webp 192w"},img:{src:"/web/_app/immutable/assets/Jira.BZ-MjmCD.webp",w:192,h:192}};export{e as default};

@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/_app/immutable/assets/python%20logo.zBwnAxG_.webp 64w, /web/_app/immutable/assets/python%20logo.CAwcQUdr.webp 128w, /web/_app/immutable/assets/python%20logo.GjkgyBI0.webp 192w"},img:{src:"/web/_app/immutable/assets/python%20logo.GjkgyBI0.webp",w:192,h:192}};export{e as default};

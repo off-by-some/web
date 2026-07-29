@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/_app/immutable/assets/AWS-logo.B--aPXWi.webp 64w, /web/_app/immutable/assets/AWS-logo.D8a206Ji.webp 128w, /web/_app/immutable/assets/AWS-logo.CjnXBt_I.webp 192w"},img:{src:"/web/_app/immutable/assets/AWS-logo.CjnXBt_I.webp",w:192,h:105}};export{e as default};

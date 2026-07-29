@@ -1,0 +1,1 @@
+const a={sources:{webp:"/web/_app/immutable/assets/angularjs.B3gENfK6.webp 64w, /web/_app/immutable/assets/angularjs.BLCKvj8b.webp 128w, /web/_app/immutable/assets/angularjs.DifqcB6t.webp 192w"},img:{src:"/web/_app/immutable/assets/angularjs.DifqcB6t.webp",w:192,h:157}};export{a as default};

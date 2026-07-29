@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/_app/immutable/assets/independent-research.BbFUbloT.webp 64w, /web/_app/immutable/assets/independent-research.h2aluhPh.webp 128w, /web/_app/immutable/assets/independent-research.AN-cAOdr.webp 192w"},img:{src:"/web/_app/immutable/assets/independent-research.AN-cAOdr.webp",w:192,h:192}};export{e as default};

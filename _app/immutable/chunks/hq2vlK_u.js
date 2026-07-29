@@ -1,0 +1,1 @@
+const e={sources:{webp:"/web/_app/immutable/assets/jourdan.CW_bh3yH.webp 96w, /web/_app/immutable/assets/jourdan.CpnbJWJR.webp 160w, /web/_app/immutable/assets/jourdan.Wy8SVTL9.webp 200w"},img:{src:"/web/_app/immutable/assets/jourdan.Wy8SVTL9.webp",w:200,h:200}};export{e as default};
