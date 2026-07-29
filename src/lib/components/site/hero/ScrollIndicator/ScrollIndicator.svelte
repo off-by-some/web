@@ -18,10 +18,12 @@
   type="button"
   aria-label={resolvedAriaLabel}
 >
-  <div class="scroll-mouse">
-    <div class="scroll-wheel"></div>
-  </div>
-  <div class="scroll-arrow"></div>
+  <span class="scroll-indicator__motion" aria-hidden="true">
+    <span class="scroll-mouse">
+      <span class="scroll-wheel"></span>
+    </span>
+    <span class="scroll-arrow"></span>
+  </span>
   <span class="scroll-text">{text}</span>
 </button>
 
@@ -29,6 +31,13 @@
   @use 'styles/breakpoints' as *;
 
   .scroll-indicator {
+    --scroll-indicator-gap: var(--token-reference-spacing-fluid-sm);
+    --scroll-mouse-block-size: 1.75rem;
+    --scroll-arrow-block-size: 0.375rem;
+    --scroll-text-block-size: calc(
+      var(--token-reference-typography-size-xs) * var(--token-reference-typography-line-height-snug)
+    );
+
     position: absolute;
     inset-block-end: calc(var(--token-reference-spacing-fluid-2xl) + env(safe-area-inset-bottom));
     inset-inline-start: 50%;
@@ -36,15 +45,18 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--token-reference-spacing-fluid-sm);
+    gap: var(--scroll-indicator-gap);
+    inline-size: max-content;
+    block-size: calc(
+      var(--scroll-mouse-block-size) + var(--scroll-arrow-block-size) +
+        var(--scroll-text-block-size) + (var(--scroll-indicator-gap) * 2)
+    );
     background: none;
     border: none;
     color: var(--token-theme-color-attention-color);
     opacity: 0.74;
     cursor: pointer;
-    animation: scrollFloat
-      var(--scroll-indicator-duration, var(--token-theme-motion-feedback-pulse))
-      var(--token-reference-motion-easing-standard) infinite;
+    contain: layout;
     z-index: 10;
     transition:
       color var(--token-theme-motion-feedback-default) var(--token-reference-motion-easing-standard),
@@ -85,9 +97,20 @@
     }
   }
 
+  .scroll-indicator__motion {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--scroll-indicator-gap);
+    animation: scrollFloat
+      var(--scroll-indicator-duration, var(--token-theme-motion-feedback-pulse))
+      var(--token-reference-motion-easing-standard) infinite;
+    will-change: transform;
+  }
+
   .scroll-mouse {
     inline-size: var(--token-reference-size-6);
-    block-size: 1.75rem;
+    block-size: var(--scroll-mouse-block-size);
     border: var(--scroll-indicator-border-width, var(--token-reference-border-width-small)) solid
       color-mix(
         in srgb,
@@ -129,7 +152,7 @@
 
   .scroll-arrow {
     inline-size: 0;
-    block-size: 0;
+    block-size: var(--scroll-arrow-block-size);
     border-inline-start: 0.25rem solid transparent;
     border-inline-end: 0.25rem solid transparent;
     border-block-start: 0.375rem solid
@@ -157,6 +180,7 @@
       var(--token-theme-color-text-secondary)
     );
     line-height: var(--token-reference-typography-line-height-snug);
+    block-size: var(--scroll-text-block-size);
   }
 
   @keyframes scrollFloat {
@@ -201,7 +225,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .scroll-indicator,
+    .scroll-indicator__motion,
     .scroll-wheel,
     .scroll-arrow {
       animation: none;

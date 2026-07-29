@@ -2,8 +2,10 @@
 import { preview } from 'vite';
 
 const port = Number(process.env.PORT || 4173);
+const base = process.env.BASE_PATH || '/web/';
 
 const server = await preview({
+  base,
   preview: {
     port,
     strictPort: true,

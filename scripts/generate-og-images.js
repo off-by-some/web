@@ -18,6 +18,26 @@ import puppeteer from 'puppeteer';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+const CHROME_EXECUTABLE_CANDIDATES = [
+  '/usr/bin/chromium',
+  '/usr/bin/chromium-browser',
+  '/usr/bin/google-chrome-stable',
+  '/usr/bin/google-chrome',
+  '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+  '/Applications/Chromium.app/Contents/MacOS/Chromium',
+];
+
+function resolveBrowserExecutablePath() {
+  const configuredPath =
+    process.env.PUPPETEER_EXECUTABLE_PATH || process.env.CHROME_PATH || process.env.CHROMIUM_PATH;
+
+  if (configuredPath && existsSync(configuredPath)) {
+    return configuredPath;
+  }
+
+  return CHROME_EXECUTABLE_CANDIDATES.find((candidate) => existsSync(candidate));
+}
+
 async function generateOGImage() {
   console.log('Generating OG image...');
 
@@ -56,10 +76,12 @@ async function generateOGImage() {
     }
 
     userDataDir = mkdtempSync(join(tmpdir(), 'web-og-chrome-'));
+    const executablePath = resolveBrowserExecutablePath();
 
     browser = await puppeteer.launch({
       headless: true,
       userDataDir,
+      ...(executablePath ? { executablePath } : {}),
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',

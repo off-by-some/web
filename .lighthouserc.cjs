@@ -112,11 +112,11 @@ module.exports = {
         'cache-insight': 'off',
         'uses-long-cache-ttl': 'off',
 
-        // The whole app's CSS is now inlined into the document through
-        // kit.output.bundleStrategy: 'inline' in svelte.config.js.
+        // The route CSS is inlined into the document through
+        // kit.inlineStyleThreshold in svelte.config.js.
         //
         // This eliminates the render-blocking stylesheet request, but it also
-        // bundles below-the-fold styles alongside the hero styles. Lighthouse
+        // can bundle below-the-fold styles alongside the hero styles. Lighthouse
         // therefore reports some unused bytes in the merged inline block.
         //
         // Its metricSavings report shows no FCP/LCP impact, so this audit is a

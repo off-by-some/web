@@ -1,0 +1,231 @@
+{
+  "filename": "Cassidy-Bridges-Resume.pdf",
+  "name": "Cassidy Bridges",
+  "role": "Staff-Level Software Engineer & Architect",
+  "contacts": [
+    {
+      "kind": "location",
+      "label": "Denver, Colorado"
+    },
+    {
+      "kind": "email",
+      "label": "cassidybridges@gmail.com",
+      "href": "mailto:cassidybridges@gmail.com"
+    },
+    {
+      "kind": "linkedin",
+      "label": "in/cassidy-bridges-tech",
+      "href": "https://www.linkedin.com/in/cassidy-bridges-tech"
+    },
+    {
+      "kind": "link",
+      "label": "off-by-some.github.io/web",
+      "href": "https://off-by-some.github.io/web/"
+    }
+  ],
+  "pages": [
+    {
+      "id": "resume-primary",
+      "ariaLabel": "Resume page 1",
+      "showHeader": true,
+      "sections": [
+        {
+          "id": "summary",
+          "kind": "summary",
+          "title": "Summary",
+          "body": "Staff-level software engineer and architect with 11+ years of experience turning ambiguous product and infrastructure problems into scalable systems, reliable release paths, and maintainable architecture. Deep background in React, TypeScript, Node.js, Python, Go, AWS Lambda, performance engineering, and technical program leadership."
+        },
+        {
+          "id": "experience",
+          "kind": "experience",
+          "title": "Experience",
+          "entries": [
+            {
+              "title": "Senior Engineering Consultant",
+              "company": "Stealth Startup | Confidential Field Operations Platform",
+              "date": "Feb 2026 – Present",
+              "location": "Remote",
+              "highlights": [
+                "Inventoried 90+ AWS Lambda functions across Development, Test, and Production, mapping source repositories, shared layers, architectures, aliases, runtime versions, ownership, and invocation paths.",
+                "Converted a Python 3.9 runtime-upgrade mandate into a phased modernization plan evaluating Python 3.11, Python 3.12, and Amazon Linux compatibility, including a proposed 12-function pilot.",
+                "Incorporated lessons from a prior rollback affecting roughly 30 functions to define dependency risk tiers, release sequencing, QA scope, acceptance criteria, and Development → Test → Production controls.",
+                "Diagnosed production failures across distributed AWS integrations by tracing data through databases, API Gateway, Lambda functions, CloudWatch logs, source code, and external dependencies.",
+                "Aligned engineering, QA, delivery leadership, and dependent-system stakeholders around migration scope, validation requirements, rollout timing, and operational risk."
+              ]
+            },
+            {
+              "title": "Senior Software Engineer",
+              "company": "Scribe",
+              "date": "Apr 2023 – Dec 2024",
+              "location": "Remote",
+              "highlights": [
+                "Led a performance overhaul that reduced sustained CPU peaks from 99% to 15% and lowered memory pressure, unlocking enterprise-scale workloads without new hardware.",
+                "Built \"Bug Buddy,\" an AI-powered triage assistant that automated roughly 75% of manual classification and surfaced duplicate and regression patterns before engineering assignment.",
+                "Architected and led a multi-team refactor that retired 15,000+ lines of legacy code while moving the front end to TypeScript without pausing active feature work.",
+                "Rebuilt the front-end API layer to eliminate redundant requests and speed up rendering, then prototyped an LLM-assisted Redux-to-React Query migration that automated roughly 80% of conversion work."
+              ]
+            },
+            {
+              "title": "Senior Software Engineer II",
+              "company": "Green Bits Inc & Dutchie",
+              "date": "Apr 2017 – Dec 2022",
+              "location": "Remote",
+              "highlights": [
+                "Built the first white-labeled React dispensary menu, cutting manual inventory updates and custom branding work by 40+ hours per week.",
+                "Ran load testing, complex query analysis, and chaos engineering to keep commerce and reporting systems resilient through traffic reaching 4× normal volume.",
+                "Engineered pre-production and staging environments with feature branches and Kubernetes, eliminating environment-related QA queues and reducing test-cycle time by more than 80%.",
+                "Implemented redundant data storage, replication, and failover strategies to protect government reporting and customer workflows across multiple data centers."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "resume-supporting",
+      "ariaLabel": "Resume page 2",
+      "sections": [
+        {
+          "id": "additional-experience",
+          "kind": "experience",
+          "title": "Additional Experience",
+          "density": "compact",
+          "entries": [
+            {
+              "title": "Front-End Engineer",
+              "company": "Import.io",
+              "date": "Jan 2017 – Apr 2017",
+              "location": "Los Gatos, California",
+              "highlights": [
+                "Established unit/E2E tests, structured ticketing, and sprint estimates to turn a fragile codebase into a more maintainable and predictable delivery system.",
+                "Architected a high-performance spreadsheet engine with live formulas and virtual rendering, eliminating manual cleanup scripts and saving users hundreds of hours.",
+                "Designed and led the Angular 1-to-React migration, cutting the JavaScript bundle by 45% and improving initial load times without customer-facing regressions."
+              ]
+            },
+            {
+              "title": "Software Engineer",
+              "company": "UpGuard",
+              "date": "Oct 2016 – Jan 2017",
+              "location": "Mountain View, California",
+              "highlights": [
+                "Expanded a vulnerability-scanning engine to support diverse machine environments, broadening security coverage and strengthening proactive detection.",
+                "Prototyped the phased Angular 1-to-React migration, replacing monolithic controllers with modular components and clearer ownership boundaries.",
+                "Overhauled end-to-end tests using TDD, BDD, and E2E testing practices, reducing suite runtime by six hours and catching regressions earlier."
+              ]
+            },
+            {
+              "title": "Full-Stack Developer / CTO",
+              "company": "LaunchBadge LLC",
+              "date": "Feb 2015 – Sep 2016",
+              "location": "Sacramento, California Area",
+              "highlights": [
+                "Built the React Native mobile app alongside Go, Python, and Node.js backends, laying the foundation for $1.2M+ in product bookings.",
+                "Owned the product roadmap across engineering and business constraints, keeping multiple projects on time and within budget.",
+                "Facilitated cross-functional standups, set OKRs, and prioritized delivery for six weeks, reducing project defects and turning scattered workstreams into a shared delivery plan."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "projects",
+          "kind": "projects",
+          "title": "Projects",
+          "entries": [
+            {
+              "name": "Engineering Portfolio",
+              "tagline": "Static SvelteKit portfolio with design tokens, Storybook, responsive images, accessibility, and Lighthouse CI",
+              "href": "https://off-by-some.github.io/web/",
+              "displayHref": "off-by-some.github.io/web"
+            },
+            {
+              "name": "FynX",
+              "tagline": "Zero-dependency Python library for reactive incremental computation over changing application state",
+              "href": "https://off-by-some.github.io/fynx/",
+              "displayHref": "off-by-some.github.io/fynx"
+            },
+            {
+              "name": "TRELLIS-BOX",
+              "tagline": "Containerized Microsoft's TRELLIS image-to-3D pipeline for local 12 GB consumer-GPU workflows",
+              "href": "https://hub.docker.com/r/cassidybridges/trellis-box",
+              "displayHref": "hub.docker.com/r/cassidybridges/trellis-box"
+            },
+            {
+              "name": "Dogescript",
+              "tagline": "Maintained a playful language compiler that turns Doge-themed syntax into valid JavaScript",
+              "href": "https://dogescript.io/",
+              "displayHref": "dogescript.io"
+            }
+          ]
+        },
+        {
+          "id": "skills",
+          "kind": "skills",
+          "title": "Skills",
+          "categories": [
+            {
+              "name": "Frontend Architecture",
+              "skills": [
+                "React",
+                "TypeScript",
+                "Redux",
+                "MobX",
+                "SCSS",
+                "Next.js",
+                "Svelte",
+                "GraphQL",
+                "Jest",
+                "Tailwind",
+                "Storybook",
+                "Webpack",
+                "Vite"
+              ]
+            },
+            {
+              "name": "Backend Systems",
+              "skills": [
+                "Node.js",
+                "Python",
+                "Ruby",
+                "Go",
+                "PostgreSQL",
+                "Redis",
+                "Ruby on Rails",
+                "Apache Kafka",
+                "Elasticsearch",
+                "Django",
+                "LangChain"
+              ]
+            },
+            {
+              "name": "Cloud & DevOps",
+              "skills": [
+                "AWS",
+                "AWS Lambda",
+                "Kubernetes",
+                "Helm",
+                "Docker",
+                "Terraform",
+                "Continuous integration and delivery (CI/CD)",
+                "Git",
+                "Bash",
+                "Locust",
+                "Datadog"
+              ]
+            },
+            {
+              "name": "Technical Leadership",
+              "skills": [
+                "Architecture",
+                "Cross-team delivery",
+                "Mentoring",
+                "Modernization strategy",
+                "Accessibility",
+                "Technical documentation"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

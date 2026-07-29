@@ -1,13 +1,13 @@
 {
   "meta": {
-    "title": "Cassidy Bridges - Engineering Resume",
-    "description": "Software Engineering Leader with 12+ years of experience building scalable systems and high-performance teams. Available for new opportunities.",
-    "jsonLdDescription": "Software Engineering Leader with 12+ years of experience building scalable systems and high-performance teams. Specializing in React, Node.js, Go, and cloud infrastructure. Available for new opportunities.",
-    "dcDescription": "Software Engineering Leader with 12+ years of experience building scalable systems and high-performance teams.",
+    "title": "Cassidy Bridges - Staff-Level Software Engineer & Architect",
+    "description": "Staff-level Software Engineer & Architect with 11+ years of experience building scalable systems, performance-critical products, and reliable cloud delivery paths. Available for new opportunities.",
+    "jsonLdDescription": "Staff-level Software Engineer & Architect with 11+ years of experience across React, TypeScript, Node.js, Python, Go, AWS, performance engineering, and cloud infrastructure. Available for new opportunities.",
+    "dcDescription": "Staff-level Software Engineer & Architect with 11+ years of experience building scalable systems and reliable cloud delivery paths.",
     "imageAlt": "Cassidy Bridges - Engineering Resume",
     "siteName": "Cassidy Bridges",
-    "dcSubject": "Software Engineering, Leadership, Technology",
-    "keywords": "software engineer, engineering leader, React, Node.js, Go, cloud infrastructure, full-stack developer, team leadership, AWS, Docker, Kubernetes, TypeScript, JavaScript, interactive resume, portfolio, personal website, Cassidy Bridges"
+    "dcSubject": "Software Engineering, Software Architecture, Technical Leadership, Technology",
+    "keywords": "senior software engineer, software architect, staff software engineer, frontend architect, technical lead, React, Node.js, Go, cloud infrastructure, AWS Lambda, Docker, Kubernetes, TypeScript, JavaScript, interactive resume, portfolio, personal website, Cassidy Bridges"
   },
 
   "common": {
@@ -21,10 +21,10 @@
   "aboutMe": {
     "greeting": "Hi, I'm",
     "name": "Cassidy Bridges",
-    "role": "Software Engineering Leader",
+    "role": "Staff-Level Software Engineer & Architect",
     "valueHeadline": "I architect systems that scale, lead teams that thrive, and build products that last.",
     "valueHeadlineEmphasis": { "primary": "scale", "accent": "last" },
-    "valueDescription": "I turn complex challenges into durable systems and help high-performing engineering teams do their best work, from product architecture to cloud infrastructure.",
+    "valueDescription": "I turn ambiguous product and infrastructure problems into durable systems, reliable delivery paths, and architecture that teams can keep evolving.",
     "avatarSrc": "cassidy-cutout.webp",
     "avatarAlt": "Cassidy Bridges",
     "primaryButtonText": "Let's build something great",
@@ -283,7 +283,7 @@
             "image": "icons/terraform.png"
           },
           {
-            "name": "CI/CD",
+            "name": "Continuous integration and delivery (CI/CD)",
             "years": 8,
             "category": "automation",
             "description": "GitHub Actions, Jenkins, deployment",
@@ -320,7 +320,7 @@
         ]
       },
       {
-        "name": "Leadership & Strategy",
+        "name": "Technical Leadership",
         "icon": "",
         "color": "quaternary",
         "mastery": "expert",
@@ -347,10 +347,10 @@
             "image": "icons/Mentorship.png"
           },
           {
-            "name": "Product Strategy",
+            "name": "Modernization Strategy",
             "years": 7,
             "category": "business",
-            "description": "Technical roadmaps, stakeholder alignment",
+            "description": "Technical roadmaps, stakeholder alignment, risk sequencing, and migration planning",
             "image": "icons/Product Strategy.png"
           },
           {
@@ -368,10 +368,10 @@
             "image": "svg/Notion-logo.svg"
           },
           {
-            "name": "Project Management",
+            "name": "Cross-team Delivery",
             "years": 10,
             "category": "business",
-            "description": "Jira, Notion, Linear, Confluence, and other project management tools.",
+            "description": "Structured delivery across engineering, QA, product, and release stakeholders.",
             "image": "icons/Jira.png"
           }
         ]
@@ -402,21 +402,21 @@
     "experiences": [
       {
         "title": "Senior Engineering Consultant",
-        "company": "Stealth Startup",
+        "company": "Stealth Startup | Confidential Field Operations Platform",
         "logo": "company_logos/stealth_startup_logo.png",
         "date": "Feb 2026 – Present",
         "dateValue": "Feb 2026",
         "location": "Remote",
-        "summary": "At a stealth startup, I led the modernization of a complex AWS integration platform supporting mission-critical field and enterprise workflows, combining hands-on cloud engineering with technical change management, stakeholder alignment, release strategy, and production reliability work.",
+        "summary": "For a stealth startup's confidential field-operations platform, I owned modernization planning for AWS middleware connecting a field application to multiple enterprise systems, combining hands-on cloud engineering with release strategy, dependency mapping, stakeholder alignment, and production reliability work.",
         "highlights": [
-          "Led technical discovery and migration planning for a large portfolio of AWS Lambda services, defining runtime strategy, dependency risk, rollout sequencing, and acceptance criteria.",
-          "Designed a safer serverless release model using versioned deployments, stable aliases, staged environment promotion, health monitoring, and rollback paths.",
-          "Drove technical change management across engineering, QA, and delivery leadership, translating infrastructure risks into concrete decisions, milestones, validation plans, and release criteria.",
-          "Built a system inventory and dependency map spanning serverless services, shared libraries, source repositories, architectures, and invocation paths to expose hidden blast radius before migration.",
-          "Diagnosed production failures across distributed, event-driven workflows by tracing data through APIs, serverless functions, application logs, databases, and upstream and downstream systems.",
-          "Converted an ambiguous runtime-upgrade mandate into an executable modernization program with structured backlog items, risk tiers, implementation options, executive briefs, and operational requirements.",
-          "Aligned modernization work with regression and release windows, defining QA scope, environment promotion paths, rollback thresholds, and production-readiness requirements.",
-          "Identified gaps in deployment provenance, monitoring, source-of-truth management, and recovery procedures, then proposed standardized controls to reduce operational risk.",
+          "Converted an open-ended Python runtime mandate into a dependency-aware modernization program for 90+ AWS Lambda functions across three environments.",
+          "Inventoried functions across Development, Test, and Production, mapping source repositories, shared Lambda layers, architectures, aliases, runtime versions, ownership, and invocation paths.",
+          "Evaluated Python 3.11, Python 3.12, and Amazon Linux compatibility for a phased Python 3.9 runtime upgrade, including a proposed 12-function pilot.",
+          "Incorporated lessons from a prior rollback affecting roughly 30 functions to define dependency risk tiers, release sequencing, QA scope, acceptance criteria, and Development → Test → Production controls.",
+          "Designed release controls using published versions, stable aliases, staged traffic, monitoring, rollback thresholds, and environment promotion.",
+          "Diagnosed production failures across distributed AWS integrations by tracing data through databases, API Gateway, Lambda functions, CloudWatch logs, source code, and external dependencies.",
+          "Aligned engineering, QA, delivery leadership, and dependent-system stakeholders around migration scope, validation requirements, rollout timing, and operational risk.",
+          "Identified gaps in production provenance, reactive alerting, source-of-truth management, and recovery procedures, then proposed standardized controls to reduce release and operational risk.",
           "Implemented and maintained Python-based cloud integrations and configuration changes supporting critical business workflows.",
           "Presented architecture, delivery, and risk tradeoffs to technical and non-technical stakeholders while coordinating decisions across teams with competing priorities."
         ],
@@ -444,9 +444,9 @@
         "location": "Remote",
         "summary": "At Scribe, I rebuilt the performance-critical core of the codebase—resolving the CPU and memory issues that had been slowing the team down—and shipped new AI-powered tooling to speed up how engineers found and fixed bugs.",
         "highlights": [
-          "Led a performance overhaul that brought sustained CPU peaks down from 99% to 15% and substantially cut memory use, unlocking enterprise-scale workloads without new hardware.",
-          "Built \"Bug Buddy,\" an AI-powered triage assistant that cut manual triage time by roughly three-quarters and meaningfully reduced downstream bug volume.",
-          "Architected and led a multi-team refactor that retired over 15,000 lines of legacy code and moved the entire front end to TypeScript.",
+          "Led a performance overhaul that reduced sustained CPU peaks from 99% to 15% and lowered memory pressure, unlocking enterprise-scale workloads without new hardware.",
+          "Built \"Bug Buddy,\" an AI-powered triage assistant that automated roughly 75% of manual classification and surfaced duplicate and regression patterns before engineering assignment.",
+          "Architected and led a cross-team refactor that retired over 15,000 lines of legacy code and moved the entire front end to TypeScript.",
           "Rebuilt the front-end API layer to eliminate redundant calls and noticeably speed up rendering—without pausing active feature work.",
           "Designed democratic decision processes and living documentation so engineering teams could ship and review features faster together.",
           "Overhauled image processing and error-reporting pipelines—introduced WebP, resolved data-integrity issues, and reduced load times by 20%.",
@@ -473,12 +473,12 @@
         "summary": "At Green Bits (acquired by Dutchie), I built our first white-labeled React dispensary menu—saving clients dozens of hours of manual work each week—architected the systems that kept the platform reliable through major traffic spikes, and managed the company's DevEx pipeline.",
         "highlights": [
           "Built the first white-labeled React dispensary menu, cutting manual inventory updates and custom branding work by 40+ hours a week.",
-          "Ran load testing, complex query analysis, and chaos engineering to keep systems resilient through traffic surges of up to 400%.",
+          "Ran load testing, complex query analysis, and chaos engineering to keep systems resilient through traffic reaching 4× normal volume.",
           "Implemented redundant data storage and replication alongside failover strategies, ensuring data integrity and reliability across multiple data centers.",
           "Owned the DevEx team's product roadmap, working with other teams to translate criteria into actionable items and keep the team shipping high-value features.",
-          "Engineered pre-production and staging environments with feature branches and Kubernetes, eliminating QA wait times and cutting test cycle time by more than 80%.",
+          "Engineered pre-production and staging environments with feature branches and Kubernetes, eliminating environment-related QA queues and cutting test-cycle time by more than 80%.",
           "Prototyped \"Brick\", an offline-first data persistence layer (TypeScript/React Native → later Dart) to guarantee seamless UX and reliable government reporting when connectivity drops.",
-          "Owned the company's CI/CD pipeline, implementing containerization and parallelized testing to speed up test execution and keep deployments reliable."
+          "Owned the company's continuous integration and delivery (CI/CD) pipeline, implementing containerization and parallelized testing to speed up test execution and keep deployments reliable."
         ],
         "skills": [
           "AWS",
@@ -487,7 +487,7 @@
           "Ruby on Rails",
           "Kubernetes",
           "Terraform",
-          "CI/CD",
+          "Continuous integration and delivery (CI/CD)",
           "Load Testing",
           "Chaos Engineering"
         ]
@@ -499,7 +499,7 @@
         "date": "Jan 2017 – Apr 2017",
         "dateValue": "Jan 2017",
         "location": "Los Gatos, California",
-        "summary": "At Import.io, I delivered a React-powered, Excel-style spreadsheet UI that automated large-dataset cleaning and saved customers hundreds of hours, and led a full Angular 1→React rewrite that meaningfully cut bundle size and load times.",
+        "summary": "At Import.io, I delivered a React-powered, Excel-style spreadsheet UI that automated large-dataset cleaning and saved customers hundreds of hours, and led a full Angular 1→React rewrite that cut bundle size by 45% and improved initial load times.",
         "highlights": [
           "Established foundational engineering workflows—unit/E2E tests, structured ticketing, and sprint estimates—to transform a fragile codebase into a maintainable, predictable system.",
           "Architected a high-performance spreadsheet engine with live formulas and virtual rendering, eliminating manual scripts and saving users hundreds of hours.",
@@ -532,7 +532,7 @@
         "summary": "At UpGuard, I initiated the migration of our front-end by migrating key modules from Angular 1 to React—streamlining the component architecture and boosting developer velocity—then revamped and rewrote our E2E test suite, cutting six hours off nightly runs.",
         "highlights": [
           "Contributed to our vulnerability-scanning engine—adding support for diverse machine environments—to broaden security coverage and strengthen proactive detection.",
-          "Prototyped the phased migration from Angular 1 to React, replacing monolithic controllers with modular & isolated components, improving maintainability.",
+          "Prototyped the phased migration from Angular 1 to React, replacing monolithic controllers with modular components and clearer ownership boundaries.",
           "Overhauled the end-to-end tests using best practices found within TDD, BDD, and E2E testing, reducing total suite runtime by six hours and catching regressions far earlier.",
           "Containerized development environments with Docker to mirror staging, reducing setup friction and improving release consistency.",
           "Instituted code-review standards and led paired workshops to embed maintainability and testing culture."
@@ -549,7 +549,7 @@
         "summary": "I drove end-to-end delivery of LaunchBadge's full-stack platform—which went on to generate $1.2M+ in bookings—and stepped in as interim CTO to break down silos, align our technical roadmap with business goals, and smooth out collaboration.",
         "highlights": [
           "Built the React Native mobile app alongside Go, Python, and Node.js backends, laying the foundation for the product's $1.2M+ in bookings.",
-          "For six weeks, facilitated cross-functional standups, set OKRs, and prioritized features—cutting project defects and improving team alignment.",
+          "For six weeks, facilitated cross-functional standups, set OKRs, and prioritized features, reducing project defects and turning scattered workstreams into a shared delivery plan.",
           "Owned the product roadmap, balanced feature priorities against resource and budget constraints, and kept multiple projects on time and on budget.",
           "Introduced agile practices—sprint planning, backlog grooming, retrospectives—that improved predictability and boosted delivery velocity.",
           "Onboarded new engineers with clear documentation and paired sessions, established coding standards, and coached teammates on full-stack best practices to scale the team without friction."
