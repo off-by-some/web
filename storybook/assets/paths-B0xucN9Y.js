@@ -1,0 +1,1 @@
+import{r as i}from"./client-BDHwhSmg.js";const r=t=>/^[a-z][a-z\d+.-]*:/i.test(t)||t.startsWith("//"),a=i,s=a("/").replace(/\/$/,"");function o(t=""){return!t||!t.startsWith("/")||r(t)||s&&(t===s||t.startsWith(`${s}/`))?t:a(t)}export{o as w};

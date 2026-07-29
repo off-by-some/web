@@ -1,1 +1,0 @@
-import{u as o,f as t,g as e}from"./WInb-kEj.js";function n(n){null===t&&function(){throw new Error("https://svelte.dev/e/lifecycle_outside_component")}(),o(()=>{const o=e(n);if("function"==typeof o)return o})}export{n as o};
