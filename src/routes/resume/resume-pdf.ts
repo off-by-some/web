@@ -27,6 +27,18 @@ interface SvgPathOperation {
   op: 'm' | 'l' | 'c' | 'h';
 }
 
+interface PdfFontState {
+  id: string;
+}
+
+interface PdfTextWriter {
+  getFont: () => PdfFontState;
+  getFontSize: () => number;
+  internal: {
+    write: (value: string) => void;
+  };
+}
+
 const PDF_PAGE = {
   height: 792,
   width: 612,
@@ -107,6 +119,32 @@ function normalizePdfText(value: string) {
 
 function normalizeCssText(value: string) {
   return normalizePdfText(value.replace(/\s+/g, ' '));
+}
+
+function pdfNumber(value: number) {
+  return Number(value.toFixed(4)).toString();
+}
+
+function escapePdfString(value: string) {
+  return value
+    .replace(/\\/g, '\\\\')
+    .replace(/\(/g, '\\(')
+    .replace(/\)/g, '\\)')
+    .replace(/\r/g, '\\r')
+    .replace(/\n/g, '\\n');
+}
+
+function writePdfTextLine(pdf: JsPdf, text: string, x: number, y: number) {
+  const writer = pdf as unknown as PdfTextWriter;
+  const font = writer.getFont();
+  const fontSize = writer.getFontSize();
+  const baselineY = PDF_PAGE.height - y;
+
+  writer.internal.write('BT');
+  writer.internal.write(`/${font.id} ${pdfNumber(fontSize)} Tf`);
+  writer.internal.write(`1 0 0 1 ${pdfNumber(x)} ${pdfNumber(baselineY)} Tm`);
+  writer.internal.write(`(${escapePdfString(text)}) Tj`);
+  writer.internal.write('ET');
 }
 
 function transformCssText(text: string, style: CSSStyleDeclaration) {
@@ -298,7 +336,7 @@ function renderTextNode(pdf: JsPdf, space: PdfPageSpace, node: Text) {
     const y = toPdfY(space, line.bottom) - fontSize * 0.18;
     const width = toPdfWidth(space, line.right - line.left);
 
-    pdf.text(transformedText, x, y);
+    writePdfTextLine(pdf, transformedText, x, y);
 
     if (link) {
       pdf.link(x, toPdfY(space, line.top), width, toPdfHeight(space, line.bottom - line.top), {

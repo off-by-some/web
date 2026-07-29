@@ -31,8 +31,8 @@
     },
     {
       name: 'team',
-      arrowTransform: 'translate(460 284) scale(0.45)',
-      labelX: 570,
+      arrowTransform: 'translate(490 284) scale(0.45)',
+      labelX: 600,
       labelY: 323,
       labelSize: 22,
       labelRotate: -2,
