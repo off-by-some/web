@@ -1,0 +1,15 @@
+import{n as p,a as h,b as n,f as i,c as g,p as u,d as f,s as v,e as C}from"./iframe-fuhK6QfV.js";import{c as _,d as w}from"./create-runtime-stories-CYWPN31x.js";import{C as l}from"./ContactMethodsPanel-CGmwRnG4.js";import{h as b}from"./controls-B7FSozl-.js";import{s as y}from"./class-p2RtpSS3.js";import{i as k}from"./lifecycle-Dgbq_5QQ.js";import"./preload-helper-k3ZeA0S-.js";import"./each-DqwwYZgk.js";import"./Card-lzMG70Rb.js";import"./svelte-element-C_84bX8b.js";import"./attributes-B2rWd7RV.js";import"./pressable-D8AtzM9Q.js";import"./ContactMethodCard-BgQNuyyT.js";import"./IconTile-A88kKKzz.js";import"./Image-Cl64Njrh.js";import"./this-CIALxHUU.js";import"./paths-BYjxsXOx.js";import"./client-A4YxA5hM.js";const P=(s,t=p)=>{var e=D();let o;var a=g(e);l(a,{get title(){return t().title},get subtitle(){return t().subtitle},get methods(){return t().methods},onContactRequested:c=>console.log("Contact requested:",c)}),h(()=>o=y(e,1,"story-shell svelte-197s80z",null,o,{"story-shell--narrow":t().narrow})),n(s,e)},M=[{type:"email",label:"Email",value:"cassidy@example.com",href:"mailto:cassidy@example.com",imagePath:"svg/email_brand_icon.svg",description:"Direct message"},{type:"linkedin",label:"LinkedIn",value:"/in/cassidybridges",href:"https://linkedin.com/in/cassidybridges",imagePath:"svg/linkedin_brand_icon.svg",description:"Professional network"}],q={title:"Component Library/Site/Contact/Contact Methods Panel",component:l,render:P,tags:["autodocs"],args:{title:"Other Ways to Connect",subtitle:"Prefer a different communication method? Choose what works best for you.",methods:M,narrow:!1},argTypes:{...b(["onContactRequested"]),narrow:{control:"boolean",description:"Story-only toggle that shrinks the preview to demonstrate the single-column wrap breakpoint."}},parameters:{docs:{description:{component:"Lays ContactMethodCards out in a responsive grid. It owns spacing and the wrap breakpoint only — resize the preview to see cards drop to a single column, rather than shrinking past a readable width."}}}},{Story:r}=w();var D=i("<div><!></div>"),N=i("<!> <!>",1);function d(s,t){u(t,!1),k();var e=N(),o=f(e);r(o,{name:"Default",parameters:{__svelteCsf:{rawCode:`<div class="story-shell" class:story-shell--narrow={args.narrow}>
+  <ContactMethodsPanel
+    title={args.title}
+    subtitle={args.subtitle}
+    methods={args.methods}
+    onContactRequested={(method) => console.log('Contact requested:', method)}
+  />
+</div>`}}});var a=v(o,2);r(a,{name:"Narrow Container",args:{narrow:!0},parameters:{__svelteCsf:{rawCode:`<div class="story-shell" class:story-shell--narrow={args.narrow}>
+  <ContactMethodsPanel
+    title={args.title}
+    subtitle={args.subtitle}
+    methods={args.methods}
+    onContactRequested={(method) => console.log('Contact requested:', method)}
+  />
+</div>`}}}),n(s,e),C()}d.__docgen={data:[],name:"ContactMethodsPanel.stories.svelte"};const m=_(d,q),K=["Default","NarrowContainer"],Q={...m.Default,tags:["svelte-csf-v5"]},U={...m.NarrowContainer,tags:["svelte-csf-v5"]};export{Q as Default,U as NarrowContainer,K as __namedExportsOrder,q as default};
