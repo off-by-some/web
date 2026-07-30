@@ -1,8 +1,0 @@
-import{n as s,b as n,f as l,c as m,p,e as d}from"./iframe-DLDiJGs9.js";import{c,d as g}from"./create-runtime-stories-Bc8tgwji.js";import{H as o}from"./HeroProfile-B32fJWs3.js";import{h as f}from"./controls-B7FSozl-.js";import{i as u}from"./lifecycle-Dms2tKSv.js";import"./preload-helper-k3ZeA0S-.js";import"./attributes-BnIK5ZvT.js";import"./class-BN7jOcxs.js";import"./Image-Ayc55QrU.js";import"./each-9emWg8qb.js";import"./this-DMZGiKmd.js";import"./paths-B0xucN9Y.js";import"./client-BDHwhSmg.js";const v=(t,e=s)=>{var r=h(),i=m(r);o(i,{get greeting(){return e().greeting},get name(){return e().name},get role(){return e().role},get titleId(){return e().titleId}}),n(t,r)},_={title:"Component Library/Site/Hero/Profile",component:o,render:v,tags:["autodocs"],args:{greeting:"Hi, I'm",name:"Cassidy Bridges",role:"Software Engineering Leader",titleId:"storybook-profile-name"},argTypes:{...f(["titleId"])},parameters:{docs:{description:{component:"Hero identity block for greeting, name, role, and accent mark. The portrait and actions stay separate so the typography can be reused without carrying page-specific layout."}}}},{Story:y}=g();var h=l('<div class="story-shell svelte-evktko"><!></div>');function a(t,e){p(e,!1),u(),y(t,{name:"Default",parameters:{__svelteCsf:{rawCode:`<div class="story-shell">
-  <HeroProfile
-    greeting={args.greeting}
-    name={args.name}
-    role={args.role}
-    titleId={args.titleId}
-  />
-</div>`}}}),d()}a.__docgen={data:[],name:"HeroProfile.stories.svelte"};const H=c(a,_),B=["Default"],M={...H.Default,tags:["svelte-csf-v5"]};export{M as Default,B as __namedExportsOrder,_ as default};
