@@ -585,7 +585,7 @@ function characterRect(range: Range) {
 
   return rects.reduce((largest, rect) =>
     rect.width * rect.height > largest.width * largest.height ? rect : largest,
-  );
+  rects[0]);
 }
 
 function collectTextLines(node: Text) {
