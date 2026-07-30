@@ -180,8 +180,17 @@
     host.style.pointerEvents = 'none';
     host.style.zIndex = '-1';
 
+    // Mobile WebKit can inflate text in a wide off-screen subtree. Range geometry then
+    // reflects the inflated layout while computed font sizes remain authored values,
+    // producing premature line breaks in the PDF. Disable autosizing only for the
+    // fixed-layout export clone so the visible document keeps normal browser behavior.
+    host.style.setProperty('-webkit-text-size-adjust', 'none');
+    host.style.setProperty('text-size-adjust', 'none');
+
     clone.style.inlineSize = renderWidth;
     clone.style.maxInlineSize = 'none';
+    clone.style.setProperty('-webkit-text-size-adjust', 'none');
+    clone.style.setProperty('text-size-adjust', 'none');
 
     host.append(clone);
     document.body.append(host);
