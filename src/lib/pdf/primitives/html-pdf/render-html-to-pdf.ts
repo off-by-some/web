@@ -576,6 +576,18 @@ function mergeLine(lines: TextLine[], line: TextLine) {
   existing.text = `${existing.text}${line.text}`;
 }
 
+function characterRect(range: Range) {
+  const rects = Array.from(range.getClientRects()).filter(
+    (rect) => rect.width > 0.01 && rect.height > 0.01,
+  );
+
+  if (rects.length === 0) return undefined;
+
+  return rects.reduce((largest, rect) =>
+    rect.width * rect.height > largest.width * largest.height ? rect : largest,
+  );
+}
+
 function collectTextLines(node: Text) {
   const lines: TextLine[] = [];
   const range = document.createRange();
@@ -588,8 +600,10 @@ function collectTextLines(node: Text) {
     range.setStart(node, index);
     range.setEnd(node, index + 1);
 
-    const rect = range.getBoundingClientRect();
-    if (rect.width === 0 && rect.height === 0) {
+    // A range can have more than one inline fragment at a line boundary.
+    // Its bounding rectangle may span both lines, so use one glyph fragment.
+    const rect = characterRect(range);
+    if (!rect) {
       if (/\s/.test(character)) pendingSpace = ' ';
       continue;
     }
